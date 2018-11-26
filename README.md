@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/janneskretschmer/lh-tool.svg?branch=master)](https://travis-ci.org/janneskretschmer/lh-tool)
 # Local Config
 ## Eclipse
 ### Checkout
