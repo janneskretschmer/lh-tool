@@ -33,7 +33,7 @@
 13. add LH-Tool
 14. Click Finish
 
-Workarounds:
+Workarounds
 1. Open debug preferences (Window > Preferences > Java Debug)
 2. Disable "Use advanced source lookup (JRE 1.5 and higher)"
 3. Apply
@@ -42,3 +42,7 @@ Workarounds:
 6. Click Finish
 7. Change the Deploy Path of classes to "WEB-INF/classes"
 8. Click Apply and Close
+
+Start
+1. Start Server in Debug Mode (Select Server and click on the bug in the upper right corner of the view)
+2. Test Server by calling http://localhost:8080/lh-tool/rest/info/heartbeat
