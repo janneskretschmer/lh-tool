@@ -34,11 +34,11 @@
 14. Click Finish
 
 Workarounds:
-15. Open debug preferences (Window > Preferences > Java Debug)
-16. Disable "Use advanced source lookup (JRE 1.5 and higher)"
-17. Apply
-18. Right click on Project > Properties > Deployment Assembly > Add...
-19. Folder > target > classes
-19. Click Finish
-20. Change the Deploy Path of classes to "WEB-INF/classes"
-21. Click Apply and Close
+1. Open debug preferences (Window > Preferences > Java Debug)
+2. Disable "Use advanced source lookup (JRE 1.5 and higher)"
+3. Apply
+4. Right click on Project > Properties > Deployment Assembly > Add...
+5. Folder > target > classes
+6. Click Finish
+7. Change the Deploy Path of classes to "WEB-INF/classes"
+8. Click Apply and Close
