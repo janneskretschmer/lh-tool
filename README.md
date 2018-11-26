@@ -28,5 +28,17 @@
 8. Click Finish
 9. Double click the server
 10. Disable Server Options > "Modules auto reload by default"
-11. Click on Modules at the bottom
-12. to be continued
+11. Save
+12. Right click on server > Add and Remove...
+13. add LH-Tool
+14. Click Finish
+
+Workarounds:
+15. Open debug preferences (Window > Preferences > Java Debug)
+16. Disable "Use advanced source lookup (JRE 1.5 and higher)"
+17. Apply
+18. Right click on Project > Properties > Deployment Assembly > Add...
+19. Folder > target > classes
+19. Click Finish
+20. Change the Deploy Path of classes to "WEB-INF/classes"
+21. Click Apply and Close
