@@ -1,0 +1,8 @@
+language: java
+jdk: oraclejdk11
+addons:
+  sonarcloud:
+    organization: "janneskretschmer-github" # the key of the org you chose at step #3
+script:
+  # other script steps might be done before running the actual analysis
+  - sonar-scanner
