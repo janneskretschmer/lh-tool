@@ -1,4 +1,4 @@
-package de.lh.tool.rest;
+package de.lh.tool.service.rest;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
