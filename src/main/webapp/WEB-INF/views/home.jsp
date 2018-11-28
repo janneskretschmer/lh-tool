@@ -2,7 +2,7 @@
 	pageEncoding="utf-8"%><!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta charset="UTF-8"/>
 <title>LH-Tool</title>
 </head>
 <body>
@@ -11,5 +11,7 @@
 	<script>
 		${js}
 	</script>
+	<div id="main-app-container"></div>
+	<script src="static/built/bundle.js"></script>
 </body>
 </html>

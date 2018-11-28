@@ -8,33 +8,36 @@ import org.springframework.web.multipart.support.StandardServletMultipartResolve
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @Configuration
-@ComponentScan
+@ComponentScan(basePackages = { "de.lh.tool.rest", "de.lh.tool.web" })
 @EnableWebMvc
-class WebMvcConfiguration extends WebMvcConfigurationSupport {
-//    @Bean
-//    public DomainClassConverter<?> domainClassConverter() {
-//        return new DomainClassConverter<FormattingConversionService>(mvcConversionService());
-//    }
+class WebMvcConfiguration implements WebMvcConfigurer {
 
-    @Override
-    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
-        configurer.enable();
-    }
+	@Override
+	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+		configurer.enable();
+	}
 
-    @Bean
-    public MultipartResolver multipartResolver() {
-        return new StandardServletMultipartResolver();
-    }
+	@Bean
+	public MultipartResolver multipartResolver() {
+		return new StandardServletMultipartResolver();
+	}
 
-    @Bean
-    public ViewResolver internalResourceViewResolver() {
-        InternalResourceViewResolver internalResourceViewResolver = new InternalResourceViewResolver();
-        internalResourceViewResolver.setPrefix("/WEB-INF/views/");
-        internalResourceViewResolver.setSuffix(".jsp");
-        return internalResourceViewResolver;
-    }
+	@Bean
+	public ViewResolver internalResourceViewResolver() {
+		InternalResourceViewResolver internalResourceViewResolver = new InternalResourceViewResolver();
+		internalResourceViewResolver.setPrefix("/WEB-INF/views/");
+		internalResourceViewResolver.setSuffix(".jsp");
+		return internalResourceViewResolver;
+	}
+
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+	}
 }
