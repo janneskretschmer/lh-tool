@@ -50,3 +50,11 @@ Workarounds
 Start
 1. Start Server in Debug Mode (Select Server and click on the bug in the upper right corner of the view)
 2. Test Server by calling http://localhost:8080/lh-tool/rest/info/heartbeat
+## MySQL
+1. Install and configure mysql-server
+2. Adapt and execute the script dbscripts/initial.sql
+3. Update the credentials in hibernate.properties
+4. Open the Git-Staging-view in Eclipse
+5. Right click on hibernate.properties > Assume unchanged
+6. It should disappear from the view
+7. Never commit your credentials from hibernate.properties!
