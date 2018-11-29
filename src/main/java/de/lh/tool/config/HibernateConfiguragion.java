@@ -40,15 +40,12 @@ public class HibernateConfiguragion {
 
 	@Bean
 	public JpaVendorAdapter getJpaVendorAdapter() {
-		JpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
-		return adapter;
+		return new HibernateJpaVendorAdapter();
 	}
 
 	@Bean(name = "transactionManager")
 	public PlatformTransactionManager getPlatformTransactionManager() {
-		JpaTransactionManager jpaTransactionManager = new JpaTransactionManager(
-				getEntityManagerFactoryBean().getObject());
-		return jpaTransactionManager;
+		return new JpaTransactionManager(getEntityManagerFactoryBean().getObject());
 	}
 
 	@Bean
