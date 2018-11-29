@@ -2,7 +2,7 @@ package de.lh.tool.service.entity.interfaces;
 
 import java.util.Optional;
 
-public interface BasicEntityService<T, ID> {
+public interface BasicEntityService<T, I> {
 
 	T save(T entity);
 
@@ -14,15 +14,15 @@ public interface BasicEntityService<T, ID> {
 
 	void deleteAll(Iterable<? extends T> entities);
 
-	void deleteById(ID id);
+	void deleteById(I id);
 
-	boolean existsById(ID id);
+	boolean existsById(I id);
 
 	Iterable<T> findAll();
 
-	Iterable<T> findAllById(Iterable<ID> ids);
+	Iterable<T> findAllById(Iterable<I> ids);
 
-	Optional<T> findById(ID id);
+	Optional<T> findById(I id);
 
 	Iterable<T> saveAll(Iterable<T> entities);
 

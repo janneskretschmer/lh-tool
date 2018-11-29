@@ -6,13 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 
 import de.lh.tool.service.entity.interfaces.BasicEntityService;
-import lombok.Getter;
 
-public abstract class BasicEntityServiceImpl<REPO extends CrudRepository<T, ID>, T, ID>
-		implements BasicEntityService<T, ID> {
+public abstract class BasicEntityServiceImpl<R extends CrudRepository<T, I>, T, I> implements BasicEntityService<T, I> {
 	@Autowired
-	@Getter
-	private REPO repository;
+	private R repository;
 
 	@Override
 	public long count() {
@@ -35,12 +32,12 @@ public abstract class BasicEntityServiceImpl<REPO extends CrudRepository<T, ID>,
 	}
 
 	@Override
-	public void deleteById(ID id) {
+	public void deleteById(I id) {
 		repository.deleteById(id);
 	}
 
 	@Override
-	public boolean existsById(ID id) {
+	public boolean existsById(I id) {
 		return repository.existsById(id);
 	}
 
@@ -50,12 +47,12 @@ public abstract class BasicEntityServiceImpl<REPO extends CrudRepository<T, ID>,
 	}
 
 	@Override
-	public Iterable<T> findAllById(Iterable<ID> ids) {
+	public Iterable<T> findAllById(Iterable<I> ids) {
 		return repository.findAllById(ids);
 	}
 
 	@Override
-	public Optional<T> findById(ID id) {
+	public Optional<T> findById(I id) {
 		return repository.findById(id);
 	}
 
