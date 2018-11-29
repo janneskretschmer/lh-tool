@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @EnableJpaRepositories("de.lh.tool.repository")
 @PropertySource(value = { "classpath:hibernate.properties" })
-public class HibernateConfiguragion {
+public class HibernateConfiguration {
 
 	@Autowired
 	private Environment environment;

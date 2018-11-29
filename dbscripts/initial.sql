@@ -1,4 +1,3 @@
--- When you change the content of this file, you have to update the checksume of the dbscripts entry as well!
 -- Please copy and execute the following commands manually as root:
 
 CREATE DATABASE IF NOT EXISTS lhtool;
