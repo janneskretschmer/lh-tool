@@ -1,4 +1,4 @@
-package de.lh.tool.rest;
+package de.lh.tool.service.rest;
 
 public abstract class URLMappings {
 
@@ -10,4 +10,7 @@ public abstract class URLMappings {
 
 	public static final String INFO_PREFIX = REST_PREFIX + "/info";
 	public static final String INFO_HEARTBEAT = "/heartbeat";
+
+	public static final String ADMIN_PREFIX = REST_PREFIX + "/admin";
+	public static final String ADMIN_DBUPDATE = "/dbupdate";
 }
