@@ -1,9 +1,11 @@
-package de.lh.tool.rest;
+package de.lh.tool.service.rest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import de.lh.tool.service.rest.InfoRestService;
 
 public class InfoRestServiceTest {
 	InfoRestService infoRestService;
