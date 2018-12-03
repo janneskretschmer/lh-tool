@@ -54,6 +54,7 @@ Start
 ### React
 1. Right click the project > Run As > npm Install
 2. Test by calling http://localhost:8080/lh-tool/web
+3. Desable JSON Validation at Window > Preferences > Validation
 
 ## MySQL
 1. Install and configure mysql-server
