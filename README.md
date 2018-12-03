@@ -50,6 +50,11 @@ Workarounds
 Start
 1. Start Server in Debug Mode (Select Server and click on the bug in the upper right corner of the view)
 2. Test Server by calling http://localhost:8080/lh-tool/rest/info/heartbeat
+
+### React
+1. Right click the project > Run As > npm Install
+2. Test by calling http://localhost:8080/lh-tool/web
+
 ## MySQL
 1. Install and configure mysql-server
 2. Adapt and execute the script dbscripts/initial.sql
