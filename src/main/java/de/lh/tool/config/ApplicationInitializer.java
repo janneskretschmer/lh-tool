@@ -10,11 +10,11 @@ public class ApplicationInitializer extends AbstractAnnotationConfigDispatcherSe
 
 	@Override
 	protected Class<?>[] getServletConfigClasses() {
-		return new Class[] {};
+		return new Class[] { WebMvcConfiguration.class };
 	}
 
 	@Override
 	protected String[] getServletMappings() {
-		return new String[] { "/*" };
+		return new String[] { "/" };
 	}
 }
