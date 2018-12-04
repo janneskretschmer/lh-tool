@@ -1,7 +1,9 @@
 import React from 'react';
+import { Helmet } from 'react-helmet';
 
 const LoginComponent = () => (
     <form>
+        <Helmet titleTemplate="Login - %s" />
         <label htmlFor="username">
             Nutzername
         </label>

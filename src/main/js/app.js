@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import { fullPathOfHome, fullPathOfLogin, fullPathOfHeartbeat } from './paths';
 import HomeComponent from './components/home';
 import LoginComponent from './components/login';
@@ -10,6 +11,10 @@ const LHToolApp = () => (
 		<div>
 			<h1>LH-Tool</h1>
 			<h3>Local Helper Tool for LDC</h3>
+
+			<Helmet>
+				<title>LH-Tool</title>
+			</Helmet>
 
 			<ul>
 				<li><Link to={fullPathOfHome()}>Home</Link></li>

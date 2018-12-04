@@ -1,4 +1,5 @@
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import rest from 'rest';
 import mime from 'rest/interceptor/mime';
 
@@ -35,6 +36,7 @@ class HeartbeatComponent extends React.Component {
             <div style={{
                 color: this.state.gotHeartbeat ? 'green' : 'red'
             }}>
+                <Helmet titleTemplate="Heartbeat - %s" />
                 {this.state.gotHeartbeat ? 'OK' : 'Kein Heartbeat!'}
             </div>
         )
