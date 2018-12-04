@@ -6,12 +6,10 @@
 <title>LH-Tool</title>
 </head>
 <body>
-	<h1>LH-Tool</h1>
-	<h3>Local Helper Tool for LDC</h3>
-	<script>
-		${js}
-	</script>
 	<div id="main-app-container"></div>
-	<script src="static/built/bundle.js"></script>
+	<script>
+		window.__GLOBAL_CONFIG__ = ${globalConfig};
+	</script>
+	<script src="${contextPath}/static/built/bundle.js"></script>
 </body>
 </html>

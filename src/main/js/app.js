@@ -1,41 +1,32 @@
-const React = require('react');
-const ReactDOM = require('react-dom');
-const rest = require('rest');
-const mime = require('rest/interceptor/mime');
+import React from 'react';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
+import { fullPathOfHome, fullPathOfLogin, fullPathOfHeartbeat } from './paths';
+import HomeComponent from './components/home';
+import LoginComponent from './components/login';
+import HeartbeatComponent from './components/heartbeat';
 
-class HeartbeatApp extends React.Component {
+const LHToolApp = () => (
+	<Router>
+		<div>
+			<h1>LH-Tool</h1>
+			<h3>Local Helper Tool for LDC</h3>
 
-	constructor(props) {
-		super(props);
-		this.state = { gotHeartbeat: false };
-		this.client = rest.wrap(mime);
-	}
+			<Helmet>
+				<title>LH-Tool</title>
+			</Helmet>
 
-	componentDidMount() {
-		setInterval(() => {
-			const hbUrl = '/lh-tool/rest/info/heartbeat';
-			this.client(hbUrl)
-			.then(response => {
-				this.setState({ gotHeartbeat: response.entity });
-			})
-			.catch(err => {
-				this.setState({ gotHeartbeat: false });
-			});
-		}, 2000);
-	}
+			<ul>
+				<li><Link to={fullPathOfHome()}>Home</Link></li>
+				<li><Link to={fullPathOfLogin()}>Login</Link></li>
+				<li><Link to={fullPathOfHeartbeat()}>Heartbeat</Link></li>
+			</ul>
 
-	render() {
-		return (
-			<div style={{
-				color: this.state.gotHeartbeat ? 'green' : 'red'
-			}}>
-				{this.state.gotHeartbeat ? 'OK' : 'Kein Heartbeat!'}
-			</div>
-		)
-	}
-}
-
-ReactDOM.render(
-	<HeartbeatApp />,
-	document.getElementById('main-app-container')
+			<Route path={fullPathOfHome()} exact component={HomeComponent} />
+			<Route path={fullPathOfLogin()} component={LoginComponent} />
+			<Route path={fullPathOfHeartbeat()} component={HeartbeatComponent} />
+		</div>
+	</Router>
 );
+
+export default LHToolApp;
