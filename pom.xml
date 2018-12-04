@@ -67,14 +67,6 @@
 				</executions>
 			</plugin>
 		</plugins>
-		<resources>
-			<resource>
-				<directory>${project.basedir}</directory>
-				<includes>
-					<include>hibernate.properties</include>
-				</includes>
-			</resource>
-		</resources>
 	</build>
 
 	<dependencies>
