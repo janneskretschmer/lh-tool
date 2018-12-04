@@ -13,7 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @Configuration
-@ComponentScan(basePackages = { "de.lh.tool.service.rest", "de.lh.tool.web" })
+@ComponentScan(basePackages = { "de.lh.tool.service.rest", "de.lh.tool.web", "springfox.documentation.swagger.web" })
 @EnableWebMvc
 class WebMvcConfiguration implements WebMvcConfigurer {
 
@@ -37,6 +37,8 @@ class WebMvcConfiguration implements WebMvcConfigurer {
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
+		registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
 		registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
 	}
 }
