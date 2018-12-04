@@ -2,6 +2,8 @@
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=lh-tool&metric=bugs)](https://sonarcloud.io/dashboard?id=lh-tool)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=lh-tool&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=lh-tool)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=lh-tool&metric=code_smells)](https://sonarcloud.io/dashboard?id=lh-tool)
+# API Documentation
+http://localhost:8080/lh-tool/swagger-ui.html
 # Local Config
 ## Eclipse
 ### Checkout
