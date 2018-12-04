@@ -7,10 +7,10 @@ const LoginComponent = () => (
         <label htmlFor="username">
             Nutzername
         </label>
-        <input type="text" id="username" />
+        <input type="text" name="username" />
         <br />
         <label htmlFor="password">Passwort</label>
-        <input type="text" id="password" />
+        <input type="password" name="password" />
         <button type="submit">
             Anmelden
         </button>
