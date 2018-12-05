@@ -1,5 +1,5 @@
 # MySQL properties
-jdbc.driver=com.mysql.jdbc.Driver
+jdbc.driver=com.mysql.cj.jdbc.Driver
 jdbc.url=jdbc:mysql://localhost:3306/lhtool
 jdbc.username=
 jdbc.password=
@@ -8,4 +8,3 @@ jdbc.password=
 hibernate.dialect=org.hibernate.dialect.MySQL5InnoDBDialect
 hibernate.show_sql=true
 hibernate.format_sql=true
-hibernate.hbm2ddl.auto=update

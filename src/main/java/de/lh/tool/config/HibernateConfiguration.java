@@ -4,9 +4,11 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -27,7 +29,16 @@ public class HibernateConfiguration {
 	@Autowired
 	private Environment environment;
 
+	@Bean(initMethod = "migrate")
+	public Flyway flyway() {
+		Flyway flyway = new Flyway();
+		flyway.setDataSource(getDataSource());
+		flyway.setLocations("classpath:dbscripts/incremental");
+		return flyway;
+	}
+
 	@Bean(name = "entityManagerFactory")
+	@DependsOn("flyway")
 	public LocalContainerEntityManagerFactoryBean getEntityManagerFactoryBean() {
 		LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
 		localContainerEntityManagerFactoryBean.setJpaVendorAdapter(getJpaVendorAdapter());
@@ -63,7 +74,6 @@ public class HibernateConfiguration {
 		properties.put("hibernate.dialect", environment.getRequiredProperty("hibernate.dialect"));
 		properties.put("hibernate.show_sql", environment.getRequiredProperty("hibernate.show_sql"));
 		properties.put("hibernate.format_sql", environment.getRequiredProperty("hibernate.format_sql"));
-		properties.put("hibernate.hbm2ddl.auto", environment.getRequiredProperty("hibernate.hbm2ddl.auto"));
 		properties.put("spring.jpa.hibernate.ddl-auto", false);
 		return properties;
 	}
