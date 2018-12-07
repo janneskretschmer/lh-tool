@@ -60,8 +60,12 @@ Start
 
 ## MySQL
 1. Install and configure mysql-server
-2. Adapt and execute the script dbscripts/initial.sql
-3. Update the credentials in hibernate.properties
+2. Adapt and execute the following statements:
+  CREATE DATABASE IF NOT EXISTS lhtool;
+  CREATE USER IF NOT EXISTS '<name>'@'localhost' IDENTIFIED BY '<password>';
+  GRANT ALL ON lhtool.* TO '<name>'@'localhost';
+3. Make a copy of /src/main/resources/hibernate.properties.example in the same directory, called "hibernate.properties"
+3. Update the credentials in hibernate.properties (Make sure that you neve commit them!)
 4. Open the Git-Staging-view in Eclipse
 5. Right click on hibernate.properties > Assume unchanged
 6. It should disappear from the view
