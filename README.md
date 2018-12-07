@@ -60,9 +60,9 @@ Start
 
 ## MySQL
 1. Install and configure mysql-server
-2. Adapt and execute the following statements:
-  CREATE DATABASE IF NOT EXISTS lhtool;
-  CREATE USER IF NOT EXISTS '<name>'@'localhost' IDENTIFIED BY '<password>';
+2. Adapt and execute the following statements:<br>
+  CREATE DATABASE IF NOT EXISTS lhtool;<br>
+  CREATE USER IF NOT EXISTS '<name>'@'localhost' IDENTIFIED BY '<password>';<br>
   GRANT ALL ON lhtool.* TO '<name>'@'localhost';
 3. Make a copy of /src/main/resources/hibernate.properties.example in the same directory, called "hibernate.properties"
 3. Update the credentials in hibernate.properties (Make sure that you neve commit them!)
