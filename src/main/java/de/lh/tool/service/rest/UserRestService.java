@@ -26,7 +26,7 @@ public class UserRestService {
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of all users")
-
+	// TODO hier könnte eine Authentifizierung stattfinden.
 	public Resources<UserDto> getAll() throws RestException {
 		Iterable<User> users = userService.findAll();
 		if (users != null) {
