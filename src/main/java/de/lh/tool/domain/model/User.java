@@ -1,4 +1,4 @@
-package de.lh.tool.bean.model;
+package de.lh.tool.domain.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

@@ -1,4 +1,4 @@
-package de.lh.tool.bean.dto;
+package de.lh.tool.domain.dto;
 
 import lombok.Data;
 

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.lh.tool.bean.dto.UserDto;
-import de.lh.tool.bean.model.User;
+import de.lh.tool.domain.dto.UserDto;
+import de.lh.tool.domain.model.User;
 import de.lh.tool.service.entity.interfaces.UserService;
 import de.lh.tool.service.rest.exception.RestException;
 import de.lh.tool.service.rest.exception.RestExceptionEnum;
