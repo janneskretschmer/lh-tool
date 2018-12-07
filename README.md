@@ -65,7 +65,7 @@ Start
   CREATE USER IF NOT EXISTS '<name>'@'localhost' IDENTIFIED BY '<password>';<br>
   GRANT ALL ON lhtool.* TO '<name>'@'localhost';
 3. Make a copy of /src/main/resources/hibernate.properties.example in the same directory, called "hibernate.properties"
-3. Update the credentials in hibernate.properties (Make sure that you neve commit them!)
+3. Update the credentials in hibernate.properties (Make sure that you never commit them!)
 4. Open the Git-Staging-view in Eclipse
 5. Right click on hibernate.properties > Assume unchanged
 6. It should disappear from the view
