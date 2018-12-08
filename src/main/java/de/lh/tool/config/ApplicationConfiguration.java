@@ -6,6 +6,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = { "de.lh.tool.service.rest", "de.lh.tool.web" })
+@ComponentScan(basePackages = { "de.lh.tool" })
 public class ApplicationConfiguration {
 }

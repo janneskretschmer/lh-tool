@@ -1,0 +1,15 @@
+CREATE TABLE `user` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `first_name` VARCHAR(50) NOT NULL,
+  `last_name` VARCHAR(50) NOT NULL,
+  `gender` VARCHAR(6) NOT NULL,
+  `password_hash` VARCHAR(128) NULL,
+  `password_salt` VARCHAR(32) NULL,
+  `email` VARCHAR(100) NOT NULL,
+  `telephone_number` VARCHAR(30) NULL,
+  `mobile_number` VARCHAR(30) NULL,
+  `business_number` VARCHAR(30) NULL,
+  `profession` VARCHAR(250) NULL,
+  `skills` VARCHAR(4000) NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC));

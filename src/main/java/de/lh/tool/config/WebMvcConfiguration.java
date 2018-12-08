@@ -13,7 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @Configuration
-@ComponentScan(basePackages = { "de.lh.tool.service.rest", "de.lh.tool.web", "springfox.documentation.swagger.web" })
+@ComponentScan(basePackages = { "de.lh.tool", "springfox.documentation.swagger.web" })
 @EnableWebMvc
 class WebMvcConfiguration implements WebMvcConfigurer {
 

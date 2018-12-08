@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 
 import de.lh.tool.service.entity.interfaces.BasicEntityService;
+import lombok.Getter;
 
 public abstract class BasicEntityServiceImpl<R extends CrudRepository<T, I>, T, I> implements BasicEntityService<T, I> {
 	@Autowired
+	@Getter
 	private R repository;
 
 	@Override
