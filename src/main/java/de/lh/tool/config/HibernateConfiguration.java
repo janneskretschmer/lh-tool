@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories("de.lh.tool.repository")
-@PropertySource(value = { "classpath:hibernate.properties" })
+@PropertySource(value = { "classpath:credentials.properties", "classpath:hibernate.properties" })
 public class HibernateConfiguration {
 
 	@Autowired
@@ -62,7 +62,7 @@ public class HibernateConfiguration {
 	@Bean
 	public DataSource getDataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setDriverClassName(environment.getRequiredProperty("jdbc.driver"));
+		dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
 		dataSource.setUrl(environment.getRequiredProperty("jdbc.url"));
 		dataSource.setUsername(environment.getRequiredProperty("jdbc.username"));
 		dataSource.setPassword(environment.getRequiredProperty("jdbc.password"));
