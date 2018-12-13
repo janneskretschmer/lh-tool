@@ -10,6 +10,10 @@ import lombok.Getter;
 public enum ExceptionEnum {
 
 	EX_USERS_NOT_FOUND("The users couldn't be found.", HttpStatus.NOT_FOUND),
+	EX_USER_NO_EMAIL("The user has no email adress.", HttpStatus.BAD_REQUEST),
+	EX_USER_NO_FIRST_NAME("The user has no first name.", HttpStatus.BAD_REQUEST),
+	EX_USER_NO_LAST_NAME("The user has no last name.", HttpStatus.BAD_REQUEST),
+	EX_USER_NO_GENDER("The user has no gender.", HttpStatus.BAD_REQUEST),
 
 	EX_PASSWORDS_DO_NOT_MATCH("The provided passwords do not match.", HttpStatus.BAD_REQUEST),
 	EX_PASSWORDS_NO_TOKEN_OR_OLD_PASSWORD("No token or old password was provided.", HttpStatus.BAD_REQUEST),

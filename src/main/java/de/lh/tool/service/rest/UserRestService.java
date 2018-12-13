@@ -47,15 +47,14 @@ public class UserRestService {
 
 	@PostMapping(path = UrlMappings.NO_EXTENSION)
 	public Resource<UserDto> add(@RequestBody UserCreationDto userCreationDto) throws DefaultException {
-		return new Resource<UserDto>(
-				convertToDto(userService.createUser(new ModelMapper().map(userCreationDto, User.class))),
+		return new Resource<>(convertToDto(userService.createUser(new ModelMapper().map(userCreationDto, User.class))),
 				linkTo(methodOn(UserRestService.class).add(userCreationDto)).withSelfRel(),
 				linkTo(methodOn(UserRestService.class).changePassword(null)).withRel(UrlMappings.USER_PASSWORD));
 	}
 
 	@PutMapping(path = UrlMappings.USER_PASSWORD)
 	public Resource<UserDto> changePassword(@RequestBody PasswordChangeDto passwordChangeDto) throws DefaultException {
-		return new Resource<UserDto>(convertToDto(userService.changePassword(passwordChangeDto.getUserId(),
+		return new Resource<>(convertToDto(userService.changePassword(passwordChangeDto.getUserId(),
 				passwordChangeDto.getToken(), passwordChangeDto.getOldPassword(), passwordChangeDto.getNewPassword(),
 				passwordChangeDto.getConfirmPassword())));
 	}

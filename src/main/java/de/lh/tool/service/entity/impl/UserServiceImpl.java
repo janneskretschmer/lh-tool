@@ -51,7 +51,19 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 
 	@Override
 	@Transactional
-	public User createUser(User user) {
+	public User createUser(User user) throws DefaultException {
+		if (user.getEmail() == null) {
+			throw new DefaultException(ExceptionEnum.EX_USER_NO_EMAIL);
+		}
+		if (user.getFirstName() == null) {
+			throw new DefaultException(ExceptionEnum.EX_USER_NO_FIRST_NAME);
+		}
+		if (user.getLastName() == null) {
+			throw new DefaultException(ExceptionEnum.EX_USER_NO_LAST_NAME);
+		}
+		if (user.getGender() == null) {
+			throw new DefaultException(ExceptionEnum.EX_USER_NO_GENDER);
+		}
 		user = save(user);
 		passwordChangeTokenService.saveRandomToken(user);
 		return user;
