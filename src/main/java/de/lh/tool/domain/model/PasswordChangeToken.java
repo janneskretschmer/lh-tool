@@ -13,9 +13,15 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.UpdateTimestamp;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "password_change_token")
 public class PasswordChangeToken {
@@ -39,4 +45,7 @@ public class PasswordChangeToken {
 	@UpdateTimestamp
 	private Calendar updated;
 
+	public PasswordChangeToken(String token) {
+		this.token = token;
+	}
 }

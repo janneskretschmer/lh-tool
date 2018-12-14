@@ -27,13 +27,13 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 		implements UserService, UserDetailsService {
 
 	@Autowired
-	PasswordChangeTokenService passwordChangeTokenService;
+	private PasswordChangeTokenService passwordChangeTokenService;
 
 	@Autowired
-	AuthenticationManager authenticationManager;
+	private AuthenticationManager authenticationManager;
 
 	@Autowired
-	PasswordEncoder passwordEncoder;
+	private PasswordEncoder passwordEncoder;
 
 	@Override
 	@Transactional
