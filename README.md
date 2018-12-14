@@ -48,6 +48,10 @@ Workarounds
 6. Click Finish
 7. Change the Deploy Path of classes to "WEB-INF/classes"
 8. Click Apply and Close
+9. If JUnit-Tests fail
+10. Help > Install new Software
+11. Work with: http://download.eclipse.org/eclipse/updates/4.9-P-builds/P20181003-1015/
+12. Follow the instructions for installation
 
 Start
 1. Start Server in Debug Mode (Select Server and click on the bug in the upper right corner of the view)
