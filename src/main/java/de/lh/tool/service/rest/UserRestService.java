@@ -11,6 +11,7 @@ import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -24,6 +25,7 @@ import de.lh.tool.domain.dto.UserDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.User;
+import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.service.entity.interfaces.UserService;
 import io.swagger.annotations.ApiOperation;
 
@@ -35,7 +37,7 @@ public class UserRestService {
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of all users")
-	// TODO hier könnte eine Authentifizierung stattfinden.
+	@Secured(UserRole.ROLE_ADMIN)
 	public Resources<UserDto> getAll() throws DefaultException {
 		Iterable<User> users = userService.findAll();
 		if (users != null) {
@@ -45,14 +47,14 @@ public class UserRestService {
 		throw new DefaultException(ExceptionEnum.EX_USERS_NOT_FOUND);
 	}
 
-	@PostMapping(path = UrlMappings.NO_EXTENSION)
+	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	public Resource<UserDto> add(@RequestBody UserCreationDto userCreationDto) throws DefaultException {
 		return new Resource<>(convertToDto(userService.createUser(new ModelMapper().map(userCreationDto, User.class))),
 				linkTo(methodOn(UserRestService.class).add(userCreationDto)).withSelfRel(),
 				linkTo(methodOn(UserRestService.class).changePassword(null)).withRel(UrlMappings.USER_PASSWORD));
 	}
 
-	@PutMapping(path = UrlMappings.USER_PASSWORD)
+	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.USER_PASSWORD)
 	public Resource<UserDto> changePassword(@RequestBody PasswordChangeDto passwordChangeDto) throws DefaultException {
 		return new Resource<>(convertToDto(userService.changePassword(passwordChangeDto.getUserId(),
 				passwordChangeDto.getToken(), passwordChangeDto.getOldPassword(), passwordChangeDto.getNewPassword(),

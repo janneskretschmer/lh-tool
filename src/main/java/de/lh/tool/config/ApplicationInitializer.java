@@ -1,6 +1,10 @@
 package de.lh.tool.config;
 
+import javax.servlet.Filter;
+
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+
+import de.lh.tool.config.security.JwtAuthenticationFilter;
 
 public class ApplicationInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 	@Override
@@ -16,5 +20,10 @@ public class ApplicationInitializer extends AbstractAnnotationConfigDispatcherSe
 	@Override
 	protected String[] getServletMappings() {
 		return new String[] { "/" };
+	}
+
+	@Override
+	protected Filter[] getServletFilters() {
+		return new Filter[] { new JwtAuthenticationFilter() };
 	}
 }

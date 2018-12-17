@@ -1,16 +1,19 @@
 package de.lh.tool.domain.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -69,13 +72,20 @@ public class User implements UserDetails {
 	@OneToOne(cascade = CascadeType.ALL, optional = true, orphanRemoval = true, mappedBy = "user")
 	private PasswordChangeToken passwordChangeToken;
 
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
+	private Collection<UserRole> roles;
+
 	public enum Gender {
 		MALE, FEMALE;
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return new ArrayList<>();
+		Set<GrantedAuthority> result = new HashSet<>();
+		for (UserRole role : roles) {
+			result.addAll(role.getRoleWithRights());
+		}
+		return result;
 	}
 
 	/**
