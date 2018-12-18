@@ -37,7 +37,7 @@ public class UserRestService {
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of all users")
-	@Secured(UserRole.USERS_GET_ALL)
+	@Secured(UserRole.RIGHT_USERS_GET_ALL)
 	public Resources<UserDto> getAll() throws DefaultException {
 		Iterable<User> users = userService.findAll();
 		if (users != null) {
@@ -48,6 +48,7 @@ public class UserRestService {
 	}
 
 	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
+	@Secured(UserRole.RIGHT_USERS_CREATE)
 	public Resource<UserDto> add(@RequestBody UserCreationDto userCreationDto) throws DefaultException {
 		return new Resource<>(convertToDto(userService.createUser(new ModelMapper().map(userCreationDto, User.class))),
 				linkTo(methodOn(UserRestService.class).add(userCreationDto)).withSelfRel(),

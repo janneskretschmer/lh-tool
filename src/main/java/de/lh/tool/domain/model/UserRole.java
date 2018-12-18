@@ -20,9 +20,11 @@ import org.springframework.security.core.GrantedAuthority;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "user_role")
 public class UserRole implements GrantedAuthority {
@@ -62,8 +64,8 @@ public class UserRole implements GrantedAuthority {
 //  ██║__██║██║╚██████╔╝██║__██║___██║___███████║
 //  ╚═╝__╚═╝╚═╝_╚═════╝_╚═╝__╚═╝___╚═╝___╚══════╝
 //	Unfortunately granted authorities always have to start with "ROLE_". Several attempts to change that failed. 	
-	public static final String USERS_GET_ALL = "ROLE_USERS_GET_ALL";
-	public static final String USERS_CREATE = "ROLE_USERS_CREATE";
+	public static final String RIGHT_USERS_GET_ALL = "ROLE_RIGHT_USERS_GET_ALL";
+	public static final String RIGHT_USERS_CREATE = "ROLE_RIGHT_USERS_CREATE";
 
 	private static class RoleRightManager {
 		private static RoleRightManager instance;
@@ -71,7 +73,20 @@ public class UserRole implements GrantedAuthority {
 
 		private RoleRightManager() {
 			roleRights = new HashMap<>();
-			roleRights.put(ROLE_ADMIN, Arrays.asList(USERS_GET_ALL, USERS_CREATE));
+
+//  _██████╗_██████╗__█████╗_███╗___██╗████████╗██╗███╗___██╗_██████╗_
+//  ██╔════╝_██╔══██╗██╔══██╗████╗__██║╚══██╔══╝██║████╗__██║██╔════╝_
+//  ██║__███╗██████╔╝███████║██╔██╗_██║___██║___██║██╔██╗_██║██║__███╗
+//  ██║___██║██╔══██╗██╔══██║██║╚██╗██║___██║___██║██║╚██╗██║██║___██║
+//  ╚██████╔╝██║__██║██║__██║██║_╚████║___██║___██║██║_╚████║╚██████╔╝
+//  _╚═════╝_╚═╝__╚═╝╚═╝__╚═╝╚═╝__╚═══╝___╚═╝___╚═╝╚═╝__╚═══╝_╚═════╝_
+			roleRights.put(ROLE_ADMIN, Arrays.asList(RIGHT_USERS_GET_ALL, RIGHT_USERS_CREATE));
+			roleRights.put(ROLE_CONSTRUCTION_SERVANT, Arrays.asList());
+			roleRights.put(ROLE_LOCAL_COORDINATOR, Arrays.asList());
+			roleRights.put(ROLE_SERVICE_COMMITTEE, Arrays.asList());
+			roleRights.put(ROLE_PUBLISHER, Arrays.asList());
+			roleRights.put(ROLE_STORE_KEEPER, Arrays.asList());
+			roleRights.put(ROLE_INVENTORY_MANAGER, Arrays.asList());
 		}
 
 		public static RoleRightManager getInstance() {
