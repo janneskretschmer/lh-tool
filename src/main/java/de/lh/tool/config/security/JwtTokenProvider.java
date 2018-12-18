@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import de.lh.tool.domain.model.User;
@@ -40,7 +41,7 @@ public class JwtTokenProvider {
 
 		return Jwts.builder().setSubject(Long.toString(user.getId()))
 				.claim("permissions",
-						user.getAuthorities().stream().map(a -> a.getAuthority()).collect(Collectors.toList()))
+						user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
 				.setIssuedAt(new Date()).setExpiration(expiryDate).signWith(SignatureAlgorithm.HS512, jwtSecret)
 				.compact();
 	}
