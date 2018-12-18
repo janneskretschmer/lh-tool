@@ -37,7 +37,7 @@ public class UserRestService {
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of all users")
-	@Secured(UserRole.ROLE_ADMIN)
+	@Secured(UserRole.USERS_GET_ALL)
 	public Resources<UserDto> getAll() throws DefaultException {
 		Iterable<User> users = userService.findAll();
 		if (users != null) {

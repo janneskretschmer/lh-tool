@@ -18,9 +18,11 @@ import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 @Entity
 @Table(name = "user_role")
 public class UserRole implements GrantedAuthority {
@@ -59,8 +61,9 @@ public class UserRole implements GrantedAuthority {
 //  ██╔══██╗██║██║___██║██╔══██║___██║___╚════██║
 //  ██║__██║██║╚██████╔╝██║__██║___██║___███████║
 //  ╚═╝__╚═╝╚═╝_╚═════╝_╚═╝__╚═╝___╚═╝___╚══════╝
-	public static final String USERS_GET_ALL = "USERS_GET_ALL";
-	public static final String USERS_CREATE = "USERS_CREATE";
+//	Unfortunately granted authorities always have to start with "ROLE_". Several attempts to change that failed. 	
+	public static final String USERS_GET_ALL = "ROLE_USERS_GET_ALL";
+	public static final String USERS_CREATE = "ROLE_USERS_CREATE";
 
 	private static class RoleRightManager {
 		private static RoleRightManager instance;

@@ -1,6 +1,7 @@
 package de.lh.tool.config.security;
 
 import java.util.Date;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -14,6 +15,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
+import lombok.Setter;
 import lombok.extern.apachecommons.CommonsLog;
 
 @Component
@@ -22,9 +24,11 @@ import lombok.extern.apachecommons.CommonsLog;
 public class JwtTokenProvider {
 
 	@Value("${jwt.secret}")
+	@Setter
 	private String jwtSecret;
 
 	@Value("${jwt.expirationInMs}")
+	@Setter
 	private int jwtExpirationInMs;
 
 	public String generateToken(Authentication authentication) {
@@ -34,13 +38,15 @@ public class JwtTokenProvider {
 		Date now = new Date();
 		Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
-		return Jwts.builder().setSubject(Long.toString(user.getId())).setIssuedAt(new Date()).setExpiration(expiryDate)
-				.signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
+		return Jwts.builder().setSubject(Long.toString(user.getId()))
+				.claim("permissions",
+						user.getAuthorities().stream().map(a -> a.getAuthority()).collect(Collectors.toList()))
+				.setIssuedAt(new Date()).setExpiration(expiryDate).signWith(SignatureAlgorithm.HS512, jwtSecret)
+				.compact();
 	}
 
 	public Long getUserIdFromJWT(String token) {
 		Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
-
 		return Long.parseLong(claims.getSubject());
 	}
 
