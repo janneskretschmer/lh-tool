@@ -1,9 +1,9 @@
 package de.lh.tool.domain.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -80,13 +80,13 @@ public class UserRole implements GrantedAuthority {
 //  ██║___██║██╔══██╗██╔══██║██║╚██╗██║___██║___██║██║╚██╗██║██║___██║
 //  ╚██████╔╝██║__██║██║__██║██║_╚████║___██║___██║██║_╚████║╚██████╔╝
 //  _╚═════╝_╚═╝__╚═╝╚═╝__╚═╝╚═╝__╚═══╝___╚═╝___╚═╝╚═╝__╚═══╝_╚═════╝_
-			roleRights.put(ROLE_ADMIN, Arrays.asList(RIGHT_USERS_GET_ALL, RIGHT_USERS_CREATE));
-			roleRights.put(ROLE_CONSTRUCTION_SERVANT, Arrays.asList());
-			roleRights.put(ROLE_LOCAL_COORDINATOR, Arrays.asList());
-			roleRights.put(ROLE_SERVICE_COMMITTEE, Arrays.asList());
-			roleRights.put(ROLE_PUBLISHER, Arrays.asList());
-			roleRights.put(ROLE_STORE_KEEPER, Arrays.asList());
-			roleRights.put(ROLE_INVENTORY_MANAGER, Arrays.asList());
+			roleRights.put(ROLE_ADMIN, List.of(RIGHT_USERS_GET_ALL, RIGHT_USERS_CREATE));
+			roleRights.put(ROLE_CONSTRUCTION_SERVANT, List.of());
+			roleRights.put(ROLE_LOCAL_COORDINATOR, List.of());
+			roleRights.put(ROLE_SERVICE_COMMITTEE, List.of());
+			roleRights.put(ROLE_PUBLISHER, List.of());
+			roleRights.put(ROLE_STORE_KEEPER, List.of());
+			roleRights.put(ROLE_INVENTORY_MANAGER, List.of());
 		}
 
 		public static RoleRightManager getInstance() {
