@@ -17,6 +17,8 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import de.lh.tool.domain.exception.DefaultException;
@@ -47,6 +49,29 @@ public class UserServiceTest {
 	@BeforeEach
 	public void before() {
 		MockitoAnnotations.initMocks(userService);
+	}
+
+	@Test
+	public void testFindByUsername() {
+		Mockito.when(userRepository.findByEmail(Mockito.eq("test@te.st")))
+				.thenReturn(Optional.of(User.builder().email("test@te.st").firstName("Tes").lastName("Ter").build()));
+		UserDetails user = userService.loadUserByUsername("test@te.st");
+		Mockito.verify(userRepository, Mockito.times(1)).findByEmail(Mockito.eq("test@te.st"));
+		assertEquals("test@te.st", user.getUsername());
+	}
+
+	@Test
+	public void testFindByUsernameNull() {
+		Mockito.when(userRepository.findByEmail(Mockito.isNull())).thenReturn(Optional.empty());
+		assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername(null));
+		Mockito.verify(userRepository, Mockito.times(1)).findByEmail(Mockito.isNull());
+	}
+
+	@Test
+	public void testFindByUsernameFalseUsername() {
+		Mockito.when(userRepository.findByEmail(Mockito.eq("test@te.s"))).thenReturn(Optional.empty());
+		assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername("test@te.s"));
+		Mockito.verify(userRepository, Mockito.times(1)).findByEmail(Mockito.eq("test@te.s"));
 	}
 
 	@Test
