@@ -21,6 +21,7 @@ import de.lh.tool.domain.model.User;
 import de.lh.tool.repository.UserRepository;
 import de.lh.tool.service.entity.interfaces.PasswordChangeTokenService;
 import de.lh.tool.service.entity.interfaces.UserService;
+import de.lh.tool.util.StringUtil;
 
 @Service
 public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User, Long>
@@ -90,7 +91,8 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 			if (token == null) {
 				throw new DefaultException(ExceptionEnum.EX_PASSWORDS_NO_TOKEN_OR_OLD_PASSWORD);
 			}
-			if (user.getPasswordChangeToken() == null || !token.equals(user.getPasswordChangeToken().getToken())) {
+			if (user.getPasswordChangeToken() == null
+					|| !StringUtil.constantTimeEquals(token, user.getPasswordChangeToken().getToken())) {
 				throw new DefaultException(ExceptionEnum.EX_PASSWORDS_INVALID_TOKEN);
 			}
 			user.getPasswordChangeToken().getUpdated().setLenient(true);
