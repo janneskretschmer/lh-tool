@@ -52,7 +52,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testFindByUsername() {
+	public void testLoadByUsername() {
 		Mockito.when(userRepository.findByEmail(Mockito.eq("test@te.st")))
 				.thenReturn(Optional.of(User.builder().email("test@te.st").firstName("Tes").lastName("Ter").build()));
 		UserDetails user = userService.loadUserByUsername("test@te.st");
@@ -61,17 +61,40 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testFindByUsernameNull() {
+	public void testLoadByUsernameNull() {
 		Mockito.when(userRepository.findByEmail(Mockito.isNull())).thenReturn(Optional.empty());
 		assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername(null));
 		Mockito.verify(userRepository, Mockito.times(1)).findByEmail(Mockito.isNull());
 	}
 
 	@Test
-	public void testFindByUsernameFalseUsername() {
+	public void testLoadByUsernameFalseUsername() {
 		Mockito.when(userRepository.findByEmail(Mockito.eq("test@te.s"))).thenReturn(Optional.empty());
 		assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername("test@te.s"));
 		Mockito.verify(userRepository, Mockito.times(1)).findByEmail(Mockito.eq("test@te.s"));
+	}
+
+	@Test
+	public void testLoadById() {
+		Mockito.when(userRepository.findById(Mockito.eq(1l)))
+				.thenReturn(Optional.of(User.builder().email("test@te.st").firstName("Tes").lastName("Ter").build()));
+		UserDetails user = userService.loadUserById(1l);
+		Mockito.verify(userRepository, Mockito.times(1)).findById(Mockito.eq(1l));
+		assertEquals("test@te.st", user.getUsername());
+	}
+
+	@Test
+	public void testLoadByIdNull() {
+		Mockito.when(userRepository.findById(Mockito.isNull())).thenReturn(Optional.empty());
+		assertThrows(UsernameNotFoundException.class, () -> userService.loadUserById(null));
+		Mockito.verify(userRepository, Mockito.times(1)).findById(Mockito.isNull());
+	}
+
+	@Test
+	public void testLoadByIdFalseId() {
+		Mockito.when(userRepository.findById(Mockito.eq(1l))).thenReturn(Optional.empty());
+		assertThrows(UsernameNotFoundException.class, () -> userService.loadUserById(1l));
+		Mockito.verify(userRepository, Mockito.times(1)).findById(Mockito.eq(1l));
 	}
 
 	@Test
