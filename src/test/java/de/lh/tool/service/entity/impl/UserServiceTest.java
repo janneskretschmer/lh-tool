@@ -2,7 +2,7 @@ package de.lh.tool.service.entity.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Calendar;
 import java.util.Optional;
@@ -51,42 +51,29 @@ public class UserServiceTest {
 
 	@Test
 	public void testCreateUserNoEmail() {
-		try {
-			userService.createUser(new User());
-			fail("exception expected");
-		} catch (DefaultException e) {
-			assertEquals(ExceptionEnum.EX_USER_NO_EMAIL, e.getException());
-		}
+		DefaultException exception = assertThrows(DefaultException.class, () -> userService.createUser(new User()));
+		assertEquals(ExceptionEnum.EX_USER_NO_EMAIL, exception.getException());
 	}
 
 	@Test
 	public void testCreateUserNoFirstName() {
-		try {
-			userService.createUser(User.builder().email("test@te.st").build());
-			fail("exception expected");
-		} catch (DefaultException e) {
-			assertEquals(ExceptionEnum.EX_USER_NO_FIRST_NAME, e.getException());
-		}
+		DefaultException exception = assertThrows(DefaultException.class,
+				() -> userService.createUser(User.builder().email("test@te.st").build()));
+		assertEquals(ExceptionEnum.EX_USER_NO_FIRST_NAME, exception.getException());
 	}
 
 	@Test
 	public void testCreateUserNoLastName() {
-		try {
-			userService.createUser(User.builder().email("test@te.st").firstName("Tes").build());
-			fail("exception expected");
-		} catch (DefaultException e) {
-			assertEquals(ExceptionEnum.EX_USER_NO_LAST_NAME, e.getException());
-		}
+		DefaultException exception = assertThrows(DefaultException.class,
+				() -> userService.createUser(User.builder().email("test@te.st").firstName("Tes").build()));
+		assertEquals(ExceptionEnum.EX_USER_NO_LAST_NAME, exception.getException());
 	}
 
 	@Test
 	public void testCreateUserNoGender() {
-		try {
-			userService.createUser(User.builder().email("test@te.st").firstName("Tes").lastName("Ter").build());
-			fail("exception expected");
-		} catch (DefaultException e) {
-			assertEquals(ExceptionEnum.EX_USER_NO_GENDER, e.getException());
-		}
+		DefaultException exception = assertThrows(DefaultException.class, () -> userService
+				.createUser(User.builder().email("test@te.st").firstName("Tes").lastName("Ter").build()));
+		assertEquals(ExceptionEnum.EX_USER_NO_GENDER, exception.getException());
 	}
 
 	@Test
@@ -100,87 +87,63 @@ public class UserServiceTest {
 
 	@Test
 	public void testChangePasswordNull() {
-		try {
-			userService.changePassword(null, null, null, null, null);
-			fail("exception expected");
-		} catch (DefaultException e) {
-			assertEquals(ExceptionEnum.EX_PASSWORDS_SHORT_PASSWORD, e.getException());
-		}
+		DefaultException exception = assertThrows(DefaultException.class,
+				() -> userService.changePassword(null, null, null, null, null));
+		assertEquals(ExceptionEnum.EX_PASSWORDS_SHORT_PASSWORD, exception.getException());
 	}
 
 	@Test
 	public void testChangePasswordShort() {
-		try {
-			userService.changePassword(null, null, null, "abcde", null);
-			fail("exception expected");
-		} catch (DefaultException e) {
-			assertEquals(ExceptionEnum.EX_PASSWORDS_SHORT_PASSWORD, e.getException());
-		}
+		DefaultException exception = assertThrows(DefaultException.class,
+				() -> userService.changePassword(null, null, null, "abcde", null));
+		assertEquals(ExceptionEnum.EX_PASSWORDS_SHORT_PASSWORD, exception.getException());
 	}
 
 	@Test
 	public void testChangePasswordDifferent() {
-		try {
-			userService.changePassword(null, null, null, "abcdef", null);
-			fail("exception expected");
-		} catch (DefaultException e) {
-			assertEquals(ExceptionEnum.EX_PASSWORDS_DO_NOT_MATCH, e.getException());
-		}
+		DefaultException exception = assertThrows(DefaultException.class,
+				() -> userService.changePassword(null, null, null, "abcdef", null));
+		assertEquals(ExceptionEnum.EX_PASSWORDS_DO_NOT_MATCH, exception.getException());
 	}
 
 	@Test
 	public void testChangePasswordDifferent2() {
-		try {
-			userService.changePassword(null, null, null, "abcdef", "abcdeF");
-			fail("exception expected");
-		} catch (DefaultException e) {
-			assertEquals(ExceptionEnum.EX_PASSWORDS_DO_NOT_MATCH, e.getException());
-		}
+		DefaultException exception = assertThrows(DefaultException.class,
+				() -> userService.changePassword(null, null, null, "abcdef", "abcdeF"));
+		assertEquals(ExceptionEnum.EX_PASSWORDS_DO_NOT_MATCH, exception.getException());
 	}
 
 	@Test
 	public void testChangePasswordNoUser() {
-		try {
-			userService.changePassword(null, null, null, "abcdef", "abcdef");
-			fail("exception expected");
-		} catch (DefaultException e) {
-			assertEquals(ExceptionEnum.EX_PASSWORDS_NO_USER_ID, e.getException());
-		}
+		DefaultException exception = assertThrows(DefaultException.class,
+				() -> userService.changePassword(null, null, null, "abcdef", "abcdef"));
+		assertEquals(ExceptionEnum.EX_PASSWORDS_NO_USER_ID, exception.getException());
 	}
 
 	@Test
 	public void testChangePasswordFalseUser() {
 		Mockito.when(userRepository.findById(Mockito.eq(0l))).thenReturn(Optional.empty());
-		try {
-			userService.changePassword(0l, null, null, "abcdef", "abcdef");
-			fail("exception expected");
-		} catch (DefaultException e) {
-			assertEquals(ExceptionEnum.EX_PASSWORDS_INVALID_USER_ID, e.getException());
-		}
+		DefaultException exception = assertThrows(DefaultException.class,
+				() -> userService.changePassword(0l, null, null, "abcdef", "abcdef"));
+		assertEquals(ExceptionEnum.EX_PASSWORDS_INVALID_USER_ID, exception.getException());
 	}
 
 	@Test
 	public void testChangePasswordNoToken() {
 		Mockito.when(userRepository.findById(Mockito.eq(1l))).thenReturn(Optional
 				.of(User.builder().email("test@te.st").firstName("Tes").lastName("Ter").gender(Gender.MALE).build()));
-		try {
-			userService.changePassword(1l, null, null, "abcdef", "abcdef");
-			fail("exception expected");
-		} catch (DefaultException e) {
-			assertEquals(ExceptionEnum.EX_PASSWORDS_NO_TOKEN_OR_OLD_PASSWORD, e.getException());
-		}
+		DefaultException exception = assertThrows(DefaultException.class,
+				() -> userService.changePassword(1l, null, null, "abcdef", "abcdef"));
+		assertEquals(ExceptionEnum.EX_PASSWORDS_NO_TOKEN_OR_OLD_PASSWORD, exception.getException());
 	}
 
 	@Test
 	public void testChangePasswordUserHasNoToken() {
 		Mockito.when(userRepository.findById(Mockito.eq(1l))).thenReturn(Optional
 				.of(User.builder().email("test@te.st").firstName("Tes").lastName("Ter").gender(Gender.MALE).build()));
-		try {
-			userService.changePassword(1l, "abc", null, "abcdef", "abcdef");
-			fail("exception expected");
-		} catch (DefaultException e) {
-			assertEquals(ExceptionEnum.EX_PASSWORDS_INVALID_TOKEN, e.getException());
-		}
+		DefaultException exception = assertThrows(DefaultException.class,
+				() -> userService.changePassword(1l, "abc", null, "abcdef", "abcdef"));
+		assertEquals(ExceptionEnum.EX_PASSWORDS_INVALID_TOKEN, exception.getException());
 	}
 
 	@Test
@@ -191,12 +154,9 @@ public class UserServiceTest {
 						.passwordChangeToken(
 								PasswordChangeToken.builder().token("abcdef").updated(Calendar.getInstance()).build())
 						.build()));
-		try {
-			userService.changePassword(1l, "abc", null, "abcdef", "abcdef");
-			fail("exception expected");
-		} catch (DefaultException e) {
-			assertEquals(ExceptionEnum.EX_PASSWORDS_INVALID_TOKEN, e.getException());
-		}
+		DefaultException exception = assertThrows(DefaultException.class,
+				() -> userService.changePassword(1l, "abc", null, "abcdef", "abcdef"));
+		assertEquals(ExceptionEnum.EX_PASSWORDS_INVALID_TOKEN, exception.getException());
 	}
 
 	@Test
@@ -206,12 +166,9 @@ public class UserServiceTest {
 		Mockito.when(userRepository.findById(Mockito.eq(1l))).thenReturn(Optional.of(User.builder().email("test@te.st")
 				.firstName("Tes").lastName("Ter").gender(Gender.MALE)
 				.passwordChangeToken(PasswordChangeToken.builder().token("abcdef").updated(updated).build()).build()));
-		try {
-			userService.changePassword(1l, "abcdef", null, "abcdef", "abcdef");
-			fail("exception expected");
-		} catch (DefaultException e) {
-			assertEquals(ExceptionEnum.EX_PASSWORDS_EXPIRED_TOKEN, e.getException());
-		}
+		DefaultException exception = assertThrows(DefaultException.class,
+				() -> userService.changePassword(1l, "abcdef", null, "abcdef", "abcdef"));
+		assertEquals(ExceptionEnum.EX_PASSWORDS_EXPIRED_TOKEN, exception.getException());
 	}
 
 	@Test
@@ -235,12 +192,9 @@ public class UserServiceTest {
 		Mockito.when(authenticationManager.authenticate(Mockito.any())).thenThrow(new AuthenticationException(null) {
 			private static final long serialVersionUID = -5217148258702539075L;
 		});
-		try {
-			userService.changePassword(1l, null, "abcdef", "abcdef", "abcdef");
-			fail("exception expected");
-		} catch (DefaultException e) {
-			assertEquals(ExceptionEnum.EX_PASSWORDS_INVALID_PASSWORD, e.getException());
-		}
+		DefaultException exception = assertThrows(DefaultException.class,
+				() -> userService.changePassword(1l, null, "abcdef", "abcdef", "abcdef"));
+		assertEquals(ExceptionEnum.EX_PASSWORDS_INVALID_PASSWORD, exception.getException());
 	}
 
 	@Test
