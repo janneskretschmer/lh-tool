@@ -12,10 +12,6 @@ public class UserDto {
 
 	private String gender;
 
-	private String passwordHash;
-
-	private String passwordSalt;
-
 	private String email;
 
 	private String telephoneNumber;
@@ -27,5 +23,7 @@ public class UserDto {
 	private String profession;
 
 	private String skills;
+
+	private Boolean active;
 
 }

@@ -8,12 +8,13 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import de.lh.tool.domain.dto.ExceptionDto;
+import de.lh.tool.domain.exception.DefaultException;
 
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
-	@ExceptionHandler(RestException.class)
-	protected ResponseEntity<Object> handleRestException(RestException restException, WebRequest request) {
+	@ExceptionHandler(DefaultException.class)
+	protected ResponseEntity<Object> handleRestException(DefaultException restException, WebRequest request) {
 		return handleExceptionInternal(restException,
 				new ExceptionDto(restException.getException().name(), restException.getException().getMessage(),
 						restException.getException().getHttpStatus().value()),

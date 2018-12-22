@@ -9,6 +9,9 @@ public abstract class UrlMappings {
 	public static final String INFO_HEARTBEAT = "/heartbeat";
 
 	public static final String USER_PREFIX = REST_PREFIX + "/users";
+	public static final String USER_PASSWORD = "/password";
+
+	public static final String LOGIN_PEFIX = REST_PREFIX + "/login";
 
 	public static final String MEDIA_TYPE_JSON = "application/json";
 

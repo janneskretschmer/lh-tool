@@ -1,28 +1,41 @@
 package de.lh.tool.domain.model;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "user")
 public class User implements UserDetails {
+	private static final long serialVersionUID = 2931297692792293149L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Column(name = "first_name", length = 50, nullable = false)
@@ -35,11 +48,8 @@ public class User implements UserDetails {
 	@Column(name = "gender", length = 6, nullable = false)
 	private Gender gender;
 
-	@Column(name = "password_hash", length = 128)
+	@Column(name = "password_hash", length = 60)
 	private String passwordHash;
-
-	@Column(name = "password_salt", length = 32)
-	private String passwordSalt;
 
 	@Column(name = "email", length = 100, unique = true, nullable = false)
 	private String email;
@@ -59,14 +69,23 @@ public class User implements UserDetails {
 	@Column(name = "skills", length = 4000)
 	private String skills;
 
+	@OneToOne(cascade = CascadeType.ALL, optional = true, orphanRemoval = true, mappedBy = "user")
+	private PasswordChangeToken passwordChangeToken;
+
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
+	private Collection<UserRole> roles;
+
 	public enum Gender {
 		MALE, FEMALE;
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		return null;
+		Set<GrantedAuthority> result = new HashSet<>();
+		for (UserRole role : roles) {
+			result.addAll(role.getRoleWithRights());
+		}
+		return result;
 	}
 
 	/**
