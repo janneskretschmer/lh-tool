@@ -67,6 +67,14 @@ public class UserRole implements GrantedAuthority {
 	public static final String RIGHT_USERS_GET_ALL = "ROLE_RIGHT_USERS_GET_ALL";
 	public static final String RIGHT_USERS_CREATE = "ROLE_RIGHT_USERS_CREATE";
 
+	public static final String RIGHT_PROJECTS_GET = "ROLE_RIGHT_PROJECTS_GET";
+	public static final String RIGHT_PROJECTS_GET_BY_ID = "ROLE_RIGHT_PROJECTS_GET_BY_ID";
+	public static final String RIGHT_PROJECTS_POST = "ROLE_RIGHT_PROJECTS_POST";
+	public static final String RIGHT_PROJECTS_PUT = "ROLE_RIGHT_PROJECTS_PUT";
+
+	public static final String RIGHT_PROJECTS_USERS_PUT = "ROLE_RIGHT_PROJECTS_USERS_PUT";
+	public static final String RIGHT_PROJECTS_USERS_DELETE = "ROLE_RIGHT_PROJECTS_USERS_DELETE";
+
 	private static class RoleRightManager {
 		private static RoleRightManager instance;
 		private final Map<String, Collection<String>> roleRights;
@@ -80,9 +88,14 @@ public class UserRole implements GrantedAuthority {
 //  ██║___██║██╔══██╗██╔══██║██║╚██╗██║___██║___██║██║╚██╗██║██║___██║
 //  ╚██████╔╝██║__██║██║__██║██║_╚████║___██║___██║██║_╚████║╚██████╔╝
 //  _╚═════╝_╚═╝__╚═╝╚═╝__╚═╝╚═╝__╚═══╝___╚═╝___╚═╝╚═╝__╚═══╝_╚═════╝_
+
 			roleRights.put(ROLE_ADMIN, List.of(RIGHT_USERS_GET_ALL, RIGHT_USERS_CREATE));
-			roleRights.put(ROLE_CONSTRUCTION_SERVANT, List.of());
-			roleRights.put(ROLE_LOCAL_COORDINATOR, List.of());
+
+			roleRights.put(ROLE_CONSTRUCTION_SERVANT, List.of(RIGHT_PROJECTS_GET, RIGHT_PROJECTS_GET_BY_ID,
+					RIGHT_PROJECTS_POST, RIGHT_PROJECTS_PUT, RIGHT_PROJECTS_USERS_DELETE, RIGHT_PROJECTS_USERS_PUT));
+
+			roleRights.put(ROLE_LOCAL_COORDINATOR, List.of(RIGHT_PROJECTS_GET_BY_ID));
+
 			roleRights.put(ROLE_SERVICE_COMMITTEE, List.of());
 			roleRights.put(ROLE_PUBLISHER, List.of());
 			roleRights.put(ROLE_STORE_KEEPER, List.of());

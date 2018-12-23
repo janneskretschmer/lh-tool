@@ -24,7 +24,9 @@ public enum ExceptionEnum {
 	EX_PASSWORDS_INVALID_PASSWORD("The provided old password is invalid.", HttpStatus.BAD_REQUEST),
 	EX_PASSWORDS_SHORT_PASSWORD(
 			"The provided password has less than " + PasswordChangeToken.MIN_PASSWORD_LENGTH + " letters.",
-			HttpStatus.BAD_REQUEST),;
+			HttpStatus.BAD_REQUEST),
+
+	EX_PROJECT_NOT_FOUND("The project couldn't be found.", HttpStatus.NOT_FOUND),;
 
 	@Getter
 	private String message;
