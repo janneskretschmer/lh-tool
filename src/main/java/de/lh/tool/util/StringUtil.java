@@ -1,6 +1,10 @@
 package de.lh.tool.util;
 
 public class StringUtil {
+	
+	private StringUtil() {
+		throw new IllegalStateException("Utility class");
+	}
 
 	public static boolean constantTimeEquals(String strA, String strB) {
 		if (strA == null && strB == null) {
