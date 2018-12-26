@@ -2,6 +2,7 @@
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=lh-tool&metric=bugs)](https://sonarcloud.io/dashboard?id=lh-tool)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=lh-tool&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=lh-tool)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=lh-tool&metric=code_smells)](https://sonarcloud.io/dashboard?id=lh-tool)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/848f01d70fe748aebbc667062c587d8c)](https://www.codacy.com/app/janneskretschmer/lh-tool?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=janneskretschmer/lh-tool&amp;utm_campaign=Badge_Grade)
 # API Documentation
 [Swagger](http://localhost:8080/lh-tool/swagger-ui.html)
 # Local Config
