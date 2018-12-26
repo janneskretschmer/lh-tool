@@ -1,3 +1,4 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/92cd71e9ac2e4b8e9e3e1534ee63ca96)](https://app.codacy.com/app/janneskretschmer/lh-tool?utm_source=github.com&utm_medium=referral&utm_content=janneskretschmer/lh-tool&utm_campaign=Badge_Grade_Dashboard)
 [![Build Status](https://travis-ci.org/janneskretschmer/lh-tool.svg?branch=master)](https://travis-ci.org/janneskretschmer/lh-tool)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=lh-tool&metric=bugs)](https://sonarcloud.io/dashboard?id=lh-tool)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=lh-tool&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=lh-tool)
