@@ -23,7 +23,7 @@ public class LoginRestService {
 	private AuthenticationManager authenticationManager;
 
 	@Autowired
-	JwtTokenProvider tokenProvider;
+	private JwtTokenProvider tokenProvider;
 
 	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	public Resource<JwtAuthenticationDto> authenticateUser(@RequestBody LoginDto loginDto) {
