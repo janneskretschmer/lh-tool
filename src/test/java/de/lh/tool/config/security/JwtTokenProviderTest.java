@@ -1,6 +1,7 @@
 package de.lh.tool.config.security;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
@@ -16,7 +17,7 @@ import de.lh.tool.domain.model.User;
 import de.lh.tool.domain.model.UserRole;
 
 public class JwtTokenProviderTest {
-	JwtTokenProvider provider;
+	private JwtTokenProvider provider;
 
 	@BeforeEach
 	public void before() {
@@ -45,18 +46,18 @@ public class JwtTokenProviderTest {
 
 	@Test
 	public void testValidateTokenEmpty() {
-		assertTrue(!provider.validateToken(null));
+		assertFalse(provider.validateToken(null));
 	}
 
 	@Test
 	public void testValidateTokenExpired() {
 		provider.setJwtExpirationInMs(0);
-		assertTrue(!provider.validateToken(getTestToken()));
+		assertFalse(provider.validateToken(getTestToken()));
 	}
 
 	@Test
 	public void testValidateTokenMalformed() {
-		assertTrue(!provider.validateToken(getTestToken().substring(10)));
+		assertFalse(provider.validateToken(getTestToken().substring(10)));
 	}
 
 	public String getTestToken() {
@@ -69,6 +70,7 @@ public class JwtTokenProviderTest {
 
 			@Override
 			public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
+				// immutable
 			}
 
 			@Override
