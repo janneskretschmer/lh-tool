@@ -26,7 +26,9 @@ public enum ExceptionEnum {
 			"The provided password has less than " + PasswordChangeToken.MIN_PASSWORD_LENGTH + " letters.",
 			HttpStatus.BAD_REQUEST),
 
-	EX_PROJECT_NOT_FOUND("The project couldn't be found.", HttpStatus.NOT_FOUND),;
+	EX_PROJECT_NOT_FOUND("The project couldn't be found.", HttpStatus.NOT_FOUND),
+
+	EX_NEED_NOT_FOUND("The need couldn't be found.", HttpStatus.NOT_FOUND),;
 
 	@Getter
 	private String message;

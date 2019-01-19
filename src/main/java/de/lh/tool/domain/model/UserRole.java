@@ -75,6 +75,14 @@ public class UserRole implements GrantedAuthority {
 	public static final String RIGHT_PROJECTS_USERS_PUT = "ROLE_RIGHT_PROJECTS_USERS_PUT";
 	public static final String RIGHT_PROJECTS_USERS_DELETE = "ROLE_RIGHT_PROJECTS_USERS_DELETE";
 
+	public static final String RIGHT_NEEDS_GET = "ROLE_RIGHT_NEEDS_GET";
+	public static final String RIGHT_NEEDS_GET_BY_ID = "ROLE_RIGHT_NEEDS_GET_BY_ID";
+	public static final String RIGHT_NEEDS_POST = "ROLE_RIGHT_NEEDS_POST";
+	public static final String RIGHT_NEEDS_PUT = "ROLE_RIGHT_NEEDS_PUT";
+
+	public static final String RIGHT_NEEDS_USERS_PUT = "ROLE_RIGHT_NEEDS_USERS_PUT";
+	public static final String RIGHT_NEEDS_USERS_GET = "ROLE_RIGHT_NEEDS_USERS_GET";
+
 	private static class RoleRightManager {
 		private static RoleRightManager instance;
 		private final Map<String, Collection<String>> roleRights;
@@ -91,13 +99,17 @@ public class UserRole implements GrantedAuthority {
 
 			roleRights.put(ROLE_ADMIN, List.of(RIGHT_USERS_GET_ALL, RIGHT_USERS_CREATE));
 
-			roleRights.put(ROLE_CONSTRUCTION_SERVANT, List.of(RIGHT_PROJECTS_GET, RIGHT_PROJECTS_GET_BY_ID,
-					RIGHT_PROJECTS_POST, RIGHT_PROJECTS_PUT, RIGHT_PROJECTS_USERS_DELETE, RIGHT_PROJECTS_USERS_PUT));
+			roleRights.put(ROLE_CONSTRUCTION_SERVANT,
+					List.of(RIGHT_PROJECTS_GET, RIGHT_PROJECTS_GET_BY_ID, RIGHT_PROJECTS_POST, RIGHT_PROJECTS_PUT,
+							RIGHT_PROJECTS_USERS_DELETE, RIGHT_PROJECTS_USERS_PUT, RIGHT_NEEDS_GET,
+							RIGHT_NEEDS_GET_BY_ID, RIGHT_NEEDS_POST, RIGHT_NEEDS_PUT, RIGHT_NEEDS_USERS_PUT,
+							RIGHT_NEEDS_USERS_GET));
 
-			roleRights.put(ROLE_LOCAL_COORDINATOR, List.of(RIGHT_PROJECTS_GET_BY_ID));
+			roleRights.put(ROLE_LOCAL_COORDINATOR, List.of(RIGHT_PROJECTS_GET_BY_ID, RIGHT_NEEDS_POST, RIGHT_NEEDS_PUT,
+					RIGHT_NEEDS_GET, RIGHT_NEEDS_GET_BY_ID, RIGHT_NEEDS_USERS_GET, RIGHT_NEEDS_USERS_PUT));
 
 			roleRights.put(ROLE_SERVICE_COMMITTEE, List.of());
-			roleRights.put(ROLE_PUBLISHER, List.of());
+			roleRights.put(ROLE_PUBLISHER, List.of(RIGHT_NEEDS_USERS_GET));
 			roleRights.put(ROLE_STORE_KEEPER, List.of());
 			roleRights.put(ROLE_INVENTORY_MANAGER, List.of());
 		}

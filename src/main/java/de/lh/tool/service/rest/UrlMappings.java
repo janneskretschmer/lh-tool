@@ -21,6 +21,8 @@ public abstract class UrlMappings {
 
 	public static final String PROJECT_PREFIX = REST_PREFIX + "/projects";
 
+	public static final String NEED_PREFIX = REST_PREFIX + "/needs";
+
 	public static final String MEDIA_TYPE_JSON = "application/json";
 
 	private UrlMappings() {
