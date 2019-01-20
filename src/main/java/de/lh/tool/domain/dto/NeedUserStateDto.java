@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class NeedUserStateDto {
 
-	NeedUserState state;
+	private NeedUserState state;
 }
