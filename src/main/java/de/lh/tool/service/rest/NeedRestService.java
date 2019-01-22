@@ -3,6 +3,8 @@ package de.lh.tool.service.rest;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+import java.util.Date;
+
 import org.springframework.hateoas.Resource;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,7 +38,7 @@ public class NeedRestService {
 			NeedDto dto1 = new NeedDto();
 			dto1.setId(1l);
 			dto1.setProjectId(1l);
-			dto1.setDate(1533081600l);
+			dto1.setDate(new Date(1533081600l));
 			dto1.setQuantity(3);
 			dto1.setHelperType(HelperType.CONSTRUCTION_WORKER);
 			return new Resource<>(dto1, linkTo(methodOn(NeedRestService.class).getById(id)).withSelfRel());
@@ -45,7 +47,7 @@ public class NeedRestService {
 			NeedDto dto2 = new NeedDto();
 			dto2.setId(2l);
 			dto2.setProjectId(2l);
-			dto2.setDate(1556668800l);
+			dto2.setDate(new Date(1556668800l));
 			dto2.setQuantity(7);
 			dto2.setHelperType(HelperType.KITCHEN_HELPER);
 			return new Resource<>(dto2, linkTo(methodOn(NeedRestService.class).getById(id)).withSelfRel());

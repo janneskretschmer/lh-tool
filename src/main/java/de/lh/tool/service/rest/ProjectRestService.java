@@ -3,6 +3,7 @@ package de.lh.tool.service.rest;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.hateoas.Resource;
@@ -35,13 +36,13 @@ public class ProjectRestService {
 		ProjectDto dto1 = new ProjectDto();
 		dto1.setId(1l);
 		dto1.setName("Altötting");
-		dto1.setStartDate(1533081600l);
-		dto1.setEndDate(1546732800l);
+		dto1.setStartDate(new Date(1533081600l));
+		dto1.setEndDate(new Date(1546732800l));
 		ProjectDto dto2 = new ProjectDto();
 		dto2.setId(2l);
 		dto2.setName("Stuttgart");
-		dto2.setStartDate(1556668800l);
-		dto2.setEndDate(1588291200l);
+		dto2.setStartDate(new Date(1556668800l));
+		dto2.setEndDate(new Date(1588291200l));
 
 		return new Resources<>(List.of(dto1, dto2), linkTo(methodOn(ProjectRestService.class).getOwn()).withSelfRel());
 	}
@@ -56,16 +57,16 @@ public class ProjectRestService {
 			ProjectDto dto1 = new ProjectDto();
 			dto1.setId(1l);
 			dto1.setName("Altötting");
-			dto1.setStartDate(1533081600l);
-			dto1.setEndDate(1546732800l);
+			dto1.setStartDate(new Date(1533081600l));
+			dto1.setEndDate(new Date(1546732800l));
 			return new Resource<>(dto1, linkTo(methodOn(ProjectRestService.class).getById(id)).withSelfRel());
 		}
 		if (id == 2l) {
 			ProjectDto dto2 = new ProjectDto();
 			dto2.setId(2l);
 			dto2.setName("Stuttgart");
-			dto2.setStartDate(1556668800l);
-			dto2.setEndDate(1588291200l);
+			dto2.setStartDate(new Date(1556668800l));
+			dto2.setEndDate(new Date(1588291200l));
 			return new Resource<>(dto2, linkTo(methodOn(ProjectRestService.class).getById(id)).withSelfRel());
 		}
 		throw new DefaultException(ExceptionEnum.EX_PROJECT_NOT_FOUND);

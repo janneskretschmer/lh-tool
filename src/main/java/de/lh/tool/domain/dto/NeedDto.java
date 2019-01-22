@@ -1,5 +1,7 @@
 package de.lh.tool.domain.dto;
 
+import java.util.Date;
+
 import de.lh.tool.domain.model.HelperType;
 import lombok.Data;
 
@@ -10,7 +12,7 @@ public class NeedDto {
 
 	private Long projectId;
 
-	private Long date;
+	private Date date;
 
 	private Integer quantity;
 
