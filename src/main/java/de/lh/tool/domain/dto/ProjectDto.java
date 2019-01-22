@@ -1,5 +1,7 @@
 package de.lh.tool.domain.dto;
 
+import java.util.Date;
+
 import lombok.Data;
 
 @Data
@@ -9,8 +11,8 @@ public class ProjectDto {
 
 	private String name;
 
-	private Long startDate;
+	private Date startDate;
 
-	private Long endDate;
+	private Date endDate;
 
 }
