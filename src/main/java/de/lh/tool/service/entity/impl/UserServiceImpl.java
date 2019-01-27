@@ -5,9 +5,12 @@ import java.util.Calendar;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -115,5 +118,17 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 		user.setPasswordHash(passwordEncoder.encode(newPassword));
 
 		return save(user);
+	}
+
+	@Override
+	@Transactional
+	public User getCurrentUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (!(authentication instanceof AnonymousAuthenticationToken)) {
+			String currentUserName = authentication.getName();
+			return getRepository().findByEmail(currentUserName).orElseThrow(
+					() -> new UsernameNotFoundException("User not " + currentUserName + " does not exist"));
+		}
+		return null;
 	}
 }

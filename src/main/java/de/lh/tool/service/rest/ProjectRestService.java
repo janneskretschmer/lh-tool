@@ -3,9 +3,12 @@ package de.lh.tool.service.rest;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
+import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.security.access.annotation.Secured;
@@ -22,29 +25,26 @@ import de.lh.tool.domain.dto.ProjectDto;
 import de.lh.tool.domain.dto.ProjectUserDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
+import de.lh.tool.domain.model.Project;
 import de.lh.tool.domain.model.UserRole;
+import de.lh.tool.service.entity.interfaces.ProjectService;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping(UrlMappings.PROJECT_PREFIX)
 public class ProjectRestService {
 
+	@Autowired
+	private ProjectService projectService;
+
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of own projects")
 	@Secured(UserRole.RIGHT_PROJECTS_GET)
 	public Resources<ProjectDto> getOwn() throws DefaultException {
-		ProjectDto dto1 = new ProjectDto();
-		dto1.setId(1l);
-		dto1.setName("Altötting");
-		dto1.setStartDate(new Date(1533081600l));
-		dto1.setEndDate(new Date(1546732800l));
-		ProjectDto dto2 = new ProjectDto();
-		dto2.setId(2l);
-		dto2.setName("Stuttgart");
-		dto2.setStartDate(new Date(1556668800l));
-		dto2.setEndDate(new Date(1588291200l));
+		Collection<Project> projects = projectService.getOwnProjects();
 
-		return new Resources<>(List.of(dto1, dto2), linkTo(methodOn(ProjectRestService.class).getOwn()).withSelfRel());
+		return new Resources<>(projects.stream().map(this::convertToDto).collect(Collectors.toList()),
+				linkTo(methodOn(ProjectRestService.class).getOwn()).withSelfRel());
 	}
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
@@ -103,5 +103,10 @@ public class ProjectRestService {
 	public Resource<Boolean> removeUser(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@PathVariable(name = UrlMappings.USER_ID_VARIABLE, required = true) Long userId) throws DefaultException {
 		return new Resource<>(true, linkTo(methodOn(ProjectRestService.class).removeUser(id, userId)).withSelfRel());
+	}
+
+	private ProjectDto convertToDto(Project project) {
+		ModelMapper modelMapper = new ModelMapper();
+		return modelMapper.map(project, ProjectDto.class);
 	}
 }
