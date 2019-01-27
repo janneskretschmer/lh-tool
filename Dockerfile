@@ -33,7 +33,7 @@ ADD target/${WAR_FILE} /tomcat/webapps/lh-tool.war
 # use credentials for docker
 RUN mkdir -p /WEB-INF/classes
 ADD src/main/resources/docker/credentials.properties /WEB-INF/classes/credentials.properties
-RUN zip -ur /tomcat/webapps/lh-tool.war /WEB-INF/classes/credentials.properties
+RUN zip -r /tomcat/webapps/lh-tool.war /WEB-INF/classes/credentials.properties
 
 
  
