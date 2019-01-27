@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.lh.tool.domain.dto.ProjectDto;
-import de.lh.tool.domain.dto.ProjectUserTypeDto;
+import de.lh.tool.domain.dto.ProjectUserDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.UserRole;
@@ -91,9 +91,9 @@ public class ProjectRestService {
 	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_USER_ID_EXTENSION)
 	@ApiOperation(value = "Create a new relationship between project and user")
 	@Secured(UserRole.RIGHT_PROJECTS_USERS_PUT)
-	public Resource<ProjectUserTypeDto> addUser(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
+	public Resource<ProjectUserDto> addUser(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@PathVariable(name = UrlMappings.USER_ID_VARIABLE, required = true) Long userId,
-			@RequestBody(required = true) ProjectUserTypeDto dto) throws DefaultException {
+			@RequestBody(required = true) ProjectUserDto dto) throws DefaultException {
 		return new Resource<>(dto, linkTo(methodOn(ProjectRestService.class).addUser(id, userId, dto)).withSelfRel());
 	}
 
