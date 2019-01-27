@@ -1,0 +1,25 @@
+version: '3'
+services:
+    db:
+        image: mysql
+        command: --default-authentication-plugin=mysql_native_password
+        restart: always
+        environment:
+            MYSQL_DATABASE: lhtool
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_USER: "lh-tool"
+            MYSQL_PASSWORD: "lh-tool"
+    tomcat:
+        container_name: tomcat
+        depends_on:
+            - db
+        image: "demo/spring:maven-3.6-jdk-11"
+        restart: always
+        command: bash -c "cp /app/lh-tool-0.0.1-SNAPSHOT.war /tomcat/webapps/ && /tomcat/bin/catalina.sh run"
+        volumes:
+            - ../target/:/app
+        ports:
+            - 8080:8080
+        environment:
+            WAIT_HOSTS: db:3306
+        
