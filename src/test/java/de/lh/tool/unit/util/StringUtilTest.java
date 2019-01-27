@@ -1,9 +1,11 @@
-package de.lh.tool.util;
+package de.lh.tool.unit.util;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+
+import de.lh.tool.util.StringUtil;
 
 public class StringUtilTest {
 	@Test
