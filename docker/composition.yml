@@ -17,7 +17,7 @@ services:
         restart: always
         command: bash -c "cp /app/lh-tool-0.0.1-SNAPSHOT.war /tomcat/webapps/ && /tomcat/bin/catalina.sh run"
         volumes:
-            - ../target/:/app
+            - /home/kretschmer/git/lh-tool/target/:/app
         ports:
             - 8080:8080
         environment:
