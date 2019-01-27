@@ -1,4 +1,4 @@
-package de.lh.tool.config.security;
+package de.lh.tool.unit.config.security;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
+import de.lh.tool.config.security.JwtTokenProvider;
 import de.lh.tool.domain.model.User;
 import de.lh.tool.domain.model.UserRole;
 
