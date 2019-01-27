@@ -9,15 +9,17 @@ import org.springframework.web.servlet.ModelAndView;
 import com.google.gson.Gson;
 
 import io.swagger.annotations.ApiOperation;
-import lombok.Data;
-import lombok.NonNull;
+import lombok.Builder;
+import lombok.Getter;
 
 @Controller
 public class HomeController {
-	@Data
-	private class GlobalWebConfig {
-		@NonNull
+	@Builder
+	private static class GlobalWebConfig {
+		@Getter
 		private String basePath;
+		@Getter
+		private String contextPath;
 	}
 
 	@GetMapping("/")
@@ -32,7 +34,10 @@ public class HomeController {
 		String contextPath = request.getContextPath();
 		String basePath = contextPath + "/web";
 
-		GlobalWebConfig globalConfig = new GlobalWebConfig(basePath);
+		GlobalWebConfig globalConfig = GlobalWebConfig.builder()
+				.basePath(basePath)
+				.contextPath(contextPath)
+				.build();
 
 		ModelAndView mv = new ModelAndView("home");
 		mv.addObject("globalConfig", new Gson().toJson(globalConfig));
