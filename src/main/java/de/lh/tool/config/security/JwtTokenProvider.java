@@ -24,11 +24,11 @@ import lombok.extern.apachecommons.CommonsLog;
 @PropertySource(value = { "classpath:credentials.properties" })
 public class JwtTokenProvider {
 
-	@Value("${jwt.secret}")
+	@Value("${app.jwtSecret}")
 	@Setter
 	private String jwtSecret;
 
-	@Value("${jwt.expirationInMs}")
+	@Value("${app.jwtExpirationInMs}")
 	@Setter
 	private int jwtExpirationInMs;
 
