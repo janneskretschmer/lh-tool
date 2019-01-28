@@ -1,7 +1,9 @@
 package de.lh.tool;
 
-import java.io.IOException;
-import java.net.URL;
+import de.lh.tool.domain.dto.LoginDto;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import io.restassured.specification.RequestSpecification;
 
 public class TestUtil {
 	private static final int TIMEOUT = 30000;
@@ -15,8 +17,9 @@ public class TestUtil {
 		long timeout = System.currentTimeMillis() + TIMEOUT;
 		while (System.currentTimeMillis() < timeout) {
 			try {
-				new URL(REST_URL).openConnection();
-			} catch (IOException e) {
+				RestAssured.when().get(REST_URL + "/info/heartbeat").then().statusCode(200);
+				return;
+			} catch (Exception e) {
 				System.out.println("Connect failed, waiting and trying again");
 				try {
 					Thread.sleep(2000);// 2 seconds
@@ -25,5 +28,16 @@ public class TestUtil {
 				}
 			}
 		}
+	}
+
+	public static RequestSpecification getRequestSpecWithAdminLogin() {
+		LoginDto dto = new LoginDto();
+		dto.setEmail("test-admin@lh-tool.de");
+		dto.setPassword("testing");
+		return RestAssured.given().body(dto).contentType(ContentType.JSON);
+	}
+
+	public static RequestSpecification getRequestSpecWithJWT(String jwt) {
+		return RestAssured.given().header("Authorization", "Bearer " + jwt);
 	}
 }
