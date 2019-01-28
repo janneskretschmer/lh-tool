@@ -1,6 +1,5 @@
 #Dockerfile
 FROM  maven:3.6-jdk-11
-MAINTAINER  Jannes Kretschmer jannes.kretschmer@gmx.de
 
 #RUN echo "deb http://archive.ubuntu.com/ubuntu bionic main universe" > /etc/apt/sources.list
 RUN apt-get update && \
@@ -19,26 +18,26 @@ RUN wget -q https://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_MAJOR_VERSION
  	rm apache-tomcat-*.tar.gz && \
  	mv apache-tomcat* tomcat
 
-ADD src/main/resources/docker/create_tomcat_admin_user.sh /create_tomcat_admin_user.sh
+COPY src/main/resources/docker/create_tomcat_admin_user.sh /create_tomcat_admin_user.sh
 RUN mkdir -p /etc/service/tomcat
-ADD src/main/resources/docker/run.sh /etc/service/tomcat/run
+COPY src/main/resources/docker/run.sh /etc/service/tomcat/run
 RUN chmod +x /*.sh
 RUN chmod +x /etc/service/tomcat/run
 
 EXPOSE 8080
 
 ARG WAR_FILE
-ADD target/${WAR_FILE} /tomcat/webapps/lh-tool.war
+COPY target/${WAR_FILE} /tomcat/webapps/lh-tool.war
 
 # use credentials for docker
 RUN mkdir -p /WEB-INF/classes
-ADD src/main/resources/docker/credentials.properties /WEB-INF/classes/credentials.properties
+COPY src/main/resources/docker/credentials.properties /WEB-INF/classes/credentials.properties
 RUN zip -r /tomcat/webapps/lh-tool.war /WEB-INF/classes/credentials.properties
 
 
  
 
-ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.2.1/wait /wait
+COPY https://github.com/ufoscout/docker-compose-wait/releases/download/2.2.1/wait /wait
 RUN chmod +x /wait
 
 ## Launch the wait tool and then your application
