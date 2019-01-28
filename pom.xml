@@ -67,6 +67,7 @@
                 <configuration>
                     <composeFile>${project.basedir}/src/main/resources/docker/composition.yml</composeFile>
                     <detachedMode>true</detachedMode>
+				    <removeImages>true</removeImages>
                 </configuration>
                 <executions>
                     <execution>
