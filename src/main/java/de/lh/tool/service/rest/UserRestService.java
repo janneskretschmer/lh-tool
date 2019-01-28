@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -60,6 +61,13 @@ public class UserRestService {
 		return new Resource<>(convertToDto(userService.changePassword(passwordChangeDto.getUserId(),
 				passwordChangeDto.getToken(), passwordChangeDto.getOldPassword(), passwordChangeDto.getNewPassword(),
 				passwordChangeDto.getConfirmPassword())));
+	}
+
+	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
+	@Secured(UserRole.RIGHT_USERS_DELETE)
+	public Resource<UserDto> delete(@RequestBody UserDto userDto) throws DefaultException {
+		userService.deleteById(userDto.getId());
+		return new Resource<>(userDto);
 	}
 
 	private UserDto convertToDto(User user) {
