@@ -1,4 +1,4 @@
-package de.lh.tool.unit.service.entity.impl;
+package de.lh.tool.service.entity.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;

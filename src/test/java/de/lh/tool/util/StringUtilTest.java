@@ -1,4 +1,4 @@
-package de.lh.tool.unit.util;
+package de.lh.tool.util;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;

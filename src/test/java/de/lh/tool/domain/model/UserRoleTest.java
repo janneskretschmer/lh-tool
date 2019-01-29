@@ -1,4 +1,4 @@
-package de.lh.tool.unit.domain.model;
+package de.lh.tool.domain.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

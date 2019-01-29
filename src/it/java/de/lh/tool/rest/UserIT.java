@@ -1,4 +1,4 @@
-package de.lh.tool.integration;
+package de.lh.tool.rest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -8,7 +8,7 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import de.lh.tool.TestUtil;
+import de.lh.tool.IntegrationTestUtil;
 import de.lh.tool.domain.dto.JwtAuthenticationDto;
 import de.lh.tool.domain.dto.UserCreationDto;
 import de.lh.tool.domain.dto.UserDto;
@@ -19,13 +19,13 @@ public class UserIT {
 
 	@BeforeAll
 	public static void waitForServer() {
-		TestUtil.waitForLocalTomcat();
+		IntegrationTestUtil.waitForLocalTomcat();
 	}
 
 	@Test
 	public void testUserCreation() throws Exception {
-		String url = TestUtil.REST_URL + "/login/";
-		JwtAuthenticationDto authenticationDto = TestUtil.getRequestSpecWithAdminLogin().when().post(url)
+		String url = IntegrationTestUtil.REST_URL + "/login/";
+		JwtAuthenticationDto authenticationDto = IntegrationTestUtil.getRequestSpecWithAdminLogin().when().post(url)
 				.as(JwtAuthenticationDto.class);
 		assertNotNull(authenticationDto.getAccessToken());
 		UserCreationDto userCreationDto = new UserCreationDto();
@@ -33,8 +33,8 @@ public class UserIT {
 		userCreationDto.setFirstName("construction");
 		userCreationDto.setLastName("servant");
 		userCreationDto.setGender(Gender.MALE.name());
-		url = TestUtil.REST_URL + "/users/";
-		UserDto userDto = TestUtil.getRequestSpecWithJWT(authenticationDto.getAccessToken()).body(userCreationDto)
+		url = IntegrationTestUtil.REST_URL + "/users/";
+		UserDto userDto = IntegrationTestUtil.getRequestSpecWithJWT(authenticationDto.getAccessToken()).body(userCreationDto)
 				.contentType(ContentType.JSON).post(url).as(UserDto.class);
 		assertNull(userDto.getBusinessNumber());
 		assertEquals("test-construction-servant@lh-tool.de", userDto.getEmail());
@@ -45,11 +45,11 @@ public class UserIT {
 		assertNull(userDto.getProfession());
 		assertNull(userDto.getSkills());
 		assertNull(userDto.getTelephoneNumber());
-		TestUtil.getRequestSpecWithJWT(authenticationDto.getAccessToken()).when().get(url).then().body("content",
+		IntegrationTestUtil.getRequestSpecWithJWT(authenticationDto.getAccessToken()).when().get(url).then().body("content",
 				Matchers.iterableWithSize(2));
-		TestUtil.getRequestSpecWithJWT(authenticationDto.getAccessToken()).body(userDto).contentType(ContentType.JSON)
+		IntegrationTestUtil.getRequestSpecWithJWT(authenticationDto.getAccessToken()).body(userDto).contentType(ContentType.JSON)
 				.delete(url).then().statusCode(200);
-		TestUtil.getRequestSpecWithJWT(authenticationDto.getAccessToken()).when().get(url).then().body("content",
+		IntegrationTestUtil.getRequestSpecWithJWT(authenticationDto.getAccessToken()).when().get(url).then().body("content",
 				Matchers.iterableWithSize(1));
 	}
 }

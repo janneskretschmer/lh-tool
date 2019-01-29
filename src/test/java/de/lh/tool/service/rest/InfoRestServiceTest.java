@@ -1,4 +1,4 @@
-package de.lh.tool.unit.service.rest;
+package de.lh.tool.service.rest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

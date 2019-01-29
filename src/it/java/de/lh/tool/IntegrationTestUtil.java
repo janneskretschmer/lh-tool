@@ -5,11 +5,11 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 
-public class TestUtil {
+public class IntegrationTestUtil {
 	private static final int TIMEOUT = 30000;
 	public static final String REST_URL = "http://localhost:8080/lh-tool/rest";
 
-	private TestUtil() {
+	private IntegrationTestUtil() {
 		throw new IllegalStateException("Utility class");
 	}
 
