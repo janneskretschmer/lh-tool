@@ -66,6 +66,7 @@ public class UserRole implements GrantedAuthority {
 //	Unfortunately granted authorities always have to start with "ROLE_". Several attempts to change that failed. 	
 	public static final String RIGHT_USERS_GET_ALL = "ROLE_RIGHT_USERS_GET_ALL";
 	public static final String RIGHT_USERS_CREATE = "ROLE_RIGHT_USERS_CREATE";
+	public static final String RIGHT_USERS_DELETE = "ROLE_RIGHT_USERS_DELETE";
 
 	public static final String RIGHT_PROJECTS_GET = "ROLE_RIGHT_PROJECTS_GET";
 	public static final String RIGHT_PROJECTS_GET_BY_ID = "ROLE_RIGHT_PROJECTS_GET_BY_ID";
@@ -97,7 +98,7 @@ public class UserRole implements GrantedAuthority {
 //  ╚██████╔╝██║__██║██║__██║██║_╚████║___██║___██║██║_╚████║╚██████╔╝
 //  _╚═════╝_╚═╝__╚═╝╚═╝__╚═╝╚═╝__╚═══╝___╚═╝___╚═╝╚═╝__╚═══╝_╚═════╝_
 
-			roleRights.put(ROLE_ADMIN, List.of(RIGHT_USERS_GET_ALL, RIGHT_USERS_CREATE));
+			roleRights.put(ROLE_ADMIN, List.of(RIGHT_USERS_GET_ALL, RIGHT_USERS_CREATE, RIGHT_USERS_DELETE));
 
 			roleRights.put(ROLE_CONSTRUCTION_SERVANT,
 					List.of(RIGHT_PROJECTS_GET, RIGHT_PROJECTS_GET_BY_ID, RIGHT_PROJECTS_POST, RIGHT_PROJECTS_PUT,

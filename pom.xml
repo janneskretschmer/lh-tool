@@ -39,6 +39,85 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>dockerfile-maven-plugin</artifactId>
+				<version>1.4.10</version>
+				<executions>
+					<execution>
+						<id>default</id>
+						<goals>
+							<goal>build</goal>
+							<goal>push</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<repository>lhtool</repository>
+					<tag>${project.version}</tag>
+					<buildArgs>
+						<WAR_FILE>${project.build.finalName}.war</WAR_FILE>
+					</buildArgs>
+				</configuration>
+			</plugin>
+			<plugin>
+				<!-- Used to spin up an integration testing environment -->
+				<groupId>com.dkanejs.maven.plugins</groupId>
+				<artifactId>docker-compose-maven-plugin</artifactId>
+				<version>2.3.0</version>
+				<configuration>
+					<composeFile>${project.basedir}/src/main/resources/docker/composition.yml</composeFile>
+					<detachedMode>true</detachedMode>
+					<removeImages>true</removeImages>
+				</configuration>
+				<executions>
+					<execution>
+						<id>docker-compose-up</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>up</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>docker-compose-down</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>down</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>add-test-source</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>add-test-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/it/java</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>3.0.0-M3</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>com.github.eirslett</groupId>
 				<artifactId>frontend-maven-plugin</artifactId>
 				<version>1.6</version>
@@ -199,6 +278,11 @@
 			<artifactId>mockito-junit-jupiter</artifactId>
 			<version>2.23.4</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>3.3.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

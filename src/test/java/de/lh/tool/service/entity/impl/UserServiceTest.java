@@ -27,6 +27,7 @@ import de.lh.tool.domain.model.PasswordChangeToken;
 import de.lh.tool.domain.model.User;
 import de.lh.tool.domain.model.User.Gender;
 import de.lh.tool.repository.UserRepository;
+import de.lh.tool.service.entity.impl.UserServiceImpl;
 import de.lh.tool.service.entity.interfaces.PasswordChangeTokenService;
 
 @ExtendWith(MockitoExtension.class)

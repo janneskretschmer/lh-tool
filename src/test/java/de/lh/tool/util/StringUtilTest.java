@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
+import de.lh.tool.util.StringUtil;
+
 public class StringUtilTest {
 	@Test
 	public void testConstantTimeEquals() {

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
+import de.lh.tool.config.security.JwtTokenProvider;
 import de.lh.tool.domain.model.User;
 import de.lh.tool.domain.model.UserRole;
 
