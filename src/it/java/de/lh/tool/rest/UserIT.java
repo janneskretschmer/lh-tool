@@ -16,7 +16,7 @@ public class UserIT extends BasicRestIntegrationTest {
 
 	@Test
 	public void testUserCreation() throws Exception {
-		String jwt = getJWTByEmail(ADMIN_EMAIL);
+		String jwt = getJwtByEmail(ADMIN_EMAIL);
 		assertNotNull(jwt);
 		UserCreationDto userCreationDto = new UserCreationDto();
 		userCreationDto.setEmail("test-construction-servant@lh-tool.de");

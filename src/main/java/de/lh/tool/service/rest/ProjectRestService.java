@@ -11,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -101,6 +102,15 @@ public class ProjectRestService {
 		ProjectDto projectDto = convertToDto(project);
 		return new Resource<>(projectDto,
 				linkTo(methodOn(ProjectRestService.class).update(id, projectDto)).withSelfRel());
+	}
+
+	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
+	@ApiOperation(value = "Delete a project")
+	@Secured(UserRole.RIGHT_PROJECTS_DELETE)
+	public ResponseEntity<?> delete(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
+			throws DefaultException {
+		projectService.deleteById(id);
+		return ResponseEntity.noContent().build();
 	}
 
 	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_USER_ID_EXTENSION)

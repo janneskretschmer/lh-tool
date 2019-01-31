@@ -11,9 +11,11 @@ import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -63,11 +65,12 @@ public class UserRestService {
 				passwordChangeDto.getConfirmPassword())));
 	}
 
-	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
+	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
 	@Secured(UserRole.RIGHT_USERS_DELETE)
-	public Resource<UserDto> delete(@RequestBody UserDto userDto) throws DefaultException {
-		userService.deleteById(userDto.getId());
-		return new Resource<>(userDto);
+	public ResponseEntity<?> delete(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
+			throws DefaultException {
+		userService.deleteById(id);
+		return ResponseEntity.noContent().build();
 	}
 
 	private UserDto convertToDto(User user) {

@@ -56,7 +56,7 @@ public abstract class BasicRestIntegrationTest {
 		}
 	}
 
-	protected String getJWTByEmail(String email) {
+	protected String getJwtByEmail(String email) {
 		String url = REST_URL + "/login/";
 		JwtAuthenticationDto res = RestAssured.given().body(new LoginDto(email, PASSWORD)).contentType(ContentType.JSON)
 				.when().post(url).as(JwtAuthenticationDto.class);
@@ -67,8 +67,9 @@ public abstract class BasicRestIntegrationTest {
 		return RestAssured.given().header("Authorization", "Bearer " + jwt);
 	}
 
-	public void createTestUsers() throws Exception {
-		String jwt = getJWTByEmail(ADMIN_EMAIL);
+	protected void createTestUsers() throws Exception {
+		deleteTestUsers();
+		String jwt = getJwtByEmail(ADMIN_EMAIL);
 		assertNotNull(jwt);
 		String registrationUrl = REST_URL + "/users/";
 		String passwordUrl = REST_URL + "/users/password";
@@ -84,15 +85,15 @@ public abstract class BasicRestIntegrationTest {
 		}
 	}
 
-	public void deleteTestUsers() {
-		String jwt = getJWTByEmail(ADMIN_EMAIL);
+	protected void deleteTestUsers() {
+		String jwt = getJwtByEmail(ADMIN_EMAIL);
 		assertNotNull(jwt);
 		String url = REST_URL + "/users/";
 		List<UserDto> users = getRequestSpecWithJWT(jwt).get(url).then().extract().jsonPath().getList("content",
 				UserDto.class);
 		for (UserDto user : users) {
 			if (TEST_USER_EMAILS.contains(user.getEmail())) {
-				getRequestSpecWithJWT(jwt).body(user).contentType(ContentType.JSON).delete(url).then().statusCode(200);
+				getRequestSpecWithJWT(jwt).delete(url + user.getId()).then().statusCode(204);
 			}
 		}
 	}
