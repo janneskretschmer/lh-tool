@@ -9,6 +9,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ExceptionEnum {
 
+	EX_ID_PROVIDED("Please don't provide an ID for new entities.", HttpStatus.BAD_REQUEST),
+	EX_NO_ID_PROVIDED("Please provide an ID for changed entities.", HttpStatus.BAD_REQUEST),
+
 	EX_USERS_NOT_FOUND("The users couldn't be found.", HttpStatus.NOT_FOUND),
 	EX_USER_NO_EMAIL("The user has no email adress.", HttpStatus.BAD_REQUEST),
 	EX_USER_NO_FIRST_NAME("The user has no first name.", HttpStatus.BAD_REQUEST),

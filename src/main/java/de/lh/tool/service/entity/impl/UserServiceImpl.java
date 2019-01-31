@@ -21,8 +21,10 @@ import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.PasswordChangeToken;
 import de.lh.tool.domain.model.User;
+import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.repository.UserRepository;
 import de.lh.tool.service.entity.interfaces.PasswordChangeTokenService;
+import de.lh.tool.service.entity.interfaces.UserRoleService;
 import de.lh.tool.service.entity.interfaces.UserService;
 import de.lh.tool.util.StringUtil;
 
@@ -32,6 +34,9 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 
 	@Autowired
 	private PasswordChangeTokenService passwordChangeTokenService;
+
+	@Autowired
+	private UserRoleService userRoleService;
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -90,28 +95,30 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 		User user = findById(userId)
 				.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_PASSWORDS_INVALID_USER_ID));
 
-		if (oldPassword == null) {
-			if (token == null) {
-				throw new DefaultException(ExceptionEnum.EX_PASSWORDS_NO_TOKEN_OR_OLD_PASSWORD);
-			}
-			if (user.getPasswordChangeToken() == null
-					|| !StringUtil.constantTimeEquals(token, user.getPasswordChangeToken().getToken())) {
-				throw new DefaultException(ExceptionEnum.EX_PASSWORDS_INVALID_TOKEN);
-			}
-			user.getPasswordChangeToken().getUpdated().setLenient(true);
-			user.getPasswordChangeToken().getUpdated().add(Calendar.DAY_OF_YEAR,
-					PasswordChangeToken.TOKEN_VALIDITY_IN_DAYS);
-			if (Calendar.getInstance().after(user.getPasswordChangeToken().getUpdated())) {
-				throw new DefaultException(ExceptionEnum.EX_PASSWORDS_EXPIRED_TOKEN);
-			}
-			passwordChangeTokenService.delete(user.getPasswordChangeToken());
-			user.setPasswordChangeToken(null);
-		} else {
-			try {
-				authenticationManager
-						.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), oldPassword));
-			} catch (AuthenticationException e) {
-				throw new DefaultException(ExceptionEnum.EX_PASSWORDS_INVALID_PASSWORD, e);
+		if (!userRoleService.hasCurrentUserRight(UserRole.RIGHT_USERS_CHANGE_FOREIGN_PASSWORD)) {
+			if (oldPassword == null) {
+				if (token == null) {
+					throw new DefaultException(ExceptionEnum.EX_PASSWORDS_NO_TOKEN_OR_OLD_PASSWORD);
+				}
+				if (user.getPasswordChangeToken() == null
+						|| !StringUtil.constantTimeEquals(token, user.getPasswordChangeToken().getToken())) {
+					throw new DefaultException(ExceptionEnum.EX_PASSWORDS_INVALID_TOKEN);
+				}
+				user.getPasswordChangeToken().getUpdated().setLenient(true);
+				user.getPasswordChangeToken().getUpdated().add(Calendar.DAY_OF_YEAR,
+						PasswordChangeToken.TOKEN_VALIDITY_IN_DAYS);
+				if (Calendar.getInstance().after(user.getPasswordChangeToken().getUpdated())) {
+					throw new DefaultException(ExceptionEnum.EX_PASSWORDS_EXPIRED_TOKEN);
+				}
+				passwordChangeTokenService.delete(user.getPasswordChangeToken());
+				user.setPasswordChangeToken(null);
+			} else {
+				try {
+					authenticationManager
+							.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), oldPassword));
+				} catch (AuthenticationException e) {
+					throw new DefaultException(ExceptionEnum.EX_PASSWORDS_INVALID_PASSWORD, e);
+				}
 			}
 		}
 

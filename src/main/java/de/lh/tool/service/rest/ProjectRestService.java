@@ -76,8 +76,15 @@ public class ProjectRestService {
 	@ApiOperation(value = "Create a new project")
 	@Secured(UserRole.RIGHT_PROJECTS_POST)
 	public Resource<ProjectDto> create(@RequestBody(required = true) ProjectDto dto) throws DefaultException {
-		dto.setId(3l);
-		return new Resource<>(dto, linkTo(methodOn(ProjectRestService.class).create(dto)).withSelfRel());
+		if (dto.getId() != null) {
+			throw new DefaultException(ExceptionEnum.EX_ID_PROVIDED);
+		}
+		Project project = convertToEntity(dto);
+		project = projectService.save(project);
+		ProjectDto projectDto = convertToDto(project);
+		return new Resource<>(projectDto,
+				linkTo(methodOn(ProjectRestService.class).update(projectDto.getId(), projectDto))
+						.withRel(UrlMappings.ID_EXTENSION));
 	}
 
 	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
@@ -85,7 +92,15 @@ public class ProjectRestService {
 	@Secured(UserRole.RIGHT_PROJECTS_PUT)
 	public Resource<ProjectDto> update(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@RequestBody(required = true) ProjectDto dto) throws DefaultException {
-		return new Resource<>(dto, linkTo(methodOn(ProjectRestService.class).create(dto)).withSelfRel());
+		dto.setId(id);
+		if (dto.getId() == null) {
+			throw new DefaultException(ExceptionEnum.EX_NO_ID_PROVIDED);
+		}
+		Project project = convertToEntity(dto);
+		project = projectService.save(project);
+		ProjectDto projectDto = convertToDto(project);
+		return new Resource<>(projectDto,
+				linkTo(methodOn(ProjectRestService.class).update(id, projectDto)).withSelfRel());
 	}
 
 	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_USER_ID_EXTENSION)
@@ -103,6 +118,11 @@ public class ProjectRestService {
 	public Resource<Boolean> removeUser(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@PathVariable(name = UrlMappings.USER_ID_VARIABLE, required = true) Long userId) throws DefaultException {
 		return new Resource<>(true, linkTo(methodOn(ProjectRestService.class).removeUser(id, userId)).withSelfRel());
+	}
+
+	private Project convertToEntity(ProjectDto projectDto) {
+		ModelMapper modelMapper = new ModelMapper();
+		return modelMapper.map(projectDto, Project.class);
 	}
 
 	private ProjectDto convertToDto(Project project) {
