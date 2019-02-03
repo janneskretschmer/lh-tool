@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
@@ -27,8 +29,12 @@ import de.lh.tool.domain.dto.ProjectUserDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.Project;
+import de.lh.tool.domain.model.ProjectUser;
+import de.lh.tool.domain.model.User;
 import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.service.entity.interfaces.ProjectService;
+import de.lh.tool.service.entity.interfaces.ProjectUserService;
+import de.lh.tool.service.entity.interfaces.UserService;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
@@ -37,6 +43,10 @@ public class ProjectRestService {
 
 	@Autowired
 	private ProjectService projectService;
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private ProjectUserService projectUserService;
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of own projects")
@@ -76,12 +86,15 @@ public class ProjectRestService {
 	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Create a new project")
 	@Secured(UserRole.RIGHT_PROJECTS_POST)
+	@Transactional
 	public Resource<ProjectDto> create(@RequestBody(required = true) ProjectDto dto) throws DefaultException {
 		if (dto.getId() != null) {
 			throw new DefaultException(ExceptionEnum.EX_ID_PROVIDED);
 		}
 		Project project = convertToEntity(dto);
 		project = projectService.save(project);
+		User user = userService.getCurrentUser();
+		projectUserService.save(new ProjectUser(project, user));
 		ProjectDto projectDto = convertToDto(project);
 		return new Resource<>(projectDto,
 				linkTo(methodOn(ProjectRestService.class).update(projectDto.getId(), projectDto))

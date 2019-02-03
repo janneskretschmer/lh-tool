@@ -3,8 +3,11 @@ package de.lh.tool.service.rest;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import javax.transaction.Transactional;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import de.lh.tool.domain.dto.PasswordChangeDto;
 import de.lh.tool.domain.dto.UserCreationDto;
 import de.lh.tool.domain.dto.UserDto;
+import de.lh.tool.domain.dto.UserRolesDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.User;
@@ -63,6 +67,28 @@ public class UserRestService {
 		return new Resource<>(convertToDto(userService.changePassword(passwordChangeDto.getUserId(),
 				passwordChangeDto.getToken(), passwordChangeDto.getOldPassword(), passwordChangeDto.getNewPassword(),
 				passwordChangeDto.getConfirmPassword())));
+	}
+
+	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.USER_ROLES)
+	@Secured(UserRole.RIGHT_USERS_CHANGE_ROLES)
+	@Transactional
+	public Resource<UserDto> changeRules(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
+			@RequestBody UserRolesDto userRolesDto) throws DefaultException {
+		User user = userService.findById(id)
+				.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_WRONG_ID_PROVIDED));
+		if (userRolesDto != null) {
+			if (userRolesDto.getRoles() != null) {
+				if (user.getRoles() == null) {
+					user.setRoles(Collections.emptyList());
+				} else {
+					user.getRoles().clear();
+				}
+				user.getRoles().addAll(userRolesDto.getRoles().stream().map(s -> new UserRole(null, user, s))
+						.collect(Collectors.toList()));
+			}
+			userService.save(user);
+		}
+		return new Resource<>(convertToDto(user));
 	}
 
 	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)

@@ -34,6 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, getServletContext());
+		UsernamePasswordAuthenticationToken authentication = null;
 		try {
 			String jwt = getJwtFromRequest(request);
 
@@ -41,15 +42,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				Long userId = tokenProvider.getUserIdFromJWT(jwt);
 
 				UserDetails user = userService.loadUserById(userId);
-				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null,
-						user.getAuthorities());
+				authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 				authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
 		} catch (Exception ex) {
 			log.error("Could not set user authentication in security context", ex);
 		}
+		SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		filterChain.doFilter(request, response);
 	}
