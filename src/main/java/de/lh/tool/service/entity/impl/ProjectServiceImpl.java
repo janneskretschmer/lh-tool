@@ -1,6 +1,7 @@
 package de.lh.tool.service.entity.impl;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import javax.transaction.Transactional;
 
@@ -41,7 +42,7 @@ public class ProjectServiceImpl extends BasicMappableEntityServiceImpl<ProjectRe
 					? (Collection<Project>) findAll()
 					: currentUser.getProjects());
 		}
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override

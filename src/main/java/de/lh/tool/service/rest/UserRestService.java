@@ -99,7 +99,7 @@ public class UserRestService {
 
 	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
 	@Secured(UserRole.RIGHT_USERS_DELETE)
-	public ResponseEntity<?> delete(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
+	public ResponseEntity<Void> delete(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 		userService.deleteById(id);
 		return ResponseEntity.noContent().build();

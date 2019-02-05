@@ -96,21 +96,7 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 
 		if (!userRoleService.hasCurrentUserRight(UserRole.RIGHT_USERS_CHANGE_FOREIGN_PASSWORD)) {
 			if (oldPassword == null) {
-				if (token == null) {
-					throw new DefaultException(ExceptionEnum.EX_PASSWORDS_NO_TOKEN_OR_OLD_PASSWORD);
-				}
-				if (user.getPasswordChangeToken() == null
-						|| !StringUtil.constantTimeEquals(token, user.getPasswordChangeToken().getToken())) {
-					throw new DefaultException(ExceptionEnum.EX_PASSWORDS_INVALID_TOKEN);
-				}
-				user.getPasswordChangeToken().getUpdated().setLenient(true);
-				user.getPasswordChangeToken().getUpdated().add(Calendar.DAY_OF_YEAR,
-						PasswordChangeToken.TOKEN_VALIDITY_IN_DAYS);
-				if (Calendar.getInstance().after(user.getPasswordChangeToken().getUpdated())) {
-					throw new DefaultException(ExceptionEnum.EX_PASSWORDS_EXPIRED_TOKEN);
-				}
-				passwordChangeTokenService.delete(user.getPasswordChangeToken());
-				user.setPasswordChangeToken(null);
+				validateToken(token, user);
 			} else {
 				try {
 					authenticationManager
@@ -124,6 +110,24 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 		user.setPasswordHash(passwordEncoder.encode(newPassword));
 
 		return save(user);
+	}
+
+	private void validateToken(String token, User user) throws DefaultException {
+		if (token == null) {
+			throw new DefaultException(ExceptionEnum.EX_PASSWORDS_NO_TOKEN_OR_OLD_PASSWORD);
+		}
+		if (user.getPasswordChangeToken() == null
+				|| !StringUtil.constantTimeEquals(token, user.getPasswordChangeToken().getToken())) {
+			throw new DefaultException(ExceptionEnum.EX_PASSWORDS_INVALID_TOKEN);
+		}
+		user.getPasswordChangeToken().getUpdated().setLenient(true);
+		user.getPasswordChangeToken().getUpdated().add(Calendar.DAY_OF_YEAR,
+				PasswordChangeToken.TOKEN_VALIDITY_IN_DAYS);
+		if (Calendar.getInstance().after(user.getPasswordChangeToken().getUpdated())) {
+			throw new DefaultException(ExceptionEnum.EX_PASSWORDS_EXPIRED_TOKEN);
+		}
+		passwordChangeTokenService.delete(user.getPasswordChangeToken());
+		user.setPasswordChangeToken(null);
 	}
 
 	@Override

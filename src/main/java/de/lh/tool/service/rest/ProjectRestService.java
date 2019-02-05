@@ -86,7 +86,7 @@ public class ProjectRestService {
 	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
 	@ApiOperation(value = "Delete a project")
 	@Secured(UserRole.RIGHT_PROJECTS_DELETE)
-	public ResponseEntity<?> delete(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
+	public ResponseEntity<Void> delete(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 
 		projectService.deleteById(id);
@@ -110,7 +110,7 @@ public class ProjectRestService {
 	@ApiOperation(value = "Remove a new relationship between project and user")
 	@Secured(UserRole.RIGHT_PROJECTS_USERS_DELETE)
 	@Transactional
-	public ResponseEntity<?> removeUser(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
+	public ResponseEntity<Void> removeUser(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@PathVariable(name = UrlMappings.USER_ID_VARIABLE, required = true) Long userId) throws DefaultException {
 
 		projectUserService.deleteByProjectAndUser(id, userId);
