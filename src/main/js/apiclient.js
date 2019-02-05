@@ -80,7 +80,8 @@ export const apiEndpoints = {
     login: {
         login: {
             method: 'POST',
-            path: LOGIN_PEFIX,
+            // TODO Trailing '/' seems to be necessary
+            path: LOGIN_PEFIX + '/',
         },
     },
     project: undefined,

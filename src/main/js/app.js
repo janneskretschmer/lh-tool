@@ -6,6 +6,7 @@ import HomeComponent from './components/home';
 import LoginComponent from './components/login';
 import HeartbeatComponent from './components/heartbeat';
 import LoginProvider, { LoginContext } from './providers/login-provider';
+import { logout } from './actions/login';
 
 const LHToolApp = () => (
 	<Router>
@@ -24,13 +25,20 @@ const LHToolApp = () => (
 					<li><Link to={fullPathOfHeartbeat()}>Heartbeat</Link></li>
 				</ul>
 
-				<LoginContext.Consumer>
-					{loginState => loginState.isLoggedIn() ? 'ANGEMELDET' : 'NICHT ANGEMELDET'}
-				</LoginContext.Consumer>
-
 				<Route path={fullPathOfHome()} exact component={HomeComponent} />
 				<Route path={fullPathOfLogin()} component={LoginComponent} />
 				<Route path={fullPathOfHeartbeat()} component={HeartbeatComponent} />
+
+				<LoginContext.Consumer>
+					{loginState => loginState.isLoggedIn() ? (
+						<>
+							<span>ANGEMELDET</span>
+							<button onClick={() => logout({ loginState })}>Logout</button>
+						</>
+					) : (
+							<span>NICHT ANGEMELDET</span>
+						)}
+				</LoginContext.Consumer>
 			</LoginProvider>
 		</div>
 	</Router>
