@@ -21,7 +21,7 @@ public interface MappableEntityService<E, D> {
 	default D convertToDto(E entity) {
 		ModelMapper modelMapper = new ModelMapper();
 		return modelMapper.map(entity, getDtoClass());
-	};
+	}
 
 	default List<E> convertToEntityList(Collection<D> dtoList) {
 		if (dtoList == null) {

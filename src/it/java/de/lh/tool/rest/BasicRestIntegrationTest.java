@@ -98,7 +98,6 @@ public abstract class BasicRestIntegrationTest {
 		assertNotNull(jwt);
 		String registrationUrl = REST_URL + "/users/";
 		String passwordUrl = REST_URL + "/users/password";
-		int counter = 0;
 		for (User user : TEST_USERS) {
 			Long userId = getRequestSpecWithJwt(jwt)
 					.body(new UserCreationDto(user.getFirstName(), user.getLastName(), user.getEmail(),
@@ -111,7 +110,6 @@ public abstract class BasicRestIntegrationTest {
 					.body(new UserRolesDto(
 							user.getRoles().stream().map(UserRole::getRole).collect(Collectors.toList())))
 					.contentType(ContentType.JSON).put(registrationUrl + userId + "/roles").then().statusCode(200);
-			counter++;
 		}
 	}
 
