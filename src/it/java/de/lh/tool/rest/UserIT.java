@@ -24,7 +24,7 @@ public class UserIT extends BasicRestIntegrationTest {
 		userCreationDto.setLastName("servant");
 		userCreationDto.setGender(Gender.MALE.name());
 		String url = REST_URL + "/users/";
-		UserDto userDto = getRequestSpecWithJWT(jwt).body(userCreationDto).contentType(ContentType.JSON).post(url)
+		UserDto userDto = getRequestSpecWithJwt(jwt).body(userCreationDto).contentType(ContentType.JSON).post(url)
 				.as(UserDto.class);
 		assertNull(userDto.getBusinessNumber());
 		assertEquals("test-construction-servant@lh-tool.de", userDto.getEmail());
@@ -35,8 +35,8 @@ public class UserIT extends BasicRestIntegrationTest {
 		assertNull(userDto.getProfession());
 		assertNull(userDto.getSkills());
 		assertNull(userDto.getTelephoneNumber());
-		getRequestSpecWithJWT(jwt).when().get(url).then().body("content", Matchers.iterableWithSize(2));
-		getRequestSpecWithJWT(jwt).body(userDto).contentType(ContentType.JSON).delete(url).then().statusCode(200);
-		getRequestSpecWithJWT(jwt).when().get(url).then().body("content", Matchers.iterableWithSize(1));
+		getRequestSpecWithJwt(jwt).when().get(url).then().body("content", Matchers.iterableWithSize(2));
+		getRequestSpecWithJwt(jwt).body(userDto).contentType(ContentType.JSON).delete(url).then().statusCode(200);
+		getRequestSpecWithJwt(jwt).when().get(url).then().body("content", Matchers.iterableWithSize(1));
 	}
 }

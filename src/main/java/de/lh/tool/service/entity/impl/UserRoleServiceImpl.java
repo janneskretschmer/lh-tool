@@ -19,6 +19,11 @@ public class UserRoleServiceImpl extends BasicEntityServiceImpl<UserRoleReposito
 	@Override
 	public boolean hasCurrentUserRight(String right) {
 		User user = userService.getCurrentUser();
+		return hasUserRight(user, right);
+	}
+
+	@Override
+	public boolean hasUserRight(User user, String right) {
 		if (right != null && user != null && user.getAuthorities() != null) {
 			return user.getAuthorities().stream().anyMatch(a -> right.equals(a.getAuthority()));
 		}

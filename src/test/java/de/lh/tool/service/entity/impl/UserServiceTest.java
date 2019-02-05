@@ -26,9 +26,10 @@ import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.PasswordChangeToken;
 import de.lh.tool.domain.model.User;
 import de.lh.tool.domain.model.User.Gender;
+import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.repository.UserRepository;
-import de.lh.tool.service.entity.impl.UserServiceImpl;
 import de.lh.tool.service.entity.interfaces.PasswordChangeTokenService;
+import de.lh.tool.service.entity.interfaces.UserRoleService;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -37,6 +38,9 @@ public class UserServiceTest {
 
 	@Mock
 	private PasswordChangeTokenService passwordChangeTokenService;
+
+	@Mock
+	private UserRoleService userRoleService;
 
 	@Mock
 	private AuthenticationManager authenticationManager;
@@ -174,7 +178,7 @@ public class UserServiceTest {
 		Mockito.when(userRepository.findById(Mockito.eq(0l))).thenReturn(Optional.empty());
 		DefaultException exception = assertThrows(DefaultException.class,
 				() -> userService.changePassword(0l, null, null, "abcdef", "abcdef"));
-		assertEquals(ExceptionEnum.EX_PASSWORDS_INVALID_USER_ID, exception.getException());
+		assertEquals(ExceptionEnum.EX_INVALID_USER_ID, exception.getException());
 	}
 
 	@Test
@@ -190,9 +194,23 @@ public class UserServiceTest {
 	public void testChangePasswordUserHasNoToken() {
 		Mockito.when(userRepository.findById(Mockito.eq(1l))).thenReturn(Optional
 				.of(User.builder().email("test@te.st").firstName("Tes").lastName("Ter").gender(Gender.MALE).build()));
+		Mockito.when(userRoleService.hasCurrentUserRight(Mockito.eq(UserRole.RIGHT_USERS_CHANGE_FOREIGN_PASSWORD)))
+				.thenReturn(false);
 		DefaultException exception = assertThrows(DefaultException.class,
 				() -> userService.changePassword(1l, "abc", null, "abcdef", "abcdef"));
 		assertEquals(ExceptionEnum.EX_PASSWORDS_INVALID_TOKEN, exception.getException());
+	}
+
+	@Test
+	public void testChangePasswordUserHasNoTokenAdmin() throws DefaultException {
+		Mockito.when(userRepository.findById(Mockito.eq(1l))).thenReturn(Optional
+				.of(User.builder().email("test@te.st").firstName("Tes").lastName("Ter").gender(Gender.MALE).build()));
+		Mockito.when(userRoleService.hasCurrentUserRight(Mockito.eq(UserRole.RIGHT_USERS_CHANGE_FOREIGN_PASSWORD)))
+				.thenReturn(true);
+		Mockito.when(userRepository.save(Mockito.any())).thenAnswer(i -> i.getArgument(0));
+		Mockito.when(passwordEncoder.encode(Mockito.anyString())).then(i -> i.<String>getArgument(0).toUpperCase());
+		User user = userService.changePassword(1l, "abc", null, "abcdef", "abcdef");
+		assertEquals("ABCDEF", user.getPassword());
 	}
 
 	@Test

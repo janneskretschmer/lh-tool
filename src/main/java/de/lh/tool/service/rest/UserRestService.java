@@ -54,6 +54,12 @@ public class UserRestService {
 		throw new DefaultException(ExceptionEnum.EX_USERS_NOT_FOUND);
 	}
 
+	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.USER_CURRENT)
+	@ApiOperation(value = "Get data of current users")
+	public Resource<UserDto> getCurrent() throws DefaultException {
+		return new Resource<>(convertToDto(userService.getCurrentUser()));
+	}
+
 	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@Secured(UserRole.RIGHT_USERS_CREATE)
 	public Resource<UserDto> add(@RequestBody UserCreationDto userCreationDto) throws DefaultException {

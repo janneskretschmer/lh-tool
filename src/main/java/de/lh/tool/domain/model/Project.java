@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import lombok.Data;
 
@@ -28,9 +30,11 @@ public class Project {
 	private String name;
 
 	@Column(name = "start_date", nullable = false)
+	@Temporal(TemporalType.DATE)
 	private Date startDate;
 
 	@Column(name = "end_date", nullable = false)
+	@Temporal(TemporalType.DATE)
 	private Date endDate;
 
 	@ManyToMany()

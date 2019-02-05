@@ -92,8 +92,7 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 			throw new DefaultException(ExceptionEnum.EX_PASSWORDS_NO_USER_ID);
 		}
 
-		User user = findById(userId)
-				.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_PASSWORDS_INVALID_USER_ID));
+		User user = findById(userId).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_USER_ID));
 
 		if (!userRoleService.hasCurrentUserRight(UserRole.RIGHT_USERS_CHANGE_FOREIGN_PASSWORD)) {
 			if (oldPassword == null) {

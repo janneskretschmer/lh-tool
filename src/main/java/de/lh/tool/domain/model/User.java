@@ -26,6 +26,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
@@ -34,6 +35,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "user")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User implements UserDetails {
 	private static final long serialVersionUID = 2931297692792293149L;
 
@@ -55,6 +57,7 @@ public class User implements UserDetails {
 	private String passwordHash;
 
 	@Column(name = "email", length = 100, unique = true, nullable = false)
+	@EqualsAndHashCode.Include
 	private String email;
 
 	@Column(name = "telephone_number", length = 30)

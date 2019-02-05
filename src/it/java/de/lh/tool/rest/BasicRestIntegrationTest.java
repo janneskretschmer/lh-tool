@@ -84,8 +84,12 @@ public abstract class BasicRestIntegrationTest {
 		return res != null ? res.getAccessToken() : null;
 	}
 
-	protected RequestSpecification getRequestSpecWithJWT(String jwt) {
+	protected RequestSpecification getRequestSpecWithJwt(String jwt) {
 		return RestAssured.given().header("Authorization", "Bearer " + jwt);
+	}
+
+	protected RequestSpecification getRequestSpecWithJwtByEmail(String email) {
+		return getRequestSpecWithJwt(getJwtByEmail(email));
 	}
 
 	protected void createTestUsers() throws Exception {
@@ -96,14 +100,14 @@ public abstract class BasicRestIntegrationTest {
 		String passwordUrl = REST_URL + "/users/password";
 		int counter = 0;
 		for (User user : TEST_USERS) {
-			Long userId = getRequestSpecWithJWT(jwt)
+			Long userId = getRequestSpecWithJwt(jwt)
 					.body(new UserCreationDto(user.getFirstName(), user.getLastName(), user.getEmail(),
 							Gender.MALE.name()))
 					.contentType(ContentType.JSON).post(registrationUrl).as(UserDto.class).getId();
-			getRequestSpecWithJWT(jwt).body(
+			getRequestSpecWithJwt(jwt).body(
 					PasswordChangeDto.builder().userId(userId).newPassword(PASSWORD).confirmPassword(PASSWORD).build())
 					.contentType(ContentType.JSON).put(passwordUrl).then().statusCode(200);
-			getRequestSpecWithJWT(jwt)
+			getRequestSpecWithJwt(jwt)
 					.body(new UserRolesDto(
 							user.getRoles().stream().map(UserRole::getRole).collect(Collectors.toList())))
 					.contentType(ContentType.JSON).put(registrationUrl + userId + "/roles").then().statusCode(200);
@@ -115,12 +119,12 @@ public abstract class BasicRestIntegrationTest {
 		String jwt = getJwtByEmail(ADMIN_EMAIL);
 		assertNotNull(jwt);
 		String url = REST_URL + "/users/";
-		List<UserDto> users = getRequestSpecWithJWT(jwt).get(url).then().extract().jsonPath().getList("content",
+		List<UserDto> users = getRequestSpecWithJwt(jwt).get(url).then().extract().jsonPath().getList("content",
 				UserDto.class);
 		List<String> emails = TEST_USERS.stream().map(User::getEmail).collect(Collectors.toList());
 		for (UserDto user : users) {
 			if (emails.contains(user.getEmail())) {
-				getRequestSpecWithJWT(jwt).delete(url + user.getId()).then().statusCode(204);
+				getRequestSpecWithJwt(jwt).delete(url + user.getId()).then().statusCode(204);
 			}
 		}
 	}
