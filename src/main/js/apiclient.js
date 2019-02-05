@@ -8,6 +8,77 @@ import {
     INFO_HEARTBEAT,
 } from './urlmappings';
 
+function isWellFormedEndpoint(apiEndpoint) {
+    return apiEndpoint && apiEndpoint.method && apiEndpoint.path;
+}
+
+function areParametersValid(apiEndpoint, parameters) {
+    if ('parameters' in apiEndpoint) {
+        const parKeys = Object.keys(parameters);
+        const parDiff = (apiEndpoint.parameters || []).filter(par => !parKeys.includes(par));
+        return parDiff.length === 0;
+    } else {
+        return true;
+    }
+}
+
+function renderPath({ apiEndpoint, parameters }) {
+    if (!isWellFormedEndpoint(apiEndpoint)) {
+        return { error: new Error('No apiEndpoint of form {method,path} given.') };
+    }
+    else if (!areParametersValid(apiEndpoint, parameters)) {
+        return { error: new Error('Missing parameters') };
+    } else {
+        return { path: URI.expand(getContextPath() + apiEndpoint.path, parameters) };
+    }
+}
+
+function buildRequest({ method, path, authToken, queries, data }) {
+    const apiHostUrlTemplate = new URI('/');
+    let pendingReq = superagent(method, apiHostUrlTemplate.path(path).toString()).type('json');
+    if (authToken) {
+        pendingReq = pendingReq.set('Authorization', `Bearer ${authToken}`);
+    }
+    Object.keys(queries).forEach(queryKey => {
+        pendingReq = pendingReq.query({
+            // eslint-disable-next-line security/detect-object-injection
+            [queryKey]: queries[queryKey]
+        });
+    });
+    if (data) {
+        pendingReq = pendingReq.send(data);
+    }
+    return pendingReq;
+}
+
+function handleResponse(err, resBody, resolve, reject) {
+    if (err) {
+        reject({
+            error: err,
+            response: resBody
+        });
+    }
+    else if (!resBody) {
+        reject({
+            error: new Error('No valid data received.'),
+            response: null
+        });
+    }
+    else {
+        resolve({
+            error: null,
+            response: resBody
+        });
+    }
+}
+
+function completeRequest(request, resolve, reject) {
+    request.end((err, res) => {
+        const resBody = res ? (res.body || null) : null;
+        handleResponse(err, resBody, resolve, reject);
+    });
+}
+
 export function apiRequest({
     apiEndpoint,
     authToken,
@@ -21,59 +92,22 @@ export function apiRequest({
         parameters: {},
         data: null,
     }) {
-    const apiHostUrlTemplate = new URI('/');
 
-    if (!apiEndpoint || (!apiEndpoint.method) || (!apiEndpoint.path)) {
-        return Promise.reject(new Error('No apiEndpoint of form {method,path} given.'));
+    const renderedPathResult = renderPath({ apiEndpoint, parameters });
+    if (renderedPathResult.error) {
+        return Promise.reject(renderedPathResult.error);
     }
 
-    if ('parameters' in apiEndpoint) {
-        const parKeys = Object.keys(parameters);
-        const parDiff = (apiEndpoint.parameters || []).filter(par => !parKeys.includes(par));
-        if (parDiff.length > 0) {
-            return Promise.reject(new Error(`Missing parameters: ${JSON.stringify(parDiff)}`));
-        }
-    }
-
-    const renderedPath = URI.expand(getContextPath() + apiEndpoint.path, parameters);
-
-    let pendingReq = superagent(apiEndpoint.method, apiHostUrlTemplate.path(renderedPath).toString()).type('json');
-
-    if (authToken) {
-        pendingReq = pendingReq.set('Authorization', `Bearer ${authToken}`);
-    }
-
-    Object.keys(queries).forEach(queryKey => {
-        pendingReq = pendingReq.query({
-            [queryKey]: queries[queryKey]
-        });
+    const req = buildRequest({
+        method: apiEndpoint.method,
+        path: renderedPathResult.path,
+        authToken,
+        queries,
+        data,
     });
 
-    if (data) {
-        pendingReq = pendingReq.send(data);
-    }
-
     return new Promise((resolve, reject) => {
-        pendingReq.end((err, res) => {
-            if (err) {
-                reject({
-                    error: err,
-                    response: res ? (res.body || null) : null
-                });
-            }
-            else if (!res.body) {
-                reject({
-                    error: new Error('No valid data received.'),
-                    response: null
-                });
-            }
-            else {
-                resolve({
-                    error: null,
-                    response: res.body
-                });
-            }
-        });
+        completeRequest(req, resolve, reject);
     });
 }
 
