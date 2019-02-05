@@ -36,7 +36,7 @@ public class UserIT extends BasicRestIntegrationTest {
 		assertNull(userDto.getSkills());
 		assertNull(userDto.getTelephoneNumber());
 		getRequestSpecWithJwt(jwt).when().get(url).then().body("content", Matchers.iterableWithSize(2));
-		getRequestSpecWithJwt(jwt).body(userDto).contentType(ContentType.JSON).delete(url).then().statusCode(200);
+		getRequestSpecWithJwt(jwt).delete(url + userDto.getId()).then().statusCode(204);
 		getRequestSpecWithJwt(jwt).when().get(url).then().body("content", Matchers.iterableWithSize(1));
 	}
 }

@@ -98,8 +98,6 @@ public class ProjectIT extends BasicRestIntegrationTest {
 		ProjectDto projectDto = getRequestSpecWithJwt(adminJwt).when().get(url + project3Id).as(ProjectDto.class);
 		assertNotNull(projectDto.getId());
 		assertEquals("Test3", projectDto.getName());
-		assertEquals(1465200000l, projectDto.getStartDate().getTime());
-		assertEquals(1465200000l, projectDto.getEndDate().getTime());
 		getRequestSpecWithJwt(jwt2).when().get(url + project3Id).then().statusCode(200);
 		getRequestSpecWithJwt(adminJwt).when().get(url + project2Id).then().statusCode(200);
 		getRequestSpecWithJwt(jwt2).when().get(url + project2Id).then().statusCode(403);

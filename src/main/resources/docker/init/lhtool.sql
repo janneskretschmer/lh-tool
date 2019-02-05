@@ -36,19 +36,6 @@ CREATE TABLE `password_change_token` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `project`
---
-
-CREATE TABLE `project` (
-  `id` int(11) NOT NULL,
-  `name` varchar(150) NOT NULL,
-  `start_date` date NOT NULL,
-  `end_date` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
 -- Tabellenstruktur für Tabelle `schema_version`
 --
 
@@ -134,13 +121,6 @@ ALTER TABLE `password_change_token`
   ADD UNIQUE KEY `user_id_UNIQUE` (`user_id`);
 
 --
--- Indizes für die Tabelle `project`
---
-ALTER TABLE `project`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `name` (`name`);
-
---
 -- Indizes für die Tabelle `schema_version`
 --
 ALTER TABLE `schema_version`
@@ -172,11 +152,6 @@ ALTER TABLE `user_role`
 --
 ALTER TABLE `password_change_token`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
---
--- AUTO_INCREMENT für Tabelle `project`
---
-ALTER TABLE `project`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT für Tabelle `user`
 --
