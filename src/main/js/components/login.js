@@ -1,6 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { LoginContext } from '../providers/login-provider';
+import { SessionContext } from '../providers/session-provider';
 import { login } from '../actions/login';
 
 class LoginComponent extends React.Component {
@@ -12,7 +12,7 @@ class LoginComponent extends React.Component {
 
     render() {
         return (
-            <LoginContext.Consumer>
+            <SessionContext.Consumer>
                 {loginState => (
                     <form onSubmit={evt => {
                         evt.preventDefault();
@@ -34,7 +34,7 @@ class LoginComponent extends React.Component {
                         </button>
                     </form>
                 )}
-            </LoginContext.Consumer>
+            </SessionContext.Consumer>
         );
     }
 }
