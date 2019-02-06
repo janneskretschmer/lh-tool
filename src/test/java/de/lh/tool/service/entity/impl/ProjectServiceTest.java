@@ -16,8 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import de.lh.tool.domain.model.Project;
 import de.lh.tool.domain.model.User;
-import de.lh.tool.service.entity.interfaces.ProjectUserService;
-import de.lh.tool.service.entity.interfaces.UserRoleService;
 import de.lh.tool.service.entity.interfaces.UserService;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,11 +24,9 @@ public class ProjectServiceTest {
 	@Mock
 	private UserService userService;
 
-	@Mock
-	private UserRoleService userRoleService;
+	// @Mock private UserRoleService userRoleService;
 
-	@Mock
-	private ProjectUserService projectUserService;
+	// @Mock private ProjectUserService projectUserService;
 
 	@InjectMocks
 	private ProjectServiceImpl projectService;
