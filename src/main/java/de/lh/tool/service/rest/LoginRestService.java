@@ -16,7 +16,7 @@ import de.lh.tool.domain.dto.JwtAuthenticationDto;
 import de.lh.tool.domain.dto.LoginDto;
 
 @RestController
-@RequestMapping(UrlMappings.LOGIN_PEFIX)
+@RequestMapping(UrlMappings.LOGIN_PREFIX)
 public class LoginRestService {
 
 	@Autowired

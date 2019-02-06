@@ -3,7 +3,7 @@ import URI from 'urijs';
 import URITemplate from 'urijs/src/URITemplate';
 import { getContextPath } from './config';
 import {
-    LOGIN_PEFIX,
+    LOGIN_PREFIX,
     INFO_PREFIX,
     INFO_HEARTBEAT,
 } from './urlmappings';
@@ -122,7 +122,7 @@ export const apiEndpoints = {
         login: {
             method: 'POST',
             // TODO Trailing '/' seems to be necessary
-            path: LOGIN_PEFIX + '/',
+            path: LOGIN_PREFIX + '/',
         },
     },
     project: null,

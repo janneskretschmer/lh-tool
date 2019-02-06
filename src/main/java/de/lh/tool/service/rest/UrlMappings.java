@@ -21,7 +21,7 @@ public abstract class UrlMappings {
 	public static final String USER_CURRENT = "/current";
 	public static final String USER_ROLES = "/{" + ID_VARIABLE + "}/roles";
 
-	public static final String LOGIN_PEFIX = REST_PREFIX + "/login";
+	public static final String LOGIN_PREFIX = REST_PREFIX + "/login";
 
 	public static final String PROJECT_PREFIX = REST_PREFIX + "/projects";
 
