@@ -18,7 +18,7 @@ function getCurrentUserState(accessToken) {
 
 @resolve('initialUserData', () => {
     // For the time being, a naive sessionStorage implementation is sufficient
-    // FUTURE: needs to change as soon as isomorphice rendering is employed
+    // FUTURE: needs to change as soon as isomorphic rendering is employed
     const accessToken = sessionStorage.getItem(ACCTOKEN_KEY);
     return getCurrentUserState(accessToken);
 })
