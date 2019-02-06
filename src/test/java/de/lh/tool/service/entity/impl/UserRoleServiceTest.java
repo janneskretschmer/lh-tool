@@ -29,7 +29,7 @@ public class UserRoleServiceTest {
 
 	@BeforeEach
 	public void before() {
-		MockitoAnnotations.initMocks(userService);
+		MockitoAnnotations.initMocks(userRoleService);
 	}
 
 	@Test

@@ -27,14 +27,14 @@ public interface MappableEntityService<E, D> {
 		if (dtoList == null) {
 			return Collections.emptyList();
 		}
-		return dtoList.stream().map(d -> convertToEntity(d)).collect(Collectors.toList());
+		return dtoList.stream().map(this::convertToEntity).collect(Collectors.toList());
 	}
 
 	default List<D> convertToDtoList(Collection<E> entityList) {
 		if (entityList == null) {
 			return Collections.emptyList();
 		}
-		return entityList.stream().map(e -> convertToDto(e)).collect(Collectors.toList());
+		return entityList.stream().map(this::convertToDto).collect(Collectors.toList());
 	}
 
 	Class<D> getDtoClass();

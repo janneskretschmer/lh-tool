@@ -1,7 +1,5 @@
 package de.lh.tool.service.entity.impl;
 
-import java.util.Optional;
-
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,10 +57,7 @@ public class ProjectUserServiceImpl
 				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_CHANGE_FOREIGN)) {
 			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
 		}
-		Optional<ProjectUser> tmp = getRepository().findByProjectAndUser(project, user);
-		if (tmp.isPresent()) {
-			delete(tmp.get());
-		}
+		getRepository().findByProjectAndUser(project, user).ifPresent(this::delete);
 	}
 
 }

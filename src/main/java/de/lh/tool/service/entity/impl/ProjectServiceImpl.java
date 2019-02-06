@@ -82,7 +82,8 @@ public class ProjectServiceImpl extends BasicMappableEntityServiceImpl<ProjectRe
 
 	@Override
 	public boolean isOwnProject(Project project) {
-		return project.getUsers() == null || project.getUsers().contains(userService.getCurrentUser());
+		return project != null && project.getUsers() != null
+				&& project.getUsers().contains(userService.getCurrentUser());
 	}
 
 }
