@@ -9,6 +9,13 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ExceptionEnum {
 
+	EX_ID_PROVIDED("Please don't provide an ID for new entities.", HttpStatus.BAD_REQUEST),
+	EX_NO_ID_PROVIDED("Please provide an ID for changed entities.", HttpStatus.BAD_REQUEST),
+	EX_WRONG_ID_PROVIDED("Please provide a valid ID.", HttpStatus.BAD_REQUEST),
+	EX_INVALID_ID("The provided id is invalid.", HttpStatus.BAD_REQUEST),
+	EX_INVALID_USER_ID("The provided user id is invalid.", HttpStatus.BAD_REQUEST),
+	EX_FORBIDDEN("You don't have the sufficient rights for this action.", HttpStatus.FORBIDDEN),
+
 	EX_USERS_NOT_FOUND("The users couldn't be found.", HttpStatus.NOT_FOUND),
 	EX_USER_NO_EMAIL("The user has no email adress.", HttpStatus.BAD_REQUEST),
 	EX_USER_NO_FIRST_NAME("The user has no first name.", HttpStatus.BAD_REQUEST),
@@ -18,7 +25,6 @@ public enum ExceptionEnum {
 	EX_PASSWORDS_DO_NOT_MATCH("The provided passwords do not match.", HttpStatus.BAD_REQUEST),
 	EX_PASSWORDS_NO_TOKEN_OR_OLD_PASSWORD("No token or old password was provided.", HttpStatus.BAD_REQUEST),
 	EX_PASSWORDS_NO_USER_ID("No user id was provided.", HttpStatus.BAD_REQUEST),
-	EX_PASSWORDS_INVALID_USER_ID("The provided user id is invalid.", HttpStatus.BAD_REQUEST),
 	EX_PASSWORDS_INVALID_TOKEN("The provided token is invalid.", HttpStatus.BAD_REQUEST),
 	EX_PASSWORDS_EXPIRED_TOKEN("The provided token is expired.", HttpStatus.BAD_REQUEST),
 	EX_PASSWORDS_INVALID_PASSWORD("The provided old password is invalid.", HttpStatus.BAD_REQUEST),

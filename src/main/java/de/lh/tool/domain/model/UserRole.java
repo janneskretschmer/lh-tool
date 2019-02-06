@@ -20,13 +20,18 @@ import org.springframework.security.core.GrantedAuthority;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "user_role")
+@EqualsAndHashCode(of = "role")
+@RequiredArgsConstructor
 public class UserRole implements GrantedAuthority {
 
 	private static final long serialVersionUID = -370455906327675533L;
@@ -40,6 +45,7 @@ public class UserRole implements GrantedAuthority {
 	private User user;
 
 	@Column(name = "role", length = 100, nullable = false)
+	@NonNull
 	private String role;
 
 //  ██████╗__██████╗_██╗_____███████╗███████╗
@@ -67,14 +73,19 @@ public class UserRole implements GrantedAuthority {
 	public static final String RIGHT_USERS_GET_ALL = "ROLE_RIGHT_USERS_GET_ALL";
 	public static final String RIGHT_USERS_CREATE = "ROLE_RIGHT_USERS_CREATE";
 	public static final String RIGHT_USERS_DELETE = "ROLE_RIGHT_USERS_DELETE";
+	public static final String RIGHT_USERS_CHANGE_FOREIGN_PASSWORD = "ROLE_RIGHT_USERS_CHANGE_FOREIGN_PASSWORD";
+	public static final String RIGHT_USERS_CHANGE_ROLES = "ROLE_RIGHT_USERS_CHANGE_ROLES";
 
 	public static final String RIGHT_PROJECTS_GET = "ROLE_RIGHT_PROJECTS_GET";
 	public static final String RIGHT_PROJECTS_GET_BY_ID = "ROLE_RIGHT_PROJECTS_GET_BY_ID";
+	public static final String RIGHT_PROJECTS_GET_FOREIGN = "ROLE_RIGHT_PROJECTS_GET_FOREIGN";
 	public static final String RIGHT_PROJECTS_POST = "ROLE_RIGHT_PROJECTS_POST";
 	public static final String RIGHT_PROJECTS_PUT = "ROLE_RIGHT_PROJECTS_PUT";
+	public static final String RIGHT_PROJECTS_DELETE = "ROLE_RIGHT_PROJECTS_DELETE";
 
-	public static final String RIGHT_PROJECTS_USERS_PUT = "ROLE_RIGHT_PROJECTS_USERS_PUT";
+	public static final String RIGHT_PROJECTS_USERS_POST = "ROLE_RIGHT_PROJECTS_USERS_POST";
 	public static final String RIGHT_PROJECTS_USERS_DELETE = "ROLE_RIGHT_PROJECTS_USERS_DELETE";
+	public static final String RIGHT_PROJECTS_USERS_CHANGE_FOREIGN = "ROLE_RIGHT_PROJECTS_USERS_CHANGE_FOREIGN";
 
 	public static final String RIGHT_NEEDS_GET = "ROLE_RIGHT_NEEDS_GET";
 	public static final String RIGHT_NEEDS_GET_BY_ID = "ROLE_RIGHT_NEEDS_GET_BY_ID";
@@ -98,11 +109,16 @@ public class UserRole implements GrantedAuthority {
 //  ╚██████╔╝██║__██║██║__██║██║_╚████║___██║___██║██║_╚████║╚██████╔╝
 //  _╚═════╝_╚═╝__╚═╝╚═╝__╚═╝╚═╝__╚═══╝___╚═╝___╚═╝╚═╝__╚═══╝_╚═════╝_
 
-			roleRights.put(ROLE_ADMIN, List.of(RIGHT_USERS_GET_ALL, RIGHT_USERS_CREATE, RIGHT_USERS_DELETE));
+			roleRights.put(ROLE_ADMIN, List.of(RIGHT_USERS_GET_ALL, RIGHT_USERS_CREATE, RIGHT_USERS_DELETE,
+					RIGHT_USERS_CHANGE_FOREIGN_PASSWORD, RIGHT_USERS_CHANGE_ROLES, RIGHT_PROJECTS_GET,
+					RIGHT_PROJECTS_GET_BY_ID, RIGHT_PROJECTS_GET_FOREIGN, RIGHT_PROJECTS_POST, RIGHT_PROJECTS_DELETE,
+					RIGHT_PROJECTS_PUT, RIGHT_PROJECTS_USERS_DELETE, RIGHT_PROJECTS_USERS_POST,
+					RIGHT_PROJECTS_USERS_CHANGE_FOREIGN, RIGHT_NEEDS_GET, RIGHT_NEEDS_GET_BY_ID, RIGHT_NEEDS_POST,
+					RIGHT_NEEDS_PUT, RIGHT_NEEDS_USERS_PUT, RIGHT_NEEDS_USERS_GET));
 
 			roleRights.put(ROLE_CONSTRUCTION_SERVANT,
 					List.of(RIGHT_PROJECTS_GET, RIGHT_PROJECTS_GET_BY_ID, RIGHT_PROJECTS_POST, RIGHT_PROJECTS_PUT,
-							RIGHT_PROJECTS_USERS_DELETE, RIGHT_PROJECTS_USERS_PUT, RIGHT_NEEDS_GET,
+							RIGHT_PROJECTS_USERS_DELETE, RIGHT_PROJECTS_USERS_POST, RIGHT_NEEDS_GET,
 							RIGHT_NEEDS_GET_BY_ID, RIGHT_NEEDS_POST, RIGHT_NEEDS_PUT, RIGHT_NEEDS_USERS_PUT,
 							RIGHT_NEEDS_USERS_GET));
 

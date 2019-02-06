@@ -8,7 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 import de.lh.tool.service.entity.interfaces.BasicEntityService;
 import lombok.Getter;
 
-public abstract class BasicEntityServiceImpl<R extends CrudRepository<T, I>, T, I> implements BasicEntityService<T, I> {
+public abstract class BasicEntityServiceImpl<R extends CrudRepository<E, I>, E, I> implements BasicEntityService<E, I> {
 	@Autowired
 	@Getter
 	private R repository;
@@ -19,7 +19,7 @@ public abstract class BasicEntityServiceImpl<R extends CrudRepository<T, I>, T, 
 	}
 
 	@Override
-	public void delete(T entity) {
+	public void delete(E entity) {
 		repository.delete(entity);
 	}
 
@@ -29,7 +29,7 @@ public abstract class BasicEntityServiceImpl<R extends CrudRepository<T, I>, T, 
 	}
 
 	@Override
-	public void deleteAll(Iterable<? extends T> entities) {
+	public void deleteAll(Iterable<? extends E> entities) {
 		repository.deleteAll(entities);
 	}
 
@@ -44,27 +44,27 @@ public abstract class BasicEntityServiceImpl<R extends CrudRepository<T, I>, T, 
 	}
 
 	@Override
-	public Iterable<T> findAll() {
+	public Iterable<E> findAll() {
 		return repository.findAll();
 	}
 
 	@Override
-	public Iterable<T> findAllById(Iterable<I> ids) {
+	public Iterable<E> findAllById(Iterable<I> ids) {
 		return repository.findAllById(ids);
 	}
 
 	@Override
-	public Optional<T> findById(I id) {
+	public Optional<E> findById(I id) {
 		return repository.findById(id);
 	}
 
 	@Override
-	public T save(T entity) {
+	public E save(E entity) {
 		return repository.save(entity);
 	}
 
 	@Override
-	public Iterable<T> saveAll(Iterable<T> entities) {
+	public Iterable<E> saveAll(Iterable<E> entities) {
 		return repository.saveAll(entities);
 	}
 }

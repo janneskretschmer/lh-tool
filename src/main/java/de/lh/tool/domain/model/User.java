@@ -13,6 +13,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -23,6 +26,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
@@ -31,6 +35,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "user")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User implements UserDetails {
 	private static final long serialVersionUID = 2931297692792293149L;
 
@@ -52,6 +57,7 @@ public class User implements UserDetails {
 	private String passwordHash;
 
 	@Column(name = "email", length = 100, unique = true, nullable = false)
+	@EqualsAndHashCode.Include
 	private String email;
 
 	@Column(name = "telephone_number", length = 30)
@@ -75,6 +81,10 @@ public class User implements UserDetails {
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
 	private Collection<UserRole> roles;
 
+	@ManyToMany
+	@JoinTable(name = "project_user", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "project_id"))
+	private Collection<Project> projects;
+
 	public enum Gender {
 		MALE, FEMALE;
 	}
@@ -82,8 +92,10 @@ public class User implements UserDetails {
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		Set<GrantedAuthority> result = new HashSet<>();
-		for (UserRole role : roles) {
-			result.addAll(role.getRoleWithRights());
+		if (roles != null) {
+			for (UserRole role : roles) {
+				result.addAll(role.getRoleWithRights());
+			}
 		}
 		return result;
 	}

@@ -14,4 +14,6 @@ public interface UserService extends BasicEntityService<User, Long> {
 	User changePassword(Long userId, String token, String oldPassword, String newPassword, String confirmPassword)
 			throws DefaultException;
 
+	User getCurrentUser();
+
 }
