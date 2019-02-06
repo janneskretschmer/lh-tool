@@ -134,7 +134,7 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 	@Transactional
 	public User getCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (!(authentication instanceof AnonymousAuthenticationToken)) {
+		if (authentication != null &&  !(authentication instanceof AnonymousAuthenticationToken)) {
 			String currentUserName = authentication.getName();
 			return getRepository().findByEmail(currentUserName).orElseThrow(
 					() -> new UsernameNotFoundException("User not " + currentUserName + " does not exist"));

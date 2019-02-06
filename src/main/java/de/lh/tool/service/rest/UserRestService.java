@@ -57,7 +57,11 @@ public class UserRestService {
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.USER_CURRENT)
 	@ApiOperation(value = "Get data of current users")
 	public Resource<UserDto> getCurrent() throws DefaultException {
-		return new Resource<>(convertToDto(userService.getCurrentUser()));
+		User user = userService.getCurrentUser();
+		if (user != null) {
+			return new Resource<>(convertToDto(user));
+		}
+		throw new DefaultException(ExceptionEnum.EX_USERS_NOT_FOUND);
 	}
 
 	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
@@ -106,6 +110,9 @@ public class UserRestService {
 	}
 
 	private UserDto convertToDto(User user) {
+		if (user == null) {
+			return null;
+		}
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addMappings(new PropertyMap<User, UserDto>() {
 			@Override
