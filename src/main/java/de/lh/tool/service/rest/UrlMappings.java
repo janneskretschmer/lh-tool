@@ -1,5 +1,7 @@
 package de.lh.tool.service.rest;
 
+// Needs to be kept in sync with urlmappings.js
+
 public abstract class UrlMappings {
 
 	public static final String REST_PREFIX = "/rest";

@@ -1,23 +1,20 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import rest from 'rest';
-import mime from 'rest/interceptor/mime';
+import { apiRequest, apiEndpoints } from '../apiclient';
 
 class HeartbeatComponent extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = { gotHeartbeat: false };
-        this.client = rest.wrap(mime);
         this.intervalId = null;
     }
 
     componentDidMount() {
         this.intervalId = setInterval(() => {
-            const hbUrl = '/lh-tool/rest/info/heartbeat';
-            this.client(hbUrl)
-                .then(response => {
-                    this.setState({ gotHeartbeat: response.entity });
+            apiRequest({ apiEndpoint: apiEndpoints.info.heartbeat })
+                .then(result => {
+                    this.setState({ gotHeartbeat: result.response });
                 })
                 .catch(err => {
                     this.setState({ gotHeartbeat: false });
