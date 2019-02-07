@@ -17,7 +17,7 @@ export const USER_PASSWORD = '/password';
 export const USER_CURRENT = '/current';
 export const USER_ROLES = '/{' + ID_VARIABLE + '}/roles';
 
-export const LOGIN_PEFIX = REST_PREFIX + '/login';
+export const LOGIN_PREFIX = REST_PREFIX + '/login';
 
 export const PROJECT_PREFIX = REST_PREFIX + '/projects';
 
