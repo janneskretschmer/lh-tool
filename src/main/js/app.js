@@ -5,13 +5,13 @@ import { fullPathOfHome, fullPathOfLogin, fullPathOfHeartbeat } from './paths';
 import HomeComponent from './components/home';
 import LoginComponent from './components/login';
 import HeartbeatComponent from './components/heartbeat';
-import LoginProvider, { LoginContext } from './providers/login-provider';
+import SessionProvider, { SessionContext } from './providers/session-provider';
 import { logout } from './actions/login';
 
 const LHToolApp = () => (
 	<Router>
 		<div>
-			<LoginProvider>
+			<SessionProvider>
 				<h1>LH-Tool</h1>
 				<h3>Local Helper Tool for LDC</h3>
 
@@ -29,17 +29,17 @@ const LHToolApp = () => (
 				<Route path={fullPathOfLogin()} component={LoginComponent} />
 				<Route path={fullPathOfHeartbeat()} component={HeartbeatComponent} />
 
-				<LoginContext.Consumer>
+				<SessionContext.Consumer>
 					{loginState => loginState.isLoggedIn() ? (
 						<>
-							<span>ANGEMELDET</span>
+							<span>{`ANGEMELDET:  ${loginState.currentUser.firstName} ${loginState.currentUser.lastName}`}</span>
 							<button onClick={() => logout({ loginState })}>Logout</button>
 						</>
 					) : (
 							<span>NICHT ANGEMELDET</span>
 						)}
-				</LoginContext.Consumer>
-			</LoginProvider>
+				</SessionContext.Consumer>
+			</SessionProvider>
 		</div>
 	</Router>
 );
