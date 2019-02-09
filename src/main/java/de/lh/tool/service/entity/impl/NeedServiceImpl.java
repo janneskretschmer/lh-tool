@@ -33,11 +33,22 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 
 	@Override
 	@Transactional
-	public List<NeedDto> getOwn() {
+	public List<NeedDto> getNeedDtos() {
 		return convertToDtoList(
 				userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_GET_FOREIGN) ? (Collection<Need>) findAll()
 						: StreamSupport.stream(findAll().spliterator(), false)
 								.filter(n -> projectService.isOwnProject(n.getProject())).collect(Collectors.toList()));
+	}
+
+	@Override
+	@Transactional
+	public NeedDto getNeedDtoById(Long id) throws DefaultException {
+		Need need = findById(id).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
+		if (projectService.isOwnProject(need.getProject())
+				|| userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_GET_FOREIGN)) {
+			return convertToDto(need);
+		}
+		throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
 	}
 
 	@Override
