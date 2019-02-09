@@ -3,10 +3,15 @@ package de.lh.tool.service.rest;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+import java.util.Collection;
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.Resources;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,11 +27,25 @@ import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.HelperType;
 import de.lh.tool.domain.model.UserRole;
+import de.lh.tool.service.entity.interfaces.NeedService;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping(UrlMappings.NEED_PREFIX)
 public class NeedRestService {
+
+	@Autowired
+	NeedService needService;
+
+	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
+	@ApiOperation(value = "Get a list of own needs")
+	@Secured(UserRole.RIGHT_NEEDS_GET)
+	public Resources<NeedDto> getOwn() throws DefaultException {
+
+		Collection<NeedDto> dtoList = needService.getOwn();
+
+		return new Resources<>(dtoList, linkTo(methodOn(NeedRestService.class).getOwn()).withSelfRel());
+	}
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
 	@ApiOperation(value = "Get a single need by id")
@@ -59,8 +78,10 @@ public class NeedRestService {
 	@ApiOperation(value = "Create a new need")
 	@Secured(UserRole.RIGHT_NEEDS_POST)
 	public Resource<NeedDto> create(@RequestBody(required = true) NeedDto dto) throws DefaultException {
-		dto.setId(3l);
-		return new Resource<>(dto, linkTo(methodOn(NeedRestService.class).create(dto)).withSelfRel());
+
+		NeedDto needDto = needService.saveNeedDto(dto);
+
+		return new Resource<>(needDto, linkTo(methodOn(NeedRestService.class).create(needDto)).withSelfRel());
 	}
 
 	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
@@ -69,6 +90,17 @@ public class NeedRestService {
 	public Resource<NeedDto> update(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@RequestBody(required = true) NeedDto dto) throws DefaultException {
 		return new Resource<>(dto, linkTo(methodOn(NeedRestService.class).create(dto)).withSelfRel());
+	}
+
+	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
+	@ApiOperation(value = "Delete a need")
+	@Secured(UserRole.RIGHT_NEEDS_DELETE)
+	public ResponseEntity<Void> delete(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
+			throws DefaultException {
+
+		needService.deleteOwn(id);
+
+		return ResponseEntity.noContent().build();
 	}
 
 	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_USER_ID_EXTENSION)

@@ -76,8 +76,21 @@ public class ProjectServiceImpl extends BasicMappableEntityServiceImpl<ProjectRe
 			throw new DefaultException(ExceptionEnum.EX_NO_ID_PROVIDED);
 		}
 		Project project = convertToEntity(projectDto);
+		if (!isOwnProject(project) && !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_CHANGE_FOREIGN)) {
+			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
+		}
 		project = save(project);
 		return convertToDto(project);
+	}
+
+	@Override
+	@Transactional
+	public void deleteOwn(Long id) throws DefaultException {
+		Project project = findById(id).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
+		if (!isOwnProject(project) && !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_CHANGE_FOREIGN)) {
+			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
+		}
+		delete(project);
 	}
 
 	@Override
