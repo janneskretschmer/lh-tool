@@ -4,7 +4,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.util.Collection;
-import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
@@ -24,8 +23,6 @@ import de.lh.tool.domain.dto.NeedDto;
 import de.lh.tool.domain.dto.NeedUserState;
 import de.lh.tool.domain.dto.NeedUserStateDto;
 import de.lh.tool.domain.exception.DefaultException;
-import de.lh.tool.domain.exception.ExceptionEnum;
-import de.lh.tool.domain.model.HelperType;
 import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.service.entity.interfaces.NeedService;
 import io.swagger.annotations.ApiOperation;
@@ -42,7 +39,7 @@ public class NeedRestService {
 	@Secured(UserRole.RIGHT_NEEDS_GET)
 	public Resources<NeedDto> getOwn() throws DefaultException {
 
-		Collection<NeedDto> dtoList = needService.getOwn();
+		Collection<NeedDto> dtoList = needService.getNeedDtos();
 
 		return new Resources<>(dtoList, linkTo(methodOn(NeedRestService.class).getOwn()).withSelfRel());
 	}
@@ -53,25 +50,9 @@ public class NeedRestService {
 	public Resource<NeedDto> getById(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 
-		if (id == 1l) {
-			NeedDto dto1 = new NeedDto();
-			dto1.setId(1l);
-			dto1.setProjectId(1l);
-			dto1.setDate(new Date(1533081600l));
-			dto1.setQuantity(3);
-			dto1.setHelperType(HelperType.CONSTRUCTION_WORKER);
-			return new Resource<>(dto1, linkTo(methodOn(NeedRestService.class).getById(id)).withSelfRel());
-		}
-		if (id == 2l) {
-			NeedDto dto2 = new NeedDto();
-			dto2.setId(2l);
-			dto2.setProjectId(2l);
-			dto2.setDate(new Date(1556668800l));
-			dto2.setQuantity(7);
-			dto2.setHelperType(HelperType.KITCHEN_HELPER);
-			return new Resource<>(dto2, linkTo(methodOn(NeedRestService.class).getById(id)).withSelfRel());
-		}
-		throw new DefaultException(ExceptionEnum.EX_NEED_NOT_FOUND);
+		NeedDto dto = needService.getNeedDtoById(id);
+
+		return new Resource<>(dto, linkTo(methodOn(NeedRestService.class).getById(id)).withSelfRel());
 	}
 
 	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)

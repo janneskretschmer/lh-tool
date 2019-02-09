@@ -2,7 +2,10 @@ package de.lh.tool.rest;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -57,6 +60,8 @@ public abstract class BasicRestIntegrationTest {
 			User.builder().email(INVENTORY_MANAGER_2_EMAIL).firstName("Inventory").lastName("Manager2")
 					.roles(List.of(new UserRole(UserRole.ROLE_INVENTORY_MANAGER))).build());
 
+	private Map<String, String> jwtCache = new HashMap<>();
+
 	private static final int TIMEOUT = 30000;
 	protected static final String REST_URL = "http://localhost:8080/lh-tool/rest";
 
@@ -79,10 +84,13 @@ public abstract class BasicRestIntegrationTest {
 	}
 
 	protected String getJwtByEmail(String email) {
-		String url = REST_URL + "/login/";
-		JwtAuthenticationDto res = RestAssured.given().body(new LoginDto(email, PASSWORD)).contentType(ContentType.JSON)
-				.when().post(url).as(JwtAuthenticationDto.class);
-		return res != null ? res.getAccessToken() : null;
+		if (!jwtCache.containsKey(email)) {
+			String url = REST_URL + "/login/";
+			JwtAuthenticationDto res = RestAssured.given().body(new LoginDto(email, PASSWORD))
+					.contentType(ContentType.JSON).when().post(url).as(JwtAuthenticationDto.class);
+			jwtCache.put(email, res != null ? res.getAccessToken() : null);
+		}
+		return jwtCache.get(email);
 	}
 
 	protected RequestSpecification getRequestSpecWithJwt(String jwt) {
@@ -138,6 +146,12 @@ public abstract class BasicRestIntegrationTest {
 				ProjectDto.class);
 		projects.stream().filter(p -> p.getName().startsWith("Test"))
 				.forEach(p -> getRequestSpecWithJwt(jwt).delete(url + p.getId()).then().statusCode(204));
+	}
+
+	protected void testForUsers(Consumer<RequestSpecification> consumer, String... emails) {
+		for (String email : emails) {
+			consumer.accept(getRequestSpecWithJwtByEmail(email));
+		}
 	}
 
 }
