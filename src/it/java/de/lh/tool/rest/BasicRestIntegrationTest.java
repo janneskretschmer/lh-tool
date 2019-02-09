@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeAll;
 import de.lh.tool.domain.dto.JwtAuthenticationDto;
 import de.lh.tool.domain.dto.LoginDto;
 import de.lh.tool.domain.dto.PasswordChangeDto;
+import de.lh.tool.domain.dto.ProjectDto;
 import de.lh.tool.domain.dto.UserCreationDto;
 import de.lh.tool.domain.dto.UserDto;
 import de.lh.tool.domain.dto.UserRolesDto;
@@ -94,6 +95,8 @@ public abstract class BasicRestIntegrationTest {
 
 	protected void createTestUsers() throws Exception {
 		deleteTestUsers();
+		deleteTestProjects();
+
 		String jwt = getJwtByEmail(ADMIN_EMAIL);
 		assertNotNull(jwt);
 		String registrationUrl = REST_URL + "/users/";
@@ -126,4 +129,15 @@ public abstract class BasicRestIntegrationTest {
 			}
 		}
 	}
+
+	protected void deleteTestProjects() {
+		String jwt = getJwtByEmail(ADMIN_EMAIL);
+		assertNotNull(jwt);
+		String url = REST_URL + "/projects/";
+		List<ProjectDto> projects = getRequestSpecWithJwt(jwt).get(url).then().extract().jsonPath().getList("content",
+				ProjectDto.class);
+		projects.stream().filter(p -> p.getName().startsWith("Test"))
+				.forEach(p -> getRequestSpecWithJwt(jwt).delete(url + p.getId()).then().statusCode(204));
+	}
+
 }

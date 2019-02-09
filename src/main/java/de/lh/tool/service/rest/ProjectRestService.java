@@ -89,7 +89,7 @@ public class ProjectRestService {
 	public ResponseEntity<Void> delete(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 
-		projectService.deleteById(id);
+		projectService.deleteOwn(id);
 
 		return ResponseEntity.noContent().build();
 	}

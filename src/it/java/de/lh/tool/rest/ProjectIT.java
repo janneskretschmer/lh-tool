@@ -114,6 +114,10 @@ public class ProjectIT extends BasicRestIntegrationTest {
 		RestAssured.given().delete(url + dto.getId() + "/" + adminId).then().statusCode(401);
 		getRequestSpecWithJwt(jwt2).delete(url + dto.getId() + "/" + adminId).then().statusCode(204);
 
+		// own project
+		getRequestSpecWithJwt(jwt).delete(url + dto.getId()).then().statusCode(403);
+		// foreign project
+		getRequestSpecWithJwt(jwt2).delete(url + project2Id).then().statusCode(403);
 		getRequestSpecWithJwt(adminJwt).delete(url + dto.getId()).then().statusCode(204);
 		getRequestSpecWithJwt(adminJwt).delete(url + project2Id).then().statusCode(204);
 		getRequestSpecWithJwt(adminJwt).delete(url + project3Id).then().statusCode(204);
