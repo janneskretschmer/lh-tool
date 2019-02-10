@@ -19,12 +19,3 @@ export function fetchOwnProjects({ accessToken }) {
         return Promise.resolve([]);
     }
 }
-
-export function fetchCurrentUser({ accessToken }) {
-    return apiRequest({
-        apiEndpoint: apiEndpoints.user.current,
-        authToken: accessToken,
-    })
-        .then(result => result.response)
-        .catch(err => null);
-}
