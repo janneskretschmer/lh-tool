@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { apiRequest, apiEndpoints } from '../apiclient';
 
-class HeartbeatComponent extends React.Component {
+export default class HeartbeatComponent extends React.Component {
 
     constructor(props) {
         super(props);
@@ -39,5 +39,3 @@ class HeartbeatComponent extends React.Component {
         )
     }
 }
-
-export default HeartbeatComponent;
