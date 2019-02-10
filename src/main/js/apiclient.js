@@ -8,6 +8,7 @@ import {
     INFO_HEARTBEAT,
     USER_PREFIX,
     USER_CURRENT,
+    PROJECT_PREFIX,
 } from './urlmappings';
 
 function isWellFormedEndpoint(apiEndpoint) {
@@ -127,7 +128,13 @@ export const apiEndpoints = {
             path: LOGIN_PREFIX + '/',
         },
     },
-    project: null,
+    project: {
+        getOwn: {
+            method:'GET',
+            // TODO Trailing '/' also necessary?
+            path: PROJECT_PREFIX + '/',
+        },
+    },
     user: {
         current: {
             method: 'GET',
