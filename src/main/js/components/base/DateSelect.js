@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import {range} from 'range';
+import { range } from 'range';
 
 const CONFIG_MIN_YEAR = 2010;
 const CONFIG_MAX_YEAR = 2070;
