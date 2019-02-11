@@ -3,12 +3,14 @@ import URI from 'urijs';
 import URITemplate from 'urijs/src/URITemplate';
 import { getContextPath } from './config';
 import {
+    ID_VARIABLE,
     LOGIN_PREFIX,
     INFO_PREFIX,
     INFO_HEARTBEAT,
     USER_PREFIX,
     USER_CURRENT,
     PROJECT_PREFIX,
+    PROJECT_DELETE,
 } from './urlmappings';
 
 function isWellFormedEndpoint(apiEndpoint) {
@@ -62,8 +64,8 @@ function handleResponse(err, resBody, resolve, reject) {
         });
     }
     else if (!resBody) {
-        reject({
-            error: new Error('No valid data received.'),
+        resolve({
+            error: null,
             response: null
         });
     }
@@ -130,9 +132,19 @@ export const apiEndpoints = {
     },
     project: {
         getOwn: {
-            method:'GET',
+            method: 'GET',
             // TODO Trailing '/' also necessary?
             path: PROJECT_PREFIX + '/',
+        },
+        createNew: {
+            method: 'POST',
+            // TODO Trailing '/' also necessary?
+            path: PROJECT_PREFIX + '/',
+        },
+        delete: {
+            method: 'DELETE',
+            path: PROJECT_DELETE,
+            parameters: [ID_VARIABLE],
         },
     },
     user: {
