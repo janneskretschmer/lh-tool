@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet';
 import { SessionContext } from '../providers/session-provider';
 import { login } from '../actions/login';
 
-class LoginComponent extends React.Component {
+export default class LoginComponent extends React.Component {
 
     constructor(props) {
         super(props);
@@ -38,5 +38,3 @@ class LoginComponent extends React.Component {
         );
     }
 }
-
-export default LoginComponent;
