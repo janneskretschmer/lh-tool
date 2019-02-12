@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import { Helmet } from 'react-helmet';
 import { fullPathOfHome, fullPathOfLogin, fullPathOfHeartbeat, fullPathOfProjects } from './paths';
 import HomeComponent from './components/home';
@@ -11,7 +12,8 @@ import { logout } from './actions/login';
 
 const LHToolApp = () => (
 	<Router>
-		<div>
+		<>
+			<CssBaseline />
 			<SessionProvider>
 				<h1>LH-Tool</h1>
 				<h3>Local Helper Tool for LDC</h3>
@@ -43,7 +45,7 @@ const LHToolApp = () => (
 						)}
 				</SessionContext.Consumer>
 			</SessionProvider>
-		</div>
+		</>
 	</Router>
 );
 
