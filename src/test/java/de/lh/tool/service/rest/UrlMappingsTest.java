@@ -26,7 +26,7 @@ public class UrlMappingsTest {
 				String line = scanner.nextLine().trim();
 				Matcher matcher = pattern.matcher(line);
 				if (matcher.find()) {
-					jsConsts.put(matcher.group(1), matcher.group(2).replaceAll("\\s", ""));
+					jsConsts.put(matcher.group(1), matcher.group(2));
 				}
 			}
 		}
@@ -37,27 +37,20 @@ public class UrlMappingsTest {
 		}
 
 		jsConsts.entrySet().stream().forEach(e -> assertEquals(javaConsts.remove(e.getKey()),
-				getConstValue(jsConsts, e.getKey()).replace("'", ""), e.getKey() + " is different"));
+				getConstValue(jsConsts, e.getKey()), e.getKey() + " is different"));
 
 		assertEquals(0, javaConsts.size(), StringUtils.join(javaConsts.keySet(), ", ") + " are missing in js file");
 	}
 
 	private String getConstValue(Map<String, String> jsConsts, String variableName) {
-		Matcher matcher = Pattern.compile("'\\+(.*?)\\+'").matcher(jsConsts.get(variableName));
-		while (matcher.find()) {
-			jsConsts.put(variableName, jsConsts.get(variableName).replace("'+" + matcher.group(1) + "+'",
-					getConstValue(jsConsts, matcher.group(1))));
+		StringBuilder sb = new StringBuilder();
+		for (String tmp : jsConsts.get(variableName).replaceAll("\\s", "").split("\\+")) {
+			if (tmp.startsWith("'")) {
+				sb.append(tmp.replace("'", ""));
+			} else {
+				sb.append(getConstValue(jsConsts, tmp));
+			}
 		}
-		matcher = Pattern.compile("^(.*?)\\+'").matcher(jsConsts.get(variableName));
-		while (matcher.find()) {
-			jsConsts.put(variableName, jsConsts.get(variableName).replace(matcher.group(1) + "+'",
-					getConstValue(jsConsts, matcher.group(1))));
-		}
-		matcher = Pattern.compile("'\\+(.*?)$").matcher(jsConsts.get(variableName));
-		while (matcher.find()) {
-			jsConsts.put(variableName, jsConsts.get(variableName).replace("'+" + matcher.group(1),
-					getConstValue(jsConsts, matcher.group(1))));
-		}
-		return jsConsts.get(variableName);
+		return sb.toString();
 	}
 }
