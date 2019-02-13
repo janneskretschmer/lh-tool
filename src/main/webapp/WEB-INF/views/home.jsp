@@ -5,6 +5,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no">
 <title>LH-Tool</title>
+<link rel="stylesheet" href="${contextPath}/static/fonts/roboto/styles.css">
 </head>
 <body>
 	<div id="main-app-container"></div>
