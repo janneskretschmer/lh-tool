@@ -6,8 +6,10 @@ import de.lh.tool.domain.model.NeedUser;
 
 public interface NeedUserService extends BasicEntityService<NeedUser, Long> {
 
-	NeedUserDto save(Long needId, Long userId, NeedUserDto dto) throws DefaultException;
+	NeedUserDto saveDto(Long needId, Long userId, NeedUserDto dto) throws DefaultException;
 
 	void deleteByNeedAndUser(Long needId, Long userId) throws DefaultException;
+
+	NeedUserDto findDtoByUserIdAndProjectId(Long needId, Long userId) throws DefaultException;
 
 }

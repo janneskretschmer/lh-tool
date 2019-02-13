@@ -44,5 +44,5 @@ public class NeedUser {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "state", length = 10, nullable = false)
 	@NonNull
-	private NeedUserState needUserState;
+	private NeedUserState state;
 }
