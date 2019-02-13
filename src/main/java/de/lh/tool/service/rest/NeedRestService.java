@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.lh.tool.domain.dto.NeedDto;
-import de.lh.tool.domain.dto.NeedUserState;
-import de.lh.tool.domain.dto.NeedUserStateDto;
+import de.lh.tool.domain.dto.NeedUserDto;
 import de.lh.tool.domain.exception.DefaultException;
+import de.lh.tool.domain.model.NeedUserState;
 import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.service.entity.interfaces.NeedService;
 import io.swagger.annotations.ApiOperation;
@@ -87,10 +87,10 @@ public class NeedRestService {
 	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_USER_ID_EXTENSION)
 	@ApiOperation(value = "Create change the state of the relationship between a need and a user")
 	@Secured(UserRole.RIGHT_NEEDS_USERS_PUT)
-	public Resource<NeedUserStateDto> changeNeedUserState(
+	public Resource<NeedUserDto> changeNeedUserState(
 			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@PathVariable(name = UrlMappings.USER_ID_VARIABLE, required = true) Long userId,
-			@RequestBody(required = true) NeedUserStateDto dto) throws DefaultException {
+			@RequestBody(required = true) NeedUserDto dto) throws DefaultException {
 		return new Resource<>(dto,
 				linkTo(methodOn(NeedRestService.class).changeNeedUserState(id, userId, dto)).withSelfRel(),
 				linkTo(methodOn(NeedRestService.class).getNeedUserState(id, userId)).withRel("getState"));
@@ -99,10 +99,10 @@ public class NeedRestService {
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_USER_ID_EXTENSION)
 	@ApiOperation(value = "Get state between a relationship between a need and a user")
 	@Secured(UserRole.RIGHT_NEEDS_USERS_PUT)
-	public Resource<NeedUserStateDto> getNeedUserState(
+	public Resource<NeedUserDto> getNeedUserState(
 			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@PathVariable(name = UrlMappings.USER_ID_VARIABLE, required = true) Long userId) throws DefaultException {
-		NeedUserStateDto dto = new NeedUserStateDto();
+		NeedUserDto dto = new NeedUserDto();
 		if (id == 1l) {
 			if (userId == 1l) {
 				dto.setState(NeedUserState.APPROVED);

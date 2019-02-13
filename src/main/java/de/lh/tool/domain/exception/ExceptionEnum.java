@@ -34,7 +34,9 @@ public enum ExceptionEnum {
 
 	EX_PROJECT_NOT_FOUND("The project couldn't be found.", HttpStatus.NOT_FOUND),
 
-	EX_NEED_NOT_FOUND("The need couldn't be found.", HttpStatus.NOT_FOUND),;
+	EX_NEED_NOT_FOUND("The need couldn't be found.", HttpStatus.NOT_FOUND),
+	EX_NEED_USER_NOT_FOUND("The need-user-connection couldn't be found.", HttpStatus.NOT_FOUND),
+	EX_NEED_USER_INVALID_STATE("The provided state is invalid.", HttpStatus.BAD_REQUEST),;
 
 	@Getter
 	private String message;

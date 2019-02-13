@@ -59,7 +59,7 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 		}
 		Need need = convertToEntity(needDto);
 		if (!projectService.isOwnProject(need.getProject())
-				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN)) {
+				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT)) {
 			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
 		}
 		need = save(need);
@@ -71,7 +71,7 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 	public void deleteOwn(Long id) throws DefaultException {
 		Need need = findById(id).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
 		if (!projectService.isOwnProject(need.getProject())
-				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN)) {
+				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT)) {
 			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
 		}
 		delete(need);
