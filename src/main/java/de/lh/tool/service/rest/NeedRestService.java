@@ -22,9 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 import de.lh.tool.domain.dto.NeedDto;
 import de.lh.tool.domain.dto.NeedUserDto;
 import de.lh.tool.domain.exception.DefaultException;
-import de.lh.tool.domain.model.NeedUserState;
 import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.service.entity.interfaces.NeedService;
+import de.lh.tool.service.entity.interfaces.NeedUserService;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
@@ -33,6 +33,9 @@ public class NeedRestService {
 
 	@Autowired
 	NeedService needService;
+
+	@Autowired
+	NeedUserService needUserService;
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of own needs")
@@ -91,27 +94,23 @@ public class NeedRestService {
 			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@PathVariable(name = UrlMappings.USER_ID_VARIABLE, required = true) Long userId,
 			@RequestBody(required = true) NeedUserDto dto) throws DefaultException {
-		return new Resource<>(dto,
+
+		NeedUserDto needUserDto = needUserService.saveOrUpdateDto(id, userId, dto);
+
+		return new Resource<>(needUserDto,
 				linkTo(methodOn(NeedRestService.class).changeNeedUserState(id, userId, dto)).withSelfRel(),
 				linkTo(methodOn(NeedRestService.class).getNeedUserState(id, userId)).withRel("getState"));
 	}
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_USER_ID_EXTENSION)
 	@ApiOperation(value = "Get state between a relationship between a need and a user")
-	@Secured(UserRole.RIGHT_NEEDS_USERS_PUT)
+	@Secured(UserRole.RIGHT_NEEDS_USERS_GET)
 	public Resource<NeedUserDto> getNeedUserState(
 			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@PathVariable(name = UrlMappings.USER_ID_VARIABLE, required = true) Long userId) throws DefaultException {
-		NeedUserDto dto = new NeedUserDto();
-		if (id == 1l) {
-			if (userId == 1l) {
-				dto.setState(NeedUserState.APPROVED);
-			} else {
-				dto.setState(NeedUserState.APPLIED);
-			}
-		} else {
-			dto.setState(NeedUserState.DECLINED);
-		}
+
+		NeedUserDto dto = needUserService.findDtoByNeedIdAndUserId(id, userId);
+
 		return new Resource<>(dto, linkTo(methodOn(NeedRestService.class).getNeedUserState(id, userId)).withSelfRel());
 	}
 }

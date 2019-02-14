@@ -36,54 +36,46 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 	@Autowired
 	UserRoleService userRoleService;
 
+	// necessary rights:
+	// +-apply-+ . +-approve-+
+	// v . . . v . v . . . . v
+	// NONE . APPLIED . APPROVED
+	// ^ | . . . . . . . . ^ |
+	// | +------approve----+ |
+	// +--------apply--------+
+	// setting to NONE = delete
 	@Override
-	public NeedUserDto saveDto(Long needId, Long userId, NeedUserDto dto) throws DefaultException {
-		if (needId != null) {
-			dto.setNeedId(needId);
-		}
-		if (userId != null) {
-			dto.setUserId(userId);
-		}
-
-		NeedUser needUser = convertToEntity(dto);
-
-		if (!NeedUserState.APPLIED.equals(needUser.getState())) {
-			throw new DefaultException(ExceptionEnum.EX_NEED_USER_INVALID_STATE);
-		}
-
-		return saveNeedUser(needUser);
-	}
-
-	public NeedUserDto updateDto(Long needId, Long userId, NeedUserDto dto) throws DefaultException {
-		NeedUser needUser = getRepository().findByNeedAndUser(
-				needService.findById(needId).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID)),
-				userService.findById(userId).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_USER_ID)))
-				.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_NEED_USER_NOT_FOUND));
+	public NeedUserDto saveOrUpdateDto(Long needId, Long userId, NeedUserDto dto) throws DefaultException {
+		NeedUser needUser = findByNeedIdAndUserId(needId, userId);
 		switch (dto.getState()) {
 		case NONE:
-			throw new DefaultException(ExceptionEnum.EX_NEED_USER_INVALID_STATE);
-		case APPLIED:
-			throw new DefaultException(ExceptionEnum.EX_NEED_USER_INVALID_STATE);
-		case APPROVED:
-			if (!NeedUserState.APPLIED.equals(needUser.getState())) {
+			if (!userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPLY)) {
 				throw new DefaultException(ExceptionEnum.EX_NEED_USER_INVALID_STATE);
+			}
+			delete(needUser);
+			dto.setId(null);
+			return dto;
+		case APPLIED:
+			if (NeedUserState.NONE.equals(needUser.getState())
+					&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPLY)) {
+				throw new DefaultException(ExceptionEnum.EX_NEED_USER_INVALID_STATE);
+			} else if (NeedUserState.APPROVED.equals(needUser.getState())
+					&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPROVE)) {
+				throw new DefaultException(ExceptionEnum.EX_NEED_USER_INVALID_STATE);
+			}
+		case APPROVED:
+			if (!userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPROVE)) {
+				throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
 			}
 			break;
 		}
-		return dto;
+		return saveNeedUser(needUser);
 
 	}
 
 	private NeedUserDto saveNeedUser(NeedUser needUser) throws DefaultException {
-		if (needUser == null || NeedUserState.NONE.equals(needUser.getState())
-				|| (NeedUserState.APPLIED.equals(needUser.getState())
-						|| NeedUserState.WITHDRAWN.equals(needUser.getState()))
-						&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPLY_AND_WITHDRAW)
-				|| (NeedUserState.APPROVED.equals(needUser.getState())
-						|| NeedUserState.DECLINED.equals(needUser.getState()))
-						&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_ACCEPT_AND_DECLINE)
-				|| (!projectService.isOwnProject(needUser.getNeed().getProject())
-						&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT))
+		if ((!projectService.isOwnProject(needUser.getNeed().getProject())
+				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT))
 				|| (needUser.getUser() != userService.getCurrentUser()
 						&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_USER))) {
 			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
@@ -92,17 +84,23 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 	}
 
 	@Override
-	public NeedUserDto findDtoByUserIdAndProjectId(Long needId, Long userId) throws DefaultException {
+	public NeedUserDto findDtoByNeedIdAndUserId(Long needId, Long userId) throws DefaultException {
+		NeedUser needUser = findByNeedIdAndUserId(needId, userId);
+		return convertToDto(needUser);
+	}
+
+	private NeedUser findByNeedIdAndUserId(Long needId, Long userId) throws DefaultException {
 		Need need = needService.findById(needId).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
 		User user = userService.findById(userId)
 				.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_USER_ID));
-		return convertToDto(getRepository().findByNeedAndUser(need, user)
-				.orElse(NeedUser.builder().need(need).user(user).state(NeedUserState.NONE).build()));
+		NeedUser needUser = getRepository().findByNeedAndUser(need, user)
+				.orElse(NeedUser.builder().need(need).user(user).state(NeedUserState.NONE).build());
+		return needUser;
 	}
 
 	@Override
 	public void deleteByNeedAndUser(Long needId, Long userId) throws DefaultException {
-		// TODO Auto-generated method stub
+		delete(findByNeedIdAndUserId(needId, userId));
 
 	}
 
