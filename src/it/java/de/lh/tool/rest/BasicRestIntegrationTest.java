@@ -101,6 +101,10 @@ public abstract class BasicRestIntegrationTest {
 		return getRequestSpecWithJwt(getJwtByEmail(email));
 	}
 
+	protected Long getUserIdByEmail(String email) {
+		return getRequestSpecWithJwtByEmail(email).get(REST_URL + "/users/current").as(UserDto.class).getId();
+	}
+
 	protected void createTestUsers() throws Exception {
 		deleteTestUsers();
 		deleteTestProjects();

@@ -141,7 +141,7 @@ public class UserRole implements GrantedAuthority {
 							RIGHT_NEEDS_USERS_GET, RIGHT_NEEDS_USERS_PUT, RIGHT_NEEDS_APPROVE));
 
 			roleRights.put(ROLE_SERVICE_COMMITTEE, List.of());
-			roleRights.put(ROLE_PUBLISHER, List.of(RIGHT_NEEDS_USERS_GET, RIGHT_NEEDS_APPLY));
+			roleRights.put(ROLE_PUBLISHER, List.of(RIGHT_NEEDS_USERS_GET, RIGHT_NEEDS_USERS_PUT, RIGHT_NEEDS_APPLY));
 			roleRights.put(ROLE_STORE_KEEPER, List.of());
 			roleRights.put(ROLE_INVENTORY_MANAGER, List.of());
 		}

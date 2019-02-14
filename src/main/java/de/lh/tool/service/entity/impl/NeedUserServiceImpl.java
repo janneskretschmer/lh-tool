@@ -1,5 +1,7 @@
 package de.lh.tool.service.entity.impl;
 
+import javax.transaction.Transactional;
+
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +47,7 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 	// +--------apply--------+
 	// setting to NONE = delete
 	@Override
+	@Transactional
 	public NeedUserDto saveOrUpdateDto(Long needId, Long userId, NeedUserDto dto) throws DefaultException {
 		NeedUser needUser = findByNeedIdAndUserId(needId, userId);
 		switch (dto.getState()) {
@@ -63,12 +66,14 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 					&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPROVE)) {
 				throw new DefaultException(ExceptionEnum.EX_NEED_USER_INVALID_STATE);
 			}
+			break;
 		case APPROVED:
 			if (!userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPROVE)) {
 				throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
 			}
 			break;
 		}
+		needUser.setState(dto.getState());
 		return saveNeedUser(needUser);
 
 	}
@@ -84,8 +89,13 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 	}
 
 	@Override
+	@Transactional
 	public NeedUserDto findDtoByNeedIdAndUserId(Long needId, Long userId) throws DefaultException {
 		NeedUser needUser = findByNeedIdAndUserId(needId, userId);
+		if (!projectService.isOwnProject(needUser.getNeed().getProject())
+				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT)) {
+			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
+		}
 		return convertToDto(needUser);
 	}
 

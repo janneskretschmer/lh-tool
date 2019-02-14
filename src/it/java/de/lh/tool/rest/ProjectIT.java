@@ -9,7 +9,6 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import de.lh.tool.domain.dto.ProjectDto;
-import de.lh.tool.domain.dto.UserDto;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 
@@ -64,11 +63,10 @@ public class ProjectIT extends BasicRestIntegrationTest {
 				.post(url).as(ProjectDto.class);
 
 		String adminJwt = getJwtByEmail(ADMIN_EMAIL);
-		Long adminId = getRequestSpecWithJwt(adminJwt).get(REST_URL + "/users/current").as(UserDto.class).getId();
+		Long adminId = getUserIdByEmail(ADMIN_EMAIL);
 		String jwt2 = getJwtByEmail(CONSTRUCTION_SERVANT_2_EMAIL);
 		getRequestSpecWithJwt(jwt2).post(url + dto.getId() + "/" + adminId).then().statusCode(403);
-		Long constructionServant2Id = getRequestSpecWithJwt(jwt2).get(REST_URL + "/users/current").as(UserDto.class)
-				.getId();
+		Long constructionServant2Id = getUserIdByEmail(CONSTRUCTION_SERVANT_2_EMAIL);
 		getRequestSpecWithJwt(jwt2).when().get(url).then().body("content", Matchers.iterableWithSize(0));
 		getRequestSpecWithJwt(adminJwt).when().get(url).then().body("content", Matchers.iterableWithSize(1));
 		getRequestSpecWithJwt(adminJwt).post(url + dto.getId() + "/" + constructionServant2Id).then().statusCode(200);
