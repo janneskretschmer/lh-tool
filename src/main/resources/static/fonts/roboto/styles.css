@@ -6,7 +6,7 @@
   font-style: normal;
   font-weight: 300;
   src: url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-300.eot'); /* IE9 Compat Modes */
-  src: 
+  src:
     local('Roboto Light'),
     local('Roboto-Light'),
     url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-300.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
