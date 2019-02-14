@@ -59,11 +59,10 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 			dto.setId(null);
 			return dto;
 		case APPLIED:
-			if (NeedUserState.NONE.equals(needUser.getState())
-					&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPLY)) {
-				throw new DefaultException(ExceptionEnum.EX_NEED_USER_INVALID_STATE);
-			} else if (NeedUserState.APPROVED.equals(needUser.getState())
-					&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPROVE)) {
+			if ((NeedUserState.NONE.equals(needUser.getState())
+					&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPLY))
+					|| (NeedUserState.APPROVED.equals(needUser.getState())
+							&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPROVE))) {
 				throw new DefaultException(ExceptionEnum.EX_NEED_USER_INVALID_STATE);
 			}
 			break;
@@ -103,9 +102,8 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 		Need need = needService.findById(needId).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
 		User user = userService.findById(userId)
 				.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_USER_ID));
-		NeedUser needUser = getRepository().findByNeedAndUser(need, user)
+		return getRepository().findByNeedAndUser(need, user)
 				.orElse(NeedUser.builder().need(need).user(user).state(NeedUserState.NONE).build());
-		return needUser;
 	}
 
 	@Override
