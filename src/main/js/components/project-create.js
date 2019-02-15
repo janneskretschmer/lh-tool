@@ -1,37 +1,43 @@
 import React from 'react';
 import moment from 'moment';
-import DateSelect from './base/DateSelect';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import { withStyles, MuiThemeProvider } from '@material-ui/core/styles';
 import { ProjectsContext } from '../providers/projects-provider';
 import { SessionContext } from '../providers/session-provider';
 import { createNewProject } from '../actions/project';
 
+const MUI_DATE_FORMAT = 'YYYY-MM-DD';
+
+const styles = theme => ({
+    textField: {
+        marginLeft: theme.spacing.unit,
+        marginRight: theme.spacing.unit,
+        width: 200,
+    },
+    button: {
+        margin: theme.spacing.unit,
+    },
+});
+
+@withStyles(styles)
 export default class ProjectCreatePanel extends React.Component {
 
     constructor(props) {
         super(props);
 
-        const now = moment();
-        this.initials = {
-            startDate: {
-                year: moment(now).year(),
-                month: moment(now).month(),
-                date: moment(now).date()
-            },
-            endDate: {
-                year: moment(now).year(),
-                month: moment(now).month(),
-                date: moment(now).date()
-            },
-        };
+        this.defaultStartDate = moment().format(MUI_DATE_FORMAT);
+        this.defaultEndDate = moment().add(1, 'day').format(MUI_DATE_FORMAT);
 
         this.state = {
             name: '',
-            startDate: this.initials.startDate,
-            endDate: this.initials.endDate,
+            startDate: this.defaultStartDate,
+            endDate: this.defaultEndDate,
         };
     }
 
     render() {
+        const { classes } = this.props;
         return (
             <SessionContext.Consumer>
                 {sessionState => (
@@ -42,28 +48,38 @@ export default class ProjectCreatePanel extends React.Component {
                                 createNewProject({
                                     accessToken: sessionState.accessToken,
                                     projectsState,
-                                    startMoment: moment(this.state.startDate),
-                                    endMoment: moment(this.state.endDate),
+                                    startMoment: moment(this.state.startDate, MUI_DATE_FORMAT),
+                                    endMoment: moment(this.state.endDate, MUI_DATE_FORMAT),
                                     name: this.state.name
                                 });
-                                // TODO Cleanup input fields after submit
                             }}>
-                                <input
-                                    type="text"
-                                    placeholder="Name"
-                                    onChange={evt => this.setState({ name: evt.target.value })} />
-                                <DateSelect
-                                    defaultYear={this.initials.startDate.year}
-                                    defaultMonth={this.initials.startDate.month}
-                                    defaultDate={this.initials.startDate.date}
-                                    onChange={newDate => this.setState({ startDate: newDate })} />
-                                {'bis'}
-                                <DateSelect
-                                    defaultYear={this.initials.endDate.year}
-                                    defaultMonth={this.initials.endDate.month}
-                                    defaultDate={this.initials.endDate.date}
-                                    onChange={newDate => this.setState({ endDate: newDate })} />
-                                <button type="submit">Erzeugen</button>
+                                <TextField
+                                    label="Name"
+                                    className={classes.textField}
+                                    value={this.state.name}
+                                    onChange={evt => this.setState({ name: evt.target.value })}
+                                    margin="normal"
+                                />
+                                <TextField
+                                    label="Beginn des Projekts"
+                                    type="date"
+                                    defaultValue={this.defaultStartDate}
+                                    className={classes.textField}
+                                    margin="normal"
+                                    onChange={evt => this.setState({ startDate: evt.target.value })}
+                                />
+                                <TextField
+                                    label="Ende des Projekts"
+                                    type="date"
+                                    defaultValue={this.defaultEndDate}
+                                    className={classes.textField}
+                                    margin="normal"
+                                    onChange={evt => this.setState({ endDate: evt.target.value })}
+                                />
+                                <br />
+                                <Button variant="contained" className={classes.button} type="submit">
+                                    Erzeugen
+                                </Button>
                             </form>
                         )}
                     </ProjectsContext.Consumer>
