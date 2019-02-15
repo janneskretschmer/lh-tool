@@ -26,10 +26,10 @@ import de.lh.tool.service.entity.interfaces.UserRoleService;
 public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedRepository, Need, NeedDto, Long>
 		implements NeedService {
 	@Autowired
-	UserRoleService userRoleService;
+	private UserRoleService userRoleService;
 
 	@Autowired
-	ProjectService projectService;
+	private ProjectService projectService;
 
 	@Override
 	@Transactional

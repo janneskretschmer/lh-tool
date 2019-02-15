@@ -32,10 +32,10 @@ import io.swagger.annotations.ApiOperation;
 public class NeedRestService {
 
 	@Autowired
-	NeedService needService;
+	private NeedService needService;
 
 	@Autowired
-	NeedUserService needUserService;
+	private NeedUserService needUserService;
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of own needs")

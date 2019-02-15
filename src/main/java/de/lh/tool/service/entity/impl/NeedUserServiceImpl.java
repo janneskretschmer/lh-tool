@@ -27,16 +27,16 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 		implements NeedUserService {
 
 	@Autowired
-	NeedService needService;
+	private NeedService needService;
 
 	@Autowired
-	UserService userService;
+	private UserService userService;
 
 	@Autowired
-	ProjectService projectService;
+	private ProjectService projectService;
 
 	@Autowired
-	UserRoleService userRoleService;
+	private UserRoleService userRoleService;
 
 	// necessary rights:
 	// +-apply-+ . +-approve-+

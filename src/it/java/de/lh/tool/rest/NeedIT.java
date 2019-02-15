@@ -26,10 +26,9 @@ public class NeedIT extends BasicRestIntegrationTest {
 				.body(ProjectDto.builder().name("Test1").startDate(new Date(1548971153l)).endDate(new Date(1551571200l))
 						.build())
 				.contentType(ContentType.JSON).post(REST_URL + "/projects/").as(ProjectDto.class).getId();
-		Long project2Id = getRequestSpecWithJwtByEmail(CONSTRUCTION_SERVANT_2_EMAIL)
-				.body(ProjectDto.builder().name("Test2").startDate(new Date(1548971153l)).endDate(new Date(1551571200l))
-						.build())
-				.contentType(ContentType.JSON).post(REST_URL + "/projects/").as(ProjectDto.class).getId();
+		getRequestSpecWithJwtByEmail(CONSTRUCTION_SERVANT_2_EMAIL).body(ProjectDto.builder().name("Test2")
+				.startDate(new Date(1548971153l)).endDate(new Date(1551571200l)).build()).contentType(ContentType.JSON)
+				.post(REST_URL + "/projects/").then().statusCode(200);
 
 		String url = REST_URL + "/needs/";
 		NeedDto testDto = NeedDto.builder().date(new Date(1548971153l)).helperType(HelperType.CONSTRUCTION_WORKER)
