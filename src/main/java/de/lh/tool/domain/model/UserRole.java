@@ -58,7 +58,6 @@ public class UserRole implements GrantedAuthority {
 	public static final String ROLE_ADMIN = "ROLE_ADMIN";
 	public static final String ROLE_CONSTRUCTION_SERVANT = "ROLE_CONSTRUCTION_SERVANT";
 	public static final String ROLE_LOCAL_COORDINATOR = "ROLE_LOCAL_COORDINATOR";
-	public static final String ROLE_SERVICE_COMMITTEE = "ROLE_SERVICE_COMMITTEE";
 	public static final String ROLE_PUBLISHER = "ROLE_PUBLISHER";
 	public static final String ROLE_STORE_KEEPER = "ROLE_STORE_KEEPER";
 	public static final String ROLE_INVENTORY_MANAGER = "ROLE_INVENTORY_MANAGER";
@@ -125,7 +124,6 @@ public class UserRole implements GrantedAuthority {
 			roleRights.put(ROLE_LOCAL_COORDINATOR, List.of(RIGHT_PROJECTS_GET_BY_ID, RIGHT_NEEDS_POST, RIGHT_NEEDS_PUT,
 					RIGHT_NEEDS_GET, RIGHT_NEEDS_GET_BY_ID, RIGHT_NEEDS_USERS_GET, RIGHT_NEEDS_USERS_PUT));
 
-			roleRights.put(ROLE_SERVICE_COMMITTEE, List.of());
 			roleRights.put(ROLE_PUBLISHER, List.of(RIGHT_NEEDS_USERS_GET));
 			roleRights.put(ROLE_STORE_KEEPER, List.of());
 			roleRights.put(ROLE_INVENTORY_MANAGER, List.of());
