@@ -1,55 +1,105 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
+import { withStyles } from '@material-ui/core/styles';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import Collapse from '@material-ui/core/Collapse';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import GroupWorkIcon from '@material-ui/icons/GroupWork';
 import ProjectsProvider, { ProjectsContext } from '../providers/projects-provider';
 import { SessionContext } from '../providers/session-provider';
 import ProjectCreatePanel from './project-create';
-import { deleteProject } from '../actions/project';
+import ProjectEditPanel from './project-edit';
 
-export default class ProjectComponent extends React.Component {
+
+
+const styles = theme => ({
+    root: {
+        width: '100%',
+        backgroundColor: theme.palette.background.paper,
+    },
+});
+
+const ProjectEntry = props => (
+    <>
+        <ListItem button onClick={() => props.onCollapseChange && props.onCollapseChange(!props.open, props.project)}>
+            <ListItemIcon>
+                <GroupWorkIcon />
+            </ListItemIcon>
+            <ListItemText
+                inset
+                primary={props.project.name}
+                secondary={`${props.project.startDate.format('DD.MM.YYYY')} bis ${props.project.endDate.format('DD.MM.YYYY')}`} />
+            {props.open ? <ExpandLess /> : <ExpandMore />}
+        </ListItem>
+        <Collapse in={props.open} timeout="auto" unmountOnExit>
+            <ProjectEditPanel project={props.project} />
+        </Collapse>
+    </>
+);
+
+@withStyles(styles)
+class StatefulProjectsComponent extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            openProjectId: null,
+        };
+    }
+
+    handleCollapseChange(openRequested, project) {
+        this.setState({
+            openProjectId: openRequested ? project.id : null,
+        });
     }
 
     render() {
+        const { classes } = this.props;
+
         return (
             <SessionContext.Consumer>
                 {sessionState => (
-                    <ProjectsProvider>
-                        <ProjectsContext.Consumer>
-                            {projectsState => (
-                                <>
-                                    <Helmet titleTemplate="Projekte - %s" />
-                                    <h2>Projekte</h2>
-                                    <div>
-                                        <h3>Neues Projekt hinzufügen</h3>
-                                        <ProjectCreatePanel />
-                                    </div>
-                                    {projectsState.projects.length === 0 ? (
-                                        <div>Keine Projekte</div>
-                                    ) : (
-                                            <ul>
-                                                {projectsState.projects.map(project => (
-                                                    <li key={project.id}>
-                                                        {`Projekt: ${project.name}, ${project.startDate.format('DD.MM.YYYY')} bis ${project.endDate.format('DD.MM.YYYY')}`}
-                                                        <button onClick={evt => {
-                                                            deleteProject({
-                                                                accessToken: sessionState.accessToken,
-                                                                projectsState: projectsState,
-                                                                projectId: project.id
-                                                            })
-                                                        }}>Löschen</button>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        )}
-                                </>
-                            )}
-                        </ProjectsContext.Consumer>
-                    </ProjectsProvider>
+                    <ProjectsContext.Consumer>
+                        {projectsState => (
+                            <div className={classes.root}>
+                                <List
+                                    subheader={<ListSubheader component="div">Neues Projekt erstellen</ListSubheader>}
+                                >
+                                    <ProjectCreatePanel />
+                                </List>
+                                <List
+                                    subheader={<ListSubheader component="div">Projekte</ListSubheader>}
+                                >
+                                    {projectsState.projects.map(project => (
+                                        <ProjectEntry
+                                            key={project.id}
+                                            project={project}
+                                            open={project.id === this.state.openProjectId}
+                                            onCollapseChange={this.handleCollapseChange.bind(this)}
+                                        />
+                                    ))}
+                                </List>
+                            </div>
+                        )}
+                    </ProjectsContext.Consumer>
+
                 )}
             </SessionContext.Consumer>
         );
     }
 }
+
+const ProjectsComponent = props => (
+    <>
+        <Helmet titleTemplate="Projekte - %s" />
+        <ProjectsProvider>
+            <StatefulProjectsComponent {...props} />
+        </ProjectsProvider>
+    </>
+);
+export default ProjectsComponent;

@@ -13,7 +13,7 @@ import AppHeader from './header';
 import HomeComponent from './home';
 import LoginComponent from './login';
 import HeartbeatComponent from './heartbeat';
-import ProjectComponent from './project';
+import ProjectsComponent from './project';
 import AppMenu from './menu';
 import SessionProvider from '../providers/session-provider';
 
@@ -118,7 +118,7 @@ export default class LHToolRoot extends React.Component {
                                 <Route path={fullPathOfHome()} exact component={HomeComponent} />
                                 <Route path={fullPathOfLogin()} component={LoginComponent} />
                                 <Route path={fullPathOfHeartbeat()} component={HeartbeatComponent} />
-                                <Route path={fullPathOfProjects()} component={ProjectComponent} />
+                                <Route path={fullPathOfProjects()} component={ProjectsComponent} />
                             </main>
 
                         </SessionProvider>
