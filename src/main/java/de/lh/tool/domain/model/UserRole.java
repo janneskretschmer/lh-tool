@@ -97,7 +97,7 @@ public class UserRole implements GrantedAuthority {
 	public static final String RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT = "ROLE_RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT";
 	public static final String RIGHT_NEEDS_CHANGE_FOREIGN_USER = "ROLE_RIGHT_NEEDS_CHANGE_FOREIGN_USER";
 	public static final String RIGHT_NEEDS_APPLY = "ROLE_RIGHT_NEEDS_APPLY";
-	public static final String RIGHT_NEEDS_APPROVE = "RIGHT_NEEDS_APPROVE";
+	public static final String RIGHT_NEEDS_APPROVE = "ROLE_RIGHT_NEEDS_APPROVE";
 
 	public static final String RIGHT_NEEDS_USERS_PUT = "ROLE_RIGHT_NEEDS_USERS_PUT";
 	public static final String RIGHT_NEEDS_USERS_GET = "ROLE_RIGHT_NEEDS_USERS_GET";
