@@ -16,4 +16,6 @@ public interface ProjectService extends BasicEntityService<Project, Long> {
 	ProjectDto updateProjectDto(Long id, ProjectDto projectDto) throws DefaultException;
 
 	ProjectDto getProjectDtoById(Long id) throws DefaultException;
+
+	void deleteOwn(Long id) throws DefaultException;
 }
