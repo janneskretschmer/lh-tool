@@ -24,7 +24,7 @@ export function fetchOwnProjects({ accessToken }) {
     }
 }
 
-export function createNewProject({ accessToken, projectsState, name, startMoment, endMoment }) {
+export function createNewProject({ accessToken, projectsState, name, startMoment, endMoment, handleFailure }) {
     return apiRequest({
         apiEndpoint: apiEndpoints.project.createNew,
         authToken: accessToken,
@@ -38,11 +38,14 @@ export function createNewProject({ accessToken, projectsState, name, startMoment
             const createdProject = mapProjectObject(result.response);
             projectsState.projectAdded(createdProject);
         })
-        // TODO Error message
-        .catch(() => null);
+        .catch(err => {
+            if (handleFailure) {
+                handleFailure(err);
+            }
+        });
 }
 
-export function deleteProject({ accessToken, projectsState, projectId }) {
+export function deleteProject({ accessToken, projectsState, projectId, handleFailure }) {
     return apiRequest({
         apiEndpoint: apiEndpoints.project.delete,
         authToken: accessToken,
@@ -54,6 +57,9 @@ export function deleteProject({ accessToken, projectsState, projectId }) {
             projectsState.projectRemoved(projectId);
             return true;
         })
-        // TODO Error message
-        .catch(err => false);
+        .catch(err => {
+            if (handleFailure) {
+                handleFailure(err);
+            }
+        });
 }

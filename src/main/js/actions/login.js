@@ -1,6 +1,6 @@
 import { apiRequest, apiEndpoints } from '../apiclient';
 
-export function login({ loginState, email, password }) {
+export function login({ loginState, email, password, handleLoginFailure }) {
     apiRequest({
         apiEndpoint: apiEndpoints.login.login,
         data: { email, password },
@@ -9,8 +9,9 @@ export function login({ loginState, email, password }) {
             loginState.accessTokenChanged(result.response.accessToken);
         })
         .catch(err => {
-            // TODO Prettier error message
-            alert('Login fehlgeschlagen');
+            if (handleLoginFailure) {
+                handleLoginFailure(err);
+            }
         })
 }
 
