@@ -82,7 +82,7 @@ public class UserRestService {
 	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.USER_ROLES)
 	@Secured(UserRole.RIGHT_USERS_CHANGE_ROLES)
 	@Transactional
-	public Resource<UserDto> changeRules(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
+	public Resource<UserDto> changeRoles(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@RequestBody UserRolesDto userRolesDto) throws DefaultException {
 		User user = userService.findById(id)
 				.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_WRONG_ID_PROVIDED));
