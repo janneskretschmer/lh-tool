@@ -11,6 +11,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { ProjectsContext } from '../providers/projects-provider';
 import { SessionContext } from '../providers/session-provider';
 import { deleteProject } from '../actions/project';
+import WithPermission from './with-permission';
 
 const styles = theme => ({
     root: {
@@ -54,7 +55,7 @@ export default class ProjectEditPanel extends React.Component {
                     {sessionState => (
                         <ProjectsContext.Consumer>
                             {projectsState => (
-                                <>
+                                <WithPermission permission="ROLE_RIGHT_PROJECTS_DELETE">
                                     <Button variant="contained" color="primary" className={classes.button} onClick={this.handleDeleteButtonClicked.bind(this)}>
                                         Projekt löschen
                                         <DeleteIcon className={classes.rightIcon} />
@@ -90,7 +91,7 @@ export default class ProjectEditPanel extends React.Component {
                                             </Button>
                                         </DialogActions>
                                     </Dialog>
-                                </>
+                                </WithPermission>
                             )}
                         </ProjectsContext.Consumer>
 

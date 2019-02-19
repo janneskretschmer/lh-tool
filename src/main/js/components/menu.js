@@ -12,6 +12,7 @@ import FaceIcon from '@material-ui/icons/Face';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import { Link } from 'react-router-dom';
+import WithPermission from './with-permission';
 import { SessionContext } from '../providers/session-provider';
 import { logout } from '../actions/login';
 import { fullPathOfHome, fullPathOfLogin, fullPathOfHeartbeat, fullPathOfProjects } from '../paths';
@@ -39,14 +40,16 @@ const HomeItem = () => (
 );
 
 const ProjectsItem = () => (
-  <Link to={fullPathOfProjects()} style={linkStyle}>
-    <ListItem button>
-      <ListItemIcon>
-        <GroupWorkIcon />
-      </ListItemIcon>
-      <ListItemText primary="Projekte" />
-    </ListItem>
-  </Link>
+  <WithPermission permission="ROLE_RIGHT_PROJECTS_GET">
+    <Link to={fullPathOfProjects()} style={linkStyle}>
+      <ListItem button>
+        <ListItemIcon>
+          <GroupWorkIcon />
+        </ListItemIcon>
+        <ListItemText primary="Projekte" />
+      </ListItem>
+    </Link>
+  </WithPermission>
 );
 
 const HeartbeatItem = () => (
