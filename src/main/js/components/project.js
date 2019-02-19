@@ -6,6 +6,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import { Typography } from '@material-ui/core';
 import Collapse from '@material-ui/core/Collapse';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
@@ -14,8 +15,7 @@ import ProjectsProvider, { ProjectsContext } from '../providers/projects-provide
 import { SessionContext } from '../providers/session-provider';
 import ProjectCreatePanel from './project-create';
 import ProjectEditPanel from './project-edit';
-
-
+import WithPermission from './with-permission';
 
 const styles = theme => ({
     root: {
@@ -67,15 +67,21 @@ class StatefulProjectsComponent extends React.Component {
                     <ProjectsContext.Consumer>
                         {projectsState => (
                             <div className={classes.root}>
-                                <List
-                                    subheader={<ListSubheader component="div">Neues Projekt erstellen</ListSubheader>}
-                                >
-                                    <ProjectCreatePanel />
-                                </List>
+                                <WithPermission permission="ROLE_RIGHT_PROJECTS_POST">
+                                    <List
+                                        subheader={<ListSubheader component="div">Neues Projekt erstellen</ListSubheader>}
+                                    >
+                                        <ProjectCreatePanel />
+                                    </List>
+                                </WithPermission>
                                 <List
                                     subheader={<ListSubheader component="div">Projekte</ListSubheader>}
                                 >
-                                    {projectsState.projects.map(project => (
+                                    {projectsState.projects.length === 0 ? (
+                                        <Typography>
+                                            (Keine Projekte anzuzeigen)
+                                        </Typography>
+                                    ) : projectsState.projects.map(project => (
                                         <ProjectEntry
                                             key={project.id}
                                             project={project}
