@@ -1,5 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
+import { withSnackbar } from 'notistack';
 import { SessionContext } from '../providers/session-provider';
 import { login } from '../actions/login';
 import Grid from '@material-ui/core/Grid';
@@ -21,6 +22,7 @@ const styles = theme => ({
     },
 });
 
+@withSnackbar
 @withStyles(styles, { withTheme: true })
 export default class LoginComponent extends React.Component {
 
@@ -28,6 +30,13 @@ export default class LoginComponent extends React.Component {
         super(props);
         this.state = {};
     }
+
+    handleLoginFailure() {
+        this.props.enqueueSnackbar('Fehler beim Anmelden', {
+            variant: 'error',
+        });
+    }
+
 
     render() {
         const { classes } = this.props;
@@ -40,7 +49,12 @@ export default class LoginComponent extends React.Component {
                         const email = this.inputUsername.value;
                         const password = this.inputPassword.value;
                         this.inputPassword.value = '';
-                        login({ loginState, email, password });
+                        login({
+                            loginState,
+                            email,
+                            password,
+                            handleLoginFailure: this.handleLoginFailure.bind(this),
+                        });
                     }}>
                         <Helmet titleTemplate="Login - %s" />
                         <Grid container justify="center">

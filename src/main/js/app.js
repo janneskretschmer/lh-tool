@@ -1,4 +1,5 @@
 import React from 'react';
+import { SnackbarProvider } from 'notistack';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import deepPurple from '@material-ui/core/colors/deepPurple';
 import blueGrey from '@material-ui/core/colors/blueGrey';
@@ -15,10 +16,16 @@ const theme = createMuiTheme({
 });
 
 const ThemedRoot = () => (
-    <MuiThemeProvider theme={theme}>
-        <LHToolRoot />
-    </MuiThemeProvider>
+	<MuiThemeProvider theme={theme}>
+		<LHToolRoot />
+	</MuiThemeProvider>
 );
 
-const LHToolApp = ThemedRoot;
+const SnackbaredRoot = () => (
+	<SnackbarProvider maxSnack={3}>
+		<ThemedRoot />
+	</SnackbarProvider>
+);
+
+const LHToolApp = SnackbaredRoot;
 export default LHToolApp;

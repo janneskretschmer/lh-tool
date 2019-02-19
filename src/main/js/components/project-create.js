@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import { withSnackbar } from 'notistack';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { withStyles } from '@material-ui/core/styles';
@@ -20,6 +21,7 @@ const styles = theme => ({
     },
 });
 
+@withSnackbar
 @withStyles(styles)
 export default class ProjectCreatePanel extends React.Component {
 
@@ -36,6 +38,12 @@ export default class ProjectCreatePanel extends React.Component {
         };
     }
 
+    handleFailure() {
+        this.props.enqueueSnackbar('Fehler beim Erstellen des neuen Projekts', {
+            variant: 'error',
+        });
+    }
+
     render() {
         const { classes } = this.props;
         return (
@@ -50,7 +58,8 @@ export default class ProjectCreatePanel extends React.Component {
                                     projectsState,
                                     startMoment: moment(this.state.startDate, MUI_DATE_FORMAT),
                                     endMoment: moment(this.state.endDate, MUI_DATE_FORMAT),
-                                    name: this.state.name
+                                    name: this.state.name,
+                                    handleFailure: this.handleFailure.bind(this),
                                 });
                             }}>
                                 <TextField

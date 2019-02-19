@@ -1,4 +1,5 @@
 import React from 'react';
+import { withSnackbar } from 'notistack';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -29,6 +30,7 @@ const styles = theme => ({
 
 const Transition = props => (<Slide direction="up" {...props} />);
 
+@withSnackbar
 @withStyles(styles)
 export default class ProjectEditPanel extends React.Component {
 
@@ -45,6 +47,12 @@ export default class ProjectEditPanel extends React.Component {
 
     handleDeleteDialogClose() {
         this.setState({ deleteDeleteDialogOpen: false });
+    }
+
+    handleDeleteFailure() {
+        this.props.enqueueSnackbar('Fehler beim Löschens des Projekts', {
+            variant: 'error',
+        });
     }
 
     render() {
@@ -84,7 +92,8 @@ export default class ProjectEditPanel extends React.Component {
                                                 deleteProject({
                                                     accessToken: sessionState.accessToken,
                                                     projectsState: projectsState,
-                                                    projectId: this.props.project.id
+                                                    projectId: this.props.project.id,
+                                                    handleFailure: this.handleDeleteFailure.bind(this),
                                                 });
                                             }}>
                                                 {`Ja, Projekt ${project.name} löschen`}
