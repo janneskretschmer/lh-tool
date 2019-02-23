@@ -4,6 +4,8 @@ export const REST_PREFIX = '/rest';
 
 export const ID_VARIABLE = 'id';
 export const USER_ID_VARIABLE = 'user_id';
+export const PROJECT_ID_VARIABLE = 'project_id';
+export const ROLE_VARIABLE = 'role';
 
 export const NO_EXTENSION = '/';
 export const ID_EXTENSION = '/{' + ID_VARIABLE + '}';

@@ -12,10 +12,8 @@ import { ProjectsContext } from '../providers/projects-provider';
 import { SessionContext } from '../providers/session-provider';
 import { deleteProject } from '../actions/project';
 import Typography from '@material-ui/core/Typography';
-
-import Checkbox from '@material-ui/core/Checkbox';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import UserComponent from './user-detail';
+import { createNewUser } from '../actions/user'
 
 const styles = theme => ({
     root: {
@@ -32,115 +30,6 @@ const styles = theme => ({
 });
 
 const Transition = props => (<Slide direction="up" {...props} />);
-
-const UserComponent = props => {
-    let inputFirstName = null;
-    let inputLastName = null;
-    let inputEmail = null;
-    let inputIsFemale = null;
-    let inputTelephoneBusiness = null;
-    let inputTelephoneMobile = null;
-    let inputTelephoneHome = null;
-    
-    return (
-        <div>
-            <TextField
-                id="first_name"
-                label="Vorname"
-                type="text"
-                name="first_name"
-                autoComplete="first name"
-                margin="dense"
-                variant="outlined"
-                InputProps={{
-                    inputRef: ref => inputFirstName = ref
-                }}
-                required
-            />
-            <TextField
-                id="last_name"
-                label="Nachname"
-                type="text"
-                name="last_name"
-                autoComplete="last name"
-                margin="dense"
-                variant="outlined"
-                InputProps={{
-                    inputRef: ref => inputLastName = ref
-                }}
-                required
-            />
-            <TextField
-                id="email"
-                label="Email"
-                type="email"
-                name="email"
-                autoComplete="email"
-                margin="dense"
-                variant="outlined"
-                InputProps={{
-                    inputRef: ref => inputEmail = ref
-                }}
-                required
-            /><br/>
-            <TextField
-                id="telephone_home"
-                label="Telefon Festnetz"
-                type="text"
-                name="telephone_home"
-                autoComplete="telephone home"
-                margin="dense"
-                variant="outlined"
-                InputProps={{
-                    inputRef: ref => inputTelephoneHome = ref
-                }}
-            />
-            <TextField
-                id="telephone_mobile"
-                label="Telefon Mobil"
-                type="text"
-                name="telephone_mobile"
-                autoComplete="telephone mobile"
-                margin="dense"
-                variant="outlined"
-                InputProps={{
-                    inputRef: ref => inputTelephoneMobile = ref
-                }}
-            />
-            <TextField
-                id="telephone_business"
-                label="Telefon Geschäftlich"
-                type="text"
-                name="telephone_business"
-                autoComplete="telephone business"
-                margin="dense"
-                variant="outlined"
-                InputProps={{
-                    inputRef: ref => inputTelephoneBusiness = ref
-                }}
-            /><br></br>
-            <FormControlLabel
-                control={
-                    <Checkbox
-                        checked={props.user && props.user.gender == 'FEMALE'}
-                
-                        value="gender"
-                        inputProps={{
-                            ref: ref => inputIsFemale = ref
-                        }}
-                    />
-                }
-                label="Schwester"
-            />
-            <Button size="small" color="secondary">
-                Abbrechen
-            </Button>
-            <Button variant="contained" type="submit">
-                Speichern
-            </Button>
-        </div>
-    )
-}
 
 @withStyles(styles)
 export default class ProjectEditPanel extends React.Component {
@@ -171,7 +60,11 @@ export default class ProjectEditPanel extends React.Component {
                                 <>
                                     <div><Typography variant="h6">Baudiener</Typography></div>
                                     <div><Typography variant="h6">Lokaler Koordinator</Typography></div>
-                                    <UserComponent/>
+                                    <UserComponent user={project.localCoordinator}
+                                        role="ROLE_LOCAL_COORDINATOR"
+                                        showEdit={false}
+                                        saveHandler={(user) => createNewUser({ accessToken: sessionState.accessToken, ...user, projectId:project.id, projectsState })}
+                                    />
                                     <div><Typography variant="h6">Verkündiger</Typography></div>
                                     <Button variant="contained" color="primary" className={classes.button} onClick={this.handleDeleteButtonClicked.bind(this)}>
                                         Projekt löschen

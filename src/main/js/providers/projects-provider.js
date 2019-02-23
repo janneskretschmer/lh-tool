@@ -29,6 +29,19 @@ export default class ProjectsProvider extends React.Component {
         }));
     };
 
+    userChanged = (projectId, user, role) => {
+        this.setState(prevState => ({
+            projects: prevState.projects.map(project => {
+                if(project.id === projectId){
+                    if (role == 'ROLE_LOCAL_COORDINATOR') {
+                        project.localCoordinator = user;
+                    }
+                }
+                return project;
+            })
+        }));
+    };
+
     render() {
         return (
             <ProjectsContext.Provider
@@ -36,6 +49,7 @@ export default class ProjectsProvider extends React.Component {
                     ...this.state,
                     projectAdded: this.projectAdded,
                     projectRemoved: this.projectRemoved,
+                    userChanged: this.userChanged,
                 }}
             >
                 {this.props.children}

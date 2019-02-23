@@ -13,6 +13,8 @@ import de.lh.tool.service.entity.interfaces.UserService;
 public class UserRoleServiceImpl extends BasicEntityServiceImpl<UserRoleRepository, UserRole, Long>
 		implements UserRoleService {
 
+	private static final String GRANT_RIGHT_PREFIX = "ROLE_RIGHT_USERS_GRANT_";
+
 	@Autowired
 	private UserService userService;
 
@@ -28,5 +30,10 @@ public class UserRoleServiceImpl extends BasicEntityServiceImpl<UserRoleReposito
 			return user.getAuthorities().stream().anyMatch(a -> right.equals(a.getAuthority()));
 		}
 		return false;
+	}
+
+	@Override
+	public boolean hasCurrentUserRightToGrantRole(String role) {
+		return hasCurrentUserRight(GRANT_RIGHT_PREFIX + role);
 	}
 }
