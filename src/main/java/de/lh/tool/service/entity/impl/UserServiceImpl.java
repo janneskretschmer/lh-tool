@@ -60,7 +60,7 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 
 	@Override
 	@Transactional
-	public User createUser(User user) throws DefaultException {
+	public User createUser(User user, String role) throws DefaultException {
 		if (user.getEmail() == null) {
 			throw new DefaultException(ExceptionEnum.EX_USER_NO_EMAIL);
 		}
@@ -74,6 +74,9 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 			throw new DefaultException(ExceptionEnum.EX_USER_NO_GENDER);
 		}
 		user = save(user);
+		if (userRoleService.hasCurrentUserRightToGrantRole(role)) {
+			userRoleService.save(new UserRole(null, user, role));
+		}
 		passwordChangeTokenService.saveRandomToken(user);
 		return user;
 	}
@@ -134,11 +137,26 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 	@Transactional
 	public User getCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication != null &&  !(authentication instanceof AnonymousAuthenticationToken)) {
+		if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken)) {
 			String currentUserName = authentication.getName();
 			return getRepository().findByEmail(currentUserName).orElseThrow(
 					() -> new UsernameNotFoundException("User not " + currentUserName + " does not exist"));
 		}
 		return null;
+	}
+
+	@Override
+	public Iterable<User> findByProjectId(Long projectId) {
+		return getRepository().findByProjects_Id(projectId);
+	}
+
+	@Override
+	public Iterable<User> findByRoleIgnoreCase(String role) {
+		return getRepository().findByRoles_RoleIgnoreCase(role);
+	}
+
+	@Override
+	public Iterable<User> findByProjectIdAndRoleIgnoreCase(Long projectId, String role) {
+		return getRepository().findByProjects_IdAndRoles_RoleIgnoreCase(projectId, role);
 	}
 }

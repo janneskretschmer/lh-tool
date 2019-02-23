@@ -9,4 +9,6 @@ public interface UserRoleService extends BasicEntityService<UserRole, Long> {
 
 	boolean hasUserRight(User user, String right);
 
+	boolean hasCurrentUserRightToGrantRole(String role);
+
 }

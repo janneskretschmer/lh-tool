@@ -4,6 +4,8 @@ import URITemplate from 'urijs/src/URITemplate';
 import { getContextPath } from './config';
 import {
     ID_VARIABLE,
+    USER_ID_VARIABLE,
+    ID_USER_ID_EXTENSION,
     LOGIN_PREFIX,
     INFO_PREFIX,
     INFO_HEARTBEAT,
@@ -98,6 +100,7 @@ export function apiRequest({
         data: null,
     }) {
 
+    
     const renderedPathResult = renderPath({ apiEndpoint, parameters });
     if (renderedPathResult.error) {
         return Promise.reject(renderedPathResult.error);
@@ -146,11 +149,26 @@ export const apiEndpoints = {
             path: PROJECT_DELETE,
             parameters: [ID_VARIABLE],
         },
+        addUser: {
+            method: 'POST',
+            path: PROJECT_PREFIX + ID_USER_ID_EXTENSION,
+            parameters: [ID_VARIABLE, USER_ID_VARIABLE],
+        }
     },
     user: {
         current: {
             method: 'GET',
             path: USER_PREFIX + USER_CURRENT,
+        },
+        create: {
+            method: 'POST',
+            // TODO Trailing '/' also necessary?
+            path: USER_PREFIX + '/' 
+        },
+        get: {
+            method: 'GET',
+            // TODO Trailing '/' also necessary?
+            path: USER_PREFIX + '/'
         }
     },
 };

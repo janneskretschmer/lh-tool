@@ -16,11 +16,16 @@ import { deleteProject } from '../actions/project';
 import WithPermission from './with-permission';
 =======
 import Typography from '@material-ui/core/Typography';
+<<<<<<< Upstream, based on origin/master
 
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 >>>>>>> ef8c21b started project edit component
+=======
+import UserComponent from './user-detail';
+import { createNewUser } from '../actions/user'
+>>>>>>> 0224d3f Edit mask for local coordinator
 
 const styles = theme => ({
     root: {
@@ -38,6 +43,7 @@ const styles = theme => ({
 
 const Transition = props => (<Slide direction="up" {...props} />);
 
+<<<<<<< Upstream, based on origin/master
 <<<<<<< Upstream, based on origin/master
 @withSnackbar
 =======
@@ -151,6 +157,8 @@ const UserComponent = props => {
 }
 
 >>>>>>> ef8c21b started project edit component
+=======
+>>>>>>> 0224d3f Edit mask for local coordinator
 @withStyles(styles)
 export default class ProjectEditPanel extends React.Component {
 
@@ -189,7 +197,11 @@ export default class ProjectEditPanel extends React.Component {
                                 <>
                                     <div><Typography variant="h6">Baudiener</Typography></div>
                                     <div><Typography variant="h6">Lokaler Koordinator</Typography></div>
-                                    <UserComponent/>
+                                    <UserComponent user={project.localCoordinator}
+                                        role="ROLE_LOCAL_COORDINATOR"
+                                        showEdit={false}
+                                        saveHandler={(user) => createNewUser({ accessToken: sessionState.accessToken, ...user, projectId:project.id, projectsState })}
+                                    />
                                     <div><Typography variant="h6">Verkündiger</Typography></div>
 >>>>>>> ef8c21b started project edit component
                                     <Button variant="contained" color="primary" className={classes.button} onClick={this.handleDeleteButtonClicked.bind(this)}>

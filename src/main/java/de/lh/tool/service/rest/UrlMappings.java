@@ -8,6 +8,8 @@ public abstract class UrlMappings {
 
 	public static final String ID_VARIABLE = "id";
 	public static final String USER_ID_VARIABLE = "user_id";
+	public static final String PROJECT_ID_VARIABLE = "project_id";
+	public static final String ROLE_VARIABLE = "role";
 
 	public static final String NO_EXTENSION = "/";
 	public static final String ID_EXTENSION = "/{" + ID_VARIABLE + "}";

@@ -104,28 +104,29 @@ public class UserServiceTest {
 
 	@Test
 	public void testCreateUserNoEmail() {
-		DefaultException exception = assertThrows(DefaultException.class, () -> userService.createUser(new User()));
+		DefaultException exception = assertThrows(DefaultException.class,
+				() -> userService.createUser(new User(), null));
 		assertEquals(ExceptionEnum.EX_USER_NO_EMAIL, exception.getException());
 	}
 
 	@Test
 	public void testCreateUserNoFirstName() {
 		DefaultException exception = assertThrows(DefaultException.class,
-				() -> userService.createUser(User.builder().email("test@te.st").build()));
+				() -> userService.createUser(User.builder().email("test@te.st").build(), null));
 		assertEquals(ExceptionEnum.EX_USER_NO_FIRST_NAME, exception.getException());
 	}
 
 	@Test
 	public void testCreateUserNoLastName() {
 		DefaultException exception = assertThrows(DefaultException.class,
-				() -> userService.createUser(User.builder().email("test@te.st").firstName("Tes").build()));
+				() -> userService.createUser(User.builder().email("test@te.st").firstName("Tes").build(), null));
 		assertEquals(ExceptionEnum.EX_USER_NO_LAST_NAME, exception.getException());
 	}
 
 	@Test
 	public void testCreateUserNoGender() {
 		DefaultException exception = assertThrows(DefaultException.class, () -> userService
-				.createUser(User.builder().email("test@te.st").firstName("Tes").lastName("Ter").build()));
+				.createUser(User.builder().email("test@te.st").firstName("Tes").lastName("Ter").build(), null));
 		assertEquals(ExceptionEnum.EX_USER_NO_GENDER, exception.getException());
 	}
 
@@ -133,7 +134,7 @@ public class UserServiceTest {
 	public void testCreateUser() throws DefaultException {
 		Mockito.when(userRepository.save(Mockito.any())).thenAnswer(i -> i.getArgument(0));
 		User user = userService.createUser(
-				User.builder().email("test@te.st").firstName("Tes").lastName("Ter").gender(Gender.MALE).build());
+				User.builder().email("test@te.st").firstName("Tes").lastName("Ter").gender(Gender.MALE).build(), null);
 		Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any());
 		Mockito.verify(passwordChangeTokenService, Mockito.times(1)).saveRandomToken(Mockito.eq(user));
 	}
