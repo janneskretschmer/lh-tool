@@ -5,6 +5,7 @@ import { getContextPath } from './config';
 import {
     ID_VARIABLE,
     USER_ID_VARIABLE,
+    ID_EXTENSION,
     ID_USER_ID_EXTENSION,
     LOGIN_PREFIX,
     INFO_PREFIX,
@@ -169,6 +170,11 @@ export const apiEndpoints = {
             method: 'GET',
             // TODO Trailing '/' also necessary?
             path: USER_PREFIX + '/'
-        }
+        },
+        delete: {
+            method: 'DELETE',
+            path: USER_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
     },
 };

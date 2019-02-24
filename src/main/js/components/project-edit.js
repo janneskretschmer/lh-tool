@@ -6,7 +6,7 @@ import { SessionContext } from '../providers/session-provider';
 import { deleteProject } from '../actions/project';
 import Typography from '@material-ui/core/Typography';
 import UserComponent from './user-detail';
-import { createNewUser } from '../actions/user'
+import { createNewUser, deleteUser } from '../actions/user'
 import SimpleDialog from './simple-dialog.js'
 import Button from '@material-ui/core/Button';
 
@@ -57,6 +57,8 @@ export default class ProjectEditPanel extends React.Component {
                                         role="ROLE_LOCAL_COORDINATOR"
                                         showEdit={true}
                                         saveHandler={(user) => createNewUser({ accessToken: sessionState.accessToken, ...user, projectId:project.id, projectsState })}
+                                        showDelete={true}
+                                        deleteHandler={(user) => deleteUser({accessToken: sessionState.accessToken, userId: user.id, projectsState})}
                                     />
                                     <div><Typography variant="h6">Verkündiger</Typography></div>
                                     <SimpleDialog

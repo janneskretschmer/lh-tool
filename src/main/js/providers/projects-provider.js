@@ -42,6 +42,21 @@ export default class ProjectsProvider extends React.Component {
         }));
     };
 
+    userRemoved = (userId) => {
+        this.setState(prevState => ({
+            //TODO: rerender of UserComponenet isn't triggered
+            projects: prevState.projects.map(project => {
+                if (project.localCoordinator && project.localCoordinator.id === userId) {
+                    project.localCoordinator = undefined;
+                }
+                if(project.publishers){
+                    project.publishers = project.publishers.filter(user => user.id !== userId);
+                }
+                return project;
+            })
+        }));
+    } 
+
     render() {
         return (
             <ProjectsContext.Provider
@@ -50,6 +65,7 @@ export default class ProjectsProvider extends React.Component {
                     projectAdded: this.projectAdded,
                     projectRemoved: this.projectRemoved,
                     userChanged: this.userChanged,
+                    userRemoved: this.userRemoved,
                 }}
             >
                 {this.props.children}
