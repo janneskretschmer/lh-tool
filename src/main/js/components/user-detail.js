@@ -7,6 +7,9 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Icon from '@material-ui/core/Icon';
 import Grid from '@material-ui/core/Grid';
+import Hidden from '@material-ui/core/Hidden';
+import { Link } from 'react-router-dom'
+import IconButton from '@material-ui/core/IconButton';
 
 const styles = theme => ({
     input: {
@@ -19,7 +22,12 @@ const styles = theme => ({
     userData: {
         maxHeight: '150px',
         overflow: 'auto',
+    },
+    userName: {
+        fontWeight: 'bold',
+        marginTop: '14px',
     }
+
 });
 
 const UserComponent = props => {
@@ -27,6 +35,7 @@ const UserComponent = props => {
     const { classes, role, saveHandler, showEdit } = props;
 
     const [edit, setEdit] = useState(!props.user);
+    const [showDetails, setShowDetails] = useState(false);
     const [user, setUser] = useState(props.user ? props.user : {firstName:'', lastName:'',email:'',telephoneNumber:'',mobileNumber:'',businessNumber:''})
 
     const handleSave = () => {
@@ -141,28 +150,48 @@ const UserComponent = props => {
                 :
                 (<>
                     <Grid container wrap="wrap" spacing={8}>
-                        <Grid item xs={6} sm={2} className={classes.userData}><span className={classes.bold}>{user ? user.lastName : ''}, {user ? user.firstName : ''}</span></Grid>
-                        <Grid item xs={6} sm={2} className={classes.userData}><a href={user?'mailto:'+user.email:''}>{user?user.email:''}</a></Grid>
-                        <Grid item xs={12} sm={3} container className={classes.userData}>
+                        <Grid item xs={12} sm={2} container justify="space-between" className={classes.userData}>
                             <Grid item>
-                                Festnetz:<br/>
-                                Mobil:<br/>
-                                Geschäftlich:                                
+                                <Typography variant="body1" className={classes.userName}>{user ? user.lastName : ''}, {user ? user.firstName : ''}</Typography>
                             </Grid>
                             <Grid item>
-                                <a href={user ? 'tel:'+user.telephoneNumber:''}>{user ? user.telephoneNumber:''}</a><br/>
-                                <a href={user ? 'tel:'+user.mobileNumber:''}>{user ? user.mobileNumber:''}</a><br/>
-                                <a href={user ? 'tel:'+user.businessNumber:''}>{user ? user.businessNumber:''}</a>
+                                <Hidden smUp>
+                                    <EmailLink email={user?user.email:''} asIcon/>
+                                    <SimpleIconButton icon="delete" shown={true} onClick={() => setEdit(true)}/>
+                                    <SimpleIconButton icon="create" shown={showEdit} onClick={() => setEdit(true)}/>
+                                    <IconButton size="small" color="secondary" onClick={() => setShowDetails(!showDetails)}>
+                                        <Icon>{showDetails?'expand_less':'expand_more'}</Icon>
+                                    </IconButton>
+                                </Hidden>
                             </Grid>
                         </Grid>
-                        <Grid item xs={12}  sm={4} className={classes.userData}>
-                            <span className={classes.bold}>Beruf:</span> {user ? user.profession : ''}<br/>
-                            <span className={classes.bold}>Fähigkeiten:</span> {user ? user.skills:''}
-                        </Grid>
-                        <Grid item sm={1} className={classes.userData}>{showEdit || true ?
-                        (<Button size="small" color="secondary" onClick={() => setEdit(true)}>
-                            <Icon>create</Icon>
-                        </Button>) : null}</Grid>                            
+                        <Hidden xsDown>
+                            <Grid item xs={12} sm={2} className={classes.userData}><EmailLink email={user?user.email:''}/></Grid>
+                        </Hidden>
+                        <Hidden xsDown={!showDetails}>
+                            <Grid item xs={12} sm={3} container className={classes.userData}>
+                                    <Grid item>
+                                        Festnetz:<br/>
+                                        Mobil:<br/>
+                                        Geschäftlich:                                
+                                    </Grid>
+                                    <Grid item>
+                                        <a href={user ? 'tel:'+user.telephoneNumber:''}>{user ? user.telephoneNumber:''}</a><br/>
+                                        <a href={user ? 'tel:'+user.mobileNumber:''}>{user ? user.mobileNumber:''}</a><br/>
+                                        <a href={user ? 'tel:'+user.businessNumber:''}>{user ? user.businessNumber:''}</a>
+                                    </Grid>
+                            </Grid>
+                            <Grid item xs={12}  sm={4} className={classes.userData}>
+                                <span className={classes.bold}>Beruf:</span> {user ? user.profession : ''}<br/>
+                                <span className={classes.bold}>Fähigkeiten:</span> {user ? user.skills:''}
+                            </Grid>
+                        </Hidden>
+                        <Hidden xsDown>
+                            <Grid item sm={1} className={classes.userData}>
+                                <SimpleIconButton icon="delete" shown={true} onClick={() => setEdit(true)}/>
+                                <SimpleIconButton icon="create" shown={showEdit} onClick={() => setEdit(true)}/>
+                            </Grid>    
+                        </Hidden>                        
                     </Grid>
 
                 </>)
@@ -170,5 +199,29 @@ const UserComponent = props => {
         </div>
     )
 }
+
+const EmailLink = ({email,asIcon}) =>{ 
+    if(asIcon){
+        return (<IconButton component="a" href={'mailto:'+email}>
+            <Icon color="secondary">email</Icon>
+        </IconButton>);
+    }else{
+        return (<a href={'mailto:'+email}>{email}</a>);
+    }
+}
+
+const SimpleIconButton = ({shown, icon, onClick}) => {
+    if(shown){
+        return (<IconButton color="secondary" onClick={onClick}>
+            <Icon>{icon}</Icon>
+        </IconButton>) 
+    }else{
+        return null;
+    }
+}
+
+
+
+
 
 export default withStyles(styles)(UserComponent);

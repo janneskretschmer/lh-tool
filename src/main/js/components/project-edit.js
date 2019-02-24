@@ -62,7 +62,7 @@ export default class ProjectEditPanel extends React.Component {
                                     <div><Typography variant="h6">Lokaler Koordinator</Typography></div>
                                     <UserComponent user={project.localCoordinator}
                                         role="ROLE_LOCAL_COORDINATOR"
-                                        showEdit={false}
+                                        showEdit={true}
                                         saveHandler={(user) => createNewUser({ accessToken: sessionState.accessToken, ...user, projectId:project.id, projectsState })}
                                     />
                                     <div><Typography variant="h6">Verkündiger</Typography></div>
