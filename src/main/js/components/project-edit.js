@@ -17,10 +17,14 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 >>>>>>> ef8c21b started project edit component
 =======
 import UserComponent from './user-detail';
+<<<<<<< Upstream, based on origin/master
 import { createNewUser } from '../actions/user'
 <<<<<<< Upstream, based on origin/master
 >>>>>>> 0224d3f Edit mask for local coordinator
 =======
+=======
+import { createNewUser, deleteUser } from '../actions/user'
+>>>>>>> 4820795 implemented deletion of user
 import SimpleDialog from './simple-dialog.js'
 import Button from '@material-ui/core/Button';
 >>>>>>> ef296a8 refactored dialog
@@ -202,6 +206,8 @@ export default class ProjectEditPanel extends React.Component {
                                         role="ROLE_LOCAL_COORDINATOR"
                                         showEdit={true}
                                         saveHandler={(user) => createNewUser({ accessToken: sessionState.accessToken, ...user, projectId:project.id, projectsState })}
+                                        showDelete={true}
+                                        deleteHandler={(user) => deleteUser({accessToken: sessionState.accessToken, userId: user.id, projectsState})}
                                     />
                                     <div><Typography variant="h6">Verkündiger</Typography></div>
 <<<<<<< Upstream, based on origin/master

@@ -10,6 +10,7 @@ import Grid from '@material-ui/core/Grid';
 import Hidden from '@material-ui/core/Hidden';
 import { Link } from 'react-router-dom'
 import IconButton from '@material-ui/core/IconButton';
+import SimpleDialog from './simple-dialog.js'
 
 const styles = theme => ({
     input: {
@@ -32,11 +33,11 @@ const styles = theme => ({
 
 const UserComponent = props => {
 
-    const { classes, role, saveHandler, showEdit } = props;
+    const { classes, role, saveHandler, showEdit, deleteHandler, showDelete } = props;
 
     const [edit, setEdit] = useState(!props.user);
     const [showDetails, setShowDetails] = useState(false);
-    const [user, setUser] = useState(props.user ? props.user : {firstName:'', lastName:'',email:'',telephoneNumber:'',mobileNumber:'',businessNumber:''})
+    const [user, setUser] = useState(props.user ? props.user : {gender:'MALE', firstName:'', lastName:'',email:'',telephoneNumber:'',mobileNumber:'',businessNumber:''})
 
     const handleSave = () => {
         if (saveHandler) {
@@ -46,6 +47,12 @@ const UserComponent = props => {
             })
         }
         setEdit(false);
+    }
+
+    const handleDelete = () => {
+        if(deleteHandler) {
+            deleteHandler(user)
+        }
     }
 
     return (
@@ -157,7 +164,7 @@ const UserComponent = props => {
                             <Grid item>
                                 <Hidden smUp>
                                     <EmailLink email={user?user.email:''} asIcon/>
-                                    <SimpleIconButton icon="delete" shown={true} onClick={() => setEdit(true)}/>
+                                    <DeleteButton shown={showDelete} userName={user.firstName + ' ' + user.lastName} deleteHandler={handleDelete}/>
                                     <SimpleIconButton icon="create" shown={showEdit} onClick={() => setEdit(true)}/>
                                     <IconButton size="small" color="secondary" onClick={() => setShowDetails(!showDetails)}>
                                         <Icon>{showDetails?'expand_less':'expand_more'}</Icon>
@@ -188,7 +195,7 @@ const UserComponent = props => {
                         </Hidden>
                         <Hidden xsDown>
                             <Grid item sm={1} className={classes.userData}>
-                                <SimpleIconButton icon="delete" shown={true} onClick={() => setEdit(true)}/>
+                                <DeleteButton shown={showDelete} userName={user.firstName + ' ' + user.lastName} deleteHandler={handleDelete}/>
                                 <SimpleIconButton icon="create" shown={showEdit} onClick={() => setEdit(true)}/>
                             </Grid>    
                         </Hidden>                        
@@ -209,6 +216,17 @@ const EmailLink = ({email,asIcon}) =>{
         return (<a href={'mailto:'+email}>{email}</a>);
     }
 }
+
+const DeleteButton = ({shown, userName, deleteHandler}) => 
+    (<SimpleDialog
+        title= {`Benutzer ${userName} löschen`}
+        text= {`Soll der Benutzer ${userName} wirklich entfernt werden? Das lässt sich nicht rückgängig machen.`}
+        cancelText="Nein"
+        okText={`Ja, Benutzer ${userName} löschen`}
+        onOK={deleteHandler}
+    >
+        <SimpleIconButton icon="delete" shown={shown}/>
+    </SimpleDialog>)
 
 const SimpleIconButton = ({shown, icon, onClick}) => {
     if(shown){

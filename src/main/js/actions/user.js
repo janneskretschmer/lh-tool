@@ -3,6 +3,7 @@ import { addUserToProject } from './project';
 import {
     PROJECT_ID_VARIABLE,
     ROLE_VARIABLE,
+    ID_VARIABLE,
 } from '../urlmappings';
 
 export function fetchCurrentUser({ accessToken }) {
@@ -28,9 +29,6 @@ export function fetchUsersByProjectIdAndRole({ accessToken, projectId, role, cal
 }
 
 export function createNewUser({ accessToken, email, firstName, lastName, gender, telephoneNumber, mobileNumber, businessNumber, role, projectId, projectsState }) {
-    console.log(telephoneNumber);
-    console.log(mobileNumber);
-    console.log(businessNumber);
     return apiRequest({
         apiEndpoint: apiEndpoints.user.create,
         authToken: accessToken,
@@ -54,3 +52,20 @@ export function createNewUser({ accessToken, email, firstName, lastName, gender,
         // TODO Error message
         .catch((e) => console.log(e));
 }
+
+export function deleteUser({ accessToken, userId, projectsState }) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.user.delete,
+        authToken: accessToken,
+        parameters:{
+            [ID_VARIABLE]: userId,
+        }
+    })
+        .then(_ => {
+            projectsState.userRemoved(userId);
+        })
+        // TODO Error message
+        .catch((e) => console.log(e));
+}
+
+

@@ -42,7 +42,7 @@ const SimpleDialog = props => {
                     <Button onClick={() => setOpen(false)} color="secondary">
                         {cancelText}
                     </Button>
-                    <Button color="primary" onClick={onOK}>
+                    <Button color="primary" onClick={() => {onOK(); setOpen(false);}}>
                         {okText}
                     </Button>
                 </DialogActions>
