@@ -4,16 +4,23 @@ import { fetchUsersByProjectIdAndRole } from './user';
 import moment from 'moment';
 
 function mapProjectObject(accessToken, responseObj) {
-    var project = {
+    const project = {
         id: responseObj.id,
         name: responseObj.name,
         startDate: moment(responseObj.startDate, 'x'),
         endDate: moment(responseObj.endDate, 'x'),
+        localCoordinator: undefined,
     };
-    fetchUsersByProjectIdAndRole({ accessToken: accessToken, projectId: responseObj.id, role: 'ROLE_LOCAL_COORDINATOR', callback:(users) => {
-        project.localCoordinator = users[0];
-    }});
-    return project;
+    return fetchUsersByProjectIdAndRole({
+        accessToken,
+        projectId: responseObj.id,
+        role: 'ROLE_LOCAL_COORDINATOR',
+    })
+        .then(users => {
+            project.localCoordinator = users[0];
+            return project;
+        })
+        .catch(() => project);
 }
 
 export function fetchOwnProjects({ accessToken }) {
@@ -23,6 +30,7 @@ export function fetchOwnProjects({ accessToken }) {
             authToken: accessToken,
         })
             .then(result => result.response.content.map(robj => mapProjectObject(accessToken, robj)))
+            .then(Promise.all)
             .catch(() => []);
     } else {
         return Promise.resolve([]);
@@ -39,10 +47,8 @@ export function createNewProject({ accessToken, projectsState, name, startMoment
             endDate: endMoment.valueOf(),
         },
     })
-        .then(result => {
-            const createdProject = mapProjectObject(accessToken, result.response);
-            projectsState.projectAdded(createdProject);
-        })
+        .then(result => mapProjectObject(accessToken, result.response))
+        .then(createdProject => projectsState.projectAdded(createdProject))
         // TODO Error message
         .catch(() => null);
 }
@@ -73,11 +79,11 @@ export function addUserToProject({ accessToken, projectId, user, role, projectsS
             [USER_ID_VARIABLE]: user.id,
         },
     })
-        .then(_ => {
+        .then(() => {
             if (projectsState) {
                 projectsState.userChanged(projectId, user, role);
             }
         })
         // TODO Error message
-        .catch((e) => console.log(e));
+        .catch(e => console.log(e));
 }

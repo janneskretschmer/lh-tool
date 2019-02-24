@@ -15,7 +15,7 @@ export function fetchCurrentUser({ accessToken }) {
         .catch(err => null);
 }
 
-export function fetchUsersByProjectIdAndRole({ accessToken, projectId, role, callback }) {
+export function fetchUsersByProjectIdAndRole({ accessToken, projectId, role }) {
     return apiRequest({
         apiEndpoint: apiEndpoints.user.get,
         authToken: accessToken,
@@ -24,7 +24,7 @@ export function fetchUsersByProjectIdAndRole({ accessToken, projectId, role, cal
             [ROLE_VARIABLE]: role,
         }
     })
-        .then(result => callback(result.response.content))
+        .then(result => result.response.content)
         .catch(err => null);
 }
 
@@ -45,12 +45,13 @@ export function createNewUser({ accessToken, email, firstName, lastName, gender,
     })
         .then(result => {
             if (projectId) {
-                addUserToProject({ accessToken, projectId, user: result.response, role, projectsState })
-
+                addUserToProject({ accessToken, projectId, user: result.response, role, projectsState });s
+                // TODO @Jannes: Möchtest du hier eher folgendes machen:
+                // return addUserToProject({ accessToken, projectId, user: result.response, role, projectsState });
             }
         })
         // TODO Error message
-        .catch((e) => console.log(e));
+        .catch(e => console.log(e));
 }
 
 export function deleteUser({ accessToken, userId, projectsState }) {
@@ -61,11 +62,12 @@ export function deleteUser({ accessToken, userId, projectsState }) {
             [ID_VARIABLE]: userId,
         }
     })
-        .then(_ => {
+        .then(() => {
+            // TODO @Jannes: return fehlt? (siehe oben)
             projectsState.userRemoved(userId);
         })
         // TODO Error message
-        .catch((e) => console.log(e));
+        .catch(e => console.log(e));
 }
 
 
