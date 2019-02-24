@@ -28,6 +28,9 @@ export function fetchUsersByProjectIdAndRole({ accessToken, projectId, role, cal
 }
 
 export function createNewUser({ accessToken, email, firstName, lastName, gender, telephoneNumber, mobileNumber, businessNumber, role, projectId, projectsState }) {
+    console.log(telephoneNumber);
+    console.log(mobileNumber);
+    console.log(businessNumber);
     return apiRequest({
         apiEndpoint: apiEndpoints.user.create,
         authToken: accessToken,
