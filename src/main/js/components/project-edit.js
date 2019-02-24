@@ -1,13 +1,6 @@
 import React from 'react';
 import { withSnackbar } from 'notistack';
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Slide from '@material-ui/core/Slide';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { ProjectsContext } from '../providers/projects-provider';
 import { SessionContext } from '../providers/session-provider';
@@ -25,7 +18,12 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 =======
 import UserComponent from './user-detail';
 import { createNewUser } from '../actions/user'
+<<<<<<< Upstream, based on origin/master
 >>>>>>> 0224d3f Edit mask for local coordinator
+=======
+import SimpleDialog from './simple-dialog.js'
+import Button from '@material-ui/core/Button';
+>>>>>>> ef296a8 refactored dialog
 
 const styles = theme => ({
     root: {
@@ -41,6 +39,7 @@ const styles = theme => ({
     },
 });
 
+<<<<<<< Upstream, based on origin/master
 const Transition = props => (<Slide direction="up" {...props} />);
 
 <<<<<<< Upstream, based on origin/master
@@ -159,6 +158,8 @@ const UserComponent = props => {
 >>>>>>> ef8c21b started project edit component
 =======
 >>>>>>> 0224d3f Edit mask for local coordinator
+=======
+>>>>>>> ef296a8 refactored dialog
 @withStyles(styles)
 export default class ProjectEditPanel extends React.Component {
 
@@ -203,6 +204,7 @@ export default class ProjectEditPanel extends React.Component {
                                         saveHandler={(user) => createNewUser({ accessToken: sessionState.accessToken, ...user, projectId:project.id, projectsState })}
                                     />
                                     <div><Typography variant="h6">Verkündiger</Typography></div>
+<<<<<<< Upstream, based on origin/master
 >>>>>>> ef8c21b started project edit component
                                     <Button variant="contained" color="primary" className={classes.button} onClick={this.handleDeleteButtonClicked.bind(this)}>
                                         Projekt löschen
@@ -229,18 +231,37 @@ export default class ProjectEditPanel extends React.Component {
                                                 {'Nein'}
                                             </Button>
                                             <Button color="primary" onClick={() => {
+=======
+                                    <SimpleDialog
+                                        title= {`Projekt ${project.name} löschen`}
+                                        text= {`Soll das Projekt ${project.name} wirklich entfernt werden? Das lässt sich nicht rückgängig machen.`}
+                                        cancelText="Nein"
+                                        okText={`Ja, Projekt ${project.name} löschen`}
+                                        onOK={() => {
+>>>>>>> ef296a8 refactored dialog
                                                 deleteProject({
                                                     accessToken: sessionState.accessToken,
                                                     projectsState: projectsState,
                                                     projectId: this.props.project.id,
                                                     handleFailure: this.handleDeleteFailure.bind(this),
                                                 });
+<<<<<<< Upstream, based on origin/master
                                             }}>
                                                 {`Ja, Projekt ${project.name} löschen`}
                                             </Button>
                                         </DialogActions>
                                     </Dialog>
                                 </WithPermission>
+=======
+                                            }}
+                                    >
+                                        <Button variant="contained" color="primary" className={classes.button}>
+                                            Projekt löschen
+                                            <DeleteIcon className={classes.rightIcon} />
+                                        </Button>
+                                    </SimpleDialog>
+                                </>
+>>>>>>> ef296a8 refactored dialog
                             )}
                         </ProjectsContext.Consumer>
 
