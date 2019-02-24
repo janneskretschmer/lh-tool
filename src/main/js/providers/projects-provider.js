@@ -33,7 +33,7 @@ export default class ProjectsProvider extends React.Component {
         this.setState(prevState => ({
             projects: prevState.projects.map(project => {
                 if(project.id === projectId){
-                    if (role == 'ROLE_LOCAL_COORDINATOR') {
+                    if (role === 'ROLE_LOCAL_COORDINATOR') {
                         project.localCoordinator = user;
                     }
                 }
@@ -54,7 +54,10 @@ export default class ProjectsProvider extends React.Component {
                 }
                 return project;
             })
-        }));
+        }), () => {
+            // Die Holzhammer-Lösung, sollte aber optimaler Weise auch ohne gehen.
+            this.forceUpdate();
+        });
     } 
 
     render() {

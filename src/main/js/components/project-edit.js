@@ -202,12 +202,13 @@ export default class ProjectEditPanel extends React.Component {
                                 <>
                                     <div><Typography variant="h6">Baudiener</Typography></div>
                                     <div><Typography variant="h6">Lokaler Koordinator</Typography></div>
-                                    <UserComponent user={project.localCoordinator}
+                                    <UserComponent
+                                        user={project.localCoordinator}
                                         role="ROLE_LOCAL_COORDINATOR"
                                         showEdit={true}
-                                        saveHandler={(user) => createNewUser({ accessToken: sessionState.accessToken, ...user, projectId:project.id, projectsState })}
+                                        onSave={user => createNewUser({ accessToken: sessionState.accessToken, ...user, projectId:project.id, projectsState })}
                                         showDelete={true}
-                                        deleteHandler={(user) => deleteUser({accessToken: sessionState.accessToken, userId: user.id, projectsState})}
+                                        onDelete={user => deleteUser({accessToken: sessionState.accessToken, userId: user.id, projectsState})}
                                     />
                                     <div><Typography variant="h6">Verkündiger</Typography></div>
 <<<<<<< Upstream, based on origin/master
@@ -239,8 +240,8 @@ export default class ProjectEditPanel extends React.Component {
                                             <Button color="primary" onClick={() => {
 =======
                                     <SimpleDialog
-                                        title= {`Projekt ${project.name} löschen`}
-                                        text= {`Soll das Projekt ${project.name} wirklich entfernt werden? Das lässt sich nicht rückgängig machen.`}
+                                        title={`Projekt ${project.name} löschen`}
+                                        text={`Soll das Projekt ${project.name} wirklich entfernt werden? Das lässt sich nicht rückgängig machen.`}
                                         cancelText="Nein"
                                         okText={`Ja, Projekt ${project.name} löschen`}
                                         onOK={() => {

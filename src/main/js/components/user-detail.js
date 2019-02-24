@@ -33,15 +33,15 @@ const styles = theme => ({
 
 const UserComponent = props => {
 
-    const { classes, role, saveHandler, showEdit, deleteHandler, showDelete } = props;
+    const { classes, role, onSave, showEdit, onDelete, showDelete } = props;
 
     const [edit, setEdit] = useState(!props.user);
     const [showDetails, setShowDetails] = useState(false);
     const [user, setUser] = useState(props.user ? props.user : {gender:'MALE', firstName:'', lastName:'',email:'',telephoneNumber:'',mobileNumber:'',businessNumber:''})
 
     const handleSave = () => {
-        if (saveHandler) {
-            saveHandler({
+        if (onSave) {
+            onSave({
                 ...user,
                 role,
             })
@@ -50,8 +50,8 @@ const UserComponent = props => {
     }
 
     const handleDelete = () => {
-        if(deleteHandler) {
-            deleteHandler(user)
+        if(onDelete) {
+            onDelete(user)
         }
     }
 
@@ -149,7 +149,7 @@ const UserComponent = props => {
                     {user ? (<Button size="small" color="secondary" onClick={() => setEdit(false)}>
                         Abbrechen
                     </Button>) : null}
-                    {saveHandler ?
+                    {onSave ?
                         (<Button variant="contained" type="submit" onClick={handleSave}>
                             Speichern
                     </Button>) : null}
@@ -164,7 +164,7 @@ const UserComponent = props => {
                             <Grid item>
                                 <Hidden smUp>
                                     <EmailLink email={user?user.email:''} asIcon/>
-                                    <DeleteButton shown={showDelete} userName={user.firstName + ' ' + user.lastName} deleteHandler={handleDelete}/>
+                                    <DeleteButton shown={showDelete} userName={user.firstName + ' ' + user.lastName} onDelete={handleDelete}/>
                                     <SimpleIconButton icon="create" shown={showEdit} onClick={() => setEdit(true)}/>
                                     <IconButton size="small" color="secondary" onClick={() => setShowDetails(!showDetails)}>
                                         <Icon>{showDetails?'expand_less':'expand_more'}</Icon>
@@ -195,7 +195,7 @@ const UserComponent = props => {
                         </Hidden>
                         <Hidden xsDown>
                             <Grid item sm={1} className={classes.userData}>
-                                <DeleteButton shown={showDelete} userName={user.firstName + ' ' + user.lastName} deleteHandler={handleDelete}/>
+                                <DeleteButton shown={showDelete} userName={user.firstName + ' ' + user.lastName} onDelete={handleDelete}/>
                                 <SimpleIconButton icon="create" shown={showEdit} onClick={() => setEdit(true)}/>
                             </Grid>    
                         </Hidden>                        
@@ -217,13 +217,13 @@ const EmailLink = ({email,asIcon}) =>{
     }
 }
 
-const DeleteButton = ({shown, userName, deleteHandler}) => 
+const DeleteButton = ({shown, userName, onDelete}) => 
     (<SimpleDialog
         title= {`Benutzer ${userName} löschen`}
         text= {`Soll der Benutzer ${userName} wirklich entfernt werden? Das lässt sich nicht rückgängig machen.`}
         cancelText="Nein"
         okText={`Ja, Benutzer ${userName} löschen`}
-        onOK={deleteHandler}
+        onOK={onDelete}
     >
         <SimpleIconButton icon="delete" shown={shown}/>
     </SimpleDialog>)
