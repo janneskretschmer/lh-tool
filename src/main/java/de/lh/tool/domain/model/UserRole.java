@@ -71,7 +71,9 @@ public class UserRole implements GrantedAuthority {
 //	Unfortunately granted authorities always have to start with "ROLE_". Several attempts to change that failed. 	
 	public static final String RIGHT_USERS_GET_ALL = "ROLE_RIGHT_USERS_GET_ALL";
 	public static final String RIGHT_USERS_CREATE = "ROLE_RIGHT_USERS_CREATE";
+	public static final String RIGHT_USERS_PUT = "ROLE_RIGHT_USERS_PUT";
 	public static final String RIGHT_USERS_DELETE = "ROLE_RIGHT_USERS_DELETE";
+	public static final String RIGHT_USERS_CHANGE_FOREIGN = "ROLE_RIGHT_USERS_CHANGE_FOREIGN";
 	public static final String RIGHT_USERS_CHANGE_FOREIGN_PASSWORD = "ROLE_RIGHT_USERS_CHANGE_FOREIGN_PASSWORD";
 	public static final String RIGHT_USERS_CHANGE_ROLES = "ROLE_RIGHT_USERS_CHANGE_ROLES";
 	public static final String RIGHT_USERS_GRANT_ROLE_ADMIN = "ROLE_RIGHT_USERS_GRANT_ROLE_ADMIN";
