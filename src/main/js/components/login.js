@@ -2,12 +2,17 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { withSnackbar } from 'notistack';
 import { SessionContext } from '../providers/session-provider';
-import { login } from '../actions/login';
+import { login, requestPasswordReset } from '../actions/login';
 import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 const styles = theme => ({
     container: {
@@ -26,10 +31,9 @@ const styles = theme => ({
 @withStyles(styles, { withTheme: true })
 export default class LoginComponent extends React.Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {};
-    }
+    state = {
+        pwResetDialogOpen: false,
+    };
 
     handleLoginFailure() {
         this.props.enqueueSnackbar('Fehler beim Anmelden', {
@@ -37,6 +41,17 @@ export default class LoginComponent extends React.Component {
         });
     }
 
+    closePwResetDialog() {
+        this.setState({
+            pwResetDialogOpen: false,
+        });
+    }
+
+    openPwResetDialog() {
+        this.setState({
+            pwResetDialogOpen: true,
+        });
+    }
 
     render() {
         const { classes } = this.props;
@@ -65,7 +80,7 @@ export default class LoginComponent extends React.Component {
                                     <TextField
                                         id="username"
                                         autoFocus={true}
-                                        label="Email"
+                                        label="E-Mail"
                                         type="email"
                                         name="username"
                                         autoComplete="email"
@@ -90,13 +105,55 @@ export default class LoginComponent extends React.Component {
                                         }}
                                     />
                                     <br />
-                                    <Button size="small" color="secondary" className={classes.button}>
+                                    <Button size="small" color="secondary" className={classes.button} onClick={this.openPwResetDialog.bind(this)}>
                                         Passwort vergessen
                                     </Button>
                                     <Button variant="contained" type="submit" className={classes.button}>
                                         Anmelden
                                     </Button>
-                                </div></div>
+                                    <Dialog
+                                        open={this.state.pwResetDialogOpen}
+                                        onClose={this.closePwResetDialog.bind(this)}
+                                        aria-labelledby="form-dialog-title"
+                                    >
+                                        <DialogTitle id="form-dialog-title">Passwort vergessen</DialogTitle>
+                                        <DialogContent>
+                                            <DialogContentText>
+                                                Wenn du dein Passwort vergessen hast, kannst du dir per E-Mail einen Link zusenden lassen, mit dem du dein Passwort neu setzen kannst.
+                                            </DialogContentText>
+                                            <TextField
+                                                autoFocus
+                                                margin="dense"
+                                                id="resetEmail"
+                                                label="E-Mail"
+                                                type="email"
+                                                fullWidth
+                                                InputProps={{
+                                                    inputRef: ref => this.inputResetEmail = ref
+                                                }}
+                                            />
+                                        </DialogContent>
+                                        <DialogActions>
+                                            <Button onClick={this.closePwResetDialog.bind(this)} color="secondary">
+                                                Abbrechen
+                                            </Button>
+                                            <Button onClick={() => {
+                                                const email = this.inputResetEmail.value;
+                                                requestPasswordReset({ email })
+                                                    .then(() => {
+                                                        this.props.enqueueSnackbar('Anforderung abgesendet', { variant: 'success', });
+                                                        this.closePwResetDialog();
+                                                    })
+                                                    .catch(() => {
+                                                        this.props.enqueueSnackbar('Fehler beim Anfordern des Links', { variant: 'error', });
+                                                    });
+                                            }} color="primary">
+                                                Link für neues Passwort anfordern
+                                            </Button>
+                                        </DialogActions>
+                                    </Dialog>
+                                </div>
+                            </div>
                         </Grid>
                     </form>
                 )}

@@ -5,6 +5,7 @@ import { getContextPath } from './config';
 import {
     ID_VARIABLE,
     LOGIN_PREFIX,
+    LOGIN_PASSWORD_RESET,
     INFO_PREFIX,
     INFO_HEARTBEAT,
     USER_PREFIX,
@@ -129,6 +130,10 @@ export const apiEndpoints = {
             // TODO Trailing '/' seems to be necessary
             path: LOGIN_PREFIX + '/',
         },
+        pwreset: {
+            method: 'POST',
+            path: LOGIN_PREFIX + LOGIN_PASSWORD_RESET,
+        }
     },
     project: {
         getOwn: {
