@@ -35,7 +35,7 @@ public class MailServiceImpl implements MailService {
 
 	@Value("${mail.smtp.password}")
 	private String password;
-	
+
 	@Value("${mail.smtp.tlsEnabled}")
 	private boolean tlsEnabled;
 
@@ -97,13 +97,14 @@ public class MailServiceImpl implements MailService {
 			}
 		}
 	}
-	
+
 	@Override
 	public void sendPwResetMail(User user, PasswordChangeToken passwordChangeToken) {
 		// Preliminary implementation:
 		if (user != null && passwordChangeToken != null && user.getEmail() != null) {
 			// FIXME Harcoded URL prefix
-			String url = "http://localhost:8080/lh-tool/web/changepw?token=" + passwordChangeToken.getToken();
+			String url = "http://localhost:8080/lh-tool/web/changepw?uid=" + user.getId() + "&token="
+					+ passwordChangeToken.getToken();
 			String text = "Link um dein Passwort zurückzusetzen:\n" + url;
 			sendMail(user.getEmail(), "[LH-Tool] Passwort zurücksetzen", text);
 		}
