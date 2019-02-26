@@ -23,6 +23,7 @@ import de.lh.tool.domain.model.PasswordChangeToken;
 import de.lh.tool.domain.model.User;
 import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.repository.UserRepository;
+import de.lh.tool.service.entity.interfaces.MailService;
 import de.lh.tool.service.entity.interfaces.PasswordChangeTokenService;
 import de.lh.tool.service.entity.interfaces.UserRoleService;
 import de.lh.tool.service.entity.interfaces.UserService;
@@ -43,12 +44,14 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private MailService mailService;
 
 	@Override
 	@Transactional
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		return getRepository().findByEmail(username)
-				.orElseThrow(() -> new UsernameNotFoundException("User not " + username + " does not exist"));
+		return loadUserByEmail(username);
 	}
 
 	@Override
@@ -56,6 +59,13 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 	public UserDetails loadUserById(Long id) {
 		return getRepository().findById(id)
 				.orElseThrow(() -> new UsernameNotFoundException("User not found with id : " + id));
+	}
+	
+	@Override
+	@Transactional
+	public User loadUserByEmail(String email) throws UsernameNotFoundException {
+		return getRepository().findByEmail(email)
+				.orElseThrow(() -> new UsernameNotFoundException("User with email " + email + " does not exist"));
 	}
 
 	@Override
@@ -140,5 +150,23 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 					() -> new UsernameNotFoundException("User not " + currentUserName + " does not exist"));
 		}
 		return null;
+	}
+	
+	@Override
+	@Transactional
+	public void requestPasswordReset(String email) throws DefaultException {
+		try {
+			User user = loadUserByEmail(email);
+			if (user != null) {
+				// FIXME Use actual password-token implementation:
+				// PasswordChangeToken token = passwordChangeTokenService.saveRandomToken(user);
+
+				mailService.sendPwResetMail(user,
+						PasswordChangeToken.builder().token("__I_AM_A_DUMMY_TOKEN__").build());
+			}
+
+		} catch (UsernameNotFoundException ex) {
+			// pass
+		}
 	}
 }
