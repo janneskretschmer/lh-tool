@@ -13,6 +13,7 @@ import javax.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import de.lh.tool.domain.model.PasswordChangeToken;
 import de.lh.tool.domain.model.User;
 import de.lh.tool.service.entity.interfaces.MailService;
 import lombok.extern.log4j.Log4j2;
@@ -34,11 +35,16 @@ public class MailServiceImpl implements MailService {
 
 	@Value("${mail.smtp.password}")
 	private String password;
+	
+	@Value("${mail.smtp.tlsEnabled}")
+	private boolean tlsEnabled;
 
 	public MailServiceImpl() {
 		properties = new Properties();
 		properties.put("mail.smtp.socketFactory.port", "465");
-		properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+		if (tlsEnabled) {
+			properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+		}
 		properties.put("mail.smtp.auth", "true");
 		properties.put("mail.smtp.port", "465");
 	}
@@ -89,6 +95,17 @@ public class MailServiceImpl implements MailService {
 							+ " with id " + user.getId() + " not sent");
 				}
 			}
+		}
+	}
+	
+	@Override
+	public void sendPwResetMail(User user, PasswordChangeToken passwordChangeToken) {
+		// Preliminary implementation:
+		if (user != null && passwordChangeToken != null && user.getEmail() != null) {
+			// FIXME Harcoded URL prefix
+			String url = "http://localhost:8080/lh-tool/web/changepw?token=" + passwordChangeToken.getToken();
+			String text = "Link um dein Passwort zurückzusetzen:\n" + url;
+			sendMail(user.getEmail(), "[LH-Tool] Passwort zurücksetzen", text);
 		}
 	}
 
