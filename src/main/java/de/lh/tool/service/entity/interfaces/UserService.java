@@ -22,4 +22,6 @@ public interface UserService extends BasicEntityService<User, Long> {
 
 	User getCurrentUser();
 
+	User updateUser(User user) throws DefaultException;
+
 }

@@ -4,6 +4,8 @@ import java.util.Calendar;
 
 import javax.transaction.Transactional;
 
+import org.modelmapper.Conditions;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -79,6 +81,25 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 		}
 		passwordChangeTokenService.saveRandomToken(user);
 		return user;
+	}
+
+	@Override
+	@Transactional
+	public User updateUser(User user) throws DefaultException {
+		if (user.getId() == null) {
+			throw new DefaultException(ExceptionEnum.EX_NO_ID_PROVIDED);
+		}
+		User old = findById(user.getId()).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_USER_ID));
+		if (getCurrentUser().getId() != user.getId()
+				&& !((userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_CHANGE_FOREIGN))
+						&& old.getRoles().stream()
+								.anyMatch(r -> userRoleService.hasCurrentUserRightToGrantRole(r.getRole())))) {
+			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
+		}
+		ModelMapper mapper = new ModelMapper();
+		mapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
+		mapper.map(user, old);
+		return save(old);
 	}
 
 	@Override
