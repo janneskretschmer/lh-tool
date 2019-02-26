@@ -29,8 +29,7 @@ export function fetchOwnProjects({ accessToken }) {
             apiEndpoint: apiEndpoints.project.getOwn,
             authToken: accessToken,
         })
-            .then(result => result.response.content.map(robj => mapProjectObject(accessToken, robj)))
-            .then(Promise.all)
+            .then(result => Promise.all(result.response.content.map(robj => mapProjectObject(accessToken, robj))))
             .catch(() => []);
     } else {
         return Promise.resolve([]);
