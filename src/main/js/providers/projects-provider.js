@@ -51,7 +51,6 @@ export default class ProjectsProvider extends React.Component {
                 }
                 return project;
             })
-<<<<<<< HEAD
         }));
     };
 
@@ -82,44 +81,6 @@ export default class ProjectsProvider extends React.Component {
                 return project;
             })
         }));
-=======
-        }), () => {
-            // Die Holzhammer-Lösung, sollte aber optimaler Weise auch ohne gehen.
-            this.forceUpdate();
-        });
-    };
-
-    userUpdated  = (user) => {
-        this.setState(prevState => ({
-            projects: prevState.projects.map(project => {
-                if (project.localCoordinator && project.localCoordinator.id === user.id) {
-                    project.localCoordinator = user;
-                }
-                if(project.publishers){
-                    project.publishers = project.publishers.map(tmpUser => tmpUser.id === user.id ? user : tmpUser);
-                }
-                return project;
-            })
-        }));
-    }
-
-    userRemoved = (userId) => {
-        this.setState(prevState => ({
-            //TODO: rerender of UserComponenet isn't triggered
-            projects: prevState.projects.map(project => {
-                if (project.localCoordinator && project.localCoordinator.id === userId) {
-                    project.localCoordinator = undefined;
-                }
-                if(project.publishers){
-                    project.publishers = project.publishers.filter(user => user.id !== userId);
-                }
-                return project;
-            })
-        }), () => {
-            // Die Holzhammer-Lösung, sollte aber optimaler Weise auch ohne gehen.
-            this.forceUpdate();
-        });
->>>>>>> branch 'project-edit' of https://github.com/janneskretschmer/lh-tool.git
     } 
 
     render() {
