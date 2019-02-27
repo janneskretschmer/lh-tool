@@ -168,16 +168,16 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 
 	@Override
 	public Iterable<User> findByProjectId(Long projectId) {
-		return getRepository().findByProjects_Id(projectId);
+		return getRepository().findByProjects_IdOrderByFirstNameAscLastNameAsc(projectId);
 	}
 
 	@Override
 	public Iterable<User> findByRoleIgnoreCase(String role) {
-		return getRepository().findByRoles_RoleIgnoreCase(role);
+		return getRepository().findByRoles_RoleIgnoreCaseOrderByFirstNameAscLastNameAsc(role);
 	}
 
 	@Override
 	public Iterable<User> findByProjectIdAndRoleIgnoreCase(Long projectId, String role) {
-		return getRepository().findByProjects_IdAndRoles_RoleIgnoreCase(projectId, role);
+		return getRepository().findByProjects_IdAndRoles_RoleIgnoreCaseOrderByFirstNameAscLastNameAsc(projectId, role);
 	}
 }

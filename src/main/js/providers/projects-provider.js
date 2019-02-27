@@ -33,14 +33,28 @@ export default class ProjectsProvider extends React.Component {
     userAdded = (projectId, user, role) => {
         this.setState(prevState => ({
             projects: prevState.projects.map(project => {
-                if(project.id === projectId){
+                if (project.id === projectId) {
                     if (role === 'ROLE_LOCAL_COORDINATOR') {
                         project.localCoordinator = user;
+                    } else if (role === 'ROLE_PUBLISHER') {
+                        project.publishers = project.publishers.concat([user]);
+                        project.publishers.sort((a, b) => {
+                            if (a.lastName < b.lastName) {
+                                return -1;
+                            } else if (a.lastName > b.lastName) {
+                                return 1;
+                            } else {
+                                return a.firstName < b.firstName ? -1 : 1;
+                            }
+                        });
                     }
                 }
                 return project;
             })
-        }));
+        }), () => {
+            // Die Holzhammer-Lösung, sollte aber optimaler Weise auch ohne gehen.
+            this.forceUpdate();
+        });
     };
 
     userUpdated  = (user) => {

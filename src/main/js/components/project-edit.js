@@ -9,6 +9,8 @@ import UserComponent from './user-detail';
 import { createNewUser, updateUser, deleteUser } from '../actions/user'
 import SimpleDialog from './simple-dialog.js'
 import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import Icon from '@material-ui/core/Icon';
 
 const styles = theme => ({
     root: {
@@ -30,16 +32,15 @@ export default class ProjectEditPanel extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            deleteDeleteDialogOpen: false,
+            editPublishers: false,
         };
     }
 
-    handleDeleteButtonClicked() {
-        this.setState({ deleteDeleteDialogOpen: true });
-    }
-
-    handleDeleteDialogClose() {
-        this.setState({ deleteDeleteDialogOpen: false });
+    handlePublisherEditButtonClicked() {
+        this.setState({
+            editPublishers: !this.state.editPublishers,
+            ...this.state,
+        })
     }
 
     render() {
@@ -62,14 +63,25 @@ export default class ProjectEditPanel extends React.Component {
                                         showDelete={true}
                                         onDelete={user => deleteUser({accessToken: sessionState.accessToken, userId: user.id, projectsState})}
                                     />
-                                    <div><Typography variant="h6">Verkündiger</Typography></div>
+                                    <Typography variant="h6">Verkündiger 
+                                        <IconButton onClick={() => this.handlePublisherEditButtonClicked()}>
+                                            <Icon>{this.state.editPublishers ? 'close' : 'create'}</Icon>
+                                        </IconButton>
+                                    </Typography>
+                                    <UserComponent
+                                        role="ROLE_PUBLISHER"
+                                        showEdit={false}
+                                        onSave={(user) => createNewUser({ accessToken: sessionState.accessToken, ...user, projectId:project.id, projectsState })}
+                                        onlyNewUsers={true}
+                                        showDelete={false}
+                                    />
                                     {project.publishers ? project.publishers.map(user => (
-                                            <UserComponent user={project.localCoordinator}
+                                            <UserComponent user={user}
                                                 role="ROLE_PUBLISHER"
                                                 showEdit={true}
-                                                //onSave={(user) => createNewUser({ accessToken: sessionState.accessToken, ...user, projectId:project.id, projectsState })}
+                                                onUpdate={(user) => updateUser({accessToken: sessionState.accessToken, user, projectsState})}
                                                 showDelete={true}
-                                                //onDelete={(user) => deleteUser({accessToken: sessionState.accessToken, userId: user.id, projectsState})}
+                                                onDelete={(user) => deleteUser({accessToken: sessionState.accessToken, userId: user.id, projectsState})}
                                             />
                                         ))
                                     :
