@@ -33,7 +33,7 @@ const styles = theme => ({
 
 const UserComponent = props => {
 
-    const { classes, role, onSave, onUpdate, showEdit, onDelete, showDelete } = props;
+    const { classes, role, onSave, onUpdate, showEdit, onDelete, showDelete, onlyNewUsers } = props;
 
     const [edit, setEdit] = useState(!props.user);
     const [showDetails, setShowDetails] = useState(false);
@@ -45,15 +45,20 @@ const UserComponent = props => {
     const disableDeleteButton = !onDelete;
 
     const handleSave = () => {
-        if (onSave && newUser) {
+        if (onSave && (newUser || onlyNewUsers)) {
             onSave({
                 ...user,
                 role,
             });
         } else if (onUpdate && !newUser) {
             onUpdate(user);
-        } 
-        setEdit(false);
+        }
+        if(onlyNewUsers){
+            setUser({gender:'MALE', firstName:'', lastName:'',email:'',telephoneNumber:'',mobileNumber:'',businessNumber:''});
+        }else{
+            setEdit(false);
+        }
+        
     }
 
     const handleDelete = () => {
@@ -153,7 +158,7 @@ const UserComponent = props => {
                         label="Schwester"
                         className={classes.input}
                     />
-                    {user ? (<Button size="small" color="secondary" onClick={() => setEdit(false)}>
+                    {user ? (<Button size="small" color="secondary" disabled={onlyNewUsers} onClick={() => setEdit(onlyNewUsers)}>
                         Abbrechen
                     </Button>) : null}
                     {onSave ?

@@ -31,7 +31,12 @@ import { createNewUser, updateUser, deleteUser } from '../actions/user'
 >>>>>>> 3596eee edit user works
 import SimpleDialog from './simple-dialog.js'
 import Button from '@material-ui/core/Button';
+<<<<<<< Upstream, based on origin/master
 >>>>>>> ef296a8 refactored dialog
+=======
+import IconButton from '@material-ui/core/IconButton';
+import Icon from '@material-ui/core/Icon';
+>>>>>>> 06c38e1 WIP edit mode for publishers
 
 const styles = theme => ({
     root: {
@@ -174,16 +179,15 @@ export default class ProjectEditPanel extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            deleteDeleteDialogOpen: false,
+            editPublishers: false,
         };
     }
 
-    handleDeleteButtonClicked() {
-        this.setState({ deleteDeleteDialogOpen: true });
-    }
-
-    handleDeleteDialogClose() {
-        this.setState({ deleteDeleteDialogOpen: false });
+    handlePublisherEditButtonClicked() {
+        this.setState({
+            editPublishers: !this.state.editPublishers,
+            ...this.state,
+        })
     }
 
     handleDeleteFailure() {
@@ -215,6 +219,7 @@ export default class ProjectEditPanel extends React.Component {
                                         showDelete={true}
                                         onDelete={user => deleteUser({accessToken: sessionState.accessToken, userId: user.id, projectsState})}
                                     />
+<<<<<<< Upstream, based on origin/master
                                     <div><Typography variant="h6">Verkündiger</Typography></div>
 <<<<<<< Upstream, based on origin/master
 <<<<<<< Upstream, based on origin/master
@@ -246,13 +251,27 @@ export default class ProjectEditPanel extends React.Component {
                                             <Button color="primary" onClick={() => {
 =======
 =======
+=======
+                                    <Typography variant="h6">Verkündiger 
+                                        <IconButton onClick={() => this.handlePublisherEditButtonClicked()}>
+                                            <Icon>{this.state.editPublishers ? 'close' : 'create'}</Icon>
+                                        </IconButton>
+                                    </Typography>
+                                    <UserComponent
+                                        role="ROLE_PUBLISHER"
+                                        showEdit={false}
+                                        onSave={(user) => createNewUser({ accessToken: sessionState.accessToken, ...user, projectId:project.id, projectsState })}
+                                        onlyNewUsers={true}
+                                        showDelete={false}
+                                    />
+>>>>>>> 06c38e1 WIP edit mode for publishers
                                     {project.publishers ? project.publishers.map(user => (
-                                            <UserComponent user={project.localCoordinator}
+                                            <UserComponent user={user}
                                                 role="ROLE_PUBLISHER"
                                                 showEdit={true}
-                                                //onSave={(user) => createNewUser({ accessToken: sessionState.accessToken, ...user, projectId:project.id, projectsState })}
+                                                onUpdate={(user) => updateUser({accessToken: sessionState.accessToken, user, projectsState})}
                                                 showDelete={true}
-                                                //onDelete={(user) => deleteUser({accessToken: sessionState.accessToken, userId: user.id, projectsState})}
+                                                onDelete={(user) => deleteUser({accessToken: sessionState.accessToken, userId: user.id, projectsState})}
                                             />
                                         ))
                                     :

@@ -10,6 +10,7 @@ function mapProjectObject(accessToken, responseObj) {
         startDate: moment(responseObj.startDate, 'x'),
         endDate: moment(responseObj.endDate, 'x'),
         localCoordinator: undefined,
+        publishers: [],
     };
     return fetchUsersByProjectIdAndRole({
         accessToken,
@@ -18,9 +19,29 @@ function mapProjectObject(accessToken, responseObj) {
     })
         .then(users => {
             project.localCoordinator = users[0];
-            return project;
+            return fetchUsersByProjectIdAndRole({
+                accessToken,
+                projectId: project.id,
+                role: 'ROLE_PUBLISHER',
+            })
+            .then(users => {
+                project.publishers = users;
+                return project;
+            })
+            .catch(() => project);
         })
-        .catch(() => project);
+        .catch(() => {
+            return fetchUsersByProjectIdAndRole({
+                accessToken,
+                projectId: project.id,
+                role: 'ROLE_PUBLISHER',
+            })
+            .then(users => {
+                project.publishers = users;
+                return project;
+            })
+            .catch(() => project);
+        });
 }
 
 export function fetchOwnProjects({ accessToken }) {
@@ -84,7 +105,6 @@ export function deleteProject({ accessToken, projectsState, projectId, handleFai
 }
 
 export function addUserToProject({ accessToken, projectId, user, role, projectsState }) {
-    console.log('sers');
     return apiRequest({
         apiEndpoint: apiEndpoints.project.addUser,
         authToken: accessToken,
@@ -95,7 +115,7 @@ export function addUserToProject({ accessToken, projectId, user, role, projectsS
     })
         .then(() => {
             if (projectsState) {
-                projectsState.userChanged(projectId, user, role);
+                projectsState.userAdded(projectId, user, role);
             }
         })
         // TODO Error message
