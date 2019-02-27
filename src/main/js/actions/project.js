@@ -67,7 +67,6 @@ export function createNewProject({ accessToken, projectsState, name, startMoment
             endDate: endMoment.valueOf(),
         },
     })
-<<<<<<< HEAD
         .then(result => {
             const createdProject = mapProjectObject(accessToken, result.response);
             projectsState.projectAdded(createdProject);
@@ -77,12 +76,6 @@ export function createNewProject({ accessToken, projectsState, name, startMoment
                 handleFailure(err);
             }
         });
-=======
-        .then(result => mapProjectObject(accessToken, result.response))
-        .then(createdProject => projectsState.projectAdded(createdProject))
-        // TODO Error message
-        .catch(() => null);
->>>>>>> branch 'project-edit' of https://github.com/janneskretschmer/lh-tool.git
 }
 
 export function deleteProject({ accessToken, projectsState, projectId, handleFailure }) {
