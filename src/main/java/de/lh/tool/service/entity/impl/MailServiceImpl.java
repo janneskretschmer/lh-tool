@@ -1,5 +1,6 @@
 package de.lh.tool.service.entity.impl;
 
+import java.net.URISyntaxException;
 import java.util.Properties;
 
 import javax.mail.Authenticator;
@@ -10,6 +11,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.http.client.utils.URIBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -102,11 +104,17 @@ public class MailServiceImpl implements MailService {
 	public void sendPwResetMail(User user, PasswordChangeToken passwordChangeToken) {
 		// Preliminary implementation:
 		if (user != null && passwordChangeToken != null && user.getEmail() != null) {
-			// FIXME Harcoded URL prefix
-			String url = "http://localhost:8080/lh-tool/web/changepw?uid=" + user.getId() + "&token="
-					+ passwordChangeToken.getToken();
-			String text = "Link um dein Passwort zurückzusetzen:\n" + url;
-			sendMail(user.getEmail(), "[LH-Tool] Passwort zurücksetzen", text);
+			try {
+				// TODO Remove Harcoded URL prefix
+				URIBuilder uriBuilder = new URIBuilder("http://localhost:8080/lh-tool/web/changepw");
+				uriBuilder.addParameter("uid", user.getId().toString());
+				uriBuilder.addParameter("token", passwordChangeToken.getToken());
+
+				String text = "Link um dein Passwort zurückzusetzen:\n" + uriBuilder.toString();
+				sendMail(user.getEmail(), "[LH-Tool] Passwort zurücksetzen", text);
+			} catch (URISyntaxException e) {
+				log.error(e);
+			}
 		}
 	}
 
