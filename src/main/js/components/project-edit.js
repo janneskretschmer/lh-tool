@@ -38,13 +38,14 @@ export default class ProjectEditPanel extends React.Component {
 
     handlePublisherEditButtonClicked() {
         this.setState({
-            editPublishers: !this.state.editPublishers,
             ...this.state,
+            editPublishers: !this.state.editPublishers,
         })
     }
 
     render() {
         const { classes, project } = this.props;
+        const { editPublishers } = this.state;
         return (
             <div>
                 <SessionContext.Consumer>
@@ -65,22 +66,23 @@ export default class ProjectEditPanel extends React.Component {
                                     />
                                     <Typography variant="h6">Verkündiger 
                                         <IconButton onClick={() => this.handlePublisherEditButtonClicked()}>
-                                            <Icon>{this.state.editPublishers ? 'close' : 'create'}</Icon>
+                                            <Icon>{editPublishers ? 'close' : 'create'}</Icon>
                                         </IconButton>
                                     </Typography>
-                                    <UserComponent
+                                    {editPublishers || project.publishers.length === 0  ? (<UserComponent
                                         role="ROLE_PUBLISHER"
                                         showEdit={false}
                                         onSave={(user) => createNewUser({ accessToken: sessionState.accessToken, ...user, projectId:project.id, projectsState })}
                                         onlyNewUsers={true}
                                         showDelete={false}
-                                    />
+                                    />) : null }
                                     {project.publishers ? project.publishers.map(user => (
                                             <UserComponent user={user}
+                                                key={user.email}
                                                 role="ROLE_PUBLISHER"
-                                                showEdit={true}
+                                                showEdit={editPublishers}
                                                 onUpdate={(user) => updateUser({accessToken: sessionState.accessToken, user, projectsState})}
-                                                showDelete={true}
+                                                showDelete={editPublishers}
                                                 onDelete={(user) => deleteUser({accessToken: sessionState.accessToken, userId: user.id, projectsState})}
                                             />
                                         ))
