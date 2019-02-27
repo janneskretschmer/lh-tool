@@ -51,10 +51,7 @@ export default class ProjectsProvider extends React.Component {
                 }
                 return project;
             })
-        }), () => {
-            // Die Holzhammer-Lösung, sollte aber optimaler Weise auch ohne gehen.
-            this.forceUpdate();
-        });
+        }));
     };
 
     userUpdated  = (user) => {
@@ -83,10 +80,7 @@ export default class ProjectsProvider extends React.Component {
                 }
                 return project;
             })
-        }), () => {
-            // Die Holzhammer-Lösung, sollte aber optimaler Weise auch ohne gehen.
-            this.forceUpdate();
-        });
+        }));
     } 
 
     render() {
