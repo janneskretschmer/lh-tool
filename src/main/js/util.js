@@ -10,7 +10,7 @@ export function withContext(propName, Context) {
             <Context.Consumer>
                 {contextState => {
                     const WrappedContext = wrapComponent(Component, { [propName]: contextState });
-                    return (<WrappedContext>{props.children}</WrappedContext>);
+                    return (<WrappedContext {...props}>{props.children}</WrappedContext>);
                 }}
             </Context.Consumer>
         );
