@@ -25,6 +25,7 @@ import de.lh.tool.domain.model.PasswordChangeToken;
 import de.lh.tool.domain.model.User;
 import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.repository.UserRepository;
+import de.lh.tool.service.entity.interfaces.MailService;
 import de.lh.tool.service.entity.interfaces.PasswordChangeTokenService;
 import de.lh.tool.service.entity.interfaces.UserRoleService;
 import de.lh.tool.service.entity.interfaces.UserService;
@@ -45,6 +46,9 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private MailService mailService;
 
 	@Override
 	@Transactional
@@ -80,6 +84,13 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 			userRoleService.save(new UserRole(null, user, role));
 		}
 		passwordChangeTokenService.saveRandomToken(user);
+
+		if (UserRole.ROLE_LOCAL_COORDINATOR.equals(role)) {
+			mailService.sendNewLocalCoordinatorMail(user);
+		} else if (UserRole.ROLE_PUBLISHER.equals(role)) {
+			mailService.sendNewPublisherMail(user);
+		}
+
 		return user;
 	}
 

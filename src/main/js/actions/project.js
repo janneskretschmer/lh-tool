@@ -114,21 +114,3 @@ export function addUserToProject({ accessToken, projectId, user, role, projectsS
         // TODO Error message
         .catch(e => console.log(e));
 }
-
-export function addUserToProject({ accessToken, projectId, user, role, projectsState }) {
-    return apiRequest({
-        apiEndpoint: apiEndpoints.project.addUser,
-        authToken: accessToken,
-        parameters: {
-            [ID_VARIABLE]: projectId,
-            [USER_ID_VARIABLE]: user.id,
-        },
-    })
-        .then(() => {
-            if (projectsState) {
-                projectsState.userAdded(projectId, user, role);
-            }
-        })
-        // TODO Error message
-        .catch(e => console.log(e));
-}
