@@ -10,6 +10,7 @@ import {
     INFO_HEARTBEAT,
     USER_PREFIX,
     USER_CURRENT,
+    USER_PASSWORD,
     PROJECT_PREFIX,
     PROJECT_DELETE,
 } from './urlmappings';
@@ -156,6 +157,10 @@ export const apiEndpoints = {
         current: {
             method: 'GET',
             path: USER_PREFIX + USER_CURRENT,
-        }
+        },
+        password: {
+            method: 'PUT',
+            path: USER_PREFIX + USER_PASSWORD,
+        },
     },
 };
