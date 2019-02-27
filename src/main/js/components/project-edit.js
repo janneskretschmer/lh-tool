@@ -5,11 +5,15 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { ProjectsContext } from '../providers/projects-provider';
 import { SessionContext } from '../providers/session-provider';
 import { deleteProject } from '../actions/project';
+<<<<<<< HEAD
 import WithPermission from './with-permission';
 import Typography from '@material-ui/core/Typography';
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+=======
+import Typography from '@material-ui/core/Typography';
+>>>>>>> branch 'project-edit' of https://github.com/janneskretschmer/lh-tool.git
 import UserComponent from './user-detail';
 import { createNewUser, updateUser, deleteUser } from '../actions/user'
 import SimpleDialog from './simple-dialog.js'
@@ -31,6 +35,7 @@ const styles = theme => ({
     },
 });
 
+<<<<<<< HEAD
 @withSnackbar
 const UserComponent = props => {
     let inputFirstName = null;
@@ -141,6 +146,8 @@ const UserComponent = props => {
     )
 }
 
+=======
+>>>>>>> branch 'project-edit' of https://github.com/janneskretschmer/lh-tool.git
 @withStyles(styles)
 export default class ProjectEditPanel extends React.Component {
 
@@ -156,12 +163,15 @@ export default class ProjectEditPanel extends React.Component {
             ...this.state,
             editPublishers: !this.state.editPublishers,
         })
+<<<<<<< HEAD
     }
 
     handleDeleteFailure() {
         this.props.enqueueSnackbar('Fehler beim Löschens des Projekts', {
             variant: 'error',
         });
+=======
+>>>>>>> branch 'project-edit' of https://github.com/janneskretschmer/lh-tool.git
     }
 
     render() {
@@ -223,7 +233,12 @@ export default class ProjectEditPanel extends React.Component {
                                                     projectId: this.props.project.id,
                                                     handleFailure: this.handleDeleteFailure.bind(this),
                                                 });
+<<<<<<< HEAD
                                             }}>
+=======
+                                            }}
+                                    >
+>>>>>>> branch 'project-edit' of https://github.com/janneskretschmer/lh-tool.git
                                         <Button variant="contained" color="primary" className={classes.button}>
                                             Projekt löschen
                                             <DeleteIcon className={classes.rightIcon} />

@@ -67,6 +67,7 @@ export function createNewProject({ accessToken, projectsState, name, startMoment
             endDate: endMoment.valueOf(),
         },
     })
+<<<<<<< HEAD
         .then(result => {
             const createdProject = mapProjectObject(accessToken, result.response);
             projectsState.projectAdded(createdProject);
@@ -76,6 +77,12 @@ export function createNewProject({ accessToken, projectsState, name, startMoment
                 handleFailure(err);
             }
         });
+=======
+        .then(result => mapProjectObject(accessToken, result.response))
+        .then(createdProject => projectsState.projectAdded(createdProject))
+        // TODO Error message
+        .catch(() => null);
+>>>>>>> branch 'project-edit' of https://github.com/janneskretschmer/lh-tool.git
 }
 
 export function deleteProject({ accessToken, projectsState, projectId, handleFailure }) {
@@ -95,6 +102,24 @@ export function deleteProject({ accessToken, projectsState, projectId, handleFai
                 handleFailure(err);
             }
         });
+}
+
+export function addUserToProject({ accessToken, projectId, user, role, projectsState }) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.project.addUser,
+        authToken: accessToken,
+        parameters: {
+            [ID_VARIABLE]: projectId,
+            [USER_ID_VARIABLE]: user.id,
+        },
+    })
+        .then(() => {
+            if (projectsState) {
+                projectsState.userAdded(projectId, user, role);
+            }
+        })
+        // TODO Error message
+        .catch(e => console.log(e));
 }
 
 export function addUserToProject({ accessToken, projectId, user, role, projectsState }) {
