@@ -5,38 +5,17 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { ProjectsContext } from '../providers/projects-provider';
 import { SessionContext } from '../providers/session-provider';
 import { deleteProject } from '../actions/project';
-<<<<<<< Upstream, based on origin/master
 import WithPermission from './with-permission';
-=======
 import Typography from '@material-ui/core/Typography';
-<<<<<<< Upstream, based on origin/master
-
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
->>>>>>> ef8c21b started project edit component
-=======
 import UserComponent from './user-detail';
-<<<<<<< Upstream, based on origin/master
-<<<<<<< Upstream, based on origin/master
-import { createNewUser } from '../actions/user'
-<<<<<<< Upstream, based on origin/master
->>>>>>> 0224d3f Edit mask for local coordinator
-=======
-=======
-import { createNewUser, deleteUser } from '../actions/user'
->>>>>>> 4820795 implemented deletion of user
-=======
 import { createNewUser, updateUser, deleteUser } from '../actions/user'
->>>>>>> 3596eee edit user works
 import SimpleDialog from './simple-dialog.js'
 import Button from '@material-ui/core/Button';
-<<<<<<< Upstream, based on origin/master
->>>>>>> ef296a8 refactored dialog
-=======
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
->>>>>>> 06c38e1 WIP edit mode for publishers
 
 const styles = theme => ({
     root: {
@@ -52,13 +31,7 @@ const styles = theme => ({
     },
 });
 
-<<<<<<< Upstream, based on origin/master
-const Transition = props => (<Slide direction="up" {...props} />);
-
-<<<<<<< Upstream, based on origin/master
-<<<<<<< Upstream, based on origin/master
 @withSnackbar
-=======
 const UserComponent = props => {
     let inputFirstName = null;
     let inputLastName = null;
@@ -168,11 +141,6 @@ const UserComponent = props => {
     )
 }
 
->>>>>>> ef8c21b started project edit component
-=======
->>>>>>> 0224d3f Edit mask for local coordinator
-=======
->>>>>>> ef296a8 refactored dialog
 @withStyles(styles)
 export default class ProjectEditPanel extends React.Component {
 
@@ -205,9 +173,7 @@ export default class ProjectEditPanel extends React.Component {
                     {sessionState => (
                         <ProjectsContext.Consumer>
                             {projectsState => (
-<<<<<<< Upstream, based on origin/master
                                 <WithPermission permission="ROLE_RIGHT_PROJECTS_DELETE">
-=======
                                 <>
                                     <div><Typography variant="h6">Baudiener</Typography></div>
                                     <div><Typography variant="h6">Lokaler Koordinator</Typography></div>
@@ -220,39 +186,6 @@ export default class ProjectEditPanel extends React.Component {
                                         showDelete={true}
                                         onDelete={user => deleteUser({accessToken: sessionState.accessToken, userId: user.id, projectsState})}
                                     />
-<<<<<<< Upstream, based on origin/master
-                                    <div><Typography variant="h6">Verkündiger</Typography></div>
-<<<<<<< Upstream, based on origin/master
-<<<<<<< Upstream, based on origin/master
->>>>>>> ef8c21b started project edit component
-                                    <Button variant="contained" color="primary" className={classes.button} onClick={this.handleDeleteButtonClicked.bind(this)}>
-                                        Projekt löschen
-                                        <DeleteIcon className={classes.rightIcon} />
-                                    </Button>
-                                    <Dialog
-                                        open={this.state.deleteDeleteDialogOpen}
-                                        TransitionComponent={Transition}
-                                        keepMounted
-                                        onClose={this.handleDeleteDialogClose.bind(this)}
-                                        aria-labelledby="alert-dialog-slide-title"
-                                        aria-describedby="alert-dialog-slide-description"
-                                    >
-                                        <DialogTitle id="alert-dialog-slide-title">
-                                            {`Projekt ${project.name} löschen`}
-                                        </DialogTitle>
-                                        <DialogContent>
-                                            <DialogContentText id="alert-dialog-slide-description">
-                                                {`Soll das Projekt ${project.name} wirklich entfernt werden? Das lässt sich nicht rückgängig machen.`}
-                                            </DialogContentText>
-                                        </DialogContent>
-                                        <DialogActions>
-                                            <Button onClick={this.handleDeleteDialogClose.bind(this)} color="secondary">
-                                                {'Nein'}
-                                            </Button>
-                                            <Button color="primary" onClick={() => {
-=======
-=======
-=======
                                     <Typography variant="h6">Verkündiger 
                                         <IconButton onClick={() => this.handlePublisherEditButtonClicked()}>
                                             <Icon>{editPublishers ? 'close' : 'create'}</Icon>
@@ -264,12 +197,7 @@ export default class ProjectEditPanel extends React.Component {
                                         onSave={(user) => createNewUser({ accessToken: sessionState.accessToken, ...user, projectId:project.id, projectsState })}
                                         onlyNewUsers={true}
                                         showDelete={false}
-<<<<<<< Upstream, based on origin/master
-                                    />
->>>>>>> 06c38e1 WIP edit mode for publishers
-=======
                                     />) : null }
->>>>>>> a7ec0b6 finished publisher list
                                     {project.publishers ? project.publishers.map(user => (
                                             <UserComponent user={user}
                                                 key={user.email}
@@ -283,37 +211,26 @@ export default class ProjectEditPanel extends React.Component {
                                     :
                                         <Typography variant="body1">Bitte füge alle geeigneten Verkündiger hinzu.</Typography>
                                     }
->>>>>>> 3596eee edit user works
                                     <SimpleDialog
                                         title={`Projekt ${project.name} löschen`}
                                         text={`Soll das Projekt ${project.name} wirklich entfernt werden? Das lässt sich nicht rückgängig machen.`}
                                         cancelText="Nein"
                                         okText={`Ja, Projekt ${project.name} löschen`}
                                         onOK={() => {
->>>>>>> ef296a8 refactored dialog
                                                 deleteProject({
                                                     accessToken: sessionState.accessToken,
                                                     projectsState: projectsState,
                                                     projectId: this.props.project.id,
                                                     handleFailure: this.handleDeleteFailure.bind(this),
                                                 });
-<<<<<<< Upstream, based on origin/master
                                             }}>
-                                                {`Ja, Projekt ${project.name} löschen`}
-                                            </Button>
-                                        </DialogActions>
-                                    </Dialog>
-                                </WithPermission>
-=======
-                                            }}
-                                    >
                                         <Button variant="contained" color="primary" className={classes.button}>
                                             Projekt löschen
                                             <DeleteIcon className={classes.rightIcon} />
                                         </Button>
                                     </SimpleDialog>
                                 </>
->>>>>>> ef296a8 refactored dialog
+                                </WithPermission>
                             )}
                         </ProjectsContext.Consumer>
 
