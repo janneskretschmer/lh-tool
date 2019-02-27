@@ -11,11 +11,18 @@ import GroupWorkIcon from '@material-ui/icons/GroupWork';
 import FaceIcon from '@material-ui/icons/Face';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
+import SecurityIcon from '@material-ui/icons/Security';
 import { Link } from 'react-router-dom';
 import WithPermission from './with-permission';
 import { SessionContext } from '../providers/session-provider';
 import { logout } from '../actions/login';
-import { fullPathOfHome, fullPathOfLogin, fullPathOfHeartbeat, fullPathOfProjects } from '../paths';
+import { 
+  fullPathOfHome,
+  fullPathOfLogin,
+  fullPathOfHeartbeat,
+  fullPathOfProjects,
+  fullPathOfChangePw,
+} from '../paths';
 
 const linkStyle = { textDecoration: 'none' };
 
@@ -59,6 +66,17 @@ const HeartbeatItem = () => (
         <FlashOnIcon />
       </ListItemIcon>
       <ListItemText primary="Heartbeat" />
+    </ListItem>
+  </Link>
+);
+
+const ChangePwItem = () => (
+  <Link to={fullPathOfChangePw()} style={linkStyle}>
+    <ListItem button>
+      <ListItemIcon>
+        <SecurityIcon />
+      </ListItemIcon>
+      <ListItemText primary="Passwort ändern" />
     </ListItem>
   </Link>
 );
@@ -108,6 +126,7 @@ export default function AppMenu() {
             <HomeItem />
             <ProjectsItem />
             <HeartbeatItem />
+            <ChangePwItem />
           </List>
           <Divider />
           <List>
