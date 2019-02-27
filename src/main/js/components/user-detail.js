@@ -161,7 +161,7 @@ const UserComponent = props => {
                     {user ? (<Button size="small" color="secondary" disabled={onlyNewUsers} onClick={() => setEdit(onlyNewUsers)}>
                         Abbrechen
                     </Button>) : null}
-                    {onSave ?
+                    {onSave || onUpdate ?
                         (<Button variant="contained" type="submit" onClick={handleSave} disabled={disableSaveButton}>
                             Speichern
                     </Button>) : null}
