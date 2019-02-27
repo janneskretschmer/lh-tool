@@ -3,6 +3,30 @@ import { ID_VARIABLE, USER_ID_VARIABLE } from '../urlmappings';
 import { fetchUsersByProjectIdAndRole } from './user';
 import moment from 'moment';
 
+function fetchAllUsersForProject({ projectId, accessToken }) {
+    const localCoordinatorPromise = fetchUsersByProjectIdAndRole({
+        accessToken,
+        projectId: projectId,
+        role: 'ROLE_LOCAL_COORDINATOR',
+    })
+        .then(users => users[0])
+        .catch(() => []);
+
+    const publishersPromise = fetchUsersByProjectIdAndRole({
+        accessToken,
+        projectId: projectId,
+        role: 'ROLE_PUBLISHER',
+    })
+        .then(users => users)
+        .catch(() => []);
+
+    return Promise.all([localCoordinatorPromise, publishersPromise])
+        .then(([localCoordinator, publishers]) => ({
+            localCoordinator,
+            publishers,
+        }));
+}
+
 function mapProjectObject(accessToken, responseObj) {
     const project = {
         id: responseObj.id,
@@ -12,36 +36,17 @@ function mapProjectObject(accessToken, responseObj) {
         localCoordinator: undefined,
         publishers: [],
     };
-    return fetchUsersByProjectIdAndRole({
-        accessToken,
-        projectId: responseObj.id,
-        role: 'ROLE_LOCAL_COORDINATOR',
-    })
-        .then(users => {
-            project.localCoordinator = users[0];
-            return fetchUsersByProjectIdAndRole({
-                accessToken,
-                projectId: project.id,
-                role: 'ROLE_PUBLISHER',
-            })
-            .then(users => {
-                project.publishers = users;
-                return project;
-            })
-            .catch(() => project);
-        })
-        .catch(() => {
-            return fetchUsersByProjectIdAndRole({
-                accessToken,
-                projectId: project.id,
-                role: 'ROLE_PUBLISHER',
-            })
-            .then(users => {
-                project.publishers = users;
-                return project;
-            })
-            .catch(() => project);
-        });
+    return fetchAllUsersForProject({ projectId: responseObj.id, accessToken })
+        .then(users => ({
+            id: responseObj.id,
+            name: responseObj.name,
+            startDate: moment(responseObj.startDate, 'x'),
+            endDate: moment(responseObj.endDate, 'x'),
+            localCoordinator: users.localCoordinator,
+            publishers: users.publishers,
+        }))
+        // TODO Blow => error msg.
+        .catch(err => console.log(err));
 }
 
 export function fetchOwnProjects({ accessToken }) {
