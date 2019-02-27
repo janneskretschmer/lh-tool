@@ -45,9 +45,7 @@ export function createNewUser({ accessToken, email, firstName, lastName, gender,
     })
         .then(result => {
             if (projectId) {
-                addUserToProject({ accessToken, projectId, user: result.response, role, projectsState });s
-                // TODO @Jannes: Möchtest du hier eher folgendes machen:
-                // return addUserToProject({ accessToken, projectId, user: result.response, role, projectsState });
+                return addUserToProject({ accessToken, projectId, user: result.response, role, projectsState });
             }
         })
         // TODO Error message
@@ -63,8 +61,23 @@ export function deleteUser({ accessToken, userId, projectsState }) {
         }
     })
         .then(() => {
-            // TODO @Jannes: return fehlt? (siehe oben)
-            projectsState.userRemoved(userId);
+            return projectsState.userRemoved(userId);
+        })
+        // TODO Error message
+        .catch(e => console.log(e));
+}
+
+export function updateUser({ accessToken, user, projectsState }) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.user.put,
+        authToken: accessToken,
+        parameters:{
+            [ID_VARIABLE]: user.id,
+        },
+        data:user,
+    })
+        .then(() => {
+            return projectsState.userUpdated(user);
         })
         // TODO Error message
         .catch(e => console.log(e));

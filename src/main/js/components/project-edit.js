@@ -18,6 +18,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 =======
 import UserComponent from './user-detail';
 <<<<<<< Upstream, based on origin/master
+<<<<<<< Upstream, based on origin/master
 import { createNewUser } from '../actions/user'
 <<<<<<< Upstream, based on origin/master
 >>>>>>> 0224d3f Edit mask for local coordinator
@@ -25,6 +26,9 @@ import { createNewUser } from '../actions/user'
 =======
 import { createNewUser, deleteUser } from '../actions/user'
 >>>>>>> 4820795 implemented deletion of user
+=======
+import { createNewUser, updateUser, deleteUser } from '../actions/user'
+>>>>>>> 3596eee edit user works
 import SimpleDialog from './simple-dialog.js'
 import Button from '@material-ui/core/Button';
 >>>>>>> ef296a8 refactored dialog
@@ -207,10 +211,12 @@ export default class ProjectEditPanel extends React.Component {
                                         role="ROLE_LOCAL_COORDINATOR"
                                         showEdit={true}
                                         onSave={user => createNewUser({ accessToken: sessionState.accessToken, ...user, projectId:project.id, projectsState })}
+                                        onUpdate={user => updateUser({accessToken: sessionState.accessToken, user, projectsState})}
                                         showDelete={true}
                                         onDelete={user => deleteUser({accessToken: sessionState.accessToken, userId: user.id, projectsState})}
                                     />
                                     <div><Typography variant="h6">Verkündiger</Typography></div>
+<<<<<<< Upstream, based on origin/master
 <<<<<<< Upstream, based on origin/master
 >>>>>>> ef8c21b started project edit component
                                     <Button variant="contained" color="primary" className={classes.button} onClick={this.handleDeleteButtonClicked.bind(this)}>
@@ -239,6 +245,20 @@ export default class ProjectEditPanel extends React.Component {
                                             </Button>
                                             <Button color="primary" onClick={() => {
 =======
+=======
+                                    {project.publishers ? project.publishers.map(user => (
+                                            <UserComponent user={project.localCoordinator}
+                                                role="ROLE_PUBLISHER"
+                                                showEdit={true}
+                                                //onSave={(user) => createNewUser({ accessToken: sessionState.accessToken, ...user, projectId:project.id, projectsState })}
+                                                showDelete={true}
+                                                //onDelete={(user) => deleteUser({accessToken: sessionState.accessToken, userId: user.id, projectsState})}
+                                            />
+                                        ))
+                                    :
+                                        <Typography variant="body1">Bitte füge alle geeigneten Verkündiger hinzu.</Typography>
+                                    }
+>>>>>>> 3596eee edit user works
                                     <SimpleDialog
                                         title={`Projekt ${project.name} löschen`}
                                         text={`Soll das Projekt ${project.name} wirklich entfernt werden? Das lässt sich nicht rückgängig machen.`}

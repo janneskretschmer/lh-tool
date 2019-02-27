@@ -176,5 +176,10 @@ export const apiEndpoints = {
             path: USER_PREFIX + ID_EXTENSION,
             parameters: [ID_VARIABLE],
         },
+        put: {
+            method: 'PUT',
+            path: USER_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
     },
 };

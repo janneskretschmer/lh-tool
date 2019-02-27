@@ -8,8 +8,9 @@ export const ProjectsContext = React.createContext();
 
 @withContext('sessionState', SessionContext)
 @resolve('initialProjectData', props => {
-    return fetchOwnProjects({ accessToken: props.sessionState.accessToken })
+    const projects = fetchOwnProjects({ accessToken: props.sessionState.accessToken }).then(project => {return project;})
         .catch(() => []);
+    return projects;
 })
 export default class ProjectsProvider extends React.Component {
 
@@ -29,7 +30,7 @@ export default class ProjectsProvider extends React.Component {
         }));
     };
 
-    userChanged = (projectId, user, role) => {
+    userAdded = (projectId, user, role) => {
         this.setState(prevState => ({
             projects: prevState.projects.map(project => {
                 if(project.id === projectId){
@@ -41,6 +42,20 @@ export default class ProjectsProvider extends React.Component {
             })
         }));
     };
+
+    userUpdated  = (user) => {
+        this.setState(prevState => ({
+            projects: prevState.projects.map(project => {
+                if (project.localCoordinator && project.localCoordinator.id === user.id) {
+                    project.localCoordinator = user;
+                }
+                if(project.publishers){
+                    project.publishers = project.publishers.map(tmpUser => tmpUser.id === user.id ? user : tmpUser);
+                }
+                return project;
+            })
+        }));
+    }
 
     userRemoved = (userId) => {
         this.setState(prevState => ({
@@ -67,8 +82,9 @@ export default class ProjectsProvider extends React.Component {
                     ...this.state,
                     projectAdded: this.projectAdded,
                     projectRemoved: this.projectRemoved,
-                    userChanged: this.userChanged,
+                    userAdded: this.userAdded,
                     userRemoved: this.userRemoved,
+                    userUpdated: this.userUpdated,
                 }}
             >
                 {this.props.children}

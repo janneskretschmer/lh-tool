@@ -33,19 +33,26 @@ const styles = theme => ({
 
 const UserComponent = props => {
 
-    const { classes, role, onSave, showEdit, onDelete, showDelete } = props;
+    const { classes, role, onSave, onUpdate, showEdit, onDelete, showDelete } = props;
 
     const [edit, setEdit] = useState(!props.user);
     const [showDetails, setShowDetails] = useState(false);
-    const [user, setUser] = useState(props.user ? props.user : {gender:'MALE', firstName:'', lastName:'',email:'',telephoneNumber:'',mobileNumber:'',businessNumber:''})
+    const newUser = !props.user;
+    const [user, setUser] = useState(newUser ? {gender:'MALE', firstName:'', lastName:'',email:'',telephoneNumber:'',mobileNumber:'',businessNumber:''} : props.user)
+
+    const disableSaveButton = !(onSave && newUser) && !(onUpdate && !newUser);
+    const disableEditButton = !onUpdate;
+    const disableDeleteButton = !onDelete;
 
     const handleSave = () => {
-        if (onSave) {
+        if (onSave && newUser) {
             onSave({
                 ...user,
                 role,
-            })
-        }
+            });
+        } else if (onUpdate && !newUser) {
+            onUpdate(user);
+        } 
         setEdit(false);
     }
 
@@ -150,7 +157,7 @@ const UserComponent = props => {
                         Abbrechen
                     </Button>) : null}
                     {onSave ?
-                        (<Button variant="contained" type="submit" onClick={handleSave}>
+                        (<Button variant="contained" type="submit" onClick={handleSave} disabled={disableSaveButton}>
                             Speichern
                     </Button>) : null}
                 </>)
@@ -164,8 +171,8 @@ const UserComponent = props => {
                             <Grid item>
                                 <Hidden smUp>
                                     <EmailLink email={user?user.email:''} asIcon/>
-                                    <DeleteButton shown={showDelete} userName={user.firstName + ' ' + user.lastName} onDelete={handleDelete}/>
-                                    <SimpleIconButton icon="create" shown={showEdit} onClick={() => setEdit(true)}/>
+                                    <DeleteButton shown={showDelete} disabled={disableDeleteButton} userName={user.firstName + ' ' + user.lastName} onDelete={handleDelete}/>
+                                    <SimpleIconButton icon="create" shown={showEdit} disabled={disableEditButton} onClick={() => setEdit(true)}/>
                                     <IconButton size="small" color="secondary" onClick={() => setShowDetails(!showDetails)}>
                                         <Icon>{showDetails?'expand_less':'expand_more'}</Icon>
                                     </IconButton>
@@ -195,8 +202,8 @@ const UserComponent = props => {
                         </Hidden>
                         <Hidden xsDown>
                             <Grid item sm={1} className={classes.userData}>
-                                <DeleteButton shown={showDelete} userName={user.firstName + ' ' + user.lastName} onDelete={handleDelete}/>
-                                <SimpleIconButton icon="create" shown={showEdit} onClick={() => setEdit(true)}/>
+                                <DeleteButton shown={showDelete} disabled={disableDeleteButton} userName={user.firstName + ' ' + user.lastName} onDelete={handleDelete}/>
+                                <SimpleIconButton icon="create" shown={showEdit} disabled={disableEditButton} onClick={() => setEdit(true)}/>
                             </Grid>    
                         </Hidden>                        
                     </Grid>
@@ -217,7 +224,7 @@ const EmailLink = ({email,asIcon}) =>{
     }
 }
 
-const DeleteButton = ({shown, userName, onDelete}) => 
+const DeleteButton = ({shown, disabled, userName, onDelete}) => 
     (<SimpleDialog
         title= {`Benutzer ${userName} löschen`}
         text= {`Soll der Benutzer ${userName} wirklich entfernt werden? Das lässt sich nicht rückgängig machen.`}
@@ -225,12 +232,12 @@ const DeleteButton = ({shown, userName, onDelete}) =>
         okText={`Ja, Benutzer ${userName} löschen`}
         onOK={onDelete}
     >
-        <SimpleIconButton icon="delete" shown={shown}/>
+        <SimpleIconButton icon="delete" disabled={disabled} shown={shown}/>
     </SimpleDialog>)
 
-const SimpleIconButton = ({shown, icon, onClick}) => {
+const SimpleIconButton = ({shown, icon, disabled, onClick}) => {
     if(shown){
-        return (<IconButton color="secondary" onClick={onClick}>
+        return (<IconButton color="secondary" disabled={disabled} onClick={onClick}>
             <Icon>{icon}</Icon>
         </IconButton>) 
     }else{

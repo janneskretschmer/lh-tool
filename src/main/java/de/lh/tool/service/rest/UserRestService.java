@@ -90,10 +90,11 @@ public class UserRestService {
 	}
 
 	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
-	@Secured(UserRole.RIGHT_USERS_CREATE)
-	public Resource<UserDto> add(@RequestBody UserDto userDto) throws DefaultException {
-		return new Resource<>(convertToDto(userService.ch(new ModelMapper().map(userDto, User.class))),
-				linkTo(methodOn(UserRestService.class).add(userDto)).withSelfRel());
+	@Secured(UserRole.RIGHT_USERS_PUT)
+	public Resource<UserDto> update(@PathVariable(name = UrlMappings.ID_VARIABLE, required = false) Long id,
+			@RequestBody UserDto userDto) throws DefaultException {
+		return new Resource<>(convertToDto(userService.updateUser(new ModelMapper().map(userDto, User.class))),
+				linkTo(methodOn(UserRestService.class).update(id, userDto)).withSelfRel());
 	}
 
 	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.USER_PASSWORD)
