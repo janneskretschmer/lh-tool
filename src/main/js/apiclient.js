@@ -15,6 +15,7 @@ import {
     USER_PASSWORD,
     PROJECT_PREFIX,
     PROJECT_DELETE,
+    NEED_PREFIX,
 } from './urlmappings';
 
 function isWellFormedEndpoint(apiEndpoint) {
@@ -187,4 +188,21 @@ export const apiEndpoints = {
             parameters: [ID_VARIABLE],
         },
     },
+    need: {
+        getOwn: {
+            method: 'GET',
+            // TODO Trailing '/' also necessary?
+            path: NEED_PREFIX + '/',
+        },
+        createNew: {
+            method: 'POST',
+            // TODO Trailing '/' also necessary?
+            path: NEED_PREFIX + '/',
+        },
+        update: {
+            method: 'PUT',
+            // TODO Trailing '/' also necessary?
+            path: NEED_PREFIX + ID_EXTENSION,
+        },
+    }
 };
