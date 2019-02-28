@@ -3,6 +3,7 @@ package de.lh.tool.service.entity.impl;
 import java.net.URISyntaxException;
 import java.util.Properties;
 
+import javax.annotation.PostConstruct;
 import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
@@ -12,6 +13,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.http.client.utils.URIBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +43,11 @@ public class MailServiceImpl implements MailService {
 	@Value("${mail.smtp.tlsEnabled}")
 	private boolean tlsEnabled;
 
-	public MailServiceImpl() {
+	@Autowired
+	private String baseUrl;
+
+	@PostConstruct
+	public void init() {
 		properties = new Properties();
 		properties.put("mail.smtp.socketFactory.port", "465");
 		if (tlsEnabled) {
@@ -105,8 +111,8 @@ public class MailServiceImpl implements MailService {
 		// Preliminary implementation:
 		if (user != null && passwordChangeToken != null && user.getEmail() != null) {
 			try {
-				// TODO Remove Harcoded URL prefix
-				URIBuilder uriBuilder = new URIBuilder("http://localhost:8080/lh-tool/web/changepw");
+				// TODO central URL-Service
+				URIBuilder uriBuilder = new URIBuilder(baseUrl + "/web/changepw");
 				uriBuilder.addParameter("uid", user.getId().toString());
 				uriBuilder.addParameter("token", passwordChangeToken.getToken());
 

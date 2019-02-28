@@ -44,7 +44,7 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
+
 	@Autowired
 	private MailService mailService;
 
@@ -60,7 +60,7 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 		return getRepository().findById(id)
 				.orElseThrow(() -> new UsernameNotFoundException("User not found with id : " + id));
 	}
-	
+
 	@Override
 	@Transactional
 	public User loadUserByEmail(String email) throws UsernameNotFoundException {
@@ -144,25 +144,23 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 	@Transactional
 	public User getCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication != null &&  !(authentication instanceof AnonymousAuthenticationToken)) {
+		if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken)) {
 			String currentUserName = authentication.getName();
 			return getRepository().findByEmail(currentUserName).orElseThrow(
 					() -> new UsernameNotFoundException("User not " + currentUserName + " does not exist"));
 		}
 		return null;
 	}
-	
+
 	@Override
 	@Transactional
 	public void requestPasswordReset(String email) throws DefaultException {
 		try {
 			User user = loadUserByEmail(email);
 			if (user != null) {
-				// FIXME Use actual password-token implementation:
-				// PasswordChangeToken token = passwordChangeTokenService.saveRandomToken(user);
+				PasswordChangeToken token = passwordChangeTokenService.saveRandomToken(user);
 
-				mailService.sendPwResetMail(user,
-						PasswordChangeToken.builder().token("__I_AM_A_DUMMY_TOKEN__").build());
+				mailService.sendPwResetMail(user, token);
 			}
 
 		} catch (UsernameNotFoundException ex) {
