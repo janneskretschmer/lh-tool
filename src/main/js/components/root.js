@@ -8,7 +8,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { Helmet } from 'react-helmet';
-import { fullPathOfHome, fullPathOfLogin, fullPathOfHeartbeat, fullPathOfProjects } from '../paths';
+import { fullPathOfLogin, fullPathOfProjects } from '../paths';
 import AppHeader from './header';
 import HomeComponent from './home';
 import LoginComponent from './login';
@@ -60,7 +60,7 @@ export default class LHToolRoot extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            drawerOpen: false,
+            drawerOpen: window.innerWidth > 960,
         };
     }
 
@@ -115,9 +115,7 @@ export default class LHToolRoot extends React.Component {
                                 })}
                             >
                                 <div className={classes.drawerHeader} />
-                                <Route path={fullPathOfHome()} exact component={HomeComponent} />
                                 <Route path={fullPathOfLogin()} component={LoginComponent} />
-                                <Route path={fullPathOfHeartbeat()} component={HeartbeatComponent} />
                                 <Route path={fullPathOfProjects()} component={ProjectsComponent} />
                             </main>
 

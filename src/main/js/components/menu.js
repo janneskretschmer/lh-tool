@@ -15,7 +15,7 @@ import { Link } from 'react-router-dom';
 import WithPermission from './with-permission';
 import { SessionContext } from '../providers/session-provider';
 import { logout } from '../actions/login';
-import { fullPathOfHome, fullPathOfLogin, fullPathOfHeartbeat, fullPathOfProjects } from '../paths';
+import { fullPathOfLogin, fullPathOfProjects } from '../paths';
 
 const linkStyle = { textDecoration: 'none' };
 
@@ -26,17 +26,6 @@ const CurrentUserItem = props => (
     </ListItemIcon>
     <ListItemText primary={`${props.currentUser.firstName} ${props.currentUser.lastName}`} />
   </ListItem>
-);
-
-const HomeItem = () => (
-  <Link to={fullPathOfHome()} style={linkStyle}>
-    <ListItem button>
-      <ListItemIcon>
-        <DashboardIcon />
-      </ListItemIcon>
-      <ListItemText primary="Übersicht" />
-    </ListItem>
-  </Link>
 );
 
 const ProjectsItem = () => (
@@ -50,17 +39,6 @@ const ProjectsItem = () => (
       </ListItem>
     </Link>
   </WithPermission>
-);
-
-const HeartbeatItem = () => (
-  <Link to={fullPathOfHeartbeat()} style={linkStyle}>
-    <ListItem button>
-      <ListItemIcon>
-        <FlashOnIcon />
-      </ListItemIcon>
-      <ListItemText primary="Heartbeat" />
-    </ListItem>
-  </Link>
 );
 
 const LoginItem = () => (
@@ -105,9 +83,7 @@ export default function AppMenu() {
           </List>
           <Divider />
           <List>
-            <HomeItem />
             <ProjectsItem />
-            <HeartbeatItem />
           </List>
           <Divider />
           <List>
@@ -118,7 +94,6 @@ export default function AppMenu() {
       ) : (
           <>
             <List>
-              <HomeItem />
               <LoginItem />
             </List>
             <Divider />

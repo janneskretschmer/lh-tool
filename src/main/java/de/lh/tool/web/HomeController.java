@@ -23,9 +23,9 @@ public class HomeController {
 	}
 
 	@GetMapping("/")
-	@ApiOperation(value = "Root path. Redirects to /web.")
-	public String root() {
-		return "redirect:web";
+	@ApiOperation(value = "Root path. Redirects to /web/login.")
+	public ModelAndView root() {
+		return new ModelAndView("redirect:web/login");
 	}
 
 	@GetMapping("/web/**")
@@ -34,10 +34,7 @@ public class HomeController {
 		String contextPath = request.getContextPath();
 		String basePath = contextPath + "/web";
 
-		GlobalWebConfig globalConfig = GlobalWebConfig.builder()
-				.basePath(basePath)
-				.contextPath(contextPath)
-				.build();
+		GlobalWebConfig globalConfig = GlobalWebConfig.builder().basePath(basePath).contextPath(contextPath).build();
 
 		ModelAndView mv = new ModelAndView("home");
 		mv.addObject("globalConfig", new Gson().toJson(globalConfig));
