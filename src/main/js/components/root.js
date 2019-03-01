@@ -126,6 +126,7 @@ export default class LHToolRoot extends React.Component {
                                 <Switch>
                                     <Route path={fullPathOfLogin()} component={LoginComponent} />
                                     <Route path={fullPathOfProjects()} component={ProjectsComponent} />
+                                    <Route path={fullPathOfChangePw()} component={ChangePasswordComponent} />
                                     <Route component={NotFoundComponent} />
                                 </Switch>
                             </main>
