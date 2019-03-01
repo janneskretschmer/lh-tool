@@ -9,11 +9,16 @@ import GroupWorkIcon from '@material-ui/icons/GroupWork';
 import FaceIcon from '@material-ui/icons/Face';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
+import SecurityIcon from '@material-ui/icons/Security';
 import { Link } from 'react-router-dom';
 import WithPermission from './with-permission';
 import { SessionContext } from '../providers/session-provider';
 import { logout } from '../actions/login';
-import { fullPathOfLogin, fullPathOfProjects } from '../paths';
+import {
+  fullPathOfLogin,
+  fullPathOfProjects,
+  fullPathOfChangePw,
+} from '../paths';
 
 const linkStyle = { textDecoration: 'none' };
 
@@ -37,6 +42,17 @@ const ProjectsItem = () => (
       </ListItem>
     </Link>
   </WithPermission>
+);
+
+const ChangePwItem = () => (
+  <Link to={fullPathOfChangePw()} style={linkStyle}>
+    <ListItem button>
+      <ListItemIcon>
+        <SecurityIcon />
+      </ListItemIcon>
+      <ListItemText primary="Passwort ändern" />
+    </ListItem>
+  </Link>
 );
 
 const LoginItem = () => (

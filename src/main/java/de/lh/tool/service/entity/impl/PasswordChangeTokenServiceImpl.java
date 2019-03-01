@@ -18,6 +18,7 @@ public class PasswordChangeTokenServiceImpl
 		PasswordChangeToken token = new PasswordChangeToken();
 		token.setToken(RandomStringUtils.randomAlphanumeric(PasswordChangeToken.TOKEN_LENGTH));
 		token.setUser(user);
+		token.setId(getRepository().findByUser_Id(user.getId()).map(PasswordChangeToken::getId).orElse(null));
 		return save(token);
 	}
 
