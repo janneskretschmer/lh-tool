@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
-import sys
-import logging
 import os.path
-from socket import getfqdn
 
 from gevent.event import Event
 from gevent import monkey
@@ -11,15 +8,12 @@ monkey.patch_all()
 from slimta.relay.pipe import PipeRelay
 from slimta.queue.dict import DictStorage
 from slimta.queue import Queue
-from slimta.policy.headers import AddDateHeader, AddMessageIdHeader, AddReceivedHeader
 from slimta.edge.smtp import SmtpEdge, SmtpValidators
 
 EMAIL_OUT_DIR = './'
 INBOUND_PORT = 465
 SERVER_NAME = 'localhost'
 MSG_MAX_SIZE = 1024 * 1024 * 10 # 10MB
-
-import uuid
 
 def _start_inbound_relay():
     return PipeRelay(['tee', os.path.join(EMAIL_OUT_DIR, '{message_id}.eml')])
@@ -30,15 +24,14 @@ def _start_inbound_queue(relay):
     storage = DictStorage(envelope_db, meta_db)
     queue = Queue(storage, relay)
     queue.start()
-    #queue.add_policy(AddDateHeader())
-    #queue.add_policy(AddMessageIdHeader())
-    #queue.add_policy(AddReceivedHeader())
     return queue
 
 def _start_inbound_edge(queue):
     inbound_banner = '{0} ESMTP test agent'.format(SERVER_NAME)
 
     class EdgeValidators(SmtpValidators):
+        # Explicit method override, therefore not possible to transform to function
+        # pylint: disable=R0201
         def handle_banner(self, reply, address):
             print('RCVD')
             reply.message = inbound_banner
