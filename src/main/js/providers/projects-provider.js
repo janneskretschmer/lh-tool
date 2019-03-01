@@ -68,7 +68,6 @@ export default class ProjectsProvider extends React.Component {
 
     userRemoved = (userId) => {
         this.setState(prevState => ({
-            //TODO: rerender of UserComponenet isn't triggered
             projects: prevState.projects.map(project => {
                 if (project.localCoordinator && project.localCoordinator.id === userId) {
                     project.localCoordinator = undefined;

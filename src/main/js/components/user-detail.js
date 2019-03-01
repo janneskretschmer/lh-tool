@@ -33,12 +33,15 @@ const styles = theme => ({
 
 const UserComponent = props => {
 
+    const userOrDefault = user => user || { gender: 'MALE', firstName: '', lastName: '', email: '', telephoneNumber: '', mobileNumber: '', businessNumber: '' };
+
     const { classes, role, onSave, onUpdate, showEdit, onDelete, showDelete, onlyNewUsers } = props;
 
     const [edit, setEdit] = useState(!props.user);
     const [showDetails, setShowDetails] = useState(false);
+    const [dirty, setDirty] = useState(false);
     const newUser = !props.user;
-    const [user, setUser] = useState(newUser ? {gender:'MALE', firstName:'', lastName:'',email:'',telephoneNumber:'',mobileNumber:'',businessNumber:''} : props.user)
+    const [user, setUser] = useState(newUser ? userOrDefault() : props.user)
 
     const disableSaveButton = !(onSave && newUser) && !(onUpdate && !newUser);
     const disableEditButton = !onUpdate;
@@ -54,17 +57,29 @@ const UserComponent = props => {
             onUpdate(user);
         }
         if(onlyNewUsers){
-            setUser({gender:'MALE', firstName:'', lastName:'',email:'',telephoneNumber:'',mobileNumber:'',businessNumber:''});
+            setUser(userOrDefault());
         }else{
             setEdit(false);
         }
         
     }
 
+    // TODO Ugly fix to handle state managemant in stateless component 😜
     const handleDelete = () => {
-        if(onDelete) {
-            onDelete(user)
+        if (onDelete) {
+            const delRet = onDelete(user);
+            if ('then' in delRet) {
+                delRet.then(() => setDirty(true));
+            } else {
+                setDirty(true);
+            }
         }
+    }
+
+    if (dirty) {
+        setEdit(!props.user)
+        setUser(userOrDefault(props.user));
+        setDirty(false);
     }
 
     return (
