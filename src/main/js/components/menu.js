@@ -14,10 +14,8 @@ import { Link } from 'react-router-dom';
 import WithPermission from './with-permission';
 import { SessionContext } from '../providers/session-provider';
 import { logout } from '../actions/login';
-import { 
-  fullPathOfHome,
+import {
   fullPathOfLogin,
-  fullPathOfHeartbeat,
   fullPathOfProjects,
   fullPathOfChangePw,
 } from '../paths';
@@ -100,7 +98,6 @@ export default function AppMenu() {
           <Divider />
           <List>
             <ProjectsItem />
-            <HeartbeatItem />
           </List>
           <Divider />
           <List>
