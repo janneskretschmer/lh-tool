@@ -13,6 +13,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { Redirect } from 'react-router'
+import { fullPathOfProjects } from '../paths';
 
 const styles = theme => ({
     container: {
@@ -58,105 +60,115 @@ export default class LoginComponent extends React.Component {
 
         return (
             <SessionContext.Consumer>
-                {loginState => (
-                    <form onSubmit={evt => {
-                        evt.preventDefault();
-                        const email = this.inputUsername.value;
-                        const password = this.inputPassword.value;
-                        this.inputPassword.value = '';
-                        login({
-                            loginState,
-                            email,
-                            password,
-                            handleLoginFailure: this.handleLoginFailure.bind(this),
-                        });
-                    }}>
-                        <Helmet titleTemplate="Login - %s" />
-                        <Grid container justify="center">
-                            <div>
-                                <Typography variant="h3" color="primary" inline={false}>Local Helper Tool</Typography>
-                                <Typography variant="subtitle1" color="secondary" inline={false}>Willkommen</Typography>
-                                <div className={classes.container}>
-                                    <TextField
-                                        id="username"
-                                        autoFocus={true}
-                                        label="E-Mail"
-                                        type="email"
-                                        name="username"
-                                        autoComplete="email"
-                                        margin="dense"
-                                        variant="outlined"
-                                        fullWidth={true}
-                                        InputProps={{
-                                            inputRef: ref => this.inputUsername = ref
-                                        }}
-                                    />
-                                    <br />
-                                    <TextField
-                                        id="password"
-                                        label="Passwort"
-                                        type="password"
-                                        autoComplete="current-password"
-                                        margin="dense"
-                                        variant="outlined"
-                                        fullWidth={true}
-                                        InputProps={{
-                                            inputRef: ref => this.inputPassword = ref
-                                        }}
-                                    />
-                                    <br />
-                                    <Button size="small" color="secondary" className={classes.button} onClick={this.openPwResetDialog.bind(this)}>
-                                        Passwort vergessen
-                                    </Button>
-                                    <Button variant="contained" type="submit" className={classes.button}>
-                                        Anmelden
-                                    </Button>
-                                    <Dialog
-                                        open={this.state.pwResetDialogOpen}
-                                        onClose={this.closePwResetDialog.bind(this)}
-                                        aria-labelledby="form-dialog-title"
-                                    >
-                                        <DialogTitle id="form-dialog-title">Passwort vergessen</DialogTitle>
-                                        <DialogContent>
-                                            <DialogContentText>
-                                                Wenn du dein Passwort vergessen hast, kannst du dir per E-Mail einen Link zusenden lassen, mit dem du dein Passwort neu setzen kannst.
-                                            </DialogContentText>
-                                            <TextField
-                                                autoFocus
-                                                margin="dense"
-                                                id="resetEmail"
-                                                label="E-Mail"
-                                                type="email"
-                                                fullWidth
-                                                InputProps={{
-                                                    inputRef: ref => this.inputResetEmail = ref
-                                                }}
-                                            />
-                                        </DialogContent>
-                                        <DialogActions>
-                                            <Button onClick={this.closePwResetDialog.bind(this)} color="secondary">
-                                                Abbrechen
-                                            </Button>
-                                            <Button onClick={() => {
-                                                const email = this.inputResetEmail.value;
-                                                requestPasswordReset({ email })
-                                                    .then(() => {
-                                                        this.props.enqueueSnackbar('Anforderung abgesendet', { variant: 'success', });
-                                                        this.closePwResetDialog();
-                                                    })
-                                                    .catch(() => {
-                                                        this.props.enqueueSnackbar('Fehler beim Anfordern des Links', { variant: 'error', });
-                                                    });
-                                            }} color="primary">
-                                                Link für neues Passwort anfordern
-                                            </Button>
-                                        </DialogActions>
-                                    </Dialog>
+                {loginState => {
+                    if(!loginState.isLoggedIn()) {
+                        return (
+                        <form onSubmit={evt => {
+                            evt.preventDefault();
+                            const email = this.inputUsername.value;
+                            const password = this.inputPassword.value;
+                            this.inputPassword.value = '';
+                            login({
+                                loginState,
+                                email,
+                                password,
+                                handleLoginFailure: this.handleLoginFailure.bind(this),
+                            });
+                        }}>
+                            <Helmet titleTemplate="Login - %s" />
+                            <Grid container justify="center">
+                                <div>
+                                    <Typography variant="h3" color="primary" inline={false}>Local Helper Tool</Typography>
+                                    <Typography variant="subtitle1" color="secondary" inline={false}>Willkommen</Typography>
+                                    <div className={classes.container}>
+                                        <TextField
+                                            id="username"
+                                            autoFocus={true}
+                                            label="Email"
+                                            type="email"
+                                            name="username"
+                                            autoComplete="email"
+                                            margin="dense"
+                                            variant="outlined"
+                                            fullWidth={true}
+                                            InputProps={{
+                                                inputRef: ref => this.inputUsername = ref
+                                            }}
+                                        />
+                                        <br />
+                                        <TextField
+                                            id="password"
+                                            label="Passwort"
+                                            type="password"
+                                            autoComplete="current-password"
+                                            margin="dense"
+                                            variant="outlined"
+                                            fullWidth={true}
+                                            InputProps={{
+                                                inputRef: ref => this.inputPassword = ref
+                                            }}
+                                        />
+                                        <br />
+                                        <Button size="small" color="secondary" className={classes.button} onClick={this.openPwResetDialog.bind(this)}>
+                                            Passwort vergessen
+                                        </Button>
+                                        <Button variant="contained" type="submit" className={classes.button}>
+                                            Anmelden
+                                        </Button>
+                                        <Dialog
+                                            open={this.state.pwResetDialogOpen}
+                                            onClose={this.closePwResetDialog.bind(this)}
+                                            aria-labelledby="form-dialog-title"
+                                        >
+                                            <DialogTitle id="form-dialog-title">Passwort vergessen</DialogTitle>
+                                            <DialogContent>
+                                                <DialogContentText>
+                                                    Wenn du dein Passwort vergessen hast, kannst du dir per E-Mail einen Link zusenden lassen, mit dem du dein Passwort neu setzen kannst.
+                                                </DialogContentText>
+                                                <TextField
+                                                    autoFocus
+                                                    margin="dense"
+                                                    id="resetEmail"
+                                                    label="E-Mail"
+                                                    type="email"
+                                                    fullWidth
+                                                    InputProps={{
+                                                        inputRef: ref => this.inputResetEmail = ref
+                                                    }}
+                                                />
+                                            </DialogContent>
+                                            <DialogActions>
+                                                <Button onClick={this.closePwResetDialog.bind(this)} color="secondary">
+                                                    Abbrechen
+                                                </Button>
+                                                <Button onClick={() => {
+                                                    const email = this.inputResetEmail.value;
+                                                    requestPasswordReset({ email })
+                                                        .then(() => {
+                                                            this.props.enqueueSnackbar('Anforderung abgesendet', { variant: 'success', });
+                                                            this.closePwResetDialog();
+                                                        })
+                                                        .catch(() => {
+                                                            this.props.enqueueSnackbar('Fehler beim Anfordern des Links', { variant: 'error', });
+                                                        });
+                                                }} color="primary">
+                                                    Link für neues Passwort anfordern
+                                                </Button>
+                                            </DialogActions>
+                                        </Dialog>
+                                    </div>
                                 </div>
-                            </div>
-                        </Grid>
-                    </form>
-                )}
+                            </Grid>
+                        </form>
+                    );
+                } else if(loginState.hasPermission('ROLE_ADMIN') || loginState.hasPermission('ROLE_CONSTRUCTION_SERVANT')){
+                    return (<Redirect to={fullPathOfProjects()}/>);
+                } else if(loginState.hasPermission('ROLE_LOCAL_COORDINATOR') || loginState.hasPermission('ROLE_PUBLISHER')){
+                    return (<div>TODO: Weiterleitung zu Bedarfsseite</div>);
+                } else {
+                    return (<div>Willkommen</div>);
+                }
+            }}
             </SessionContext.Consumer>
         );
     }

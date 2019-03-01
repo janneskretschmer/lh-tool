@@ -67,7 +67,7 @@ export default class LHToolRoot extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            drawerOpen: false,
+            drawerOpen: window.innerWidth > 960,
         };
     }
 
@@ -122,9 +122,7 @@ export default class LHToolRoot extends React.Component {
                                 })}
                             >
                                 <div className={classes.drawerHeader} />
-                                <Route path={fullPathOfHome()} exact component={HomeComponent} />
                                 <Route path={fullPathOfLogin()} component={LoginComponent} />
-                                <Route path={fullPathOfHeartbeat()} component={HeartbeatComponent} />
                                 <Route path={fullPathOfProjects()} component={ProjectsComponent} />
                                 <Route path={fullPathOfChangePw()} component={ChangePasswordComponent} />
                             </main>
