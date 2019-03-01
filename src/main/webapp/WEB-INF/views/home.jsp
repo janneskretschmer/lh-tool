@@ -6,7 +6,7 @@
 <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no">
 <title>LH-Tool</title>
 <link rel="stylesheet" href="${contextPath}/static/fonts/roboto/styles.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="${contextPath}/static/fonts/icons/styles.css">
 <style>body{font-family: "Roboto", "Helvetica", "Arial", sans-serif;}</style>
 </head>
 <body>

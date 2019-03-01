@@ -55,7 +55,7 @@ public class UserRestService {
 			users = userService.findByProjectIdAndRoleIgnoreCase(projectId, role);
 		} else if (projectId != null) {
 			users = userService.findByProjectId(projectId);
-		} else if (StringUtils.isNoneBlank(role)) {
+		} else if (StringUtils.isNotBlank(role)) {
 			users = userService.findByRoleIgnoreCase(role);
 		} else {
 			users = userService.findAll();

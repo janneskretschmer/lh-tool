@@ -8,9 +8,7 @@ export const ProjectsContext = React.createContext();
 
 @withContext('sessionState', SessionContext)
 @resolve('initialProjectData', props => {
-    const projects = fetchOwnProjects({ accessToken: props.sessionState.accessToken }).then(project => {return project;})
-        .catch(() => []);
-    return projects;
+    return fetchOwnProjects({ accessToken: props.sessionState.accessToken });
 })
 export default class ProjectsProvider extends React.Component {
 
