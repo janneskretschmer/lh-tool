@@ -8,13 +8,20 @@ import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { Helmet } from 'react-helmet';
-import { fullPathOfLogin, fullPathOfProjects } from '../paths';
+import { 
+    fullPathOfHome,
+    fullPathOfLogin,
+    fullPathOfHeartbeat,
+    fullPathOfProjects,
+    fullPathOfChangePw,
+} from '../paths';
 import AppHeader from './header';
 import HomeComponent from './home';
 import LoginComponent from './login';
 import HeartbeatComponent from './heartbeat';
 import ProjectsComponent from './project';
 import AppMenu from './menu';
+import ChangePasswordComponent from './changepw';
 import SessionProvider from '../providers/session-provider';
 
 const drawerWidth = 240;
@@ -117,6 +124,7 @@ export default class LHToolRoot extends React.Component {
                                 <div className={classes.drawerHeader} />
                                 <Route path={fullPathOfLogin()} component={LoginComponent} />
                                 <Route path={fullPathOfProjects()} component={ProjectsComponent} />
+                                <Route path={fullPathOfChangePw()} component={ChangePasswordComponent} />
                             </main>
 
                         </SessionProvider>

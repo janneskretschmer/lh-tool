@@ -5,10 +5,12 @@ import { getContextPath } from './config';
 import {
     ID_VARIABLE,
     LOGIN_PREFIX,
+    LOGIN_PASSWORD_RESET,
     INFO_PREFIX,
     INFO_HEARTBEAT,
     USER_PREFIX,
     USER_CURRENT,
+    USER_PASSWORD,
     PROJECT_PREFIX,
     PROJECT_DELETE,
 } from './urlmappings';
@@ -129,6 +131,10 @@ export const apiEndpoints = {
             // TODO Trailing '/' seems to be necessary
             path: LOGIN_PREFIX + '/',
         },
+        pwreset: {
+            method: 'POST',
+            path: LOGIN_PREFIX + LOGIN_PASSWORD_RESET,
+        }
     },
     project: {
         getOwn: {
@@ -151,6 +157,10 @@ export const apiEndpoints = {
         current: {
             method: 'GET',
             path: USER_PREFIX + USER_CURRENT,
-        }
+        },
+        password: {
+            method: 'PUT',
+            path: USER_PREFIX + USER_PASSWORD,
+        },
     },
 };
