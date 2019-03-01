@@ -63,6 +63,10 @@
 	2. Test by calling [http://localhost:8080/lh-tool/web](http://localhost:8080/lh-tool/web)
 	3. Desable JSON Validation at Window > Preferences > Validation
 
+### Create canonical package-lock.json
+	1. Right click the project > Maven > Update project > OK
+	2. Project > Clean > Clean (with "Start a build immediately" checked)
+
 ## MySQL
 	1. Install and configure mysql-server
 	2. Adapt and execute the following statements:<br>
