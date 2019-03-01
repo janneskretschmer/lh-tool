@@ -4,18 +4,21 @@ import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import DashboardIcon from '@material-ui/icons/Dashboard';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import FlashOnIcon from '@material-ui/icons/FlashOn';
 import GroupWorkIcon from '@material-ui/icons/GroupWork';
 import FaceIcon from '@material-ui/icons/Face';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
+import SecurityIcon from '@material-ui/icons/Security';
 import { Link } from 'react-router-dom';
 import WithPermission from './with-permission';
 import { SessionContext } from '../providers/session-provider';
 import { logout } from '../actions/login';
-import { fullPathOfHome, fullPathOfLogin, fullPathOfHeartbeat, fullPathOfProjects } from '../paths';
+import {
+  fullPathOfLogin,
+  fullPathOfProjects,
+  fullPathOfChangePw,
+} from '../paths';
 
 const linkStyle = { textDecoration: 'none' };
 
@@ -26,17 +29,6 @@ const CurrentUserItem = props => (
     </ListItemIcon>
     <ListItemText primary={`${props.currentUser.firstName} ${props.currentUser.lastName}`} />
   </ListItem>
-);
-
-const HomeItem = () => (
-  <Link to={fullPathOfHome()} style={linkStyle}>
-    <ListItem button>
-      <ListItemIcon>
-        <DashboardIcon />
-      </ListItemIcon>
-      <ListItemText primary="Übersicht" />
-    </ListItem>
-  </Link>
 );
 
 const ProjectsItem = () => (
@@ -52,13 +44,13 @@ const ProjectsItem = () => (
   </WithPermission>
 );
 
-const HeartbeatItem = () => (
-  <Link to={fullPathOfHeartbeat()} style={linkStyle}>
+const ChangePwItem = () => (
+  <Link to={fullPathOfChangePw()} style={linkStyle}>
     <ListItem button>
       <ListItemIcon>
-        <FlashOnIcon />
+        <SecurityIcon />
       </ListItemIcon>
-      <ListItemText primary="Heartbeat" />
+      <ListItemText primary="Passwort ändern" />
     </ListItem>
   </Link>
 );
@@ -105,9 +97,7 @@ export default function AppMenu() {
           </List>
           <Divider />
           <List>
-            <HomeItem />
             <ProjectsItem />
-            <HeartbeatItem />
           </List>
           <Divider />
           <List>
@@ -118,7 +108,6 @@ export default function AppMenu() {
       ) : (
           <>
             <List>
-              <HomeItem />
               <LoginItem />
             </List>
             <Divider />

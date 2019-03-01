@@ -191,4 +191,20 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 	public Iterable<User> findByProjectIdAndRoleIgnoreCase(Long projectId, String role) {
 		return getRepository().findByProjects_IdAndRoles_RoleIgnoreCaseOrderByLastNameAscFirstNameAsc(projectId, role);
 	}
+	
+	@Override
+	@Transactional
+	public void requestPasswordReset(String email) throws DefaultException {
+		try {
+			User user = loadUserByEmail(email);
+			if (user != null) {
+				PasswordChangeToken token = passwordChangeTokenService.saveRandomToken(user);
+
+				mailService.sendPwResetMail(user, token);
+			}
+
+		} catch (UsernameNotFoundException ex) {
+			// pass
+		}
+	}
 }

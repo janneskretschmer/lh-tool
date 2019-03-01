@@ -18,3 +18,10 @@ export function login({ loginState, email, password, handleLoginFailure }) {
 export function logout({ loginState }) {
     loginState.accessTokenChanged(null);
 }
+
+export function requestPasswordReset({ email }) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.login.pwreset,
+        data: { email }
+    });
+}

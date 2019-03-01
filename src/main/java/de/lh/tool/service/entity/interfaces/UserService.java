@@ -23,5 +23,10 @@ public interface UserService extends BasicEntityService<User, Long> {
 	User getCurrentUser();
 
 	User updateUser(User user) throws DefaultException;
+	
+	User loadUserByEmail(String email) throws UsernameNotFoundException;
+
+	void requestPasswordReset(String email) throws DefaultException;
+	
 
 }

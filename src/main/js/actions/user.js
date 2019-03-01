@@ -15,6 +15,14 @@ export function fetchCurrentUser({ accessToken }) {
         .catch(err => null);
 }
 
+export function changePassword({ userId, token, oldPassword, newPassword, confirmPassword }) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.user.password,
+        data: { userId, token, oldPassword, newPassword, confirmPassword }
+    })
+        .then(result => result.response);
+}
+
 export function fetchUsersByProjectIdAndRole({ accessToken, projectId, role }) {
     return apiRequest({
         apiEndpoint: apiEndpoints.user.get,

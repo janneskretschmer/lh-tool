@@ -161,6 +161,10 @@ export const apiEndpoints = {
             method: 'GET',
             path: USER_PREFIX + USER_CURRENT,
         },
+        password: {
+            method: 'PUT',
+            path: USER_PREFIX + USER_PASSWORD,
+        },
         create: {
             method: 'POST',
             // TODO Trailing '/' also necessary?
