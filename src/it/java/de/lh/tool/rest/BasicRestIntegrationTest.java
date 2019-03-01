@@ -116,7 +116,7 @@ public abstract class BasicRestIntegrationTest {
 		for (User user : TEST_USERS) {
 			Long userId = getRequestSpecWithJwt(jwt)
 					.body(new UserCreationDto(user.getFirstName(), user.getLastName(), user.getEmail(),
-							Gender.MALE.name()))
+							Gender.MALE.name(), "+49 123456789", "+49 87654321", "+49 123454321", null))
 					.contentType(ContentType.JSON).post(registrationUrl).as(UserDto.class).getId();
 			getRequestSpecWithJwt(jwt).body(
 					PasswordChangeDto.builder().userId(userId).newPassword(PASSWORD).confirmPassword(PASSWORD).build())

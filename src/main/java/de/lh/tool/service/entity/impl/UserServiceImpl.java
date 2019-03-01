@@ -4,6 +4,8 @@ import java.util.Calendar;
 
 import javax.transaction.Transactional;
 
+import org.modelmapper.Conditions;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -70,7 +72,7 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 
 	@Override
 	@Transactional
-	public User createUser(User user) throws DefaultException {
+	public User createUser(User user,String role) throws DefaultException {
 		if (user.getEmail() == null) {
 			throw new DefaultException(ExceptionEnum.EX_USER_NO_EMAIL);
 		}
@@ -84,8 +86,37 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 			throw new DefaultException(ExceptionEnum.EX_USER_NO_GENDER);
 		}
 		user = save(user);
+		if (userRoleService.hasCurrentUserRightToGrantRole(role)) {
+			userRoleService.save(new UserRole(null, user, role));
+		}
 		passwordChangeTokenService.saveRandomToken(user);
+
+		if (UserRole.ROLE_LOCAL_COORDINATOR.equals(role)) {
+			mailService.sendNewLocalCoordinatorMail(user);
+		} else if (UserRole.ROLE_PUBLISHER.equals(role)) {
+			mailService.sendNewPublisherMail(user);
+		}
+
 		return user;
+	}
+
+	@Override
+	@Transactional
+	public User updateUser(User user) throws DefaultException {
+		if (user.getId() == null) {
+			throw new DefaultException(ExceptionEnum.EX_NO_ID_PROVIDED);
+		}
+		User old = findById(user.getId()).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_USER_ID));
+		if (getCurrentUser().getId() != user.getId()
+				&& !((userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_CHANGE_FOREIGN))
+						&& old.getRoles().stream()
+								.anyMatch(r -> userRoleService.hasCurrentUserRightToGrantRole(r.getRole())))) {
+			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
+		}
+		ModelMapper mapper = new ModelMapper();
+		mapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
+		mapper.map(user, old);
+		return save(old);
 	}
 
 	@Override
@@ -152,6 +183,21 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 		return null;
 	}
 
+	@Override
+	public Iterable<User> findByProjectId(Long projectId) {
+		return getRepository().findByProjects_IdOrderByLastNameAscFirstNameAsc(projectId);
+	}
+
+	@Override
+	public Iterable<User> findByRoleIgnoreCase(String role) {
+		return getRepository().findByRoles_RoleIgnoreCaseOrderByLastNameAscFirstNameAsc(role);
+	}
+
+	@Override
+	public Iterable<User> findByProjectIdAndRoleIgnoreCase(Long projectId, String role) {
+		return getRepository().findByProjects_IdAndRoles_RoleIgnoreCaseOrderByLastNameAscFirstNameAsc(projectId, role);
+	}
+	
 	@Override
 	@Transactional
 	public void requestPasswordReset(String email) throws DefaultException {

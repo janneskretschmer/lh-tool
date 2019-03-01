@@ -9,6 +9,7 @@ import java.util.stream.StreamSupport;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.lh.tool.domain.dto.PasswordChangeDto;
@@ -45,11 +47,24 @@ public class UserRestService {
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of all users")
 	@Secured(UserRole.RIGHT_USERS_GET_ALL)
-	public Resources<UserDto> getAll() throws DefaultException {
-		Iterable<User> users = userService.findAll();
+	public Resources<UserDto> getAll(
+			@RequestParam(required = false, name = UrlMappings.PROJECT_ID_VARIABLE) Long projectId,
+			@RequestParam(required = false, name = UrlMappings.ROLE_VARIABLE) String role) throws DefaultException {
+		Iterable<User> users = null;
+		if (projectId != null && StringUtils.isNotBlank(role)) {
+			users = userService.findByProjectIdAndRoleIgnoreCase(projectId, role);
+		} else if (projectId != null) {
+			users = userService.findByProjectId(projectId);
+		} else if (StringUtils.isNotBlank(role)) {
+			users = userService.findByRoleIgnoreCase(role);
+		} else {
+			users = userService.findAll();
+		}
 		if (users != null) {
-			return new Resources<>(StreamSupport.stream(users.spliterator(), true).map(this::convertToDto)
-					.collect(Collectors.toList()), linkTo(methodOn(UserRestService.class).getAll()).withSelfRel());
+			return new Resources<>(
+					StreamSupport.stream(users.spliterator(), true).map(this::convertToDto)
+							.collect(Collectors.toList()),
+					linkTo(methodOn(UserRestService.class).getAll(projectId, role)).withSelfRel());
 		}
 		throw new DefaultException(ExceptionEnum.EX_USERS_NOT_FOUND);
 	}
@@ -67,9 +82,19 @@ public class UserRestService {
 	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@Secured(UserRole.RIGHT_USERS_CREATE)
 	public Resource<UserDto> add(@RequestBody UserCreationDto userCreationDto) throws DefaultException {
-		return new Resource<>(convertToDto(userService.createUser(new ModelMapper().map(userCreationDto, User.class))),
+		return new Resource<>(
+				convertToDto(userService.createUser(new ModelMapper().map(userCreationDto, User.class),
+						userCreationDto.getRole())),
 				linkTo(methodOn(UserRestService.class).add(userCreationDto)).withSelfRel(),
 				linkTo(methodOn(UserRestService.class).changePassword(null)).withRel(UrlMappings.USER_PASSWORD));
+	}
+
+	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
+	@Secured(UserRole.RIGHT_USERS_PUT)
+	public Resource<UserDto> update(@PathVariable(name = UrlMappings.ID_VARIABLE, required = false) Long id,
+			@RequestBody UserDto userDto) throws DefaultException {
+		return new Resource<>(convertToDto(userService.updateUser(new ModelMapper().map(userDto, User.class))),
+				linkTo(methodOn(UserRestService.class).update(id, userDto)).withSelfRel());
 	}
 
 	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.USER_PASSWORD)

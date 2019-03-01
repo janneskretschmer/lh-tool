@@ -4,13 +4,14 @@ import URITemplate from 'urijs/src/URITemplate';
 import { getContextPath } from './config';
 import {
     ID_VARIABLE,
+    USER_ID_VARIABLE,
+    ID_EXTENSION,
+    ID_USER_ID_EXTENSION,
     LOGIN_PREFIX,
-    LOGIN_PASSWORD_RESET,
     INFO_PREFIX,
     INFO_HEARTBEAT,
     USER_PREFIX,
     USER_CURRENT,
-    USER_PASSWORD,
     PROJECT_PREFIX,
     PROJECT_DELETE,
 } from './urlmappings';
@@ -100,6 +101,7 @@ export function apiRequest({
         data: null,
     }) {
 
+    
     const renderedPathResult = renderPath({ apiEndpoint, parameters });
     if (renderedPathResult.error) {
         return Promise.reject(renderedPathResult.error);
@@ -131,10 +133,6 @@ export const apiEndpoints = {
             // TODO Trailing '/' seems to be necessary
             path: LOGIN_PREFIX + '/',
         },
-        pwreset: {
-            method: 'POST',
-            path: LOGIN_PREFIX + LOGIN_PASSWORD_RESET,
-        }
     },
     project: {
         getOwn: {
@@ -152,6 +150,11 @@ export const apiEndpoints = {
             path: PROJECT_DELETE,
             parameters: [ID_VARIABLE],
         },
+        addUser: {
+            method: 'POST',
+            path: PROJECT_PREFIX + ID_USER_ID_EXTENSION,
+            parameters: [ID_VARIABLE, USER_ID_VARIABLE],
+        }
     },
     user: {
         current: {
@@ -161,6 +164,26 @@ export const apiEndpoints = {
         password: {
             method: 'PUT',
             path: USER_PREFIX + USER_PASSWORD,
+        },
+        create: {
+            method: 'POST',
+            // TODO Trailing '/' also necessary?
+            path: USER_PREFIX + '/' 
+        },
+        get: {
+            method: 'GET',
+            // TODO Trailing '/' also necessary?
+            path: USER_PREFIX + '/'
+        },
+        delete: {
+            method: 'DELETE',
+            path: USER_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
+        put: {
+            method: 'PUT',
+            path: USER_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
         },
     },
 };

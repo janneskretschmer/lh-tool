@@ -12,4 +12,8 @@ public class UserCreationDto {
 	private String lastName;
 	private String email;
 	private String gender;
+	private String telephoneNumber;
+	private String mobileNumber;
+	private String businessNumber;
+	private String role;
 }

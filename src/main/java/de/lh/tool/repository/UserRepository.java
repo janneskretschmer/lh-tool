@@ -12,4 +12,10 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
 	Optional<User> findByEmail(String email);
 
+	Iterable<User> findByProjects_IdOrderByLastNameAscFirstNameAsc(Long projectId);
+
+	Iterable<User> findByRoles_RoleIgnoreCaseOrderByLastNameAscFirstNameAsc(String role);
+
+	Iterable<User> findByProjects_IdAndRoles_RoleIgnoreCaseOrderByLastNameAscFirstNameAsc(Long projectId, String role);
+
 }

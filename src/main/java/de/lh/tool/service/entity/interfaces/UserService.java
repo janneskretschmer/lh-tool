@@ -10,12 +10,20 @@ public interface UserService extends BasicEntityService<User, Long> {
 
 	UserDetails loadUserById(Long id);
 
-	User createUser(User user) throws DefaultException;
-
 	User changePassword(Long userId, String token, String oldPassword, String newPassword, String confirmPassword)
 			throws DefaultException;
 
+	Iterable<User> findByProjectId(Long projectId);
+
+	Iterable<User> findByRoleIgnoreCase(String role);
+
+	Iterable<User> findByProjectIdAndRoleIgnoreCase(Long projectId, String role);
+
+	User createUser(User user, String role) throws DefaultException;
+
 	User getCurrentUser();
+
+	User updateUser(User user) throws DefaultException;
 
 	User loadUserByEmail(String email) throws UsernameNotFoundException;
 
