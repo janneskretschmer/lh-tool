@@ -53,8 +53,7 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 	@Override
 	@Transactional
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		return getRepository().findByEmail(username)
-				.orElseThrow(() -> new UsernameNotFoundException("User not " + username + " does not exist"));
+		return loadUserByEmail(username);
 	}
 
 	@Override
@@ -66,7 +65,14 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 
 	@Override
 	@Transactional
-	public User createUser(User user, String role) throws DefaultException {
+	public User loadUserByEmail(String email) throws UsernameNotFoundException {
+		return getRepository().findByEmail(email)
+				.orElseThrow(() -> new UsernameNotFoundException("User with email " + email + " does not exist"));
+	}
+
+	@Override
+	@Transactional
+	public User createUser(User user,String role) throws DefaultException {
 		if (user.getEmail() == null) {
 			throw new DefaultException(ExceptionEnum.EX_USER_NO_EMAIL);
 		}
