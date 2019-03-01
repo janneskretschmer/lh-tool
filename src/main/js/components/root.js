@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -20,6 +20,7 @@ import HomeComponent from './home';
 import LoginComponent from './login';
 import HeartbeatComponent from './heartbeat';
 import ProjectsComponent from './project';
+import NotFoundComponent from './notfound';
 import AppMenu from './menu';
 import ChangePasswordComponent from './changepw';
 import SessionProvider from '../providers/session-provider';
@@ -122,9 +123,12 @@ export default class LHToolRoot extends React.Component {
                                 })}
                             >
                                 <div className={classes.drawerHeader} />
-                                <Route path={fullPathOfLogin()} component={LoginComponent} />
-                                <Route path={fullPathOfProjects()} component={ProjectsComponent} />
-                                <Route path={fullPathOfChangePw()} component={ChangePasswordComponent} />
+                                <Switch>
+                                    <Route path={fullPathOfLogin()} component={LoginComponent} />
+                                    <Route path={fullPathOfProjects()} component={ProjectsComponent} />
+                                    <Route path={fullPathOfChangePw()} component={ChangePasswordComponent} />
+                                    <Route component={NotFoundComponent} />
+                                </Switch>
                             </main>
 
                         </SessionProvider>
