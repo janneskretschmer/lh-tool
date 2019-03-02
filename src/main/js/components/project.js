@@ -85,7 +85,7 @@ class StatefulProjectsComponent extends React.Component {
                                         <ProjectEntry
                                             key={project.id}
                                             project={project}
-                                            open={project.id === this.state.openProjectId}
+                                            open={project.id === this.state.openProjectId || projectsState.projects.length === 1}
                                             onCollapseChange={this.handleCollapseChange.bind(this)}
                                         />
                                     ))}

@@ -72,7 +72,7 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 
 	@Override
 	@Transactional
-	public User createUser(User user,String role) throws DefaultException {
+	public User createUser(User user, String role) throws DefaultException {
 		if (user.getEmail() == null) {
 			throw new DefaultException(ExceptionEnum.EX_USER_NO_EMAIL);
 		}
@@ -89,12 +89,12 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 		if (userRoleService.hasCurrentUserRightToGrantRole(role)) {
 			userRoleService.save(new UserRole(null, user, role));
 		}
-		passwordChangeTokenService.saveRandomToken(user);
+		PasswordChangeToken token = passwordChangeTokenService.saveRandomToken(user);
 
 		if (UserRole.ROLE_LOCAL_COORDINATOR.equals(role)) {
-			mailService.sendNewLocalCoordinatorMail(user);
+			mailService.sendNewLocalCoordinatorMail(user, token);
 		} else if (UserRole.ROLE_PUBLISHER.equals(role)) {
-			mailService.sendNewPublisherMail(user);
+			mailService.sendNewPublisherMail(user, token);
 		}
 
 		return user;
@@ -197,7 +197,7 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 	public Iterable<User> findByProjectIdAndRoleIgnoreCase(Long projectId, String role) {
 		return getRepository().findByProjects_IdAndRoles_RoleIgnoreCaseOrderByLastNameAscFirstNameAsc(projectId, role);
 	}
-	
+
 	@Override
 	@Transactional
 	public void requestPasswordReset(String email) throws DefaultException {
