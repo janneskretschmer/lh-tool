@@ -3,6 +3,7 @@ package de.lh.tool.service.entity.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +57,7 @@ public class NeedServiceTest {
 
 	@Test
 	public void testCreateNeedIndex() {
-		Date today = new Date();
+		Date today = DateUtils.truncate(new Date(), Calendar.DATE);
 
 		Map<Date, Map<HelperType, Need>> index = needService.createNeedIndex(List.of(
 				Need.builder().date(today).helperType(HelperType.CONSTRUCTION_WORKER).quantity(1).build(),
