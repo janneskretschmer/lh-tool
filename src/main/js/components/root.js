@@ -9,16 +9,12 @@ import Divider from '@material-ui/core/Divider';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { Helmet } from 'react-helmet';
 import { 
-    fullPathOfHome,
     fullPathOfLogin,
-    fullPathOfHeartbeat,
     fullPathOfProjects,
     fullPathOfChangePw,
 } from '../paths';
 import AppHeader from './header';
-import HomeComponent from './home';
 import LoginComponent from './login';
-import HeartbeatComponent from './heartbeat';
 import ProjectsComponent from './project';
 import NotFoundComponent from './notfound';
 import AppMenu from './menu';

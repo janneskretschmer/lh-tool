@@ -12,6 +12,7 @@ import {
     INFO_HEARTBEAT,
     USER_PREFIX,
     USER_CURRENT,
+    USER_PASSWORD,
     PROJECT_PREFIX,
     PROJECT_DELETE,
 } from './urlmappings';
