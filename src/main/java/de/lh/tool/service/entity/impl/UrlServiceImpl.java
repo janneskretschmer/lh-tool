@@ -18,14 +18,14 @@ public class UrlServiceImpl implements UrlService {
 
 	@Override
 	public String getPasswordChangeUrl(Long userId, String token) {
-		URIBuilder uriBuilder = null;
 		try {
-			uriBuilder = new URIBuilder(baseUrl + "/web/changepw");
+			URIBuilder uriBuilder = new URIBuilder(baseUrl + "/web/changepw");
+			uriBuilder.addParameter("uid", userId.toString());
+			uriBuilder.addParameter("token", token);
+			return uriBuilder.toString();
 		} catch (URISyntaxException e) {
 			log.catching(e);
 		}
-		uriBuilder.addParameter("uid", userId != null ? userId.toString() : "");
-		uriBuilder.addParameter("token", token);
-		return uriBuilder.toString();
+		throw new IllegalArgumentException();
 	}
 }
