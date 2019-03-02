@@ -36,11 +36,17 @@ public class ProjectServiceImpl extends BasicMappableEntityServiceImpl<ProjectRe
 	@Override
 	@Transactional
 	public Collection<ProjectDto> getProjectDtos() {
+		return convertToDtoList(getOwnProjects());
+	}
+
+	@Override
+	@Transactional
+	public Collection<Project> getOwnProjects() {
 		User currentUser = userService.getCurrentUser();
 		if (currentUser != null) {
-			return convertToDtoList(userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_GET_FOREIGN)
+			return userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_GET_FOREIGN)
 					? (Collection<Project>) findAll()
-					: currentUser.getProjects());
+					: currentUser.getProjects();
 		}
 		return Collections.emptyList();
 	}

@@ -6,6 +6,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import GroupWorkIcon from '@material-ui/icons/GroupWork';
+import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import FaceIcon from '@material-ui/icons/Face';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
@@ -17,6 +18,7 @@ import { logout } from '../actions/login';
 import {
   fullPathOfLogin,
   fullPathOfProjects,
+  fullPathOfNeeds,
   fullPathOfChangePw,
 } from '../paths';
 
@@ -39,6 +41,19 @@ const ProjectsItem = () => (
           <GroupWorkIcon />
         </ListItemIcon>
         <ListItemText primary="Projekte" />
+      </ListItem>
+    </Link>
+  </WithPermission>
+);
+
+const NeedsItem = () => (
+  <WithPermission permission="ROLE_RIGHT_NEEDS_GET">
+    <Link to={fullPathOfNeeds()} style={linkStyle}>
+      <ListItem button>
+        <ListItemIcon>
+          <GroupAddIcon />
+        </ListItemIcon>
+        <ListItemText primary="Helfer" />
       </ListItem>
     </Link>
   </WithPermission>
@@ -98,6 +113,7 @@ export default function AppMenu() {
           <Divider />
           <List>
             <ProjectsItem />
+            <NeedsItem />
           </List>
           <Divider />
           <List>

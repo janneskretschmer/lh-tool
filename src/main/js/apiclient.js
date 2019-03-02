@@ -201,8 +201,8 @@ export const apiEndpoints = {
         },
         update: {
             method: 'PUT',
-            // TODO Trailing '/' also necessary?
             path: NEED_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
         },
     }
 };

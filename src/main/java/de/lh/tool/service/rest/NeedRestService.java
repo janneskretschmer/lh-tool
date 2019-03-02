@@ -63,7 +63,7 @@ public class NeedRestService {
 	@Secured(UserRole.RIGHT_NEEDS_POST)
 	public Resource<NeedDto> create(@RequestBody(required = true) NeedDto dto) throws DefaultException {
 
-		NeedDto needDto = needService.saveNeedDto(dto);
+		NeedDto needDto = needService.createNeedDto(dto);
 
 		return new Resource<>(needDto, linkTo(methodOn(NeedRestService.class).create(needDto)).withSelfRel());
 	}
@@ -73,7 +73,10 @@ public class NeedRestService {
 	@Secured(UserRole.RIGHT_NEEDS_PUT)
 	public Resource<NeedDto> update(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@RequestBody(required = true) NeedDto dto) throws DefaultException {
-		return new Resource<>(dto, linkTo(methodOn(NeedRestService.class).create(dto)).withSelfRel());
+
+		NeedDto needDto = needService.updateNeedDto(dto, id);
+
+		return new Resource<>(dto, linkTo(methodOn(NeedRestService.class).update(id, dto)).withSelfRel());
 	}
 
 	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)

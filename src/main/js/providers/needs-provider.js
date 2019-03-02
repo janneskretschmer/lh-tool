@@ -3,30 +3,30 @@ import { resolve } from 'react-resolver';
 import { SessionContext } from './session-provider';
 import { fetchOwnNeeds } from '../actions/need';
 import { withContext } from '../util';
+import moment from 'moment';
 
-export const ProjectsContext = React.createContext();
+export const NeedsContext = React.createContext();
 
 @withContext('sessionState', SessionContext)
 @resolve('initialNeedData', props => {
     return fetchOwnNeeds({ accessToken: props.sessionState.accessToken })
-        .catch(() => []);
+        .catch(e => console.log(e));
 })
-export default class ProjectsProvider extends React.Component {
+export default class NeedsProvider extends React.Component {
 
     state = {
-        projects: this.props.initialNeedData,
-    };
-
-    needsAdded = need => {
-        this.setState(prevState => ({
-            projects: prevState.needs.concat([need]),
-        }));
+        needs: this.props.initialNeedData,
     };
 
     needsUpdated = need => {
-        /*this.setState(prevState => ({
-            projects: prevState.projects.filter(project => project.id != projectId)
-        }));*/
+        this.setState(prevState => ({
+            needs: prevState.needs.map(tmp => {
+                if(tmp.date.isSame(moment(need.date,'x')) && tmp.projectId === need.projectId) {
+                    tmp[need.helperType] = need;
+                }
+                return tmp;
+            })
+        }));
     };
 
     render() {
