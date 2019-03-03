@@ -67,7 +67,7 @@ export default class ProjectEditPanel extends React.Component {
                                 <>
                                     <div><Typography variant="h6">Baudiener</Typography></div>
                                     TODO: Auswahlliste der Baudiener
-                                    <div><Typography variant="h6">Lokaler Koordinator</Typography></div>
+                                    <div><Typography variant="h6">Helferkoordinator</Typography></div>
                                     <UserComponent
                                         user={project.localCoordinator}
                                         role="ROLE_LOCAL_COORDINATOR"
@@ -81,6 +81,11 @@ export default class ProjectEditPanel extends React.Component {
                                         <IconButton onClick={() => this.handlePublisherEditButtonClicked()}>
                                             <Icon>{editPublishers ? 'close' : 'create'}</Icon>
                                         </IconButton>
+                                        {!editPublishers ? (
+                                            <IconButton onClick={() => this.handlePublisherEditButtonClicked()}>
+                                                <Icon>group_add</Icon>
+                                            </IconButton>
+                                        ) : null}
                                     </Typography>
                                     {sessionState.hasPermission('ROLE_RIGHT_USERS_CREATE') && sessionState.hasPermission('ROLE_RIGHT_USERS_GRANT_ROLE_PUBLISHER') && (editPublishers || project.publishers.length === 0)  ? (<UserComponent
                                         role="ROLE_PUBLISHER"
