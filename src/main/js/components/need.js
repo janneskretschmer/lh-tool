@@ -1,16 +1,14 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
+import { withSnackbar } from 'notistack';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import Hidden from '@material-ui/core/Hidden';
 import TextField from '@material-ui/core/TextField';
 import NeedsProvider, { NeedsContext } from '../providers/needs-provider';
 import { createOrUpdateNeed } from '../actions/need';
 import { SessionContext } from '../providers/session-provider';
-import WithPermission from './with-permission';
-import { withSnackbar } from 'notistack';
 
-const styles = theme => {return ({
+const styles = theme => ({
     root: {
         width: '100%',
         backgroundColor: theme.palette.background.paper,
@@ -27,7 +25,7 @@ const styles = theme => {return ({
     padded: {
         padding: theme.spacing.unit,
     }
-})};
+});
 
 const NeedQuantity = props => (
     <Grid item container md={2} sm={3} xs={6}>
@@ -43,13 +41,13 @@ const NeedQuantity = props => (
                 onChange={
                     e => props.onChange({
                         ...props.need,
-                        quantity:e.target.value,
+                        quantity: e.target.value,
                     })
                 }
             />
         </Grid>
         <Grid item className={props.classes.padded}>
-            Beworben: {0}<br /> 
+            Beworben: {0}<br />
             Genehmigt: {0}
         </Grid>
     </Grid>
@@ -72,13 +70,13 @@ class StatefulNeedsComponent extends React.Component {
         });
     }
 
-    handleQuantityChange( accessToken, need, needsState, handleFailure ){
+    handleQuantityChange(accessToken, need, needsState) {
         createOrUpdateNeed({
-             accessToken, need, needsState, handleFailure:this.handleFailure.bind(this)
+            accessToken, need, needsState, handleFailure: this.handleFailure.bind(this)
         });
     }
 
-     handleFailure() {
+    handleFailure() {
         this.props.enqueueSnackbar('Fehler beim Aktualisieren des Bedarfs', {
             variant: 'error',
         });
@@ -93,13 +91,13 @@ class StatefulNeedsComponent extends React.Component {
                     <NeedsContext.Consumer>
                         {needsState => (
                             <Grid container>
-                                {needsState.needs.map((need,i) => (
-                                    <Grid item alignItems="center" className={i%2===0?classes.stripe:null} container xs={12} key={need.date.format('x') + need.projectName}>
+                                {needsState.needs.map((need, i) => (
+                                    <Grid item alignItems="center" className={i % 2 === 0 ? classes.stripe : null} container xs={12} key={need.date.format('x') + need.projectName}>
                                         <Grid className={classes.date} item md={2} xs={11}>{need.date.format('DD.MM.YYYY')}</Grid>
-                                        <NeedQuantity need={need['CONSTRUCTION_WORKER']} onChange={need => this.handleQuantityChange(sessionState.accessToken,need,needsState)} classes={classes} label="Bauhelfer"/>
-                                        <NeedQuantity need={need['STORE_KEEPER']} onChange={need => this.handleQuantityChange(sessionState.accessToken,need,needsState)} classes={classes} label="Magaziner"/>
-                                        <NeedQuantity need={need['KITCHEN_HELPER']} onChange={need => this.handleQuantityChange(sessionState.accessToken,need,needsState)} classes={classes} label="Küche"/>
-                                        <NeedQuantity need={need['CLEANER']} onChange={need => this.handleQuantityChange(sessionState.accessToken,need,needsState)} classes={classes} label="Putzen"/>
+                                        <NeedQuantity need={need.CONSTRUCTION_WORKER} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState)} classes={classes} label="Bauhelfer" />
+                                        <NeedQuantity need={need.STORE_KEEPER} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState)} classes={classes} label="Magaziner" />
+                                        <NeedQuantity need={need.KITCHEN_HELPER} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState)} classes={classes} label="Küche" />
+                                        <NeedQuantity need={need.CLEANER} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState)} classes={classes} label="Putzen" />
                                         <Grid item xs={1} md={2}></Grid>
                                     </Grid>
                                 ))}

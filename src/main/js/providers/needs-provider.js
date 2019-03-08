@@ -1,9 +1,9 @@
 import React from 'react';
+import moment from 'moment';
 import { resolve } from 'react-resolver';
 import { SessionContext } from './session-provider';
 import { fetchOwnNeeds } from '../actions/need';
 import { withContext } from '../util';
-import moment from 'moment';
 
 export const NeedsContext = React.createContext();
 
@@ -18,13 +18,13 @@ export default class NeedsProvider extends React.Component {
         needs: this.props.initialNeedData,
     };
 
-    needsUpdated = need => {
+    needsUpdated = newNeed => {
         this.setState(prevState => ({
-            needs: prevState.needs.map(tmp => {
-                if(tmp.date.isSame(moment(need.date,'x')) && tmp.projectId === need.projectId) {
-                    tmp[need.helperType] = need;
+            needs: prevState.needs.map(need => {
+                if (need.date.isSame(moment(newNeed.date, 'x')) && need.projectId === newNeed.projectId) {
+                    need[newNeed.helperType] = newNeed;
                 }
-                return tmp;
+                return need;
             })
         }));
     };
