@@ -27,6 +27,7 @@ export function fetchOwnNeeds({ accessToken }) {
             authToken: accessToken,
         })
             .then(result => mapNeedArray(result.response.content))
+            // TODO Proper error message
             .catch(e => console.log(e));
     } else {
         return Promise.resolve([]);
