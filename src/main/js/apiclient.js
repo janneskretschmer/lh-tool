@@ -204,5 +204,10 @@ export const apiEndpoints = {
             path: NEED_PREFIX + ID_EXTENSION,
             parameters: [ID_VARIABLE],
         },
-    }
+        apply: {
+            method: 'PUT',
+            path: NEED_PREFIX + ID_USER_ID_EXTENSION,
+            parameters: [ID_VARIABLE, USER_ID_VARIABLE],
+        }
+    },
 };

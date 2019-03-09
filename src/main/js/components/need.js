@@ -4,9 +4,11 @@ import { withSnackbar } from 'notistack';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 import NeedsProvider, { NeedsContext } from '../providers/needs-provider';
-import { createOrUpdateNeed } from '../actions/need';
+import { createOrUpdateNeed, applyForNeed } from '../actions/need';
 import { SessionContext } from '../providers/session-provider';
+import WithPermission from './with-permission';
 
 const styles = theme => ({
     root: {
@@ -30,21 +32,39 @@ const styles = theme => ({
 const NeedQuantity = props => (
     <Grid item container md={2} sm={3} xs={6}>
         <Grid item>
-            <TextField
-                id={props.need.date + props.need.projectName + props.label}
-                label={props.label}
-                defaultValue={props.need.quantity}
-                className={props.classes.quantity}
-                type="number"
-                margin="dense"
-                variant="outlined"
-                onChange={
-                    e => props.onChange({
-                        ...props.need,
-                        quantity: e.target.value,
-                    })
-                }
-            />
+            <WithPermission permission="ROLE_RIGHT_NEEDS_POST">
+                <TextField
+                    id={props.need.date + props.need.projectName + props.label}
+                    label={props.label}
+                    defaultValue={props.need.quantity}
+                    className={props.classes.quantity}
+                    type="number"
+                    margin="dense"
+                    variant="outlined"
+                    onChange={
+                        e => props.onChange({
+                            ...props.need,
+                            quantity: e.target.value,
+                        })
+                    }
+                />
+            </WithPermission>
+            <WithPermission permission="ROLE_RIGHT_NEEDS_APPLY">
+                <SessionContext.Consumer>
+                    {sessionState => (
+                        <Button variant="contained" onClick={() => {
+                            // TODO Proper error message
+                            applyForNeed({ 
+                                sessionState,
+                                need: props.need.id,
+                                handleFailure: err => console.log(err)
+                            });
+                        }}>
+                            Bewerben
+                        </Button>
+                    )}
+                </SessionContext.Consumer>
+            </WithPermission>
         </Grid>
         <Grid item className={props.classes.padded}>
             Beworben: {0}<br />

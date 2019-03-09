@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { apiRequest, apiEndpoints } from '../apiclient';
-import { ID_VARIABLE } from '../urlmappings';
+import { ID_VARIABLE, USER_ID_VARIABLE } from '../urlmappings';
 
 function mapNeedArray(content) {
     let needs = []
@@ -50,6 +50,25 @@ export function createOrUpdateNeed({ accessToken, need, needsState, handleFailur
             }
         });
 }
+
+export function applyForNeed({ sessionState, needId, handleFailure }) {
+    const userId = sessionState.currentUser.id;
+    apiRequest({
+        apiEndpoint: apiEndpoints.need.apply,
+        data: {
+            needId,
+            state: 'APPLIED',
+            userId,
+        },
+        parameters: {
+            [ID_VARIABLE]: needId,
+            [USER_ID_VARIABLE]: userId,
+        },
+        authToken: sessionState.accessToken
+    });
+    // TODO RETURN
+}
+
 /*
 export function deleteProject({ accessToken, projectsState, projectId, handleFailure }) {
     return apiRequest({
