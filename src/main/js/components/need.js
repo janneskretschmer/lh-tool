@@ -9,6 +9,7 @@ import NeedsProvider, { NeedsContext } from '../providers/needs-provider';
 import { createOrUpdateNeed, applyForNeed } from '../actions/need';
 import { SessionContext } from '../providers/session-provider';
 import WithPermission from './with-permission';
+import { requiresLogin } from '../util';
 
 const styles = theme => ({
     root: {
@@ -54,7 +55,7 @@ const NeedQuantity = props => (
                     {sessionState => (
                         <Button variant="contained" onClick={() => {
                             // TODO Proper error message
-                            applyForNeed({ 
+                            applyForNeed({
                                 sessionState,
                                 need: props.need.id,
                                 handleFailure: err => console.log(err)
@@ -138,4 +139,5 @@ const NeedsComponent = props => (
         </NeedsProvider>
     </>
 );
-export default NeedsComponent;
+export default requiresLogin(NeedsComponent);
+

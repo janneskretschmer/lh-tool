@@ -16,6 +16,7 @@ import { SessionContext } from '../providers/session-provider';
 import ProjectCreatePanel from './project-create';
 import ProjectEditPanel from './project-edit';
 import WithPermission from './with-permission';
+import { requiresLogin } from '../util';
 
 const styles = theme => ({
     root: {
@@ -108,4 +109,4 @@ const ProjectsComponent = props => (
         </ProjectsProvider>
     </>
 );
-export default ProjectsComponent;
+export default requiresLogin(ProjectsComponent);
