@@ -49,22 +49,24 @@ const NeedQuantity = props => (
                     }
                 />
             </WithPermission>
-            <WithPermission permission="ROLE_RIGHT_NEEDS_APPLY">
-                <SessionContext.Consumer>
-                    {sessionState => (
-                        <Button variant="contained" onClick={() => {
-                            // TODO Proper error message
-                            applyForNeed({ 
-                                sessionState,
-                                need: props.need.id,
-                                handleFailure: err => console.log(err)
-                            });
-                        }}>
-                            Bewerben
-                        </Button>
-                    )}
-                </SessionContext.Consumer>
-            </WithPermission>
+            {props.need.id ? (
+                <WithPermission permission="ROLE_RIGHT_NEEDS_APPLY">
+                    <SessionContext.Consumer>
+                        {sessionState => (
+                            <Button variant="contained" onClick={() => {
+                                // TODO Proper error message
+                                applyForNeed({ 
+                                    sessionState,
+                                    needId: props.need.id,
+                                    handleFailure: err => console.log(err)
+                                });
+                            }}>
+                                Bewerben
+                            </Button>
+                        )}
+                    </SessionContext.Consumer>
+                </WithPermission>
+            ) : null}
         </Grid>
         <Grid item className={props.classes.padded}>
             Beworben: {0}<br />
