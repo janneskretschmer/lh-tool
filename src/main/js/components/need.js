@@ -11,6 +11,7 @@ import { createOrUpdateNeed, applyForNeed, revokeApplicationForNeed, fetchNeed }
 import { SessionContext } from '../providers/session-provider';
 import WithPermission from './with-permission';
 import WithoutPermission from './without-permission';
+import { requiresLogin } from '../util';
 
 const styles = theme => ({
     root: {
@@ -170,4 +171,5 @@ const NeedsComponent = props => (
         </NeedsProvider>
     </>
 );
-export default NeedsComponent;
+export default requiresLogin(NeedsComponent);
+
