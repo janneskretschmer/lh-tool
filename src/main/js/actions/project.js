@@ -14,7 +14,7 @@ function fetchAllUsersForProject({ projectId, accessToken }) {
 
     const publishersPromise = fetchUsersByProjectIdAndRole({
         accessToken,
-        projectId: projectId,
+        projectId,
         role: 'ROLE_PUBLISHER',
     })
         .then(users => users)
@@ -33,7 +33,7 @@ function mapProjectObject(accessToken, responseObj) {
         name: responseObj.name,
         startDate: moment(responseObj.startDate, 'x'),
         endDate: moment(responseObj.endDate, 'x'),
-        localCoordinator: undefined,
+        localCoordinator: null,
         publishers: [],
     };
     return fetchAllUsersForProject({ projectId: responseObj.id, accessToken })
