@@ -17,7 +17,7 @@ export const NeedsContext = React.createContext();
 export default class NeedsProvider extends React.Component {
 
     state = {
-        needs: this.props.initialNeedData,
+        needs: this.props.initialNeedData || [],
     };
 
     needsUpdated = newNeed => {
