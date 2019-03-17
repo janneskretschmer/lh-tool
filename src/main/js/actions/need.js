@@ -20,13 +20,37 @@ function mapNeedArray(content) {
     return needs;
 }
 
-export function fetchOwnNeeds({ accessToken }) {
+function attachOwnStateToNeeds({ needs, accessToken, userId }) {
+    const promNeeds = needs.map(need => {
+        if (need.id) {
+            return fetchOwnNeedStatus({ accessToken, needId: need.id, userId })
+                .then(result => ({ ...need, ownState: result.response.state }))
+        } else {
+            return Promise.resolve(need);
+        }
+    });
+    return Promise.all(promNeeds);
+}
+
+export function fetchOwnNeedStatus({ accessToken, needId, userId }) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.need.getStatus,
+        authToken: accessToken,
+        parameters: {
+            [ID_VARIABLE]: needId,
+            [USER_ID_VARIABLE]: userId,
+        },
+    });
+}
+
+export function fetchOwnNeeds({ accessToken, userId }) {
     if (accessToken) {
         return apiRequest({
             apiEndpoint: apiEndpoints.need.getOwn,
             authToken: accessToken,
         })
-            .then(result => mapNeedArray(result.response.content))
+            .then(result => attachOwnStateToNeeds({ needs: result.response.content, accessToken, userId }))
+            .then(needs => mapNeedArray(needs))
             // TODO Proper error message
             .catch(e => console.log(e));
     } else {
@@ -53,7 +77,7 @@ export function createOrUpdateNeed({ accessToken, need, needsState, handleFailur
 
 export function applyForNeed({ sessionState, needId, handleFailure }) {
     const userId = sessionState.currentUser.id;
-    apiRequest({
+    return apiRequest({
         apiEndpoint: apiEndpoints.need.apply,
         data: {
             needId,
@@ -65,9 +89,30 @@ export function applyForNeed({ sessionState, needId, handleFailure }) {
             [USER_ID_VARIABLE]: userId,
         },
         authToken: sessionState.accessToken
-    });
-    // TODO RETURN
+    })
+        .then(result => result.response);
+    // TODO handleFailure
 }
+
+export function revokeApplicationForNeed({ sessionState, needId, handleFailure }) {
+    const userId = sessionState.currentUser.id;
+    return apiRequest({
+        apiEndpoint: apiEndpoints.need.apply,
+        data: {
+            needId,
+            state: 'NONE',
+            userId,
+        },
+        parameters: {
+            [ID_VARIABLE]: needId,
+            [USER_ID_VARIABLE]: userId,
+        },
+        authToken: sessionState.accessToken
+    })
+        .then(result => result.response);
+    // TODO handleFailure
+}
+
 
 /*
 export function deleteProject({ accessToken, projectsState, projectId, handleFailure }) {

@@ -6,7 +6,7 @@ import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import NeedsProvider, { NeedsContext } from '../providers/needs-provider';
-import { createOrUpdateNeed, applyForNeed } from '../actions/need';
+import { createOrUpdateNeed, applyForNeed, revokeApplicationForNeed } from '../actions/need';
 import { SessionContext } from '../providers/session-provider';
 import WithPermission from './with-permission';
 
@@ -53,16 +53,31 @@ const NeedQuantity = props => (
                 <WithPermission permission="ROLE_RIGHT_NEEDS_APPLY">
                     <SessionContext.Consumer>
                         {sessionState => (
-                            <Button variant="contained" onClick={() => {
-                                // TODO Proper error message
-                                applyForNeed({ 
-                                    sessionState,
-                                    needId: props.need.id,
-                                    handleFailure: err => console.log(err)
-                                });
-                            }}>
-                                Bewerben
-                            </Button>
+                            <NeedsContext.Consumer>
+                                {needsState => (
+                                    <Button variant="contained" onClick={() => {
+                                        // TODO Proper error message
+                                        (
+                                            props.need.ownState === 'APPLIED'
+                                                ? revokeApplicationForNeed({
+                                                    sessionState,
+                                                    needId: props.need.id,
+                                                    handleFailure: err => console.log(err)
+                                                })
+                                                : applyForNeed({
+                                                    sessionState,
+                                                    needId: props.need.id,
+                                                    handleFailure: err => console.log(err)
+                                                })
+                                        ).then(newNeedUser => {
+                                            props.need.ownState = newNeedUser.state;
+                                            needsState.needsUpdated(props.need);
+                                        });     
+                                    }}>
+                                        {props.need.ownState === 'APPLIED' ? 'Bewerbung zurücknehmen' : 'Bewerben'}
+                                    </Button>
+                                )}
+                            </NeedsContext.Consumer>
                         )}
                     </SessionContext.Consumer>
                 </WithPermission>
