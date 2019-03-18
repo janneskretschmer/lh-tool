@@ -23,7 +23,7 @@ export default class NeedsProvider extends React.Component {
     needsUpdated = newNeed => {
         this.setState(prevState => ({
             needs: prevState.needs.map(need => {
-                if (need.date.isSame(moment(newNeed.date, 'x')) && need.projectId === newNeed.projectId) {
+                if (need.date.isSame(moment(newNeed.date, 'x'), 'day') && need.projectId === newNeed.projectId) {
                     need[newNeed.helperType] = newNeed;
                 }
                 return need;

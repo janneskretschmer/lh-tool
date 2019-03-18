@@ -5,10 +5,12 @@ import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
 import NeedsProvider, { NeedsContext } from '../providers/needs-provider';
-import { createOrUpdateNeed, applyForNeed, revokeApplicationForNeed } from '../actions/need';
+import { createOrUpdateNeed, applyForNeed, revokeApplicationForNeed, fetchNeed } from '../actions/need';
 import { SessionContext } from '../providers/session-provider';
 import WithPermission from './with-permission';
+import WithoutPermission from './without-permission';
 
 const styles = theme => ({
     root: {
@@ -49,43 +51,56 @@ const NeedQuantity = props => (
                     }
                 />
             </WithPermission>
-            {props.need.id ? (
-                <WithPermission permission="ROLE_RIGHT_NEEDS_APPLY">
-                    <SessionContext.Consumer>
-                        {sessionState => (
-                            <NeedsContext.Consumer>
-                                {needsState => (
-                                    <Button variant="contained" onClick={() => {
-                                        // TODO Proper error message
-                                        (
-                                            props.need.ownState === 'APPLIED'
-                                                ? revokeApplicationForNeed({
-                                                    sessionState,
-                                                    needId: props.need.id,
-                                                    handleFailure: err => console.log(err)
-                                                })
-                                                : applyForNeed({
-                                                    sessionState,
-                                                    needId: props.need.id,
-                                                    handleFailure: err => console.log(err)
-                                                })
-                                        ).then(newNeedUser => {
-                                            props.need.ownState = newNeedUser.state;
-                                            needsState.needsUpdated(props.need);
-                                        });     
-                                    }}>
-                                        {props.need.ownState === 'APPLIED' ? 'Bewerbung zurücknehmen' : 'Bewerben'}
-                                    </Button>
-                                )}
-                            </NeedsContext.Consumer>
+            <WithoutPermission permission="ROLE_RIGHT_NEEDS_POST">
+                <Typography variant="overline" gutterBottom>
+                    {props.label}
+                </Typography>
+            </WithoutPermission>
+            <Grid item className={props.classes.padded}>
+                Bedarf: {typeof props.need.quantity === 'number' ? props.need.quantity : '(kein Bedarf)'}<br />
+                Beworben: {typeof props.need.appliedCount === 'number' ? props.need.appliedCount : 'n/a'}<br />
+                Genehmigt: {typeof props.need.approvedCount === 'number' ? props.need.approvedCount : 'n/a'}
+            </Grid>
+
+            <SessionContext.Consumer>
+                {sessionState => (
+                    <NeedsContext.Consumer>
+                        {needsState => (
+                            <Button
+                                variant="contained"
+                                disabled={!sessionState.hasPermission('ROLE_RIGHT_NEEDS_APPLY') || !props.need.id || props.need.quantity === 0}
+                                onClick={() => {
+                                    // TODO Proper error message
+                                    (
+                                        props.need.ownState === 'APPLIED'
+                                            ? revokeApplicationForNeed({
+                                                sessionState,
+                                                needId: props.need.id,
+                                                handleFailure: err => console.log(err)
+                                            })
+                                            : applyForNeed({
+                                                sessionState,
+                                                needId: props.need.id,
+                                                handleFailure: err => console.log(err)
+                                            })
+                                    )
+                                        .then(newNeedUser => {
+                                            return fetchNeed({
+                                                accessToken: sessionState.accessToken,
+                                                needId: newNeedUser.needId,
+                                                userId: sessionState.currentUser.id,
+                                            });
+                                        })
+                                        .then(need => {
+                                            needsState.needsUpdated(need);
+                                        });
+                                }}>
+                                {props.need.ownState === 'APPLIED' ? 'Bewerbung zurücknehmen' : 'Bewerben'}
+                            </Button>
                         )}
-                    </SessionContext.Consumer>
-                </WithPermission>
-            ) : null}
-        </Grid>
-        <Grid item className={props.classes.padded}>
-            Beworben: {0}<br />
-            Genehmigt: {0}
+                    </NeedsContext.Consumer>
+                )}
+            </SessionContext.Consumer>
         </Grid>
     </Grid>
 )
@@ -107,9 +122,9 @@ class StatefulNeedsComponent extends React.Component {
         });
     }
 
-    handleQuantityChange(accessToken, need, needsState) {
+    handleQuantityChange(accessToken, need, needsState, sessionState) {
         createOrUpdateNeed({
-            accessToken, need, needsState, handleFailure: this.handleFailure.bind(this)
+            accessToken, need, needsState, sessionState, handleFailure: this.handleFailure.bind(this)
         });
     }
 
@@ -131,10 +146,10 @@ class StatefulNeedsComponent extends React.Component {
                                 {needsState.needs.map((need, i) => (
                                     <Grid item alignItems="center" className={i % 2 === 0 ? classes.stripe : null} container xs={12} key={need.date.format('x') + need.projectName}>
                                         <Grid className={classes.date} item md={2} xs={11}>{need.date.format('DD.MM.YYYY')}</Grid>
-                                        <NeedQuantity need={need.CONSTRUCTION_WORKER} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState)} classes={classes} label="Bauhelfer" />
-                                        <NeedQuantity need={need.STORE_KEEPER} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState)} classes={classes} label="Magaziner" />
-                                        <NeedQuantity need={need.KITCHEN_HELPER} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState)} classes={classes} label="Küche" />
-                                        <NeedQuantity need={need.CLEANER} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState)} classes={classes} label="Putzen" />
+                                        <NeedQuantity need={need.CONSTRUCTION_WORKER} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} classes={classes} label="Bauhelfer" />
+                                        <NeedQuantity need={need.STORE_KEEPER} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} classes={classes} label="Magaziner" />
+                                        <NeedQuantity need={need.KITCHEN_HELPER} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} classes={classes} label="Küche" />
+                                        <NeedQuantity need={need.CLEANER} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} classes={classes} label="Putzen" />
                                         <Grid item xs={1} md={2}></Grid>
                                     </Grid>
                                 ))}

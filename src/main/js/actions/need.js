@@ -58,15 +58,34 @@ export function fetchOwnNeeds({ accessToken, userId }) {
     }
 }
 
-export function createOrUpdateNeed({ accessToken, need, needsState, handleFailure }) {
+export function fetchNeed({ accessToken, needId, userId }) {
+    if (accessToken) {
+        return apiRequest({
+            apiEndpoint: apiEndpoints.need.get,
+            authToken: accessToken,
+            parameters: { [ID_VARIABLE]: needId }
+        })
+            .then(result => attachOwnStateToNeeds({ needs: [result.response], accessToken, userId }))
+            .then(needs => needs[0])
+            // TODO Proper error message
+            .catch(e => console.log(e));
+    } else {
+        return Promise.resolve(null);
+    }
+}
+
+export function createOrUpdateNeed({ accessToken, need, needsState, sessionState, handleFailure }) {
+    const userId = sessionState.currentUser.id;
     return apiRequest({
         apiEndpoint: need.id ? apiEndpoints.need.update : apiEndpoints.need.createNew,
         authToken: accessToken,
         data: need,
         parameters: need.id ? { [ID_VARIABLE]: need.id } : {},
     })
-        .then(result => {
-            needsState.needsUpdated(result.response);
+        .then(result => attachOwnStateToNeeds({ needs: [result.response], accessToken, userId }))
+        .then(needs => needs[0])
+        .then(need => {
+            needsState.needsUpdated(need);
         })
         .catch(err => {
             if (handleFailure) {
