@@ -9,13 +9,15 @@ export const NeedsContext = React.createContext();
 
 @withContext('sessionState', SessionContext)
 @resolve('initialNeedData', props => {
-    return fetchOwnNeeds({ accessToken: props.sessionState.accessToken })
-        .catch(e => console.log(e));
+    if (props.sessionState.isLoggedIn()) {
+        return fetchOwnNeeds({ accessToken: props.sessionState.accessToken, userId: props.sessionState.currentUser.id })
+            .catch(e => console.log(e));
+    }
 })
 export default class NeedsProvider extends React.Component {
 
     state = {
-        needs: this.props.initialNeedData,
+        needs: this.props.initialNeedData || [],
     };
 
     needsUpdated = newNeed => {

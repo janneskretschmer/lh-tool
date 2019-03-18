@@ -164,7 +164,7 @@ const UserComponent = props => {
                     <FormControlLabel
                         control={
                             <Checkbox
-                                checked={user.gender == 'FEMALE'}
+                                checked={user.gender === 'FEMALE'}
 
                                 value="gender"
                                 onChange={e => setUser({...user,gender:e.target.checked?'FEMALE':'MALE'})}
@@ -234,7 +234,7 @@ const UserComponent = props => {
     )
 }
 
-const EmailLink = ({email,asIcon}) =>{ 
+const EmailLink = ({email, asIcon}) =>{ 
     if(asIcon){
         return (<IconButton component="a" href={'mailto:'+email}>
             <Icon color="secondary">email</Icon>

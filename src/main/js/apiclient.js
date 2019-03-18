@@ -208,6 +208,10 @@ export const apiEndpoints = {
             method: 'PUT',
             path: NEED_PREFIX + ID_USER_ID_EXTENSION,
             parameters: [ID_VARIABLE, USER_ID_VARIABLE],
+        },
+        getStatus: {
+            method: 'GET',
+            path: NEED_PREFIX + ID_USER_ID_EXTENSION,
         }
     },
 };
