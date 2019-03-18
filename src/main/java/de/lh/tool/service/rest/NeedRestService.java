@@ -76,7 +76,7 @@ public class NeedRestService {
 
 		NeedDto needDto = needService.updateNeedDto(dto, id);
 
-		return new Resource<>(dto, linkTo(methodOn(NeedRestService.class).update(id, dto)).withSelfRel());
+		return new Resource<>(needDto, linkTo(methodOn(NeedRestService.class).update(id, dto)).withSelfRel());
 	}
 
 	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
