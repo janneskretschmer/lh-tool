@@ -7,7 +7,7 @@ function mapNeedArray(content) {
     content.forEach(need => {
         const date = moment(need.date, 'x');
         let item = needs[needs.length - 1];
-        if (item === undefined || !date.isSame(item.date, 'day') || item.projectName !== need.projectName) {
+        if (!item || !date.isSame(item.date, 'day') || item.projectName !== need.projectName) {
             item = {
                 date,
                 projectName: need.projectName,
@@ -20,6 +20,17 @@ function mapNeedArray(content) {
     return needs;
 }
 
+export function fetchOwnNeedStatus({ accessToken, needId, userId }) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.need.getStatus,
+        authToken: accessToken,
+        parameters: {
+            [ID_VARIABLE]: needId,
+            [USER_ID_VARIABLE]: userId,
+        },
+    });
+}
+
 function attachOwnStateToNeeds({ needs, accessToken, userId }) {
     const promNeeds = needs.map(need => {
         if (need.id) {
@@ -30,17 +41,6 @@ function attachOwnStateToNeeds({ needs, accessToken, userId }) {
         }
     });
     return Promise.all(promNeeds);
-}
-
-export function fetchOwnNeedStatus({ accessToken, needId, userId }) {
-    return apiRequest({
-        apiEndpoint: apiEndpoints.need.getStatus,
-        authToken: accessToken,
-        parameters: {
-            [ID_VARIABLE]: needId,
-            [USER_ID_VARIABLE]: userId,
-        },
-    });
 }
 
 export function fetchOwnNeeds({ accessToken, userId }) {
