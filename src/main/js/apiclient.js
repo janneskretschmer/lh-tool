@@ -194,6 +194,11 @@ export const apiEndpoints = {
             // TODO Trailing '/' also necessary?
             path: NEED_PREFIX + '/',
         },
+        get: {
+            method: 'GET',
+            path: NEED_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
         createNew: {
             method: 'POST',
             // TODO Trailing '/' also necessary?

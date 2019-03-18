@@ -28,5 +28,9 @@ public class NeedDto {
 	private Integer quantity;
 
 	private HelperType helperType;
+	
+	private Integer appliedCount;
+	
+	private Integer approvedCount;
 
 }

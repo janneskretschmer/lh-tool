@@ -6,7 +6,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -22,10 +24,13 @@ import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.HelperType;
 import de.lh.tool.domain.model.Need;
+import de.lh.tool.domain.model.NeedUser;
+import de.lh.tool.domain.model.NeedUserState;
 import de.lh.tool.domain.model.Project;
 import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.repository.NeedRepository;
 import de.lh.tool.service.entity.interfaces.NeedService;
+import de.lh.tool.service.entity.interfaces.NeedUserService;
 import de.lh.tool.service.entity.interfaces.ProjectService;
 import de.lh.tool.service.entity.interfaces.UserRoleService;
 
@@ -38,26 +43,47 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 	@Autowired
 	private ProjectService projectService;
 
+	@Autowired
+	private NeedUserService needUserService;
+
+	public NeedDto convertToDto(Need need) {
+		if (need.getId() == null) {
+			return super.convertToDto(need);
+		}
+		try {
+			List<NeedUser> needUsers = needUserService.findByNeedId(need.getId());
+			int appliedCount = (int) needUsers.stream().filter(nu -> nu.getState() == NeedUserState.APPLIED).count();
+			int approvedCount = (int) needUsers.stream().filter(nu -> nu.getState() == NeedUserState.APPROVED).count();
+			NeedDto needDto = super.convertToDto(need);
+			needDto.setAppliedCount(appliedCount);
+			needDto.setApprovedCount(approvedCount);
+			return needDto;
+		} catch (DefaultException e) {
+			return super.convertToDto(need);
+		}
+	}
+
 	/**
 	 * get all possible needs of the current user's projects
 	 */
 	@Override
 	@Transactional
-	public List<NeedDto> getNeedDtos() {
-		List<Need> needs = new ArrayList<>();
+	public List<NeedDto> getNeedDtos() throws DefaultException {
+		List<NeedDto> needDtos = new ArrayList<>();
 		for (Project project : projectService.getOwnProjects()) {
 			Map<Date, Map<HelperType, Need>> index = createNeedIndex(getRepository().findByProject_Id(project.getId()));
 			Date date = DateUtils.truncate(project.getStartDate(), Calendar.DATE);
 			while (!date.after(project.getEndDate())) {
 				for (HelperType helperType : HelperType.values()) {
-					needs.add(Optional.ofNullable(index.get(date)).map(m -> m.get(helperType)).orElse(
-							Need.builder().project(project).helperType(helperType).date(date).quantity(0).build()));
+					Need need = Optional.ofNullable(index.get(date)).map(m -> m.get(helperType)).orElse(
+							Need.builder().project(project).helperType(helperType).date(date).quantity(0).build());
+					needDtos.add(convertToDto(need));
 				}
 				date = DateUtils.addDays(date, 1);
 			}
 		}
 
-		return convertToDtoList(needs);
+		return needDtos;
 	}
 
 	public Map<Date, Map<HelperType, Need>> createNeedIndex(Iterable<Need> needs) {

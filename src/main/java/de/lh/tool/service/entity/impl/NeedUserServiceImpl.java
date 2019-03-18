@@ -1,5 +1,9 @@
 package de.lh.tool.service.entity.impl;
 
+import static com.google.common.collect.Lists.newArrayList;
+
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.modelmapper.ModelMapper;
@@ -104,6 +108,13 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 				.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_USER_ID));
 		return getRepository().findByNeedAndUser(need, user)
 				.orElse(NeedUser.builder().need(need).user(user).state(NeedUserState.NONE).build());
+	}
+
+	@Override
+	@Transactional
+	public List<NeedUser> findByNeedId(Long needId) throws DefaultException {
+		Need need = needService.findById(needId).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
+		return newArrayList(getRepository().findByNeed(need));
 	}
 
 	@Override
