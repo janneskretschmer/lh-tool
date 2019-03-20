@@ -21,10 +21,16 @@ public class NeedDto {
 
 	private Long projectId;
 
+	private String projectName;
+
 	private Date date;
 
 	private Integer quantity;
 
 	private HelperType helperType;
+	
+	private Integer appliedCount;
+	
+	private Integer approvedCount;
 
 }

@@ -11,11 +11,13 @@ import { Helmet } from 'react-helmet';
 import { 
     fullPathOfLogin,
     fullPathOfProjects,
+    fullPathOfNeeds,
     fullPathOfChangePw,
 } from '../paths';
 import AppHeader from './header';
 import LoginComponent from './login';
 import ProjectsComponent from './project';
+import NeedsComponent from './need';
 import NotFoundComponent from './notfound';
 import AppMenu from './menu';
 import ChangePasswordComponent from './changepw';
@@ -122,6 +124,7 @@ export default class LHToolRoot extends React.Component {
                                 <Switch>
                                     <Route path={fullPathOfLogin()} component={LoginComponent} />
                                     <Route path={fullPathOfProjects()} component={ProjectsComponent} />
+                                    <Route path={fullPathOfNeeds()} component={NeedsComponent} />
                                     <Route path={fullPathOfChangePw()} component={ChangePasswordComponent} />
                                     <Route component={NotFoundComponent} />
                                 </Switch>

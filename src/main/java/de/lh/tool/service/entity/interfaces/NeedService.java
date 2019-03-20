@@ -8,12 +8,14 @@ import de.lh.tool.domain.model.Need;
 
 public interface NeedService extends BasicEntityService<Need, Long> {
 
-	NeedDto saveNeedDto(NeedDto needDto) throws DefaultException;
+	NeedDto createNeedDto(NeedDto needDto) throws DefaultException;
 
 	void deleteOwn(Long id) throws DefaultException;
 
-	List<NeedDto> getNeedDtos();
+	List<NeedDto> getNeedDtos() throws DefaultException;
 
 	NeedDto getNeedDtoById(Long id) throws DefaultException;
+
+	NeedDto updateNeedDto(NeedDto needDto, Long id) throws DefaultException;
 
 }
