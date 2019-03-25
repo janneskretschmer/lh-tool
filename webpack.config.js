@@ -20,21 +20,21 @@ module.exports = {
 				'NODE_ENV': JSON.stringify('production')
 			}
 		})
-	] : undefined,
+	] : null,
 	optimization: PROD_BUILD ? {
 		minimizer: [
-		  new UglifyJsPlugin({
-			cache: true,
-			parallel: true,
-			uglifyOptions: {
-			  compress: true,
-			  ecma: 6,
-			  mangle: true
-			},
-			sourceMap: false
-		  })
+			new UglifyJsPlugin({
+				cache: true,
+				parallel: true,
+				uglifyOptions: {
+					compress: true,
+					ecma: 6,
+					mangle: true
+				},
+				sourceMap: false
+			})
 		]
-	} : undefined,
+	} : null,
 	module : {
 		rules : [ {
 			test : path.join(__dirname, '.'),
