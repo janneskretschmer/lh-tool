@@ -1,14 +1,40 @@
 var path = require('path');
+var webpack = require('webpack');
+var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+
+
+var PROD_BUILD = true;
 
 module.exports = {
 	entry : './src/main/js/browser.js',
-	devtool : 'sourcemaps',
+	devtool : PROD_BUILD ? 'cheap-module-source-map' : 'sourcemaps',
 	cache : true,
-	mode : 'development',
+	mode : PROD_BUILD ? 'production' : 'development',
 	output : {
 		path : __dirname,
 		filename : './src/main/resources/static/built/bundle.js'
 	},
+	plugins: PROD_BUILD ? [
+		new webpack.DefinePlugin({
+			'process.env': {
+				'NODE_ENV': JSON.stringify('production')
+			}
+		})
+	] : null,
+	optimization: PROD_BUILD ? {
+		minimizer: [
+			new UglifyJsPlugin({
+				cache: true,
+				parallel: true,
+				uglifyOptions: {
+					compress: true,
+					ecma: 6,
+					mangle: true
+				},
+				sourceMap: false
+			})
+		]
+	} : null,
 	module : {
 		rules : [ {
 			test : path.join(__dirname, '.'),
