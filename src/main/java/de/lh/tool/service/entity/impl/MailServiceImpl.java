@@ -27,6 +27,7 @@ public class MailServiceImpl implements MailService {
 
 	private static final String SENDER_NAME = "LDC Baugruppe 5";
 	private static final String FOOTER = "p.s. Das ist eine automatisch generierte Mail, bitte antworte nicht darauf. Bei Fragen wende dich bitte an ...";
+	private static final String DEFAULT_MSG_CHARSET = "utf-8";
 
 	private Properties properties;
 
@@ -124,11 +125,11 @@ public class MailServiceImpl implements MailService {
 			}
 		});
 		try {
-			Message msg = new MimeMessage(session);
+			MimeMessage msg = new MimeMessage(session);
 			msg.setFrom(new InternetAddress(SENDER_NAME + "<" + username + ">"));
 			msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmailAddress));
-			msg.setSubject(subject);
-			msg.setText(messageText);
+			msg.setSubject(subject, DEFAULT_MSG_CHARSET);
+			msg.setText(messageText, DEFAULT_MSG_CHARSET);
 			Transport.send(msg);
 		} catch (Exception e) {
 			log.warn("Email to " + toEmailAddress + " could not be sent", e);
