@@ -8,6 +8,7 @@ import {
     ID_EXTENSION,
     ID_USER_ID_EXTENSION,
     LOGIN_PREFIX,
+    LOGIN_PASSWORD_RESET,
     INFO_PREFIX,
     INFO_HEARTBEAT,
     USER_PREFIX,
@@ -103,7 +104,7 @@ export function apiRequest({
         data: null,
     }) {
 
-    
+
     const renderedPathResult = renderPath({ apiEndpoint, parameters });
     if (renderedPathResult.error) {
         return Promise.reject(renderedPathResult.error);
@@ -134,6 +135,10 @@ export const apiEndpoints = {
             method: 'POST',
             // TODO Trailing '/' seems to be necessary
             path: LOGIN_PREFIX + '/',
+        },
+        pwreset: {
+            method: 'POST',
+            path: LOGIN_PREFIX + LOGIN_PASSWORD_RESET,
         },
     },
     project: {
@@ -170,7 +175,7 @@ export const apiEndpoints = {
         create: {
             method: 'POST',
             // TODO Trailing '/' also necessary?
-            path: USER_PREFIX + '/' 
+            path: USER_PREFIX + '/'
         },
         get: {
             method: 'GET',
