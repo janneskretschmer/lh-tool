@@ -14,7 +14,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Redirect } from 'react-router'
-import { fullPathOfProjects } from '../paths';
+import { fullPathOfProjects, fullPathOfNeeds } from '../paths';
 
 const styles = theme => ({
     container: {
@@ -164,7 +164,7 @@ export default class LoginComponent extends React.Component {
                 } else if(loginState.hasPermission('ROLE_ADMIN') || loginState.hasPermission('ROLE_CONSTRUCTION_SERVANT')){
                     return (<Redirect to={fullPathOfProjects()}/>);
                 } else if(loginState.hasPermission('ROLE_LOCAL_COORDINATOR') || loginState.hasPermission('ROLE_PUBLISHER')){
-                    return (<div>TODO: Weiterleitung zu Bedarfsseite</div>);
+                    return (<Redirect to={fullPathOfNeeds()}/>);
                 } else {
                     return (<div>Willkommen</div>);
                 }
