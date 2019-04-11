@@ -1,6 +1,7 @@
 package de.lh.tool.domain.dto;
 
 import java.util.Date;
+import java.util.Collection
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -32,5 +33,7 @@ public class NeedDto {
 	private Integer appliedCount;
 	
 	private Integer approvedCount;
+  
+  private Collection<NeedUserDto> users;
 
 }

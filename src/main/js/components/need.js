@@ -12,10 +12,12 @@ import { SessionContext } from '../providers/session-provider';
 import WithPermission from './with-permission';
 import WithoutPermission from './without-permission';
 import { requiresLogin } from '../util';
+import GroupAddIcon from '@material-ui/icons/GroupAdd';
+import IconButton from '@material-ui/core/IconButton';
 
 const NeedQuantity = props => (
     <div style={{ width: '100%' }}>
-        <h4>{props.label}</h4>
+        <h4>{props.label} <IconButton onClick={props.helperIconHandle}><GroupAddIcon /></IconButton></h4>
         <div>
             <>
                 <>Bedarf:&nbsp;</>

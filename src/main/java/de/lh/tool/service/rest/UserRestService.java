@@ -68,6 +68,18 @@ public class UserRestService {
 		}
 		throw new DefaultException(ExceptionEnum.EX_USERS_NOT_FOUND);
 	}
+  
+  @GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
+	@ApiOperation(value = "Get a single user by id")
+	@Secured(UserRole.RIGHT_USERS_GET_BY_ID)
+	public Resource<UserDto> getById(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
+			throws DefaultException {
+
+		UserDto dto = convertToDto(userService.findById(id)
+				.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_WRONG_ID_PROVIDED)));
+
+		return new Resource<>(dto, linkTo(methodOn(UserRestService.class).getById(id)).withSelfRel());
+	}
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.USER_CURRENT)
 	@ApiOperation(value = "Get data of current users")

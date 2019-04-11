@@ -182,6 +182,11 @@ export const apiEndpoints = {
             // TODO Trailing '/' also necessary?
             path: USER_PREFIX + '/'
         },
+        getById: {
+            method: 'GET',
+            path: USER_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
         delete: {
             method: 'DELETE',
             path: USER_PREFIX + ID_EXTENSION,

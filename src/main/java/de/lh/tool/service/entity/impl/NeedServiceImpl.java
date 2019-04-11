@@ -51,10 +51,13 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 			return super.convertToDto(need);
 		}
 		try {
-			List<NeedUser> needUsers = needUserService.findByNeedId(need.getId());
-			int appliedCount = (int) needUsers.stream().filter(nu -> nu.getState() == NeedUserState.APPLIED).count();
+			List<NeedUserDto> needUsers = needUserService.findDtosByNeedId(need.getId()).stream().filter(nu -> nu.getState() != NeedUserState.NONE).collect(Collectors.toList());
+      int appliedCount = (int) needUsers.stream().filter(nu -> nu.getState() == NeedUserState.APPLIED).count();
 			int approvedCount = (int) needUsers.stream().filter(nu -> nu.getState() == NeedUserState.APPROVED).count();
 			NeedDto needDto = super.convertToDto(need);
+      if(userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPROVE)) {
+        needDto.setUsers(needUsers);
+      }
 			needDto.setAppliedCount(appliedCount);
 			needDto.setApprovedCount(approvedCount);
 			return needDto;

@@ -14,6 +14,6 @@ public interface NeedUserService extends BasicEntityService<NeedUser, Long> {
 
 	NeedUserDto saveOrUpdateDto(Long needId, Long userId, NeedUserDto dto) throws DefaultException;
 
-	List<NeedUser> findByNeedId(Long needId) throws DefaultException;
+	List<NeedUserDto> findDtosByNeedId(Long needId) throws DefaultException;
 
 }

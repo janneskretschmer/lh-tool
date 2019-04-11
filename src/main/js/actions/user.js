@@ -36,6 +36,17 @@ export function fetchUsersByProjectIdAndRole({ accessToken, projectId, role }) {
         .catch(err => null);
 }
 
+export function fetchUser({ accessToken, userId }) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.user.getById,
+        authToken: accessToken,
+        data: { userId }
+    })
+        .then(result => result.response)
+  // TODO Error message
+        .catch(e => console.log(e));
+}
+
 export function createNewUser({ accessToken, email, firstName, lastName, gender, telephoneNumber, mobileNumber, businessNumber, role, projectId, projectsState }) {
     return apiRequest({
         apiEndpoint: apiEndpoints.user.create,
