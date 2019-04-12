@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.lh.tool.domain.dto.NeedDto;
+import de.lh.tool.domain.dto.NeedUserDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.HelperType;

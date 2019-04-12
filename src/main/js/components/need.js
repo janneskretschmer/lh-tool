@@ -14,6 +14,7 @@ import WithoutPermission from './without-permission';
 import { requiresLogin } from '../util';
 import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import IconButton from '@material-ui/core/IconButton';
+import ApplicationList from './approve-need.js'
 
 const NeedQuantity = props => (
     <div style={{ width: '100%' }}>
@@ -35,6 +36,7 @@ const NeedQuantity = props => (
                         }
                     />
                 </WithPermission>
+                {props.showApplications ? (<ApplicationList accessToken={props.accessToken} need={props.need} />) : null}
                 <WithoutPermission permission="ROLE_RIGHT_NEEDS_POST">
                     {typeof props.need.quantity === 'number' ? props.need.quantity : '(kein Bedarf)'}
                 </WithoutPermission>
@@ -125,7 +127,7 @@ class StatefulNeedsComponent extends React.Component {
                                 {needsState.needs.map((need, i) => (
                                     <li key={need.date.format('x') + need.projectName}>
                                         <h3>{need.date.format('DD.MM.YYYY')}</h3>
-                                        <NeedQuantity need={need.CONSTRUCTION_WORKER} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} classes={classes} label="Bauhelfer" />
+                                        <NeedQuantity need={need.CONSTRUCTION_WORKER} accessToken={sessionState.accessToken} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} showApplications={true} classes={classes} label="Bauhelfer" />
                                         <NeedQuantity need={need.STORE_KEEPER} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} classes={classes} label="Magaziner" />
                                         <NeedQuantity need={need.KITCHEN_HELPER} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} classes={classes} label="Küche" />
                                         <NeedQuantity need={need.CLEANER} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} classes={classes} label="Putzen" />

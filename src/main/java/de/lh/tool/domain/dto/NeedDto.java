@@ -1,7 +1,7 @@
 package de.lh.tool.domain.dto;
 
 import java.util.Date;
-import java.util.Collection
+import java.util.Collection;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

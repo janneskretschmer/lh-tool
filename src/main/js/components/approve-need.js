@@ -8,7 +8,10 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import CommentIcon from '@material-ui/icons/Comment';
+import { requiresLogin } from '../util';
 import { fetchUser } from '../actions/user';
+import { changeApplicationStateForNeed } from '../actions/need';
+
 
 const styles = theme => ({
   root: {
@@ -18,38 +21,46 @@ const styles = theme => ({
   },
 });
 
-class CheckboxList extends React.Component {
-  state = {
-    checked: [],
-  };
+class ApplicationList extends React.Component {
+	constructor(props) {
+		super(props)
+	  this.state = {
+	    users: [],
+	  };
+	  const self = this;
+	  if (props.need.users) {
+      	props.need.users.map(user => fetchUser({ accessToken:props.accessToken, userId: user.userId, callback: result => {
+      		self.setState({
+			    users: [...self.state.users, {...result.response,state:user.state}],
+			  })
+      	}}));
+      }	  
+	}
 
-  handleToggle = value => () => {
-    const { checked } = this.state;
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
-
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-
+  handleToggle = value => {
+	  const newState = value.state === 'APPROVED' ? 'APPLIED' : 'APPROVED'
+	  value.state = newState	  
     this.setState({
-      checked: newChecked,
+      users: this.state.users.map(user => user.id=value.id ? value : user),
     });
+	  changeApplicationStateForNeed({ 
+    	accessToken:this.props.accessToken,
+    	userId:value.id,
+    	needId:this.props.need.id,
+    	state: newState,
+    	handleFailure: err => console.log(err)
+    })
   };
 
   render() {
-    const { classes } = this.props;
-
-    return (
+    const { classes, need } = this.props;
+    return need.users ? (
       <List className={classes.root}>
-        {props.need.users.map(value => {
-          const user = fetchUser(value.userId);
+        {this.state.users.map(user => {
           return (
-            <ListItem key={value} role={undefined} dense button onClick={this.handleToggle(value)}>
+            <ListItem key={user} role={undefined} dense button onClick={this.handleToggle(user)}>
               <Checkbox
-                checked={this.state.checked.indexOf(value) !== -1}
+                checked={user.state === 'APPROVED'}
                 tabIndex={-1}
                 disableRipple
               />
@@ -57,12 +68,12 @@ class CheckboxList extends React.Component {
             </ListItem>
           )})}
       </List>
-    );
+    ) : null;
   }
 }
 
-CheckboxList.propTypes = {
+ApplicationList.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default requiresLogin(withStyles(styles)(CheckboxList));
+export default requiresLogin(withStyles(styles)(ApplicationList));

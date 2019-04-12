@@ -24,6 +24,7 @@ export function changePassword({ userId, token, oldPassword, newPassword, confir
 }
 
 export function fetchUsersByProjectIdAndRole({ accessToken, projectId, role }) {
+	if(true)return {};
     return apiRequest({
         apiEndpoint: apiEndpoints.user.get,
         authToken: accessToken,
@@ -36,13 +37,15 @@ export function fetchUsersByProjectIdAndRole({ accessToken, projectId, role }) {
         .catch(err => null);
 }
 
-export function fetchUser({ accessToken, userId }) {
+export function fetchUser({ accessToken, userId, callback }) {
     return apiRequest({
         apiEndpoint: apiEndpoints.user.getById,
         authToken: accessToken,
-        data: { userId }
+        parameters:{
+            [ID_VARIABLE]: userId,
+        }
     })
-        .then(result => result.response)
+        .then(callback)
   // TODO Error message
         .catch(e => console.log(e));
 }
