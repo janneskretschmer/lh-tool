@@ -41,7 +41,7 @@ class ApplicationList extends React.Component {
 	  const newState = value.state === 'APPROVED' ? 'APPLIED' : 'APPROVED'
 	  value.state = newState	  
     this.setState({
-      users: this.state.users.map(user => user.id=value.id ? value : user),
+      users: this.state.users.map(user => user.id === value.id ? value : user),
     });
 	  changeApplicationStateForNeed({ 
     	accessToken:this.props.accessToken,
@@ -58,7 +58,7 @@ class ApplicationList extends React.Component {
       <List className={classes.root}>
         {this.state.users.map(user => {
           return (
-            <ListItem key={user} role={undefined} dense button onClick={this.handleToggle(user)}>
+            <ListItem key={user} role={undefined} dense button onClick={() => this.handleToggle(user)}>
               <Checkbox
                 checked={user.state === 'APPROVED'}
                 tabIndex={-1}
