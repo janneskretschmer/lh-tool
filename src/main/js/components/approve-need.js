@@ -31,7 +31,13 @@ class ApplicationList extends React.Component {
 	  if (props.need.users) {
       	props.need.users.map(user => fetchUser({ accessToken:props.accessToken, userId: user.userId, callback: result => {
       		self.setState({
-			    users: [...self.state.users, {...result.response,state:user.state}],
+			    users: [...self.state.users, {...result.response,state:user.state}].sort(
+			    	(a,b) => {		
+			    		if (a.lastName === b.lastName) {
+			    	         return a.firstName < b.firstName ? 1 : -1;
+			    	    }
+			    	    return a.lastName < b.lastName ? 1 : -1;
+      				}),
 			  })
       	}}));
       }	  

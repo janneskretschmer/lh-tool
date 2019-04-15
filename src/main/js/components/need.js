@@ -18,7 +18,7 @@ import ApplicationList from './approve-need.js'
 
 const NeedQuantity = props => (
     <div style={{ width: '100%' }}>
-        <h4>{props.label} <IconButton onClick={props.helperIconHandle}><GroupAddIcon /></IconButton></h4>
+        <h4>{props.label}</h4>
         <div>
             <>
                 <>Bedarf:&nbsp;</>
@@ -36,7 +36,9 @@ const NeedQuantity = props => (
                         }
                     />
                 </WithPermission>
-                {props.showApplications ? (<ApplicationList accessToken={props.accessToken} need={props.need} />) : null}
+                <WithPermission permission="ROLE_RIGHT_NEEDS_APPROVE">
+                	{props.showApplications ? (<ApplicationList accessToken={props.accessToken} need={props.need} />) : null}
+              	</WithoutPermission>
                 <WithoutPermission permission="ROLE_RIGHT_NEEDS_POST">
                     {typeof props.need.quantity === 'number' ? props.need.quantity : '(kein Bedarf)'}
                 </WithoutPermission>
@@ -89,20 +91,7 @@ const NeedQuantity = props => (
 
 @withSnackbar
 class StatefulNeedsComponent extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            openNeedId: null,
-        };
-    }
-
-    handleCollapseChange(openRequested, need) {
-        this.setState({
-            openNeedId: openRequested ? need.id : null,
-        });
-    }
-
+    
     handleQuantityChange(accessToken, need, needsState, sessionState) {
         createOrUpdateNeed({
             accessToken, need, needsState, sessionState, handleFailure: this.handleFailure.bind(this)
@@ -128,9 +117,9 @@ class StatefulNeedsComponent extends React.Component {
                                     <li key={need.date.format('x') + need.projectName}>
                                         <h3>{need.date.format('DD.MM.YYYY')}</h3>
                                         <NeedQuantity need={need.CONSTRUCTION_WORKER} accessToken={sessionState.accessToken} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} showApplications={true} classes={classes} label="Bauhelfer" />
-                                        <NeedQuantity need={need.STORE_KEEPER} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} classes={classes} label="Magaziner" />
-                                        <NeedQuantity need={need.KITCHEN_HELPER} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} classes={classes} label="Küche" />
-                                        <NeedQuantity need={need.CLEANER} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} classes={classes} label="Putzen" />
+                                        <NeedQuantity need={need.STORE_KEEPER} accessToken={sessionState.accessToken} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} showApplications={true} classes={classes} label="Magaziner" />
+                                        <NeedQuantity need={need.KITCHEN_HELPER} accessToken={sessionState.accessToken} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} showApplications={true} classes={classes} label="Küche" />
+                                        <NeedQuantity need={need.CLEANER} accessToken={sessionState.accessToken} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} showApplications={true} classes={classes} label="Putzen" />
                                     </li>
                                 ))}
                             </ul>
