@@ -38,7 +38,7 @@ const NeedQuantity = props => (
                 </WithPermission>
                 <WithPermission permission="ROLE_RIGHT_NEEDS_APPROVE">
                 	{props.showApplications ? (<ApplicationList accessToken={props.accessToken} need={props.need} />) : null}
-              	</WithoutPermission>
+              	</WithPermission>
                 <WithoutPermission permission="ROLE_RIGHT_NEEDS_POST">
                     {typeof props.need.quantity === 'number' ? props.need.quantity : '(kein Bedarf)'}
                 </WithoutPermission>
