@@ -24,7 +24,6 @@ export function changePassword({ userId, token, oldPassword, newPassword, confir
 }
 
 export function fetchUsersByProjectIdAndRole({ accessToken, projectId, role }) {
-	if(true)return {};
     return apiRequest({
         apiEndpoint: apiEndpoints.user.get,
         authToken: accessToken,

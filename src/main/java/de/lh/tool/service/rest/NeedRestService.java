@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.lh.tool.domain.dto.NeedDto;
@@ -40,11 +41,15 @@ public class NeedRestService {
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of own needs")
 	@Secured(UserRole.RIGHT_NEEDS_GET)
-	public Resources<NeedDto> getOwn() throws DefaultException {
+	public Resources<NeedDto> getOwn(
+			@RequestParam(required = false, name = UrlMappings.NEED_START_DIFF_VARIABLE) Integer startDiff,
+			@RequestParam(required = false, name = UrlMappings.NEED_END_DIFF_VARIABLE) Integer endDiff)
+			throws DefaultException {
 
-		Collection<NeedDto> dtoList = needService.getNeedDtos();
+		Collection<NeedDto> dtoList = needService.getNeedDtos(startDiff, endDiff);
 
-		return new Resources<>(dtoList, linkTo(methodOn(NeedRestService.class).getOwn()).withSelfRel());
+		return new Resources<>(dtoList,
+				linkTo(methodOn(NeedRestService.class).getOwn(startDiff, endDiff)).withSelfRel());
 	}
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)

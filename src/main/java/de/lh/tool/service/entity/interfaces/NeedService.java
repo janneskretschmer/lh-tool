@@ -12,10 +12,10 @@ public interface NeedService extends BasicEntityService<Need, Long> {
 
 	void deleteOwn(Long id) throws DefaultException;
 
-	List<NeedDto> getNeedDtos() throws DefaultException;
-
 	NeedDto getNeedDtoById(Long id) throws DefaultException;
 
 	NeedDto updateNeedDto(NeedDto needDto, Long id) throws DefaultException;
+
+	List<NeedDto> getNeedDtos(Integer startDiff, Integer endDiff) throws DefaultException;
 
 }

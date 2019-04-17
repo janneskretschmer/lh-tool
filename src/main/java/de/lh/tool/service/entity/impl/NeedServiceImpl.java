@@ -52,13 +52,14 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 			return super.convertToDto(need);
 		}
 		try {
-			List<NeedUserDto> needUsers = needUserService.findDtosByNeedId(need.getId()).stream().filter(nu -> nu.getState() != NeedUserState.NONE).collect(Collectors.toList());
-      int appliedCount = (int) needUsers.stream().filter(nu -> nu.getState() == NeedUserState.APPLIED).count();
+			List<NeedUserDto> needUsers = needUserService.findDtosByNeedId(need.getId()).stream()
+					.filter(nu -> nu.getState() != NeedUserState.NONE).collect(Collectors.toList());
+			int appliedCount = (int) needUsers.stream().filter(nu -> nu.getState() == NeedUserState.APPLIED).count();
 			int approvedCount = (int) needUsers.stream().filter(nu -> nu.getState() == NeedUserState.APPROVED).count();
 			NeedDto needDto = super.convertToDto(need);
-      if(userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPROVE)) {
-        needDto.setUsers(needUsers);
-      }
+			if (userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPROVE)) {
+				needDto.setUsers(needUsers);
+			}
 			needDto.setAppliedCount(appliedCount);
 			needDto.setApprovedCount(approvedCount);
 			return needDto;
@@ -69,15 +70,30 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 
 	/**
 	 * get all possible needs of the current user's projects
+	 * 
+	 * @param startDiff delta in days from today (may be negative)
+	 * @param endDiff   delta in days from today (may be negative)
+	 * 
 	 */
 	@Override
 	@Transactional
-	public List<NeedDto> getNeedDtos() throws DefaultException {
+	public List<NeedDto> getNeedDtos(Integer startDiff, Integer endDiff) throws DefaultException {
 		List<NeedDto> needDtos = new ArrayList<>();
+		Date today = DateUtils.truncate(new Date(), Calendar.DATE);
+		Date start = DateUtils.addDays(today, ObjectUtils.defaultIfNull(startDiff, 0));
+		Date end = DateUtils.addDays(today, ObjectUtils.defaultIfNull(endDiff, 14));
 		for (Project project : projectService.getOwnProjects()) {
-			Map<Date, Map<HelperType, Need>> index = createNeedIndex(getRepository().findByProject_Id(project.getId()));
+			// TODO write test
+			if (project.getEndDate().before(start) || project.getStartDate().after(end)) {
+				continue;
+			}
+			Map<Date, Map<HelperType, Need>> index = createNeedIndex(
+					getRepository().findByProject_IdAndDateBetween(project.getId(), start, end));
 			Date date = DateUtils.truncate(project.getStartDate(), Calendar.DATE);
-			while (!date.after(project.getEndDate())) {
+			if (date.before(start)) {
+				date = start;
+			}
+			while (!date.after(project.getEndDate()) && !date.after(end)) {
 				for (HelperType helperType : HelperType.values()) {
 					Need need = Optional.ofNullable(index.get(date)).map(m -> m.get(helperType)).orElse(
 							Need.builder().project(project).helperType(helperType).date(date).quantity(0).build());

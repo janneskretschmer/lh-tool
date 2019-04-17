@@ -1,11 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { withSnackbar } from 'notistack';
-//import { withStyles } from '@material-ui/core/styles';
-//import Grid from '@material-ui/core/Grid';
-//import TextField from '@material-ui/core/TextField';
-//import Button from '@material-ui/core/Button';
-//import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@material-ui/core/styles';
 import NeedsProvider, { NeedsContext } from '../providers/needs-provider';
 import { createOrUpdateNeed, applyForNeed, revokeApplicationForNeed, fetchNeed } from '../actions/need';
 import { SessionContext } from '../providers/session-provider';
@@ -17,8 +13,8 @@ import IconButton from '@material-ui/core/IconButton';
 import ApplicationList from './approve-need.js'
 
 const NeedQuantity = props => (
-    <div style={{ width: '100%' }}>
-        <h4>{props.label}</h4>
+    <div style={{ minWidth: '200px', width: '23%', display: 'inline-block', verticalAlign: 'top', margin: '3px', marginBottom: '20px' }}>
+        <div style={{ fontWeight: 'bold' }}>{props.label}</div>
         <div>
             <>
                 <>Bedarf:&nbsp;</>
@@ -44,8 +40,11 @@ const NeedQuantity = props => (
                 </WithoutPermission>
                 <br/>
             </>
-            Beworben: {typeof props.need.appliedCount === 'number' ? props.need.appliedCount : 'n/a'}<br />
-            Genehmigt: {typeof props.need.approvedCount === 'number' ? props.need.approvedCount : 'n/a'}
+            <WithPermission permission="ROLE_RIGHT_NEEDS_APPROVE">
+            	#Beworben: {typeof props.need.appliedCount === 'number' ? props.need.appliedCount : 'n/a'}<br />
+            	#Genehmigt: {typeof props.need.approvedCount === 'number' ? props.need.approvedCount : 'n/a'}<br />
+            </WithPermission>
+            Status: {props.need.ownState === 'APPLIED' ? 'Beworben' : (props.need.ownState === 'APPROVED' ? (<span style={{color: '#0A0'}}>Eingeteilt</span>) : 'Nicht Beworben') /*TODO get color from theme*/}
         </div>
 
         <SessionContext.Consumer>
@@ -112,17 +111,18 @@ class StatefulNeedsComponent extends React.Component {
                 {sessionState => (
                     <NeedsContext.Consumer>
                         {needsState => (
-                            <ul>
-                                {needsState.needs.map((need, i) => (
-                                    <li key={need.date.format('x') + need.projectName}>
-                                        <h3>{need.date.format('DD.MM.YYYY')}</h3>
-                                        <NeedQuantity need={need.CONSTRUCTION_WORKER} accessToken={sessionState.accessToken} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} showApplications={true} classes={classes} label="Bauhelfer" />
-                                        <NeedQuantity need={need.STORE_KEEPER} accessToken={sessionState.accessToken} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} showApplications={true} classes={classes} label="Magaziner" />
-                                        <NeedQuantity need={need.KITCHEN_HELPER} accessToken={sessionState.accessToken} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} showApplications={true} classes={classes} label="Küche" />
-                                        <NeedQuantity need={need.CLEANER} accessToken={sessionState.accessToken} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} showApplications={true} classes={classes} label="Putzen" />
-                                    </li>
-                                ))}
-                            </ul>
+                        	<>
+	                            {needsState.needs.map((need, i) => (
+	                            	<>
+		                                <div style={{ fontWeight: 'bold' }}>{need.date.format('DD.MM.YYYY')}</div>
+		                                <NeedQuantity need={need.CONSTRUCTION_WORKER} accessToken={sessionState.accessToken} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} showApplications={true} classes={classes} label="Bauhelfer" />
+		                                <NeedQuantity need={need.STORE_KEEPER} accessToken={sessionState.accessToken} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} showApplications={true} classes={classes} label="Magaziner" />
+		                                <NeedQuantity need={need.KITCHEN_HELPER} accessToken={sessionState.accessToken} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} showApplications={true} classes={classes} label="Küche" />
+		                                <NeedQuantity need={need.CLEANER} accessToken={sessionState.accessToken} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} showApplications={true} classes={classes} label="Putzen" />
+		                            </>
+	                            ))}
+	                            <button onClick={() => {needsState.loadNeeds(30)}}>Weiteren Monat laden</button>
+	                        </>
                         )}
                     </NeedsContext.Consumer>
                 )}

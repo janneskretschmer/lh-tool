@@ -30,6 +30,8 @@ public abstract class UrlMappings {
 	public static final String PROJECT_DELETE = PROJECT_PREFIX + ID_EXTENSION;
 
 	public static final String NEED_PREFIX = REST_PREFIX + "/needs";
+	public static final String NEED_START_DIFF_VARIABLE = "start_diff";
+	public static final String NEED_END_DIFF_VARIABLE = "end_diff";
 
 	public static final String MEDIA_TYPE_JSON = "application/json";
 
