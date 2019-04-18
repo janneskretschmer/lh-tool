@@ -28,20 +28,22 @@ class ApplicationList extends React.Component {
 	    users: [],
 	  };
 	  const self = this;
-	  if (props.need.users) {
-      	props.need.users.map(user => fetchUser({ accessToken:props.accessToken, userId: user.userId, callback: result => {
-      		self.setState({
-			    users: [...self.state.users, {...result.response,state:user.state}].sort(
-			    	(a,b) => {		
-			    		if (a.lastName === b.lastName) {
-			    	         return a.firstName < b.firstName ? 1 : -1;
-			    	    }
-			    	    return a.lastName < b.lastName ? 1 : -1;
-      				}),
-			  })
-      	}}));
-      }	  
-	}
+    if (props.need.users) {
+      props.need.users.forEach(user => fetchUser({ accessToken: props.accessToken, userId: user.userId }).then(result => {
+        if (!result) {
+          self.setState({
+            users: [...self.state.users, { ...result.response, state: user.state }].sort(
+              (a, b) => {
+                if (a.lastName === b.lastName) {
+                  return a.firstName < b.firstName ? 1 : -1;
+                }
+                return a.lastName < b.lastName ? 1 : -1;
+              }),
+          })
+        }
+      }));
+    }
+  }
 
   handleToggle = value => {
 	  const newState = value.state === 'APPROVED' ? 'APPLIED' : 'APPROVED'

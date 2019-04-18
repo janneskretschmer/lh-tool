@@ -36,7 +36,7 @@ export function fetchUsersByProjectIdAndRole({ accessToken, projectId, role }) {
         .catch(err => null);
 }
 
-export function fetchUser({ accessToken, userId, callback }) {
+export function fetchUser({ accessToken, userId }) {
     return apiRequest({
         apiEndpoint: apiEndpoints.user.getById,
         authToken: accessToken,
@@ -44,7 +44,6 @@ export function fetchUser({ accessToken, userId, callback }) {
             [ID_VARIABLE]: userId,
         }
     })
-        .then(callback)
   // TODO Error message
         .catch(e => console.log(e));
 }
