@@ -7,7 +7,12 @@
 <title>LH-Tool</title>
 <link rel="stylesheet" href="${contextPath}/static/fonts/roboto/styles.css">
 <link rel="stylesheet" href="${contextPath}/static/fonts/icons/styles.css">
-<style>body{font-family: "Roboto", "Helvetica", "Arial", sans-serif;}</style>
+<style>
+	body{
+		font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+		background-color: #FFF !important;
+	}
+</style>
 </head>
 <body>
 	<div id="main-app-container"></div>

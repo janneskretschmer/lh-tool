@@ -18,6 +18,7 @@ export default class NeedsProvider extends React.Component {
 
     state = {
         needs: this.props.initialNeedData || [],
+        startDiff: 0,
         endDiff: 14,
     };
 
@@ -32,11 +33,16 @@ export default class NeedsProvider extends React.Component {
         }));
     };
     
-    loadNeeds = diff => {
-    	this.setState(prevState => ({
-    		needs: fetchOwnNeeds({ accessToken: this.props.sessionState.accessToken, userId: this.props.sessionState.currentUser.id, startDiff: 0, endDiff: prevState.endDiff + diff }),
-    		endDiff: prevState.endDiff + diff,
-    	}));
+    loadNeeds = (startDiff,endDiff) => {
+    	let self = this;
+    	fetchOwnNeeds({ accessToken: this.props.sessionState.accessToken, userId: this.props.sessionState.currentUser.id, startDiff, endDiff })
+    	.then(result => {
+    		self.setState(prevState => ({
+        		needs: result,
+        		startDiff,
+        		endDiff,
+        	}));
+    	})
     }
 
     render() {

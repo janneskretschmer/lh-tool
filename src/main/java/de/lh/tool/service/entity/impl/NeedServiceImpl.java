@@ -38,6 +38,9 @@ import de.lh.tool.service.entity.interfaces.UserRoleService;
 @Service
 public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedRepository, Need, NeedDto, Long>
 		implements NeedService {
+	private static final int DEFAULT_START_DIFF = 0;
+	private static final int DEFAULT_END_DIFF = 14;
+
 	@Autowired
 	private UserRoleService userRoleService;
 
@@ -80,8 +83,8 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 	public List<NeedDto> getNeedDtos(Integer startDiff, Integer endDiff) throws DefaultException {
 		List<NeedDto> needDtos = new ArrayList<>();
 		Date today = DateUtils.truncate(new Date(), Calendar.DATE);
-		Date start = DateUtils.addDays(today, ObjectUtils.defaultIfNull(startDiff, 0));
-		Date end = DateUtils.addDays(today, ObjectUtils.defaultIfNull(endDiff, 14));
+		Date start = DateUtils.addDays(today, ObjectUtils.defaultIfNull(startDiff, DEFAULT_START_DIFF));
+		Date end = DateUtils.addDays(today, ObjectUtils.defaultIfNull(endDiff, DEFAULT_END_DIFF));
 		for (Project project : projectService.getOwnProjects()) {
 			// TODO write test
 			if (project.getEndDate().before(start) || project.getStartDate().after(end)) {
@@ -94,10 +97,13 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 				date = start;
 			}
 			while (!date.after(project.getEndDate()) && !date.after(end)) {
-				for (HelperType helperType : HelperType.values()) {
-					Need need = Optional.ofNullable(index.get(date)).map(m -> m.get(helperType)).orElse(
-							Need.builder().project(project).helperType(helperType).date(date).quantity(0).build());
-					needDtos.add(convertToDto(need));
+				int weekday = DateUtils.toCalendar(date).get(Calendar.DAY_OF_WEEK);
+				if (weekday > 2) {
+					for (HelperType helperType : HelperType.values()) {
+						Need need = Optional.ofNullable(index.get(date)).map(m -> m.get(helperType)).orElse(
+								Need.builder().project(project).helperType(helperType).date(date).quantity(0).build());
+						needDtos.add(convertToDto(need));
+					}
 				}
 				date = DateUtils.addDays(date, 1);
 			}
