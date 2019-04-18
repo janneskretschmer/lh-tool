@@ -113,9 +113,15 @@ class StatefulNeedsComponent extends React.Component {
     }
                 		
     handleQuantityChange(accessToken, need, needsState, sessionState) {
-        createOrUpdateNeed({
-            accessToken, need, needsState, sessionState, handleFailure: this.handleFailure.bind(this)
-        });
+		if (this.changeThrottleTimeout) {
+			clearTimeout(this.changeThrottleTimeout);
+		}
+
+		this.changeThrottleTimeout = setTimeout(() => {
+			createOrUpdateNeed({
+				accessToken, need, needsState, sessionState, handleFailure: this.handleFailure.bind(this)
+			});
+		}, 200);
     }
 
     handleFailure() {
