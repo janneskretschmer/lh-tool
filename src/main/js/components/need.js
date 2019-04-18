@@ -133,7 +133,8 @@ class StatefulNeedsComponent extends React.Component {
 
     render() {
         const { classes } = this.props;
-
+        const { singleDayMode } = this.state;
+        console.log(singleDayMode);
         return (
             <SessionContext.Consumer>
                 {sessionState => (
@@ -142,14 +143,14 @@ class StatefulNeedsComponent extends React.Component {
                         	<>
 	                            {needsState.needs && needsState.needs.length > 0 ? needsState.needs.map((need, i) => (
 	                            	<div style={{ borderBottom: (need.date.format('E') === '6' ? '3' : '1') + 'px solid #e0e0e0', marginTop:'10px' }} key={need.date.format('DD.MM.YYYY')}>
-		                                <div style={{ fontWeight: 'bold', textAlign: this.state.singleDayMode ? 'center' : 'left'}}>
-		                                	{this.props.singleDayMode ? (
+		                                <div style={{ fontWeight: 'bold', textAlign: singleDayMode ? 'center' : 'left'}}>
+		                                	{singleDayMode ? (
 		                                		<IconButton onClick={() => {needsState.loadNeeds(i-(need.date.format('E') === '1'?3:1),i-1)}}>
 		                                            <NavigateBeforeIcon />
 		                                        </IconButton>	
 		                                	) : null}
 		                                	{new Array('Dienstag','Mittwoch','Donnerstag','Freitag','Samstag')[need.date.format('E')-2]}, {need.date.format('DD.MM.YYYY')}
-		                                	{this.props.singleDayMode ? (
+		                                	{singleDayMode ? (
 		                                		<IconButton onClick={() => {needsState.loadNeeds(i+(need.date.format('E') === '6'?3:1),needsState.loadNeeds(i+(need.date.format('E') === '6'?3:1)))}}>
 		                                            <NavigateNextIcon />
 		                                        </IconButton>	
@@ -159,10 +160,10 @@ class StatefulNeedsComponent extends React.Component {
 	                                			</IconButton>
 		                                	)}
 		                                </div>
-		                                <NeedQuantity need={need.CONSTRUCTION_WORKER} accessToken={sessionState.accessToken} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} singleDayMode={this.state.singleDayMode} classes={classes} label="Bauhelfer" />
-		                                <NeedQuantity need={need.STORE_KEEPER} accessToken={sessionState.accessToken} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} singleDayMode={this.state.singleDayMode} classes={classes} label="Magaziner" />
-		                                <NeedQuantity need={need.KITCHEN_HELPER} accessToken={sessionState.accessToken} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} singleDayMode={this.state.singleDayMode} classes={classes} label="Küche" />
-		                                <NeedQuantity need={need.CLEANER} accessToken={sessionState.accessToken} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} singleDayMode={this.state.singleDayMode} classes={classes} label="Putzen" />
+		                                <NeedQuantity need={need.CONSTRUCTION_WORKER} accessToken={sessionState.accessToken} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} singleDayMode={singleDayMode} classes={classes} label="Bauhelfer" />
+		                                <NeedQuantity need={need.STORE_KEEPER} accessToken={sessionState.accessToken} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} singleDayMode={singleDayMode} classes={classes} label="Magaziner" />
+		                                <NeedQuantity need={need.KITCHEN_HELPER} accessToken={sessionState.accessToken} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} singleDayMode={singleDayMode} classes={classes} label="Küche" />
+		                                <NeedQuantity need={need.CLEANER} accessToken={sessionState.accessToken} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} singleDayMode={singleDayMode} classes={classes} label="Putzen" />
 		                            </div>
 	                            )) : 'Es besteht kein Bedarf an Helfern in den nächsten ' + needsState.endDiff + ' Tagen. Bitte klicke auf den folgenden Button, um weitere 30 Tage zu laden:'}
 	                            <br />
