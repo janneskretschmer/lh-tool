@@ -30,7 +30,6 @@ class ApplicationList extends React.Component {
 	  const self = this;
     if (props.need.users) {
       props.need.users.forEach(user => fetchUser({ accessToken: props.accessToken, userId: user.userId }).then(result => {
-        if (!result) {
           self.setState({
             users: [...self.state.users, { ...result.response, state: user.state }].sort(
               (a, b) => {
@@ -40,7 +39,6 @@ class ApplicationList extends React.Component {
                 return a.lastName < b.lastName ? 1 : -1;
               }),
           })
-        }
       }));
     }
   }

@@ -147,7 +147,7 @@ class StatefulNeedsComponent extends React.Component {
                         {needsState => (
                         	<>
 	                            {needsState.needs && needsState.needs.length > 0 ? needsState.needs.map((need, i) => (
-	                            	<div style={{ borderBottom: (need.date.format('E') === '6' ? '3' : '1') + 'px solid #e0e0e0', marginTop:'10px' }} key={need.date.format('DD.MM.YYYY')}>
+	                            	<div style={{ borderBottom: (need.date.format('E') === '6' ? '3' : '1') + 'px solid #e0e0e0', marginTop:'10px' }} key={i}>
 		                                <div style={{ fontWeight: 'bold', textAlign: singleDayMode ? 'center' : 'left'}}>
 		                                	{singleDayMode ? (
 		                                		<IconButton onClick={() => {let diff = needsState.startDiff-(need.date.format('E') === '2'?3:1); needsState.loadNeeds(diff,diff);}}>
@@ -159,10 +159,12 @@ class StatefulNeedsComponent extends React.Component {
 		                                		<IconButton onClick={() => {let diff = needsState.startDiff+(need.date.format('E') === '6'?3:1); needsState.loadNeeds(diff,diff);}}>
 		                                            <NavigateNextIcon />
 		                                        </IconButton>	
-		                                	) : (		                                			
-		                                		<IconButton onClick={() => this.enterSingleDayMode(needsState, i)}>
-	                                				<GroupAddIcon />
-	                                			</IconButton>
+		                                	) : (
+		                                		<WithPermission permission="ROLE_RIGHT_NEEDS_APPROVE">
+			                                		<IconButton onClick={() => this.enterSingleDayMode(needsState, i)}>
+		                                				<GroupAddIcon />
+		                                			</IconButton>
+		                                		</WithPermission>
 		                                	)}
 		                                </div>
 		                                <NeedQuantity need={need.CONSTRUCTION_WORKER} accessToken={sessionState.accessToken} onChange={need => this.handleQuantityChange(sessionState.accessToken, need, needsState, sessionState)} singleDayMode={singleDayMode} classes={classes} label="Bauhelfer" />

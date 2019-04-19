@@ -98,7 +98,7 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 			}
 			while (!date.after(project.getEndDate()) && !date.after(end)) {
 				int weekday = DateUtils.toCalendar(date).get(Calendar.DAY_OF_WEEK);
-				if (weekday > 2) {
+				if (weekday != Calendar.SUNDAY && weekday != Calendar.MONDAY) {
 					for (HelperType helperType : HelperType.values()) {
 						Need need = Optional.ofNullable(index.get(date)).map(m -> m.get(helperType)).orElse(
 								Need.builder().project(project).helperType(helperType).date(date).quantity(0).build());
