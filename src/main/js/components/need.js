@@ -131,7 +131,7 @@ class StatefulNeedsComponent extends React.Component {
     }
     
     enterSingleDayMode(needsState, day) {
-    	this.setState(prevState => {
+    	this.setState({
     		singleDayMode: true
     	});
     	needsState.loadNeeds(day, day);
@@ -140,7 +140,6 @@ class StatefulNeedsComponent extends React.Component {
     render() {
         const { classes } = this.props;
         const { singleDayMode } = this.state;
-        console.log(singleDayMode);
         return (
             <SessionContext.Consumer>
                 {sessionState => (
@@ -151,13 +150,13 @@ class StatefulNeedsComponent extends React.Component {
 	                            	<div style={{ borderBottom: (need.date.format('E') === '6' ? '3' : '1') + 'px solid #e0e0e0', marginTop:'10px' }} key={need.date.format('DD.MM.YYYY')}>
 		                                <div style={{ fontWeight: 'bold', textAlign: singleDayMode ? 'center' : 'left'}}>
 		                                	{singleDayMode ? (
-		                                		<IconButton onClick={() => {needsState.loadNeeds(i-(need.date.format('E') === '1'?3:1),i-1)}}>
+		                                		<IconButton onClick={() => {let diff = needsState.startDiff-(need.date.format('E') === '2'?3:1); needsState.loadNeeds(diff,diff);}}>
 		                                            <NavigateBeforeIcon />
 		                                        </IconButton>	
 		                                	) : null}
 		                                	{new Array('Dienstag','Mittwoch','Donnerstag','Freitag','Samstag')[need.date.format('E')-2]}, {need.date.format('DD.MM.YYYY')}
 		                                	{singleDayMode ? (
-		                                		<IconButton onClick={() => {needsState.loadNeeds(i+(need.date.format('E') === '6'?3:1),needsState.loadNeeds(i+(need.date.format('E') === '6'?3:1)))}}>
+		                                		<IconButton onClick={() => {let diff = needsState.startDiff+(need.date.format('E') === '6'?3:1); needsState.loadNeeds(diff,diff);}}>
 		                                            <NavigateNextIcon />
 		                                        </IconButton>	
 		                                	) : (		                                			
