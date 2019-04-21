@@ -13,6 +13,7 @@ import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import IconButton from '@material-ui/core/IconButton';
 import ApplicationList from './approve-need.js'
+import { setWaitingState } from '../util';
 
 const NeedQuantity = props => (
     <div style={{ minWidth: '200px', width: '23%', display: 'inline-block', verticalAlign: 'top', margin: '3px', marginBottom: '10px' }}>
@@ -140,7 +141,7 @@ class StatefulNeedsComponent extends React.Component {
     render() {
         const { classes } = this.props;
         const { singleDayMode } = this.state;
-        return (
+        const tmp = (
             <SessionContext.Consumer>
                 {sessionState => (
                     <NeedsContext.Consumer>
@@ -181,6 +182,8 @@ class StatefulNeedsComponent extends React.Component {
                 )}
             </SessionContext.Consumer>
         );
+        setWaitingState(false);
+        return tmp;
     }
 }
 

@@ -16,7 +16,7 @@ import { SessionContext } from '../providers/session-provider';
 import ProjectCreatePanel from './project-create';
 import ProjectEditPanel from './project-edit';
 import WithPermission from './with-permission';
-import { requiresLogin } from '../util';
+import { requiresLogin, setWaitingState } from '../util';
 
 const styles = theme => ({
     root: {
@@ -62,7 +62,7 @@ class StatefulProjectsComponent extends React.Component {
     render() {
         const { classes } = this.props;
 
-        return (
+        const tmp = (
             <SessionContext.Consumer>
                 {sessionState => (
                     <ProjectsContext.Consumer>
@@ -98,6 +98,8 @@ class StatefulProjectsComponent extends React.Component {
                 )}
             </SessionContext.Consumer>
         );
+        setWaitingState(false);
+        return tmp;
     }
 }
 
