@@ -20,6 +20,7 @@ import de.lh.tool.domain.model.NeedUserState;
 import de.lh.tool.domain.model.User;
 import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.repository.NeedUserRepository;
+import de.lh.tool.service.entity.interfaces.MailService;
 import de.lh.tool.service.entity.interfaces.NeedService;
 import de.lh.tool.service.entity.interfaces.NeedUserService;
 import de.lh.tool.service.entity.interfaces.ProjectService;
@@ -42,6 +43,9 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 	@Autowired
 	private UserRoleService userRoleService;
 
+	@Autowired
+	private MailService mailService;
+
 	// necessary rights:
 	// +-apply-+ . +-approve-+
 	// v . . . v . v . . . . v
@@ -59,6 +63,12 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 			if (!userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPLY)) {
 				throw new DefaultException(ExceptionEnum.EX_NEED_USER_INVALID_STATE);
 			}
+			if (NeedUserState.APPROVED.equals(needUser.getState())) {
+				needUser.setState(NeedUserState.NONE);
+				mailService.sendNeedUserStateChangedMailToCoordinator(needUser,
+						userService.findByProjectIdAndRoleIgnoreCase(needUser.getNeed().getProject().getId(),
+								UserRole.ROLE_LOCAL_COORDINATOR).iterator().next());
+			}
 			delete(needUser);
 			dto.setId(null);
 			return dto;
@@ -69,13 +79,22 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 							&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPROVE))) {
 				throw new DefaultException(ExceptionEnum.EX_NEED_USER_INVALID_STATE);
 			}
+			if (NeedUserState.APPROVED.equals(needUser.getState())) {
+				needUser.setState(NeedUserState.APPLIED);
+				mailService.sendNeedUserStateChangedMailToUser(needUser);
+			}
 			break;
 		case APPROVED:
 			if (!userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPROVE)) {
 				throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
 			}
+			if (NeedUserState.APPLIED.equals(needUser.getState())) {
+				needUser.setState(NeedUserState.APPROVED);
+				mailService.sendNeedUserStateChangedMailToUser(needUser);
+			}
 			break;
 		}
+		// new state is already set above in some cases
 		needUser.setState(dto.getState());
 		return saveNeedUser(needUser);
 
@@ -114,8 +133,8 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 	@Transactional
 	public List<NeedUserDto> findDtosByNeedId(Long needId) throws DefaultException {
 		Need need = needService.findById(needId).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
-    List<NeedUser> needUserList = newArrayList(getRepository().findByNeed(need));
-    if (!(needUserList.size() > 0 && projectService.isOwnProject(needUserList.get(0).getNeed().getProject()))
+		List<NeedUser> needUserList = newArrayList(getRepository().findByNeed(need));
+		if (!(needUserList.size() > 0 && projectService.isOwnProject(needUserList.get(0).getNeed().getProject()))
 				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT)) {
 			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
 		}

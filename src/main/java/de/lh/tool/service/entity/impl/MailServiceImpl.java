@@ -11,14 +11,18 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import de.lh.tool.domain.model.NeedUser;
+import de.lh.tool.domain.model.NeedUserState;
 import de.lh.tool.domain.model.PasswordChangeToken;
 import de.lh.tool.domain.model.User;
 import de.lh.tool.service.entity.interfaces.MailService;
 import de.lh.tool.service.entity.interfaces.UrlService;
+import de.lh.tool.util.DateUtil;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -85,9 +89,8 @@ public class MailServiceImpl implements MailService {
 	public void sendNewPublisherMail(User user, PasswordChangeToken passwordChangeToken) {
 		if (user != null) {
 			if (user.getEmail() != null) {
-				StringBuilder text = new StringBuilder(User.Gender.FEMALE.equals(user.getGender()) ? "Liebe Schwester "
-						: "Lieber Bruder ").append(user.getLastName()).append(
-								",\n\nes wurde für dich ein Account auf lh-tool.de angelegt. Auf dieser Webseite kannst du dich als Helfer bei der Baustelle an deinem Saal bewerben.\n")
+				StringBuilder text = getGreeting(user).append(user.getLastName()).append(
+								"es wurde für dich ein Account auf lh-tool.de angelegt. Auf dieser Webseite kannst du dich als Helfer bei der Baustelle an deinem Saal bewerben.\n")
 								.append("Bitte rufe folgenden Link auf, um ein Passwort zu setzen. Anschließend kannst du angeben, an welchen Tagen es dir möglich wäre mitzuhelfen.\n\n")
 								.append(urlService.getPasswordChangeUrl(user.getId(), passwordChangeToken.getToken()))
 								.append("\n\nVielen Dank für deine Bereitschaft. Wir wünschen dir Jehovas Segen.\n\nIn brüderlicher Liebe\n")
@@ -114,6 +117,74 @@ public class MailServiceImpl implements MailService {
 					+ urlService.getPasswordChangeUrl(user.getId(), passwordChangeToken.getToken());
 			sendMail(user.getEmail(), "[LH-Tool] Passwort zurücksetzen", text);
 		}
+	}
+	
+
+	@Override
+	public void sendNeedUserStateChangedMailToUser(NeedUser needUser) {
+		if (ObjectUtils.allNotNull(needUser, needUser.getUser(), needUser.getNeed())) {
+			User user = needUser.getUser();
+			if (user.getEmail() != null) {
+				StringBuilder text = getGreeting(user).append(
+						"deine Bewerbung für den ").append(DateUtil.getReadableFormat(needUser.getNeed().getDate()))
+						.append(" wurde ").append(getNeedUserStateDescription(needUser.getState()))
+						.append(".\n\nVielen Dank für deine Bereitschaft. Wir wünschen dir Jehovas Segen.\n\nIn brüderlicher Liebe\n")
+						.append(SENDER_NAME).append("\n\n").append(FOOTER);
+				sendMail(user.getEmail(), "Bewerbung fuer " + DateUtil.getReadableFormat(needUser.getNeed().getDate()) + " " + getNeedUserStateDescription(needUser.getState()), text.toString());
+				if (log.isInfoEnabled()) {
+					log.info("NeedUserState mail for user " + user.getFirstName() + " " + user.getLastName()
+							+ " sent to " + user.getEmail());
+				}
+			} else {
+				if (log.isInfoEnabled()) {
+					log.warn("NeedUserState mail for user " + user.getFirstName() + " " + user.getLastName()
+							+ " with id " + user.getId() + " not sent");
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void sendNeedUserStateChangedMailToCoordinator(NeedUser needUser, User coordinator) {
+		if (ObjectUtils.allNotNull(needUser, needUser.getUser(), needUser.getNeed(), coordinator)) {
+			User user = needUser.getUser();
+			if (user.getEmail() != null) {
+				StringBuilder text = getGreeting(coordinator).append(
+						"die Bewerbung von ").append(user.getFirstName()).append(" ").append(user.getLastName()).append(" für den ").append(DateUtil.getReadableFormat(needUser.getNeed().getDate()))
+						.append(" wurde ").append(getNeedUserStateDescription(needUser.getState()))
+						.append(".\n\nBitte prüfe, ob an diesem Tag genügend Helfer zur Verfügung stehen. Wir wünschen dir Jehovas Segen.\n\nIn brüderlicher Liebe\n")
+						.append(SENDER_NAME).append("\n\n").append(FOOTER);
+				sendMail(coordinator.getEmail(), "Bewerbung fuer " + DateUtil.getReadableFormat(needUser.getNeed().getDate()) + " " + getNeedUserStateDescription(needUser.getState()), text.toString());
+				if (log.isInfoEnabled()) {
+					log.info("NeedUserState mail for local coordinator " + coordinator.getFirstName() + " " + coordinator.getLastName()
+							+ " sent to " + coordinator.getEmail());
+				}
+			} else {
+				if (log.isInfoEnabled()) {
+					log.warn("NeedUserState mail for local coordinator " + coordinator.getFirstName() + " " + coordinator.getLastName()
+							+ " with id " + coordinator.getId() + " not sent");
+				}
+			}
+		}
+	}
+	
+	private String getNeedUserStateDescription(NeedUserState state) {
+		switch (state) {
+		case APPLIED:
+			return "nicht genehmigt";
+		case APPROVED:
+			return "genehmigt";
+		case NONE:
+			return "zurückgezogen";
+		default:
+			break;
+		}
+		return "";
+	}
+	
+	private StringBuilder getGreeting(User user) {
+		return new StringBuilder(User.Gender.FEMALE.equals(user.getGender()) ? "Liebe Schwester "
+				: "Lieber Bruder ").append(user.getLastName()).append(",\n\n");
 	}
 
 	private void sendMail(String toEmailAddress, String subject, String messageText) {

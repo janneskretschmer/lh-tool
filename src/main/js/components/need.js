@@ -65,13 +65,13 @@ const NeedQuantity = props => (
 		                                    onClick={() => {
 		                                        // TODO Proper error message
 		                                        (
-		                                            props.need.ownState === 'APPLIED'
-		                                                ? revokeApplicationForNeed({
+		                                            props.need.ownState === 'NONE'
+		                                                ? applyForNeed({
 		                                                    sessionState,
 		                                                    needId: props.need.id,
 		                                                    handleFailure: err => console.log(err)
 		                                                })
-		                                                : applyForNeed({
+		                                                : revokeApplicationForNeed({
 		                                                    sessionState,
 		                                                    needId: props.need.id,
 		                                                    handleFailure: err => console.log(err)
