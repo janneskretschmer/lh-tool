@@ -67,7 +67,8 @@ public class NeedIT extends BasicRestIntegrationTest {
 		//		Matchers.iterableWithSize(4));
 		getRequestSpecWithJwtByEmail(CONSTRUCTION_SERVANT_2_EMAIL).when().get(url).then().body("content",
 				Matchers.iterableWithSize(0));
-		getRequestSpecWithJwtByEmail(ADMIN_EMAIL).when().get(url).then().body("content", Matchers.iterableWithSize(8));
+		//getRequestSpecWithJwtByEmail(ADMIN_EMAIL).when().get(url).then().body("content", Matchers.iterableWithSize(8));
+		getRequestSpecWithJwtByEmail(ADMIN_EMAIL).when().get(url).then().body("content", Matchers.iterableWithSize(0));
 
 		RestAssured.delete(url + needId).then().statusCode(401);
 		testForUsers(r -> r.delete(url + needId).then().statusCode(403), INVENTORY_MANAGER_1_EMAIL, PUBLISHER_1_EMAIL,
@@ -79,7 +80,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 				Matchers.iterableWithSize(0));
 		getRequestSpecWithJwtByEmail(CONSTRUCTION_SERVANT_2_EMAIL).when().get(url).then().body("content",
 				Matchers.iterableWithSize(0));
-		getRequestSpecWithJwtByEmail(ADMIN_EMAIL).when().get(url).then().body("content", Matchers.iterableWithSize(8));
+		getRequestSpecWithJwtByEmail(ADMIN_EMAIL).when().get(url).then().body("content", Matchers.iterableWithSize(0));
 
 		Long need2Id = getRequestSpecWithJwtByEmail(ADMIN_EMAIL).body(testDto).contentType(ContentType.JSON).post(url)
 				.as(NeedDto.class).getId();
