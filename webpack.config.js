@@ -20,7 +20,7 @@ module.exports = {
 				'NODE_ENV': JSON.stringify('production')
 			}
 		})
-	] : null,
+	] : [ ],
 	optimization: PROD_BUILD ? {
 		minimizer: [
 			new UglifyJsPlugin({
@@ -34,7 +34,7 @@ module.exports = {
 				sourceMap: false
 			})
 		]
-	} : null,
+	} : { },
 	module : {
 		rules : [ {
 			test : path.join(__dirname, '.'),

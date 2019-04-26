@@ -15,6 +15,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Redirect } from 'react-router'
 import { fullPathOfProjects, fullPathOfNeeds } from '../paths';
+import { setWaitingState } from '../util';
 
 const styles = theme => ({
     container: {
@@ -68,6 +69,7 @@ export default class LoginComponent extends React.Component {
                             const email = this.inputUsername.value;
                             const password = this.inputPassword.value;
                             this.inputPassword.value = '';
+                            setWaitingState(true);
                             login({
                                 loginState,
                                 email,

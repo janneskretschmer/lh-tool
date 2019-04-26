@@ -26,5 +26,7 @@ export const PROJECT_PREFIX = REST_PREFIX + '/projects';
 export const PROJECT_DELETE = PROJECT_PREFIX + ID_EXTENSION;
 
 export const NEED_PREFIX = REST_PREFIX + '/needs';
+export const NEED_START_DIFF_VARIABLE = 'start_diff';
+export const NEED_END_DIFF_VARIABLE = 'end_diff';
 
 export const MEDIA_TYPE_JSON = 'application/json';

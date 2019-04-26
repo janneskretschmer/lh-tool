@@ -17,6 +17,9 @@ import {
     PROJECT_PREFIX,
     PROJECT_DELETE,
     NEED_PREFIX,
+    START_DIFF_VARIABLE,
+    END_DIFF_VARIABLE,
+    
 } from './urlmappings';
 
 function isWellFormedEndpoint(apiEndpoint) {
@@ -203,6 +206,7 @@ export const apiEndpoints = {
             method: 'GET',
             // TODO Trailing '/' also necessary?
             path: NEED_PREFIX + '/',
+            queries: [START_DIFF_VARIABLE, END_DIFF_VARIABLE],
         },
         get: {
             method: 'GET',

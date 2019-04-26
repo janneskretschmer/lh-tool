@@ -40,9 +40,10 @@ export function fetchUser({ accessToken, userId }) {
     return apiRequest({
         apiEndpoint: apiEndpoints.user.getById,
         authToken: accessToken,
-        data: { userId }
+        parameters:{
+            [ID_VARIABLE]: userId,
+        }
     })
-        .then(result => result.response)
   // TODO Error message
         .catch(e => console.log(e));
 }

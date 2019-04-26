@@ -32,3 +32,7 @@ export function requiresLogin(Component) {
     );
 }
 
+export function setWaitingState(waiting) {
+	document.body.style.cursor = waiting ? 'wait' : 'default';
+}
+

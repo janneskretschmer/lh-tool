@@ -1,8 +1,8 @@
 import moment from 'moment';
 import { apiRequest, apiEndpoints } from '../apiclient';
-import { ID_VARIABLE, USER_ID_VARIABLE } from '../urlmappings';
+import { ID_VARIABLE, USER_ID_VARIABLE, NEED_START_DIFF_VARIABLE, NEED_END_DIFF_VARIABLE } from '../urlmappings';
 
-function mapNeedArray(content) {
+function mapNeedArray(accessToken, content) {
     let needs = []
     content.forEach(need => {
         const date = moment(need.date, 'x');
@@ -43,14 +43,18 @@ function attachOwnStateToNeeds({ needs, accessToken, userId }) {
     return Promise.all(promNeeds);
 }
 
-export function fetchOwnNeeds({ accessToken, userId }) {
+export function fetchOwnNeeds({ accessToken, userId, startDiff, endDiff }) {
     if (accessToken) {
         return apiRequest({
             apiEndpoint: apiEndpoints.need.getOwn,
             authToken: accessToken,
+            queries: {
+            	[NEED_START_DIFF_VARIABLE]: startDiff,
+            	[NEED_END_DIFF_VARIABLE]: endDiff,
+            }
         })
             .then(result => attachOwnStateToNeeds({ needs: result.response.content, accessToken, userId }))
-            .then(needs => mapNeedArray(needs))
+            .then(needs => mapNeedArray(accessToken, needs))
             // TODO Proper error message
             .catch(e => console.log(e));
     } else {
@@ -132,6 +136,24 @@ export function revokeApplicationForNeed({ sessionState, needId, handleFailure }
     // TODO handleFailure
 }
 
+//TODO duplication ?
+export function changeApplicationStateForNeed({ accessToken, userId, needId, state, handleFailure }) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.need.apply,
+        data: {
+            needId,
+            state,
+            userId,
+        },
+        parameters: {
+            [ID_VARIABLE]: needId,
+            [USER_ID_VARIABLE]: userId,
+        },
+        authToken: accessToken
+    })
+        .then(result => result.response);
+    // TODO handleFailure
+}
 
 /*
 export function deleteProject({ accessToken, projectsState, projectId, handleFailure }) {
