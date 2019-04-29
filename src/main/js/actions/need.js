@@ -49,8 +49,8 @@ export function fetchOwnNeeds({ accessToken, userId, startDiff, endDiff }) {
             apiEndpoint: apiEndpoints.need.getOwn,
             authToken: accessToken,
             queries: {
-            	[NEED_START_DIFF_VARIABLE]: startDiff,
-            	[NEED_END_DIFF_VARIABLE]: endDiff,
+                [NEED_START_DIFF_VARIABLE]: startDiff,
+                [NEED_END_DIFF_VARIABLE]: endDiff,
             }
         })
             .then(result => attachOwnStateToNeeds({ needs: result.response.content, accessToken, userId }))
@@ -78,19 +78,16 @@ export function fetchNeed({ accessToken, needId, userId }) {
     }
 }
 
-export function createOrUpdateNeed({ accessToken, need, needsState, sessionState, handleFailure }) {
+export function createOrUpdateNeed({ need, sessionState, handleFailure }) {
     const userId = sessionState.currentUser.id;
     return apiRequest({
         apiEndpoint: need.id ? apiEndpoints.need.update : apiEndpoints.need.createNew,
-        authToken: accessToken,
+        authToken: sessionState.accessToken,
         data: need,
         parameters: need.id ? { [ID_VARIABLE]: need.id } : {},
     })
-        .then(result => attachOwnStateToNeeds({ needs: [result.response], accessToken, userId }))
+        .then(result => attachOwnStateToNeeds({ needs: [result.response], accessToken: sessionState.accessToken, userId }))
         .then(needs => needs[0])
-        .then(need => {
-            needsState.needsUpdated(need);
-        })
         .catch(err => {
             if (handleFailure) {
                 handleFailure(err);

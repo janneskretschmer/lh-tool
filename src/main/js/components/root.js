@@ -17,7 +17,7 @@ import {
 import AppHeader from './header';
 import LoginComponent from './login';
 import ProjectsComponent from './project';
-import NeedsComponent from './need';
+import NeedsComponent from './need-list';
 import NotFoundComponent from './notfound';
 import AppMenu from './menu';
 import ChangePasswordComponent from './changepw';
