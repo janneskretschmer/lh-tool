@@ -13,6 +13,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { Redirect } from 'react-router'
 import { fullPathOfProjects, fullPathOfNeeds } from '../paths';
 import { setWaitingState } from '../util';
@@ -36,24 +37,40 @@ export default class LoginComponent extends React.Component {
 
     state = {
         pwResetDialogOpen: false,
+        loading: false,
     };
 
     handleLoginFailure() {
         this.props.enqueueSnackbar('Fehler beim Anmelden', {
             variant: 'error',
         });
+        this.setState({
+            pwResetDialogOpen: false,
+            loading: false,
+        });
     }
 
     closePwResetDialog() {
         this.setState({
             pwResetDialogOpen: false,
+            loading: false,
         });
     }
 
     openPwResetDialog() {
         this.setState({
             pwResetDialogOpen: true,
+            loading: false,
         });
+    }
+    
+    setWaiting() {
+        setWaitingState(true);
+        this.setState({
+        	pwResetDialogOpen: this.state.pwResetDialogOpen,
+        	loading: true,
+        })
+    	
     }
 
     render() {
@@ -69,7 +86,7 @@ export default class LoginComponent extends React.Component {
                             const email = this.inputUsername.value;
                             const password = this.inputPassword.value;
                             this.inputPassword.value = '';
-                            setWaitingState(true);
+                            this.setWaiting();
                             login({
                                 loginState,
                                 email,
@@ -111,12 +128,16 @@ export default class LoginComponent extends React.Component {
                                             }}
                                         />
                                         <br />
-                                        <Button size="small" color="secondary" className={classes.button} onClick={this.openPwResetDialog.bind(this)}>
-                                            Passwort vergessen
-                                        </Button>
-                                        <Button variant="contained" type="submit" className={classes.button}>
-                                            Anmelden
-                                        </Button>
+                                        { this.state.loading ? (<CircularProgress />) : (
+	                                        <>	
+                                        		<Button size="small" color="secondary" className={classes.button} onClick={this.openPwResetDialog.bind(this)}>
+		                                        	Passwort vergessen
+		                                        </Button>
+		                                        <Button variant="contained" type="submit" className={classes.button}>
+		                                            Anmelden
+		                                        </Button>
+                                            </>
+                                        )}
                                         <Dialog
                                             open={this.state.pwResetDialogOpen}
                                             onClose={this.closePwResetDialog.bind(this)}
