@@ -16,6 +16,6 @@ public interface NeedService extends BasicEntityService<Need, Long> {
 
 	NeedDto updateNeedDto(NeedDto needDto, Long id) throws DefaultException;
 
-	List<NeedDto> getNeedDtos(Integer startDiff, Integer endDiff) throws DefaultException;
+	List<NeedDto> getNeedDtos(Long projectId, Integer startDiff, Integer endDiff) throws DefaultException;
 
 }

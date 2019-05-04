@@ -2,6 +2,7 @@ package de.lh.tool.service.entity.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -80,12 +81,13 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 	 */
 	@Override
 	@Transactional
-	public List<NeedDto> getNeedDtos(Integer startDiff, Integer endDiff) throws DefaultException {
+	public List<NeedDto> getNeedDtos(Long projectId, Integer startDiff, Integer endDiff) throws DefaultException {
 		List<NeedDto> needDtos = new ArrayList<>();
 		Date today = DateUtils.truncate(new Date(), Calendar.DATE);
 		Date start = DateUtils.addDays(today, ObjectUtils.defaultIfNull(startDiff, DEFAULT_START_DIFF));
 		Date end = DateUtils.addDays(today, ObjectUtils.defaultIfNull(endDiff, DEFAULT_END_DIFF));
-		for (Project project : projectService.getOwnProjects()) {
+		Collection<Project> projects = projectId == null ? projectService.getOwnProjects() : List.of(projectService.findById(projectId).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID)));
+		for (Project project : projects) {
 			// TODO write test
 			if (project.getEndDate().before(start) || project.getStartDate().after(end)) {
 				continue;
