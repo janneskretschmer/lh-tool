@@ -69,7 +69,7 @@ class StatefulNeedsComponent extends React.Component {
     loadNeedData() {
     	const start = this.state.singleDayMode ? this.state.day.diff(moment().startOf('day'),'days') : this.state.months[this.state.month].startOffset;
     	const end = this.state.singleDayMode ? this.state.day.diff(moment().startOf('day'),'days') : this.state.months[this.state.month].endOffset;
-    	fetchOwnNeeds({accessToken:this.props.sessionState.accessToken, userId:this.props.sessionState.currentUser.id, startDiff: start, endDiff: end}).then(result => this.setState({
+    	fetchOwnNeeds({accessToken:this.props.sessionState.accessToken, userId:this.props.sessionState.currentUser.id, projectId: this.state.project.id, startDiff: start, endDiff: end}).then(result => this.setState({
     		...this.state,
     		needData: result,
     	}))

@@ -42,14 +42,15 @@ public class NeedRestService {
 	@ApiOperation(value = "Get a list of own needs")
 	@Secured(UserRole.RIGHT_NEEDS_GET)
 	public Resources<NeedDto> getOwn(
+			@RequestParam(required = false, name = UrlMappings.PROJECT_ID_VARIABLE) Long projectId,
 			@RequestParam(required = false, name = UrlMappings.NEED_START_DIFF_VARIABLE) Integer startDiff,
 			@RequestParam(required = false, name = UrlMappings.NEED_END_DIFF_VARIABLE) Integer endDiff)
 			throws DefaultException {
 
-		Collection<NeedDto> dtoList = needService.getNeedDtos(startDiff, endDiff);
+		Collection<NeedDto> dtoList = needService.getNeedDtos(projectId, startDiff, endDiff);
 
 		return new Resources<>(dtoList,
-				linkTo(methodOn(NeedRestService.class).getOwn(startDiff, endDiff)).withSelfRel());
+				linkTo(methodOn(NeedRestService.class).getOwn(projectId, startDiff, endDiff)).withSelfRel());
 	}
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)

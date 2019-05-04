@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { apiRequest, apiEndpoints } from '../apiclient';
-import { ID_VARIABLE, USER_ID_VARIABLE, NEED_START_DIFF_VARIABLE, NEED_END_DIFF_VARIABLE } from '../urlmappings';
+import { ID_VARIABLE, USER_ID_VARIABLE, PROJECT_ID_VARIABLE, NEED_START_DIFF_VARIABLE, NEED_END_DIFF_VARIABLE } from '../urlmappings';
 
 function mapNeedArray(accessToken, content) {
     let needs = []
@@ -43,7 +43,7 @@ function attachOwnStateToNeeds({ needs, accessToken, userId }) {
     return Promise.all(promNeeds);
 }
 
-export function fetchOwnNeeds({ accessToken, userId, startDiff, endDiff }) {
+export function fetchOwnNeeds({ accessToken, userId, projectId, startDiff, endDiff }) {
     if (accessToken) {
         return apiRequest({
             apiEndpoint: apiEndpoints.need.getOwn,
@@ -51,6 +51,7 @@ export function fetchOwnNeeds({ accessToken, userId, startDiff, endDiff }) {
             queries: {
                 [NEED_START_DIFF_VARIABLE]: startDiff,
                 [NEED_END_DIFF_VARIABLE]: endDiff,
+                [PROJECT_ID_VARIABLE]: projectId,
             }
         })
             .then(result => attachOwnStateToNeeds({ needs: result.response.content, accessToken, userId }))
@@ -95,45 +96,6 @@ export function createOrUpdateNeed({ need, sessionState, handleFailure }) {
         });
 }
 
-export function applyForNeed({ sessionState, needId, handleFailure }) {
-    const userId = sessionState.currentUser.id;
-    return apiRequest({
-        apiEndpoint: apiEndpoints.need.apply,
-        data: {
-            needId,
-            state: 'APPLIED',
-            userId,
-        },
-        parameters: {
-            [ID_VARIABLE]: needId,
-            [USER_ID_VARIABLE]: userId,
-        },
-        authToken: sessionState.accessToken
-    })
-        .then(result => result.response);
-    // TODO handleFailure
-}
-
-export function revokeApplicationForNeed({ sessionState, needId, handleFailure }) {
-    const userId = sessionState.currentUser.id;
-    return apiRequest({
-        apiEndpoint: apiEndpoints.need.apply,
-        data: {
-            needId,
-            state: 'NONE',
-            userId,
-        },
-        parameters: {
-            [ID_VARIABLE]: needId,
-            [USER_ID_VARIABLE]: userId,
-        },
-        authToken: sessionState.accessToken
-    })
-        .then(result => result.response);
-    // TODO handleFailure
-}
-
-//TODO duplication ?
 export function changeApplicationStateForNeed({ accessToken, userId, needId, state, handleFailure }) {
     return apiRequest({
         apiEndpoint: apiEndpoints.need.apply,
