@@ -241,6 +241,8 @@ export default function AppMenu() {
             <NeedApproveItem />
             <StoresItem />
             <ItemsItem />
+            <StoresItem />
+            <ItemsItem />
           </List>
           <Divider />
           <List>

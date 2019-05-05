@@ -19,6 +19,10 @@ export const fullPathOfStore = (id) => fullPathOf('/stores/' + (id ? id : ':id')
 export const fullPathOfItems = () => fullPathOf('/items/');
 export const fullPathOfItem = (id) => fullPathOf('/items/' + (id ? id : ':id'));
 
+export const fullPathOfStores = () => fullPathOf('/stores/');
+
+export const fullPathOfItems = () => fullPathOf('/items');
+
 export const fullPathOfChangePw = () => fullPathOf('/changepw/');
 
 export const fullPathOfImprint = () => fullPathOf('/imprint/');
