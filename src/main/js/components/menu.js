@@ -5,6 +5,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 import DateRangeIcon from '@material-ui/icons/DateRange';
@@ -34,6 +35,7 @@ import {
   fullPathOfNeedApprove,
   fullPathOfNeedQuantities,
   fullPathOfProjects
+  fullPathOfItems,
 } from '../paths';
 import { SessionContext } from '../providers/session-provider';
 import WithPermission from './with-permission';
