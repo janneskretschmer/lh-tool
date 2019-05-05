@@ -11,6 +11,8 @@ import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 import DateRangeIcon from '@material-ui/icons/DateRange';
 import FaceIcon from '@material-ui/icons/Face';
+import HomeIcon from '@material-ui/icons/Home';
+import BuildIcon from '@material-ui/icons/Build';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import SecurityIcon from '@material-ui/icons/Security';
@@ -119,6 +121,33 @@ const ItemsItem = () => (
   </WithPermission>
 );
 
+const StoresItem = () => (
+  <WithPermission permission="ROLE_ADMIN">
+    <Link to={fullPathOfStores()} style={linkStyle}>
+      <ListItem button>
+        <ListItemIcon>
+          <HomeIcon />
+        </ListItemIcon>
+        <ListItemText primary="Lager" />
+      </ListItem>
+    </Link>
+  </WithPermission>
+);
+
+
+const ItemsItem = () => (
+  <WithPermission permission="ROLE_ADMIN">
+    <Link to={fullPathOfItems()} style={linkStyle}>
+      <ListItem button>
+        <ListItemIcon>
+          <BuildIcon />
+        </ListItemIcon>
+        <ListItemText primary="Artikel" />
+      </ListItem>
+    </Link>
+  </WithPermission>
+);
+
 const ChangePwItem = () => (
   <Link to={fullPathOfChangePw()} style={linkStyle}>
     <ListItem button>
@@ -176,6 +205,8 @@ export default function AppMenu() {
             <NeedQuantitiesItem />
             <NeedApplyItem />
             <NeedApproveItem />
+            <StoresItem />
+            <ItemsItem />
             <StoresItem />
             <ItemsItem />
           </List>
