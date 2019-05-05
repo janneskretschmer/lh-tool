@@ -8,16 +8,20 @@ import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { Helmet } from 'react-helmet';
-import { 
+import {
     fullPathOfLogin,
     fullPathOfProjects,
     fullPathOfNeeds,
+    fullPathOfStores,
+    fullPathOfItems,
     fullPathOfChangePw,
 } from '../paths';
 import AppHeader from './header';
 import LoginComponent from './login';
 import ProjectsComponent from './project';
 import NeedsComponent from './need-list';
+import StoreListComponent from './store-list';
+import ItemListComponent from './item-list';
 import NotFoundComponent from './notfound';
 import AppMenu from './menu';
 import ChangePasswordComponent from './changepw';
@@ -125,6 +129,8 @@ export default class LHToolRoot extends React.Component {
                                     <Route path={fullPathOfLogin()} component={LoginComponent} />
                                     <Route path={fullPathOfProjects()} component={ProjectsComponent} />
                                     <Route path={fullPathOfNeeds()} component={NeedsComponent} />
+                                    <Route path={fullPathOfStores()} component={StoreListComponent} />
+                                    <Route path={fullPathOfItems()} component={ItemListComponent} />
                                     <Route path={fullPathOfChangePw()} component={ChangePasswordComponent} />
                                     <Route component={NotFoundComponent} />
                                 </Switch>

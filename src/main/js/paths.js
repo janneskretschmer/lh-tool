@@ -9,4 +9,8 @@ export const fullPathOfProjects = () => fullPathOf('/projects/');
 
 export const fullPathOfNeeds = () => fullPathOf('/needs/');
 
+export const fullPathOfStores = () => fullPathOf('/stores/');
+
+export const fullPathOfItems = () => fullPathOf('/items');
+
 export const fullPathOfChangePw = () => fullPathOf('/changepw/');
