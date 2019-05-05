@@ -55,10 +55,12 @@ export default class ProjectEditPanel extends React.Component {
         });
     }
 
-    handleCreateFailure() {
-        this.props.enqueueSnackbar('Fehler beim Erstellen des neuen Nutzers. Wird die angegebene E-Mail-Adresse vielleicht bereits verwendet?', {
-            variant: 'error',
-        });
+    handleCreateFailure(errorKey) {
+        const message = errorKey === 'EX_USER_EMAIL_ALREADY_IN_USE'
+            ? 'Die angegebene E-Mail-Adresse wird schon für einen anderen Nutzer verwendet. Wähle bitte eine andere Adresse.'
+            : 'Fehler beim Erstellen des neuen Nutzers.';
+
+        this.props.enqueueSnackbar(message, { variant: 'error' });
     }
 
     render() {

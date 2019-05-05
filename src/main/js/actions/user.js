@@ -70,7 +70,7 @@ export function createNewUser({ accessToken, email, firstName, lastName, gender,
         })
         .catch(e => {
             if (typeof handleFailure === 'function') {
-                handleFailure();
+                handleFailure('response' in e ? e.response.key : null);
             }
         });
 }
