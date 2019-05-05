@@ -6,6 +6,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import GroupWorkIcon from '@material-ui/icons/GroupWork';
+import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 import DateRangeIcon from '@material-ui/icons/DateRange';
@@ -24,6 +25,8 @@ import {
   fullPathOfNeedApply,
   fullPathOfNeedApprove,
   fullPathOfChangePw,
+  fullPathOfStores,
+  fullPathOfItems,
 } from '../paths';
 
 const linkStyle = { textDecoration: 'none' };
@@ -89,6 +92,33 @@ const NeedApproveItem = () => (
   </WithPermission>
 );
 
+const StoresItem = () => (
+  <WithPermission permission="ROLE_ADMIN">
+    <Link to={fullPathOfStores()} style={linkStyle}>
+      <ListItem button>
+        <ListItemIcon>
+          <HomeIcon />
+        </ListItemIcon>
+        <ListItemText primary="Lager" />
+      </ListItem>
+    </Link>
+  </WithPermission>
+);
+
+
+const ItemsItem = () => (
+  <WithPermission permission="ROLE_ADMIN">
+    <Link to={fullPathOfItems()} style={linkStyle}>
+      <ListItem button>
+        <ListItemIcon>
+          <BuildIcon />
+        </ListItemIcon>
+        <ListItemText primary="Artikel" />
+      </ListItem>
+    </Link>
+  </WithPermission>
+);
+
 const ChangePwItem = () => (
   <Link to={fullPathOfChangePw()} style={linkStyle}>
     <ListItem button>
@@ -146,6 +176,8 @@ export default function AppMenu() {
             <NeedQuantitiesItem />
             <NeedApplyItem />
             <NeedApproveItem />
+            <StoresItem />
+            <ItemsItem />
           </List>
           <Divider />
           <List>

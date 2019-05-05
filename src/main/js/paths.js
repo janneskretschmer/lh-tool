@@ -13,4 +13,8 @@ export const fullPathOfNeedApply = () => fullPathOf('/needs/apply/');
 
 export const fullPathOfNeedApprove = () => fullPathOf('/needs/approve/');
 
+export const fullPathOfStores = () => fullPathOf('/stores/');
+
+export const fullPathOfItems = () => fullPathOf('/items');
+
 export const fullPathOfChangePw = () => fullPathOf('/changepw/');
