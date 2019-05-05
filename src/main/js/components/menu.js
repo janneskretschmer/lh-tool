@@ -129,6 +129,33 @@ const ItemsItem = () => (
   </WithPermission>
 );
 
+const StoresItem = () => (
+  <WithPermission permission="ROLE_ADMIN">
+    <Link to={fullPathOfStores()} style={linkStyle}>
+      <ListItem button>
+        <ListItemIcon>
+          <HomeIcon />
+        </ListItemIcon>
+        <ListItemText primary="Lager" />
+      </ListItem>
+    </Link>
+  </WithPermission>
+);
+
+
+const ItemsItem = () => (
+  <WithPermission permission="ROLE_ADMIN">
+    <Link to={fullPathOfItems()} style={linkStyle}>
+      <ListItem button>
+        <ListItemIcon>
+          <BuildIcon />
+        </ListItemIcon>
+        <ListItemText primary="Artikel" />
+      </ListItem>
+    </Link>
+  </WithPermission>
+);
+
 const ChangePwItem = () => (
   <Link to={fullPathOfChangePw()} style={linkStyle}>
     <ListItem button>

@@ -12,6 +12,8 @@ import {
     fullPathOfStores,
     fullPathOfItems,
     fullPathOfItem,
+    fullPathOfStores,
+    fullPathOfItems,
     fullPathOfChangePw, 
     fullPathOfDataProtection, 
     fullPathOfImprint, 
@@ -28,6 +30,7 @@ import LoginComponent from './login';
 import StoreListComponent from './store-list';
 import ItemListComponent from './item-list';
 import ItemDetailComponent from './item-detail';
+import ItemListComponent from './item-list';
 import AppMenu from './menu';
 import NeedApplyComponent from './need/apply';
 import NeedApproveComponent from './need/approve';
