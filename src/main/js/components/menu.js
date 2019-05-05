@@ -8,6 +8,8 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import GroupWorkIcon from '@material-ui/icons/GroupWork';
 import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import FaceIcon from '@material-ui/icons/Face';
+import HomeIcon from '@material-ui/icons/Home';
+import BuildIcon from '@material-ui/icons/Build';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import SecurityIcon from '@material-ui/icons/Security';
@@ -20,6 +22,8 @@ import {
   fullPathOfProjects,
   fullPathOfNeeds,
   fullPathOfChangePw,
+  fullPathOfStores,
+  fullPathOfItems,
 } from '../paths';
 
 const linkStyle = { textDecoration: 'none' };
@@ -54,6 +58,33 @@ const NeedsItem = () => (
           <GroupAddIcon />
         </ListItemIcon>
         <ListItemText primary="Helfer" />
+      </ListItem>
+    </Link>
+  </WithPermission>
+);
+
+const StoresItem = () => (
+  <WithPermission permission="ROLE_ADMIN">
+    <Link to={fullPathOfStores()} style={linkStyle}>
+      <ListItem button>
+        <ListItemIcon>
+          <HomeIcon />
+        </ListItemIcon>
+        <ListItemText primary="Lager" />
+      </ListItem>
+    </Link>
+  </WithPermission>
+);
+
+
+const ItemsItem = () => (
+  <WithPermission permission="ROLE_ADMIN">
+    <Link to={fullPathOfItems()} style={linkStyle}>
+      <ListItem button>
+        <ListItemIcon>
+          <BuildIcon />
+        </ListItemIcon>
+        <ListItemText primary="Artikel" />
       </ListItem>
     </Link>
   </WithPermission>
@@ -114,6 +145,8 @@ export default function AppMenu() {
           <List>
             <ProjectsItem />
             <NeedsItem />
+            <StoresItem />
+            <ItemsItem />
           </List>
           <Divider />
           <List>
