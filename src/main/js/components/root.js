@@ -8,7 +8,9 @@ import classNames from 'classnames';
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { 
+import {
+    fullPathOfStores,
+    fullPathOfItems,
     fullPathOfChangePw, 
     fullPathOfDataProtection, 
     fullPathOfImprint, 
@@ -22,6 +24,8 @@ import SessionProvider from '../providers/session-provider';
 import ChangePasswordComponent from './changepw';
 import AppHeader from './header';
 import LoginComponent from './login';
+import StoreListComponent from './store-list';
+import ItemListComponent from './item-list';
 import AppMenu from './menu';
 import NeedApplyComponent from './need/apply';
 import NeedApproveComponent from './need/approve';
@@ -135,6 +139,8 @@ export default class LHToolRoot extends React.Component {
                                     <Route path={fullPathOfNeedQuantities()} component={NeedQuantityComponent} />
                                     <Route path={fullPathOfNeedApply()} component={NeedApplyComponent} />
                                     <Route path={fullPathOfNeedApprove()} component={NeedApproveComponent} />
+                                    <Route path={fullPathOfStores()} component={StoreListComponent} />
+                                    <Route path={fullPathOfItems()} component={ItemListComponent} />
                                     <Route path={fullPathOfChangePw()} component={ChangePasswordComponent} />
                                     <Route path={fullPathOfImprint()} component={Imprint} />
                                     <Route path={fullPathOfDataProtection()} component={DataProtection} />

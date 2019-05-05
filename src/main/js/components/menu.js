@@ -1,3 +1,5 @@
+import React from 'react';
+import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -7,19 +9,27 @@ import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 import DateRangeIcon from '@material-ui/icons/DateRange';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import GroupWorkIcon from '@material-ui/icons/GroupWork';
+import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import FaceIcon from '@material-ui/icons/Face';
+import HomeIcon from '@material-ui/icons/Home';
+import BuildIcon from '@material-ui/icons/Build';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import GroupWorkIcon from '@material-ui/icons/GroupWork';
 import SecurityIcon from '@material-ui/icons/Security';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import WithPermission from './with-permission';
+import { SessionContext } from '../providers/session-provider';
 import { logout } from '../actions/login';
 import {
+  fullPathOfLogin,
   fullPathOfChangePw,
   fullPathOfDataProtection,
   fullPathOfImprint,
-  fullPathOfLogin,
+  fullPathOfStores,
+  fullPathOfItems,
   fullPathOfNeedApply,
   fullPathOfNeedApprove,
   fullPathOfNeedQuantities,
@@ -87,6 +97,33 @@ const NeedApproveItem = () => (
           <AssignmentTurnedInIcon />
         </ListItemIcon>
         <ListItemText primary="Zuteilen" />
+      </ListItem>
+    </Link>
+  </WithPermission>
+);
+
+const StoresItem = () => (
+  <WithPermission permission="ROLE_ADMIN">
+    <Link to={fullPathOfStores()} style={linkStyle}>
+      <ListItem button>
+        <ListItemIcon>
+          <HomeIcon />
+        </ListItemIcon>
+        <ListItemText primary="Lager" />
+      </ListItem>
+    </Link>
+  </WithPermission>
+);
+
+
+const ItemsItem = () => (
+  <WithPermission permission="ROLE_ADMIN">
+    <Link to={fullPathOfItems()} style={linkStyle}>
+      <ListItem button>
+        <ListItemIcon>
+          <BuildIcon />
+        </ListItemIcon>
+        <ListItemText primary="Artikel" />
       </ListItem>
     </Link>
   </WithPermission>
@@ -161,6 +198,8 @@ export default function AppMenu() {
             <NeedQuantitiesItem />
             <NeedApplyItem />
             <NeedApproveItem />
+            <StoresItem />
+            <ItemsItem />
           </List>
           <Divider />
           <List>
