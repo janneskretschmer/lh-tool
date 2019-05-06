@@ -15,6 +15,8 @@ export const fullPathOfNeedApprove = () => fullPathOf('/needs/approve/');
 
 export const fullPathOfStores = () => fullPathOf('/stores/');
 
-export const fullPathOfItems = () => fullPathOf('/items');
+export const fullPathOfItems = () => fullPathOf('/items/');
+
+export const fullPathOfItem = (id) => fullPathOf('/item/');
 
 export const fullPathOfChangePw = () => fullPathOf('/changepw/');
