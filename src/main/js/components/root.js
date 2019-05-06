@@ -35,6 +35,7 @@ import NeedApplyComponent from './need/apply';
 import NeedApproveComponent from './need/approve';
 import NeedQuantityComponent from './need/quantities';
 import ItemListComponent from './item-list';
+import ItemDetailComponent from './item-detail';
 import NotFoundComponent from './notfound';
 import ProjectsComponent from './project/project';
 import DataProtection from './util/data-protection';
@@ -148,6 +149,7 @@ export default class LHToolRoot extends React.Component {
                                     <Route path={fullPathOfStores()} component={StoreListComponent} />
                                     <Route path={fullPathOfItem()} component={ItemDetailComponent} />
                                     <Route path={fullPathOfItems()} component={ItemListComponent} />
+                                    <Route path={fullPathOfItem()} component={ItemDetailComponent} />
                                     <Route path={fullPathOfChangePw()} component={ChangePasswordComponent} />
                                     <Route path={fullPathOfImprint()} component={Imprint} />
                                     <Route path={fullPathOfDataProtection()} component={DataProtection} />
