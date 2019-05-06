@@ -11,6 +11,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import {
     fullPathOfStores,
     fullPathOfItems,
+    fullPathOfItem,
     fullPathOfChangePw, 
     fullPathOfDataProtection, 
     fullPathOfImprint, 
@@ -26,6 +27,7 @@ import AppHeader from './header';
 import LoginComponent from './login';
 import StoreListComponent from './store-list';
 import ItemListComponent from './item-list';
+import ItemDetailComponent from './item-detail';
 import AppMenu from './menu';
 import NeedApplyComponent from './need/apply';
 import NeedApproveComponent from './need/approve';
@@ -141,6 +143,7 @@ export default class LHToolRoot extends React.Component {
                                     <Route path={fullPathOfNeedApprove()} component={NeedApproveComponent} />
                                     <Route path={fullPathOfStores()} component={StoreListComponent} />
                                     <Route path={fullPathOfItems()} component={ItemListComponent} />
+                                    <Route path={fullPathOfItem()} component={ItemDetailComponent} />
                                     <Route path={fullPathOfChangePw()} component={ChangePasswordComponent} />
                                     <Route path={fullPathOfImprint()} component={Imprint} />
                                     <Route path={fullPathOfDataProtection()} component={DataProtection} />
