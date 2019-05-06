@@ -34,23 +34,23 @@ export function requiresLogin(Component) {
 }
 
 export function setWaitingState(waiting) {
-	document.body.style.cursor = waiting ? 'wait' : 'default';
+  document.body.style.cursor = waiting ? 'wait' : 'default';
 }
 
 export function getMonthArrayWithOffsets(start, end) {
-	const today = moment().startOf('day');
-	let date = start.diff(today, 'days') > 0 ? start.clone() : today.clone();
-	let months = [];
-	while (end.diff(date, 'days') > 0) {
-		const monthEnd = date.clone().endOf('month');
-		months = [
-			...months,
-			{
-				month: date.format('M'),
-				startOffset: date.diff(today, 'days'),
-				endOffset: monthEnd.diff(today, 'days'),
-			}];
-		date = monthEnd.add(1, 'days');
-	}
-	return months;
+  const today = moment().startOf('day');
+  let date = start.diff(today, 'days') > 0 ? start.clone() : today.clone();
+  let months = [];
+  while (end.diff(date, 'days') > 0) {
+    const monthEnd = date.clone().endOf('month');
+    months = [
+      ...months,
+      {
+        month: date.format('M'),
+        startOffset: date.diff(today, 'days'),
+        endOffset: monthEnd.diff(today, 'days'),
+      }];
+    date = monthEnd.add(1, 'days');
+  }
+  return months;
 }
