@@ -52,24 +52,24 @@ class Need extends React.Component {
         });
     }
 
-  handleQuantityChange(event) {
-    /*if (this.changeThrottleTimeout) {
-      clearTimeout(this.changeThrottleTimeout);
-    }
+    handleQuantityChange(event) {
+        if (this.changeThrottleTimeout) {
+          clearTimeout(this.changeThrottleTimeout);
+        }
 
-    this.changeThrottleTimeout = setTimeout(function(){*/
-      this.setState({
-        ...this.state,
-        updating: true,
-      })
-      createOrUpdateNeed({
-        need: { ...this.state.data, quantity: parseInt(event.target.value, 10)}, sessionState: this.props.sessionState, handleFailure: this.handleFailure.bind(this)
-      }).then(need => this.setState({
-        ...this.state,
-        data: need,
-        updating: false,
-      }));
-    //}.bind(this), 200);
+        this.changeThrottleTimeout = setTimeout(function(value){
+          this.setState({
+            ...this.state,
+            updating: true,
+          })
+          createOrUpdateNeed({
+            need: { ...this.state.data, quantity: parseInt(value, 10)}, sessionState: this.props.sessionState, handleFailure: this.handleFailure.bind(this)
+          }).then(need => this.setState({
+            ...this.state,
+            data: need,
+            updating: false,
+          }));
+      }.bind(this, event.target.value), 200);
     }
 
   handleApprove(diff){
