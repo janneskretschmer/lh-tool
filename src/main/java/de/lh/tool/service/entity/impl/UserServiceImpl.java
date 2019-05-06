@@ -85,6 +85,10 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 		if (user.getGender() == null) {
 			throw new DefaultException(ExceptionEnum.EX_USER_NO_GENDER);
 		}
+		final boolean emailAlreadyInUse = getRepository().findByEmail(user.getEmail()).isPresent();
+		if (emailAlreadyInUse) {
+			throw new DefaultException(ExceptionEnum.EX_USER_EMAIL_ALREADY_IN_USE);
+		}
 		user = save(user);
 		if (userRoleService.hasCurrentUserRightToGrantRole(role)) {
 			userRoleService.save(new UserRole(null, user, role));

@@ -55,6 +55,14 @@ export default class ProjectEditPanel extends React.Component {
         });
     }
 
+    handleCreateFailure(errorKey) {
+        const message = errorKey === 'EX_USER_EMAIL_ALREADY_IN_USE'
+            ? 'Die angegebene E-Mail-Adresse wird schon für einen anderen Nutzer verwendet. Wähle bitte eine andere Adresse.'
+            : 'Fehler beim Erstellen des neuen Nutzers.';
+
+        this.props.enqueueSnackbar(message, { variant: 'error' });
+    }
+
     render() {
         const { classes, project } = this.props;
         const { editPublishers } = this.state;
@@ -72,7 +80,7 @@ export default class ProjectEditPanel extends React.Component {
                                         user={project.localCoordinator}
                                         role="ROLE_LOCAL_COORDINATOR"
                                         showEdit={sessionState.hasPermission('ROLE_RIGHT_USERS_PUT') && sessionState.hasPermission('ROLE_RIGHT_USERS_GRANT_ROLE_LOCAL_COORDINATOR')}
-                                        onSave={user => createNewUser({ accessToken: sessionState.accessToken, ...user, projectId:project.id, projectsState })}
+                                        onSave={user => createNewUser({ accessToken: sessionState.accessToken, ...user, projectId: project.id, projectsState, handleFailure: this.handleCreateFailure.bind(this), })}
                                         onUpdate={user => updateUser({accessToken: sessionState.accessToken, user, projectsState})}
                                         showDelete={sessionState.hasPermission('ROLE_RIGHT_USERS_DELETE') && sessionState.hasPermission('ROLE_RIGHT_USERS_GRANT_ROLE_LOCAL_COORDINATOR')}
                                         onDelete={user => deleteUser({accessToken: sessionState.accessToken, userId: user.id, projectsState})}
@@ -90,7 +98,7 @@ export default class ProjectEditPanel extends React.Component {
                                     {sessionState.hasPermission('ROLE_RIGHT_USERS_CREATE') && sessionState.hasPermission('ROLE_RIGHT_USERS_GRANT_ROLE_PUBLISHER') && (editPublishers || project.publishers.length === 0)  ? (<UserComponent
                                         role="ROLE_PUBLISHER"
                                         showEdit={false}
-                                        onSave={(user) => createNewUser({ accessToken: sessionState.accessToken, ...user, projectId:project.id, projectsState })}
+                                        onSave={(user) => createNewUser({ accessToken: sessionState.accessToken, ...user, projectId:project.id, projectsState, handleFailure: this.handleCreateFailure.bind(this), })}
                                         onlyNewUsers={true}
                                         showDelete={false}
                                     />) : null }

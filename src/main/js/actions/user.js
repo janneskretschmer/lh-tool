@@ -48,7 +48,7 @@ export function fetchUser({ accessToken, userId }) {
         .catch(e => console.log(e));
 }
 
-export function createNewUser({ accessToken, email, firstName, lastName, gender, telephoneNumber, mobileNumber, businessNumber, role, projectId, projectsState }) {
+export function createNewUser({ accessToken, email, firstName, lastName, gender, telephoneNumber, mobileNumber, businessNumber, role, projectId, projectsState, handleFailure }) {
     return apiRequest({
         apiEndpoint: apiEndpoints.user.create,
         authToken: accessToken,
@@ -68,8 +68,11 @@ export function createNewUser({ accessToken, email, firstName, lastName, gender,
                 return addUserToProject({ accessToken, projectId, user: result.response, role, projectsState });
             }
         })
-        // TODO Error message
-        .catch(e => console.log(e));
+        .catch(e => {
+            if (typeof handleFailure === 'function') {
+                handleFailure('response' in e ? e.response.key : null);
+            }
+        });
 }
 
 export function deleteUser({ accessToken, userId, projectsState }) {
