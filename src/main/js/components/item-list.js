@@ -18,11 +18,16 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import { withStyles } from '@material-ui/core/styles';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import { Link } from 'react-router-dom';
+import { fullPathOfItem } from '../paths';
 
 const styles = theme => ({
   button: {
     margin: '7px',
-  }
+  },
+  link: {
+    textDecoration: 'none',
+  },
 });
 
 @withStyles(styles)
@@ -119,14 +124,28 @@ export default class ItemListComponent extends React.Component {
                       </TableHead>
                       <TableBody>
                         {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
-                          <TableRow key={row.id}>
-                            <TableCell component="th" scope="row">
-                              {row.name}
-                            </TableCell>
-                            <TableCell align="right">{row.store}</TableCell>
-                            <TableCell align="right">{row.slot}</TableCell>
-                            <TableCell align="right">{row.quantity} {row.unit}</TableCell>
-                          </TableRow>
+                            <TableRow key={row.id}>
+                              <TableCell component="th" scope="row">
+                                <Link to={fullPathOfItem()} className={classes.link}>
+                                  {row.name}
+                                </Link>
+                              </TableCell>
+                              <TableCell align="right">
+                                <Link to={fullPathOfItem()} className={classes.link}>
+                                  {row.store}
+                                </Link>
+                              </TableCell>
+                              <TableCell align="right">
+                                <Link to={fullPathOfItem()} className={classes.link}>
+                                  {row.slot}
+                                </Link>
+                              </TableCell>
+                              <TableCell align="right">
+                                <Link to={fullPathOfItem()} className={classes.link}>
+                                  {row.quantity} {row.unit}
+                                </Link>
+                              </TableCell>
+                            </TableRow>
                         ))}
                         {emptyRows > 0 && (
                           <TableRow style={{ height: 48 * emptyRows }}>

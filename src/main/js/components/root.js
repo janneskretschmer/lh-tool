@@ -14,6 +14,7 @@ import {
     fullPathOfNeeds,
     fullPathOfStores,
     fullPathOfItems,
+    fullPathOfItem,
     fullPathOfChangePw,
 } from '../paths';
 import AppHeader from './header';
@@ -22,6 +23,7 @@ import ProjectsComponent from './project';
 import NeedsComponent from './need';
 import StoreListComponent from './store-list';
 import ItemListComponent from './item-list';
+import ItemDetailComponent from './item-detail';
 import NotFoundComponent from './notfound';
 import AppMenu from './menu';
 import ChangePasswordComponent from './changepw';
@@ -131,6 +133,7 @@ export default class LHToolRoot extends React.Component {
                                     <Route path={fullPathOfNeeds()} component={NeedsComponent} />
                                     <Route path={fullPathOfStores()} component={StoreListComponent} />
                                     <Route path={fullPathOfItems()} component={ItemListComponent} />
+                                    <Route path={fullPathOfItem()} component={ItemDetailComponent} />
                                     <Route path={fullPathOfChangePw()} component={ChangePasswordComponent} />
                                     <Route component={NotFoundComponent} />
                                 </Switch>
