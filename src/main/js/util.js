@@ -39,7 +39,7 @@ export function setWaitingState(waiting) {
 
 export function getMonthArrayWithOffsets(start, end) {
 	const today = moment().startOf('day');
-	let date = start.diff(date, 'days') > 0 ? start.clone() : today.clone();
+	let date = start.diff(today, 'days') > 0 ? start.clone() : today.clone();
 	let months = [];
 	while (end.diff(date, 'days') > 0) {
 		const monthEnd = date.clone().endOf('month');
@@ -54,4 +54,3 @@ export function getMonthArrayWithOffsets(start, end) {
 	}
 	return months;
 }
-
