@@ -55,7 +55,7 @@ class ApplicationList extends React.Component {
     	needId:this.props.need.id,
     	state: newState,
     	handleFailure: err => console.log(err)
-    })
+    }).then(() => this.props.onApprove(newState === 'APPROVED' ? 1 : -1))
   };
 
   render() {

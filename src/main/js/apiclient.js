@@ -16,6 +16,7 @@ import {
     USER_PASSWORD,
     PROJECT_PREFIX,
     PROJECT_DELETE,
+    PROJECT_ID_VARIABLE,
     NEED_PREFIX,
     START_DIFF_VARIABLE,
     END_DIFF_VARIABLE,
@@ -206,7 +207,7 @@ export const apiEndpoints = {
             method: 'GET',
             // TODO Trailing '/' also necessary?
             path: NEED_PREFIX + '/',
-            queries: [START_DIFF_VARIABLE, END_DIFF_VARIABLE],
+            queries: [PROJECT_ID_VARIABLE, START_DIFF_VARIABLE, END_DIFF_VARIABLE],
         },
         get: {
             method: 'GET',

@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { apiRequest, apiEndpoints } from '../apiclient';
-import { ID_VARIABLE, USER_ID_VARIABLE, NEED_START_DIFF_VARIABLE, NEED_END_DIFF_VARIABLE } from '../urlmappings';
+import { ID_VARIABLE, USER_ID_VARIABLE, PROJECT_ID_VARIABLE, NEED_START_DIFF_VARIABLE, NEED_END_DIFF_VARIABLE } from '../urlmappings';
 
 function mapNeedArray(accessToken, content) {
     let needs = []
@@ -43,14 +43,15 @@ function attachOwnStateToNeeds({ needs, accessToken, userId }) {
     return Promise.all(promNeeds);
 }
 
-export function fetchOwnNeeds({ accessToken, userId, startDiff, endDiff }) {
+export function fetchOwnNeeds({ accessToken, userId, projectId, startDiff, endDiff }) {
     if (accessToken) {
         return apiRequest({
             apiEndpoint: apiEndpoints.need.getOwn,
             authToken: accessToken,
             queries: {
-            	[NEED_START_DIFF_VARIABLE]: startDiff,
-            	[NEED_END_DIFF_VARIABLE]: endDiff,
+                [NEED_START_DIFF_VARIABLE]: startDiff,
+                [NEED_END_DIFF_VARIABLE]: endDiff,
+                [PROJECT_ID_VARIABLE]: projectId,
             }
         })
             .then(result => attachOwnStateToNeeds({ needs: result.response.content, accessToken, userId }))
@@ -78,19 +79,16 @@ export function fetchNeed({ accessToken, needId, userId }) {
     }
 }
 
-export function createOrUpdateNeed({ accessToken, need, needsState, sessionState, handleFailure }) {
+export function createOrUpdateNeed({ need, sessionState, handleFailure }) {
     const userId = sessionState.currentUser.id;
     return apiRequest({
         apiEndpoint: need.id ? apiEndpoints.need.update : apiEndpoints.need.createNew,
-        authToken: accessToken,
+        authToken: sessionState.accessToken,
         data: need,
         parameters: need.id ? { [ID_VARIABLE]: need.id } : {},
     })
-        .then(result => attachOwnStateToNeeds({ needs: [result.response], accessToken, userId }))
+        .then(result => attachOwnStateToNeeds({ needs: [result.response], accessToken: sessionState.accessToken, userId }))
         .then(needs => needs[0])
-        .then(need => {
-            needsState.needsUpdated(need);
-        })
         .catch(err => {
             if (handleFailure) {
                 handleFailure(err);
@@ -98,45 +96,6 @@ export function createOrUpdateNeed({ accessToken, need, needsState, sessionState
         });
 }
 
-export function applyForNeed({ sessionState, needId, handleFailure }) {
-    const userId = sessionState.currentUser.id;
-    return apiRequest({
-        apiEndpoint: apiEndpoints.need.apply,
-        data: {
-            needId,
-            state: 'APPLIED',
-            userId,
-        },
-        parameters: {
-            [ID_VARIABLE]: needId,
-            [USER_ID_VARIABLE]: userId,
-        },
-        authToken: sessionState.accessToken
-    })
-        .then(result => result.response);
-    // TODO handleFailure
-}
-
-export function revokeApplicationForNeed({ sessionState, needId, handleFailure }) {
-    const userId = sessionState.currentUser.id;
-    return apiRequest({
-        apiEndpoint: apiEndpoints.need.apply,
-        data: {
-            needId,
-            state: 'NONE',
-            userId,
-        },
-        parameters: {
-            [ID_VARIABLE]: needId,
-            [USER_ID_VARIABLE]: userId,
-        },
-        authToken: sessionState.accessToken
-    })
-        .then(result => result.response);
-    // TODO handleFailure
-}
-
-//TODO duplication ?
 export function changeApplicationStateForNeed({ accessToken, userId, needId, state, handleFailure }) {
     return apiRequest({
         apiEndpoint: apiEndpoints.need.apply,
