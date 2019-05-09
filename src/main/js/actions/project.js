@@ -72,10 +72,8 @@ export function createNewProject({ accessToken, projectsState, name, startMoment
             endDate: endMoment.valueOf(),
         },
     })
-        .then(result => {
-            const createdProject = mapProjectObject(accessToken, result.response);
-            projectsState.projectAdded(createdProject);
-        })
+        .then(result => mapProjectObject(accessToken, result.response))
+        .then(createdProject => projectsState.projectAdded(createdProject))
         .catch(err => {
             if (handleFailure) {
                 handleFailure(err);
