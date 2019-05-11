@@ -73,7 +73,7 @@ class Need extends React.Component {
               updating: false,
             }, function(){
               this.requestInProgress = false;
-              if(this.state.data.quantity != this.latestQuantity) {
+              if(this.state.data.quantity !== this.latestQuantity) {
                 this.updateValue();
               }
             }.bind(this))));
