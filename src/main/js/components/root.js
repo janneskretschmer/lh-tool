@@ -20,7 +20,11 @@ import {
 import AppHeader from './header';
 import LoginComponent from './login';
 import ProjectsComponent from './project';
+<<<<<<< HEAD
 import NeedsComponent from './need-list';
+=======
+import NeedsComponent from './need';
+>>>>>>> branch 'warehousing-ui' of https://github.com/janneskretschmer/lh-tool
 import StoreListComponent from './store-list';
 import ItemListComponent from './item-list';
 import ItemDetailComponent from './item-detail';
