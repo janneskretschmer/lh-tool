@@ -53,23 +53,31 @@ class Need extends React.Component {
     }
 
     handleQuantityChange(event) {
-        if (this.changeThrottleTimeout) {
-          clearTimeout(this.changeThrottleTimeout);
-        }
+        this.latestQuantity = parseInt(event.target.value, 10)
+        this.updateValue()
+    }
 
-        this.changeThrottleTimeout = setTimeout(function(value){
-          this.setState({
+    //keeps calling the api, until the quantity is up to date. is "threadsafe"
+    updateValue() {
+      if(!this.requestInProgress) {
+        this.requestInProgress = true;
+        this.setState({
             ...this.state,
             updating: true,
-          })
-          createOrUpdateNeed({
-            need: { ...this.state.data, quantity: parseInt(value, 10)}, sessionState: this.props.sessionState, handleFailure: this.handleFailure.bind(this)
+          }, () =>
+            createOrUpdateNeed({
+              need: { ...this.state.data, quantity: this.latestQuantity}, sessionState: this.props.sessionState, handleFailure: this.handleFailure.bind(this)
           }).then(need => this.setState({
-            ...this.state,
-            data: need,
-            updating: false,
-          }));
-      }.bind(this, event.target.value), 200);
+              ...this.state,
+              data: need,
+              updating: false,
+            }, function(){
+              this.requestInProgress = false;
+              if(this.state.data.quantity != this.latestQuantity) {
+                this.updateValue();
+              }
+            }.bind(this))));
+      }
     }
 
   handleApprove(diff){
@@ -133,9 +141,6 @@ class Need extends React.Component {
                           margin="dense"
                           variant="outlined"
                         />
-                          { this.state.updating ? (
-                              <CircularProgress size={15}/>
-                          ) : null}
                   </WithPermission>
                   <br />
                   <WithoutPermission permission="ROLE_RIGHT_NEEDS_POST">
