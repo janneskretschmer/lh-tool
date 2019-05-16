@@ -33,7 +33,7 @@ const styles = theme => ({
 
 const UserComponent = props => {
 
-    const userOrDefault = user => user || { gender: 'MALE', firstName: '', lastName: '', email: '', telephoneNumber: '', mobileNumber: '', businessNumber: '' };
+    const userOrDefault = user => user || { gender: 'MALE', firstName: '', lastName: '', email: '', telephoneNumber: '', mobileNumber: '', businessNumber: '', skills: '' };
 
     const { classes, role, onSave, onUpdate, showEdit, onDelete, showDelete, onlyNewUsers } = props;
 
@@ -160,6 +160,17 @@ const UserComponent = props => {
                         variant="outlined"
                         onChange={e => setUser({...user,businessNumber:e.target.value})}
                         className={classes.input}
+                    /><br />
+                    <TextField
+                        id="skills"
+                        label="Fähigkeiten"
+                        multiline
+                        value={user.skills}
+                        margin="dense"
+                        variant="outlined"
+                        onChange={e => setUser({...user,skills:e.target.value})}
+                        className={classes.input}
+                        style={{ width: '80%' }}
                     /><br />
                     <FormControlLabel
                         control={

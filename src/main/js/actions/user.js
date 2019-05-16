@@ -48,7 +48,7 @@ export function fetchUser({ accessToken, userId }) {
         .catch(e => console.log(e));
 }
 
-export function createNewUser({ accessToken, email, firstName, lastName, gender, telephoneNumber, mobileNumber, businessNumber, role, projectId, projectsState, handleFailure }) {
+export function createNewUser({ accessToken, email, firstName, lastName, gender, telephoneNumber, mobileNumber, businessNumber, skills, role, projectId, projectsState, handleFailure }) {
     return apiRequest({
         apiEndpoint: apiEndpoints.user.create,
         authToken: accessToken,
@@ -60,6 +60,7 @@ export function createNewUser({ accessToken, email, firstName, lastName, gender,
             telephoneNumber,
             mobileNumber,
             businessNumber,
+            skills,
             role,
         },
     })
