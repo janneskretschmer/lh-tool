@@ -20,8 +20,12 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 <<<<<<< Upstream, based on origin/master
 <<<<<<< Upstream, based on origin/master
+<<<<<<< Upstream, based on origin/master
 import { Link } from 'react-router-dom';
+=======
+>>>>>>> d5dc258 WIP article detail view
 import { fullPathOfItem } from '../paths';
+import { Redirect } from 'react-router'
 
 const styles = theme => ({
   button: {
@@ -57,6 +61,8 @@ export default class ItemListComponent extends React.Component {
                 rowsPerPage: 10,
 
                 showFilters: false,
+
+                redirect: undefined,
               };
     }
 
@@ -72,10 +78,17 @@ export default class ItemListComponent extends React.Component {
     this.setState({ showFilters: !this.state.showFilters})
   }
 
+  redirect (id) {
+    this.setState({ redirect: id})
+  }
+
     render() {
         const { classes } = this.props
         const { rows, rowsPerPage, page, showFilters } = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+        if(this.state.redirect) {
+          return (<Redirect to={fullPathOfItem(this.state.redirect)}>;)
+        }
         return (
             <SessionContext.Consumer>
                 {sessionState => (
@@ -126,26 +139,21 @@ export default class ItemListComponent extends React.Component {
                       </TableHead>
                       <TableBody>
                         {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
-                            <TableRow key={row.id}>
+                            <TableRow
+                              key={row.id}
+                              onClick={event => this.redirect(row.id)}
+                              >
                               <TableCell component="th" scope="row">
-                                <Link to={fullPathOfItem()} className={classes.link}>
                                   {row.name}
-                                </Link>
                               </TableCell>
                               <TableCell align="right">
-                                <Link to={fullPathOfItem()} className={classes.link}>
                                   {row.store}
-                                </Link>
                               </TableCell>
                               <TableCell align="right">
-                                <Link to={fullPathOfItem()} className={classes.link}>
                                   {row.slot}
-                                </Link>
                               </TableCell>
                               <TableCell align="right">
-                                <Link to={fullPathOfItem()} className={classes.link}>
                                   {row.quantity} {row.unit}
-                                </Link>
                               </TableCell>
                             </TableRow>
 =======

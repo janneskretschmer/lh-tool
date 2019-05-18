@@ -16,7 +16,7 @@ export default class ItemDetailComponent extends React.Component {
     render () {
       return (
         <>
-          Detail-Ansicht
+          Detail-Ansicht fuer {this.props.match.params.id}
         </>
       )
     }
