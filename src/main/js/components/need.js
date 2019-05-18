@@ -76,7 +76,9 @@ class Need extends React.Component {
               if(this.state.data.quantity !== this.latestQuantity) {
                 this.updateValue();
               }
-            }.bind(this))));
+            }.bind(this))
+          ).catch(() => {this.requestInProgress = false;})
+        );
       }
     }
 
