@@ -87,7 +87,7 @@ export default class ItemListComponent extends React.Component {
         const { rows, rowsPerPage, page, showFilters } = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
         if(this.state.redirect) {
-          return (<Redirect to={fullPathOfItem(this.state.redirect)}>;)
+          return (<Redirect to={fullPathOfItem(this.state.redirect)}/>)
         }
         return (
             <SessionContext.Consumer>
