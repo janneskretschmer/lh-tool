@@ -148,8 +148,8 @@ export default class LHToolRoot extends React.Component {
                                     <Route path={fullPathOfStore()} component={StoreDetailComponent} />
                                     <Route path={fullPathOfStores()} component={StoreListComponent} />
                                     <Route path={fullPathOfItem()} component={ItemDetailComponent} />
-                                    <Route path={fullPathOfItems()} component={ItemListComponent} />
                                     <Route path={fullPathOfItem()} component={ItemDetailComponent} />
+                                    <Route path={fullPathOfItems()} component={ItemListComponent} />
                                     <Route path={fullPathOfChangePw()} component={ChangePasswordComponent} />
                                     <Route path={fullPathOfImprint()} component={Imprint} />
                                     <Route path={fullPathOfDataProtection()} component={DataProtection} />
