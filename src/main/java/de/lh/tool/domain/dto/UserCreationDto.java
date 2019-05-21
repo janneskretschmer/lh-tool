@@ -19,4 +19,5 @@ public class UserCreationDto {
 	private String businessNumber;
 	private String role;
 	private String skills;
+	private String profession;
 }

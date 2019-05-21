@@ -33,7 +33,7 @@ const styles = theme => ({
 
 const UserComponent = props => {
 
-    const userOrDefault = user => user || { gender: 'MALE', firstName: '', lastName: '', email: '', telephoneNumber: '', mobileNumber: '', businessNumber: '', skills: '' };
+    const userOrDefault = user => user || { gender: 'MALE', firstName: '', lastName: '', email: '', telephoneNumber: '', mobileNumber: '', businessNumber: '', skills: '', profession: '' };
 
     const { classes, role, onSave, onUpdate, showEdit, onDelete, showDelete, onlyNewUsers } = props;
 
@@ -162,6 +162,15 @@ const UserComponent = props => {
                         className={classes.input}
                     /><br />
                     <TextField
+                        id="profession"
+                        label="Beruf"
+                        value={user.profession}
+                        margin="dense"
+                        variant="outlined"
+                        onChange={e => setUser({...user,profession:e.target.value})}
+                        className={classes.input}
+                    />
+                    <TextField
                         id="skills"
                         label="Fähigkeiten"
                         multiline
@@ -170,7 +179,6 @@ const UserComponent = props => {
                         variant="outlined"
                         onChange={e => setUser({...user,skills:e.target.value})}
                         className={classes.input}
-                        style={{ width: '80%' }}
                     /><br />
                     <FormControlLabel
                         control={
@@ -228,7 +236,7 @@ const UserComponent = props => {
                             </Grid>
                             <Grid item xs={12}  sm={4} className={classes.userData}>
                                 <span className={classes.bold}>Beruf:</span> {user ? user.profession : ''}<br/>
-                                <span className={classes.bold}>Fähigkeiten:</span> {user ? user.skills:''}
+                                <span className={classes.bold}>Fähigkeiten:</span> <span style={{ whiteSpace: 'pre-line' }}>{user ? user.skills:''}</span>
                             </Grid>
                         </Hidden>
                         <Hidden xsDown>
