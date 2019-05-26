@@ -27,7 +27,10 @@ const styles = theme => ({
     userName: {
         fontWeight: 'bold',
         marginTop: '14px',
-    }
+    },
+    multiLineContent: {
+        whiteSpace: 'pre-line',
+    },
 
 });
 
@@ -236,7 +239,7 @@ const UserComponent = props => {
                             </Grid>
                             <Grid item xs={12}  sm={4} className={classes.userData}>
                                 <span className={classes.bold}>Beruf:</span> {user ? user.profession : ''}<br/>
-                                <span className={classes.bold}>Fähigkeiten:</span> <span style={{ whiteSpace: 'pre-line' }}>{user ? user.skills:''}</span>
+                                <span className={classes.bold}>Fähigkeiten:</span> <span className={classes.multiLineContent}>{user ? user.skills:''}</span>
                             </Grid>
                         </Hidden>
                         <Hidden xsDown>
