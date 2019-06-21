@@ -115,8 +115,15 @@ public abstract class BasicRestIntegrationTest {
 		String passwordUrl = REST_URL + "/users/password";
 		for (User user : TEST_USERS) {
 			Long userId = getRequestSpecWithJwt(jwt)
-					.body(new UserCreationDto(user.getFirstName(), user.getLastName(), user.getEmail(),
-							Gender.MALE.name(), "+49 123456789", "+49 87654321", "+49 123454321", null))
+					.body(UserCreationDto.builder()
+							.firstName(user.getFirstName())
+							.lastName(user.getLastName())
+							.email(user.getEmail())
+							.gender(Gender.MALE.name())
+							.telephoneNumber("+49 123456789")
+							.mobileNumber("+49 87654321")
+							.businessNumber("+49 123454321")
+							.build())
 					.contentType(ContentType.JSON).post(registrationUrl).as(UserDto.class).getId();
 			getRequestSpecWithJwt(jwt).body(
 					PasswordChangeDto.builder().userId(userId).newPassword(PASSWORD).confirmPassword(PASSWORD).build())

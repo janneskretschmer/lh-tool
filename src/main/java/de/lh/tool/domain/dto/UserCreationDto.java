@@ -1,12 +1,14 @@
 package de.lh.tool.domain.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class UserCreationDto {
 	private String firstName;
 	private String lastName;
@@ -16,4 +18,6 @@ public class UserCreationDto {
 	private String mobileNumber;
 	private String businessNumber;
 	private String role;
+	private String skills;
+	private String profession;
 }
