@@ -5,7 +5,7 @@ import { ID_VARIABLE, USER_ID_VARIABLE, PROJECT_ID_VARIABLE, NEED_START_DIFF_VAR
 function mapNeedArray(accessToken, content) {
     let needs = []
     content.forEach(need => {
-        const date = moment(need.date, 'x');
+        const date = moment.utc(need.date, 'x');
         let item = needs[needs.length - 1];
         if (!item || !date.isSame(item.date, 'day') || item.projectName !== need.projectName) {
             item = {
