@@ -146,7 +146,7 @@ class Need extends React.Component {
                   </WithPermission>
                   <br />
                   <WithoutPermission permission="ROLE_RIGHT_NEEDS_POST">
-                    Bedarf: {typeof this.state.data.quantity === 'number' ? this.state.data.quantity : '(kein Bedarf)'}
+                    Bedarf: {typeof this.state.data.quantity === 'number' ? this.state.data.quantity : '(kein Bedarf)'}<br />
                       </WithoutPermission>
                       <WithPermission permission="ROLE_RIGHT_NEEDS_APPROVE">
                       Genehmigt: {typeof this.state.data.approvedCount === 'number' ? this.state.data.approvedCount : '0'} / {typeof this.state.data.appliedCount === 'number' ? this.state.data.appliedCount + this.state.data.approvedCount : '0'}<br />
@@ -157,7 +157,7 @@ class Need extends React.Component {
                         </WithPermission>
                       ): (
                         <>
-                        {this.state.data.ownState === 'APPLIED' ? (<>Status: <span className={classes.applied}>Beworben</span></>) : (this.state.data.ownState === 'APPROVED' ? (<>Status: <span className={classes.approved}>Eingeteilt</span></>) : null)}
+                        {this.state.data.ownState === 'APPLIED' ? (<>Status: <span className={classes.applied}>Beworben</span><br /></>) : (this.state.data.ownState === 'APPROVED' ? (<>Status: <span className={classes.approved}>Eingeteilt</span><br /></>) : null)}
                         {this.state.updating ? (
                             <>
                               <br />

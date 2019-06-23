@@ -34,7 +34,7 @@ const CurrentUserItem = props => (
 );
 
 const ProjectsItem = () => (
-  <WithPermission permission="ROLE_RIGHT_PROJECTS_GET">
+  <WithPermission permission="RIGHT_PROJECTS_POST">
     <Link to={fullPathOfProjects()} style={linkStyle}>
       <ListItem button>
         <ListItemIcon>

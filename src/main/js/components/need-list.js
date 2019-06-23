@@ -125,7 +125,7 @@ class StatefulNeedsComponent extends React.Component {
         const tmp = (
           <>
             <div className={classes.projectWrapper}>
-                <ProjectSelection  onChange={project => this.switchProject(project)} accessToken={sessionState.accessToken} />
+                    <ProjectSelection  onChange={project => this.switchProject(project)} accessToken={sessionState.accessToken} />
               </div>
               {this.state.project ? (
                   <>
