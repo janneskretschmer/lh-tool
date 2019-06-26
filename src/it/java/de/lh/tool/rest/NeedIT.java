@@ -58,16 +58,17 @@ public class NeedIT extends BasicRestIntegrationTest {
 		getRequestSpecWithJwtByEmail(CONSTRUCTION_SERVANT_2_EMAIL).get(url + needId).then().statusCode(403);
 		getRequestSpecWithJwtByEmail(ADMIN_EMAIL).get(url + needId).then().statusCode(200);
 
-		//TODO specify dates 
-		//getRequestSpecWithJwtByEmail(CONSTRUCTION_SERVANT_1_EMAIL).when().get(url).then().body("content",
-		//		Matchers.iterableWithSize(4));
+		// TODO specify dates
+		// getRequestSpecWithJwtByEmail(CONSTRUCTION_SERVANT_1_EMAIL).when().get(url).then().body("content",
+		// Matchers.iterableWithSize(4));
 		getRequestSpecWithJwtByEmail(CONSTRUCTION_SERVANT_1_EMAIL).when().get(url).then().body("content",
 				Matchers.iterableWithSize(0));
-		//getRequestSpecWithJwtByEmail(CONSTRUCTION_SERVANT_2_EMAIL).when().get(url).then().body("content",
-		//		Matchers.iterableWithSize(4));
+		// getRequestSpecWithJwtByEmail(CONSTRUCTION_SERVANT_2_EMAIL).when().get(url).then().body("content",
+		// Matchers.iterableWithSize(4));
 		getRequestSpecWithJwtByEmail(CONSTRUCTION_SERVANT_2_EMAIL).when().get(url).then().body("content",
 				Matchers.iterableWithSize(0));
-		//getRequestSpecWithJwtByEmail(ADMIN_EMAIL).when().get(url).then().body("content", Matchers.iterableWithSize(8));
+		// getRequestSpecWithJwtByEmail(ADMIN_EMAIL).when().get(url).then().body("content",
+		// Matchers.iterableWithSize(8));
 		getRequestSpecWithJwtByEmail(ADMIN_EMAIL).when().get(url).then().body("content", Matchers.iterableWithSize(0));
 
 		RestAssured.delete(url + needId).then().statusCode(401);
@@ -75,7 +76,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 				STORE_KEEPER_1_EMAIL, CONSTRUCTION_SERVANT_2_EMAIL);
 		getRequestSpecWithJwtByEmail(CONSTRUCTION_SERVANT_1_EMAIL).delete(url + needId).then().statusCode(204);
 
-		//TODO specify dates 
+		// TODO specify dates
 		getRequestSpecWithJwtByEmail(CONSTRUCTION_SERVANT_1_EMAIL).when().get(url).then().body("content",
 				Matchers.iterableWithSize(0));
 		getRequestSpecWithJwtByEmail(CONSTRUCTION_SERVANT_2_EMAIL).when().get(url).then().body("content",
@@ -115,7 +116,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 
 		getRequestSpecWithJwtByEmail(LOCAL_COORDINATOR_1_EMAIL).body(new NeedUserDto(NeedUserState.APPLIED))
 				.contentType(ContentType.JSON).put(url + need1Id + "/" + getUserIdByEmail(LOCAL_COORDINATOR_1_EMAIL))
-				.then().statusCode(400);
+				.then().statusCode(200);
 		getRequestSpecWithJwtByEmail(STORE_KEEPER_1_EMAIL).body(new NeedUserDto(NeedUserState.APPLIED))
 				.contentType(ContentType.JSON).put(url + need1Id + "/" + getUserIdByEmail(STORE_KEEPER_1_EMAIL)).then()
 				.statusCode(403);
