@@ -64,6 +64,7 @@ const styles = theme => ({
         transform: 'translate(-50%,0)',
         alignItems: 'center',
         display: 'flex',
+        fontSize: 'x-large',
     },
 });
 
@@ -134,7 +135,6 @@ class ProjectCalendar extends React.Component {
                     </div>
 
                 </div>
-                <br />
                 <table className={classes.calendar}>
                     <thead>
                         <tr>
