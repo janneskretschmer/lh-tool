@@ -8,16 +8,20 @@ import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { Helmet } from 'react-helmet';
-import { 
+import {
     fullPathOfLogin,
     fullPathOfProjects,
-    fullPathOfNeeds,
+    fullPathOfNeedQuantities,
+    fullPathOfNeedApply,
+    fullPathOfNeedApprove,
     fullPathOfChangePw,
 } from '../paths';
 import AppHeader from './header';
 import LoginComponent from './login';
 import ProjectsComponent from './project';
-import NeedsComponent from './need-list';
+import NeedQuantityComponent from './need/quantities';
+import NeedApplyComponent from './need/apply';
+import NeedApproveComponent from './need/approve';
 import NotFoundComponent from './notfound';
 import AppMenu from './menu';
 import ChangePasswordComponent from './changepw';
@@ -124,7 +128,9 @@ export default class LHToolRoot extends React.Component {
                                 <Switch>
                                     <Route path={fullPathOfLogin()} component={LoginComponent} />
                                     <Route path={fullPathOfProjects()} component={ProjectsComponent} />
-                                    <Route path={fullPathOfNeeds()} component={NeedsComponent} />
+                                    <Route path={fullPathOfNeedQuantities()} component={NeedQuantityComponent} />
+                                    <Route path={fullPathOfNeedApply()} component={NeedApplyComponent} />
+                                    <Route path={fullPathOfNeedApprove()} component={NeedApproveComponent} />
                                     <Route path={fullPathOfChangePw()} component={ChangePasswordComponent} />
                                     <Route component={NotFoundComponent} />
                                 </Switch>

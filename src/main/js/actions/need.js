@@ -3,7 +3,16 @@ import { apiRequest, apiEndpoints } from '../apiclient';
 import { ID_VARIABLE, USER_ID_VARIABLE, PROJECT_ID_VARIABLE, NEED_START_DIFF_VARIABLE, NEED_END_DIFF_VARIABLE } from '../urlmappings';
 
 function mapNeedArray(accessToken, content) {
-    let needs = []
+    var needs = {}
+    content.forEach(need => {
+        const date = moment.utc(need.date, 'x');
+        if(!needs[date]){
+            needs[date] = {}
+        }
+        needs[date][need.helperType] = need;
+    });
+    return needs;
+    /*let needs = []
     content.forEach(need => {
         const date = moment.utc(need.date, 'x');
         let item = needs[needs.length - 1];
@@ -17,7 +26,7 @@ function mapNeedArray(accessToken, content) {
         }
         item[need.helperType] = need;
     });
-    return needs;
+    return needs;*/
 }
 
 export function fetchOwnNeedStatus({ accessToken, needId, userId }) {

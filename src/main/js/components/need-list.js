@@ -14,23 +14,63 @@ import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import ClearIcon from '@material-ui/icons/Clear';
 import IconButton from '@material-ui/core/IconButton';
 import { setWaitingState, getMonthArrayWithOffsets } from '../util';
-import ProjectSelection from './project-selection';
+import ProjectSelection from './util/project-selection';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Need from './need';
 import Typography from '@material-ui/core/Typography';
 import moment from 'moment';
+import TextField from '@material-ui/core/TextField';
+
 
 const Date = props => (
   <>{['Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'][props.date.format('E')-2]}, {props.date.format('DD.MM.YYYY')}</>
 )
 
 const styles = theme => ({
-  projectWrapper: {
-  marginRight: '50px',
-  display: 'inline',
-  },
+    projectWrapper: {
+        marginRight: '50px',
+        display: 'inline',
+    },
+    calendar: {
+        tableLayout: 'fixed',
+        width: '100%',
+        borderCollapse: 'collapse',
+        minWidth: '640px',
+    },
+    calendarRow: {
+
+    },
+    calendarCell: {
+        width: '20%',
+        border: '1px solid '+theme.palette.primary.light,
+        textAlign: 'center',
+        padding: theme.spacing.unit,
+    },
+    quantityInput: {
+        minWidth: '105px',
+        width: '48%',
+        margin: '3px',
+    },
+    quantityWrapper: {
+        width: '100%'
+    },
+    dayName: {
+        padding: theme.spacing.unit,
+        color: theme.palette.secondary.dark,
+        border: '1px solid '+theme.palette.primary.light,
+        fontWeight: 'normal',
+        fontSize: 'large',
+    },
+    day: {
+        width: '100%',
+        textAlign: 'right',
+        color: theme.palette.secondary.main,
+        fontWeight: 'bold',
+        fontSize: 'larger',
+        padding: '3px',
+    },
 });
 
 @withStyles(styles)
@@ -51,7 +91,7 @@ class StatefulNeedsComponent extends React.Component {
 
     enterSingleDayMode(day) {
       this.setState({
-        ...this.state,
+          ...this.state,
         singleDayMode: true,
         day,
         needData: null,
@@ -124,6 +164,64 @@ class StatefulNeedsComponent extends React.Component {
         const { singleDayMode } = this.state;
         const tmp = (
           <>
+            <table className={classes.calendar}>
+                <tr>
+                    <th className={classes.dayName}>Dienstag</th>
+                    <th className={classes.dayName}>Mittwoch</th>
+                    <th className={classes.dayName}>Donnerstag</th>
+                    <th className={classes.dayName}>Freitag</th>
+                    <th className={classes.dayName}>Samstag</th>
+                </tr>
+                {Array.from(Array(5)).map((_,i) =>
+                        (<tr className={classes.calendarRow}>
+                            {Array.from(Array(5)).map((_,j) => (
+                                <td className={classes.calendarCell}>
+                                    <div className={classes.day}>{i*7+j}</div>
+                                    <div className={classes.quantityWrapper}>
+                                        <TextField
+                                              id="need_quantity"
+                                              label="Bauhelfer"
+                                              defaultValue={undefined}
+                                              type="number"
+                                              margin="dense"
+                                              variant="outlined"
+                                              className={classes.quantityInput}
+                                            />
+                                        <TextField
+                                              id="need_quantity"
+                                              label="Magaziner"
+                                              defaultValue={undefined}
+                                              type="number"
+                                              margin="dense"
+                                              variant="outlined"
+                                              className={classes.quantityInput}
+                                            />
+                                    </div>
+                                    <div className={classes.quantityWrapper}>
+                                        <TextField
+                                              id="need_quantity"
+                                              label="Küche"
+                                              defaultValue={undefined}
+                                              type="number"
+                                              margin="dense"
+                                              variant="outlined"
+                                              className={classes.quantityInput}
+                                            />
+                                        <TextField
+                                              id="need_quantity"
+                                              label="Putzen"
+                                              defaultValue={undefined}
+                                              type="number"
+                                              margin="dense"
+                                              variant="outlined"
+                                              className={classes.quantityInput}
+                                            />
+                                    </div>
+                                </td>
+                            ))}
+                        </tr>
+                ))}
+            </table>
             <div className={classes.projectWrapper}>
                     <ProjectSelection  onChange={project => this.switchProject(project)} accessToken={sessionState.accessToken} />
               </div>

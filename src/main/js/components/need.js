@@ -18,6 +18,7 @@ const styles = theme => ({
     verticalAlign: 'top',
     margin: '3px',
     marginBottom: '10px'
+
   },
   approved: {
     color: theme.palette.primary.main
@@ -46,7 +47,7 @@ class Need extends React.Component {
         };
     }
 
-  handleFailure() {
+    handleFailure() {
         this.props.enqueueSnackbar('Fehler beim Aktualisieren des Bedarfs', {
             variant: 'error',
         });
@@ -136,7 +137,7 @@ class Need extends React.Component {
                           InputLabelProps={{
                             shrink: true,
                           }}
-                      inputProps={{
+                          inputProps={{
                             'min': '0',
                             'step': '1',
                           }}
