@@ -38,7 +38,8 @@ class NeedQuantityEditComponent extends React.Component {
     }
 
     handleQuantityChange(event) {
-        this.latestQuantity = parseInt(event.target.value, 10)
+        let quantity = parseInt(event.target.value, 10)
+        this.latestQuantity = quantity ? quantity : 0
         this.updateValue()
     }
 
