@@ -13,5 +13,5 @@ import de.lh.tool.domain.model.User;
 public interface NeedUserRepository extends CrudRepository<NeedUser, Long> {
 	Optional<NeedUser> findByNeedAndUser(Need need, User user);
 	
-	Iterable<NeedUser> findByNeed(Need need);
+	Iterable<NeedUser> findByNeedOrderByUser_LastNameAscUser_FirstNameAsc(Need need);
 }
