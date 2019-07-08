@@ -1,7 +1,7 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { withSnackbar } from 'notistack';
-import { requiresLogin } from '../../util';
+import { requiresLogin, setWaitingState } from '../../util';
 import ProjectCalendar from '../util/project-calendar';
 import TextField from '@material-ui/core/TextField';
 import { createOrUpdateNeed, applyForNeed, revokeApplicationForNeed, fetchNeed, fetchOwnNeeds } from '../../actions/need';
@@ -74,7 +74,7 @@ class NeedApplyComponent extends React.Component {
 
     render() {
         const { classes, sessionState } = this.props;
-
+        setWaitingState(false);
         return (
             <>
                 <div className={classes.legendItem}>
