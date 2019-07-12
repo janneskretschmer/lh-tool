@@ -42,6 +42,11 @@ const ItemDisplayComponent = props => {
                 9515301538<br />
                 <br />
                 <div className={classes.bold}>
+                    Lagerplatz
+                </div>
+                <a href="javascript:alert('Umleitung zu Lager Kehlheim')">Kehlheim</a> <a href="javascript:alert('Umleitung zu Regal A Platz 7')">A7</a><br />
+                <br />
+                <div className={classes.bold}>
                     Menge+Einheit
                 </div>
                 1 Stück<br />
