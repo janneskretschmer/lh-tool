@@ -147,7 +147,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 		assertEquals(NeedUserState.APPROVED, getRequestSpecWithJwtByEmail(PUBLISHER_1_EMAIL)
 				.get(url + need1Id + "/" + publisherId).as(NeedUserDto.class).getState());
 		getRequestSpecWithJwtByEmail(LOCAL_COORDINATOR_1_EMAIL).body(new NeedUserDto(NeedUserState.NONE))
-				.contentType(ContentType.JSON).put(url + need1Id + "/" + publisherId).then().statusCode(400);
+				.contentType(ContentType.JSON).put(url + need1Id + "/" + publisherId).then().statusCode(200);
 		getRequestSpecWithJwtByEmail(LOCAL_COORDINATOR_1_EMAIL).body(new NeedUserDto(NeedUserState.APPLIED))
 				.contentType(ContentType.JSON).put(url + need1Id + "/" + publisherId).then().statusCode(200);
 		assertEquals(NeedUserState.APPLIED, getRequestSpecWithJwtByEmail(PUBLISHER_1_EMAIL)
