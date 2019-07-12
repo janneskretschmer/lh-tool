@@ -1,7 +1,7 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { SessionContext } from '../providers/session-provider';
-import { withContext } from '../util';
+import { SessionContext } from '../../providers/session-provider';
+import { withContext } from '../../util';
 import ItemDisplayComponent from './item-display';
 import ItemEditComponent from './item-edit';
 import Button from '@material-ui/core/Button';
