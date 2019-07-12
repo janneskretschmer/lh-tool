@@ -31,8 +31,6 @@ const ItemDisplayComponent = props => {
 
     return (
         <div>
-            [Show]
-
             <div className={classes.title}>Hammer</div>
             <img className={classes.image} src="https://images-na.ssl-images-amazon.com/images/I/71tTWyypTKL._SX679_.jpg"/>
             <div className={classes.container}>
