@@ -86,7 +86,7 @@ class NeedApproveEditComponent extends React.Component {
             userId:value.userId,
             needId:value.needId,
             state: newState,
-            handleFailure: err => console.log(err)
+            handleFailure: err => {}
         }).then(result => {
             this.setState({
                 users: this.state.users.map(user => {
@@ -116,7 +116,7 @@ class NeedApproveEditComponent extends React.Component {
                   <List className={classes.root}>
                     {users.map(user => {
                       return (
-                        <ListItem key={user.id} role={undefined} dense button onClick={() => this.handleToggle(user)} disabled={user.state !== 'APPROVED' && approved >= need.quantity}>
+                        <ListItem key={user.id} role={null} dense button onClick={() => this.handleToggle(user)} disabled={user.state !== 'APPROVED' && approved >= need.quantity}>
                             {user.lastName ? (
                                 <>
                                     {user.updating ? (

@@ -9,10 +9,6 @@ import IconButton from '@material-ui/core/IconButton';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = theme => ({
-    projectWrapper: {
-        marginRight: '50px',
-        display: 'inline',
-    },
     calendar: {
         tableLayout: 'fixed',
         width: '100%',

@@ -55,6 +55,22 @@ export function getMonthArrayWithOffsets(start, end) {
   return months;
 }
 
+export function isMonthOffsetWithinRange(offset, startDate, endDate) {
+    return !moment().utc().add(offset,'months').endOf('month').isBefore(startDate) && !moment().utc().add(offset,'months').startOf('month').isAfter(endDate)
+}
+
+export function getMonthOffsetWithinRange(originalOffset, startDate, endDate){
+    if(!isMonthOffsetWithinRange(originalOffset, startDate, endDate)){
+        return startDate.diff(moment().utc(),'months');
+    }
+    return originalOffset;
+}
+
+export function getMonthNameForOffset(offset) {
+    return ['Januar','Februar','Maerz','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'][moment().utc().add(offset,'months').month()]
+}
+
+
 export function getProjectMonth(monthOffset, startDate, endDate) {
     var date = moment().utc().startOf('month').add(monthOffset,'months');
     let month = date.clone().month();
@@ -79,26 +95,11 @@ export function getProjectMonth(monthOffset, startDate, endDate) {
         if(date.isoWeekday() > 1 && date.isoWeekday() < 7){
             let day = {
                 date: date.clone(),
-                disabled: date.month() != month || date.isBefore(startDate) || date.isAfter(endDate),
+                disabled: date.month() !== month || date.isBefore(startDate) || date.isAfter(endDate),
             }
             result.days.push(day);
         }
         date =  date.add(1, 'days')
     }
     return result;
-}
-
-export function isMonthOffsetWithinRange(offset, startDate, endDate) {
-    return !moment().utc().add(offset,'months').endOf('month').isBefore(startDate) && !moment().utc().add(offset,'months').startOf('month').isAfter(endDate)
-}
-
-export function getMonthOffsetWithinRange(originalOffset, startDate, endDate){
-    if(!isMonthOffsetWithinRange(originalOffset, startDate, endDate)){
-        return startDate.diff(moment().utc(),'months');
-    }
-    return originalOffset;
-}
-
-export function getMonthNameForOffset(offset) {
-    return ["Januar","Februar","Maerz","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"][moment().utc().add(offset,'months').month()]
 }

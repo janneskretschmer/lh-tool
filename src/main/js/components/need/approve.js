@@ -214,7 +214,7 @@ class NeedApproveComponent extends React.Component {
                                                 return (
                                                     <td className={classNames({
                                                             [classes.calendarCell]: true,
-                                                            [classes.selected]: index == selectedDay,
+                                                            [classes.selected]: index === selectedDay,
                                                         })} key={j}>
                                                             <Button
                                                                 disabled={data.days[index].disabled}
@@ -228,6 +228,9 @@ class NeedApproveComponent extends React.Component {
                                             })}
                                         </tr>
                                     ))}
+                                <tr>
+                                	<td colSpan="5">Bitte klicke auf einen Tag, um die Bewerber zuzuteilen.<br /> Wenn alle Positionen besetzt sind, erscheint ein Haken.</td>
+                                </tr>
                             </tbody>
                         </table>
 
@@ -238,12 +241,12 @@ class NeedApproveComponent extends React.Component {
                                         <Date date={data.days[selectedDay].date}/>
                                     </div>
                                     <div className={classes.needsWrapper}>
-                                        <NeedApproveEditComponent label="Bauhelfer" need={data.days[selectedDay].needs.CONSTRUCTION_WORKER} onApprove={(diff) => this.updateApprovedCount("CONSTRUCTION_WORKER",diff)}/>
-                                        <NeedApproveEditComponent label="Magaziner" need={data.days[selectedDay].needs.STORE_KEEPER} onApprove={(diff) => this.updateApprovedCount("STORE_KEEPER",diff)}/>
+                                        <NeedApproveEditComponent label="Bauhelfer" need={data.days[selectedDay].needs.CONSTRUCTION_WORKER} onApprove={(diff) => this.updateApprovedCount('CONSTRUCTION_WORKER',diff)}/>
+                                        <NeedApproveEditComponent label="Magaziner" need={data.days[selectedDay].needs.STORE_KEEPER} onApprove={(diff) => this.updateApprovedCount('STORE_KEEPER',diff)}/>
                                     </div>
                                     <div className={classes.needsWrapper}>
-                                        <NeedApproveEditComponent label="Küche" need={data.days[selectedDay].needs.KITCHEN_HELPER} onApprove={(diff) => this.updateApprovedCount("KITCHEN_HELPER",diff)}/>
-                                        <NeedApproveEditComponent label="Putzen" need={data.days[selectedDay].needs.CLEANER} onApprove={(diff) => this.updateApprovedCount("CLEANER",diff)}/>
+                                        <NeedApproveEditComponent label="Küche" need={data.days[selectedDay].needs.KITCHEN_HELPER} onApprove={(diff) => this.updateApprovedCount('KITCHEN_HELPER',diff)}/>
+                                        <NeedApproveEditComponent label="Putzen" need={data.days[selectedDay].needs.CLEANER} onApprove={(diff) => this.updateApprovedCount('CLEANER',diff)}/>
                                     </div>
                                 </div>
                             </>

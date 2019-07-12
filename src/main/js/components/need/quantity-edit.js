@@ -76,7 +76,7 @@ class NeedQuantityEditComponent extends React.Component {
                 <TextField
                       id="need_quantity"
                       label={label}
-                      defaultValue={need.quantity > 0 ? need.quantity : undefined}
+                      defaultValue={need.quantity > 0 ? need.quantity : null}
                       type="number"
                       margin="dense"
                       variant="outlined"
