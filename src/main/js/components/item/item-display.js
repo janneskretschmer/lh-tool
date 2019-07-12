@@ -4,7 +4,7 @@ import Chip from '@material-ui/core/Chip';
 
 const styles = theme => ({
     bold: {
-        fontWeight: '500',
+        fontWeight: 'bold',
     },
     title: {
         fontSize: '30px',
@@ -12,8 +12,7 @@ const styles = theme => ({
         textAlign: 'center',
     },
     image: {
-        float: 'right',
-        maxWidth: '100%',
+        maxWidth: '400px',
         display: 'inline-block',
         verticalAlign: 'top',
         marginRight: '30px',
