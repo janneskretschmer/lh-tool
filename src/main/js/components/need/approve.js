@@ -229,7 +229,7 @@ class NeedApproveComponent extends React.Component {
                                         </tr>
                                     ))}
                                 <tr>
-                                	<td colSpan="5">Bitte klicke auf einen Tag, um die Bewerber zuzuteilen.<br /> Wenn alle Positionen besetzt sind, erscheint ein Haken.</td>
+                                    <td colSpan="5">Bitte klicke auf einen Tag, um die Bewerber zuzuteilen.<br /> Wenn alle Positionen besetzt sind, erscheint ein Haken.</td>
                                 </tr>
                             </tbody>
                         </table>
