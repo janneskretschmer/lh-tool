@@ -12,6 +12,17 @@ const ItemEditComponent = props => {
     return (
         <div>
             edit
+
+            <span>Hammer</span>
+            Eindeutiger Bezeichner
+            (Barcode)
+            Menge+Einheit
+            Maße
+            Verbrauchsgegenstand
+            Beschreibung
+            Tags
+            Gewerke
+            Historie
         </div>
     )
 }
