@@ -9,6 +9,8 @@ import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import SearchIcon from '@material-ui/icons/Search';
+import DeleteIcon from '@material-ui/icons/Delete';
+import ForwardIcon from '@material-ui/icons/Forward';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import Button from '@material-ui/core/Button';
@@ -22,6 +24,7 @@ import { fullPathOfItem } from '../../paths';
 import { Redirect } from 'react-router'
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
+import Checkbox from '@material-ui/core/Checkbox';
 
 
 const styles = theme => ({
@@ -42,6 +45,12 @@ const styles = theme => ({
     new: {
         marginTop: theme.spacing.unit,
     },
+    selectionHeader: {
+        width: '120px',
+    },
+    selectionText: {
+        marginRight: '18px',
+    },
 });
 
 @withStyles(styles)
@@ -52,21 +61,22 @@ export default class ItemListComponent extends React.Component {
         super(props);
         this.state = {
             rows: [
-                {id:1,name:'Hammer',store:1,slot:1,quantity:3,unit:'Stueck'},
-                {id:2,name:'Hammer',store:2,slot:2,quantity:3,unit:'Stueck'},
-                {id:3,name:'Meissel',store:1,slot:3,quantity:4,unit:'Stueck'},
-                {id:4,name:'Presslufthammer',slot:4,store:1,quantity:5,unit:'Stueck'},
-                {id:5,name:'Schlauch dick',slot:5,store:2,quantity:2,unit:'m'},
-                {id:6,name:'Schlauch duenn',slot:1,store:2,quantity:2,unit:'m'},
-                {id:7,name:'Schlauch dick',slot:2,store:1,quantity:4,unit:'m'},
-                {id:8,name:'Silikon',store:2,slot:3,quantity:2,unit:'Stueck'},
-                {id:9,name:'Zange',store:2,slot:4,quantity:3,unit:'Stueck'},
-                {id:10,name:'Zange',store:3,slot:5,quantity:2,unit:'Stueck'},
-                {id:11,name:'Zollstock',store:2,slot:1,quantity:2,unit:'Stueck'},
-                {id:12,name:'Zollstock',store:1,slot:3,quantity:7,unit:'Stueck'},
+                { id: 1, name: 'Hammer', store: 1, slot: 1, quantity: 3, unit: 'Stueck' },
+                { id: 2, name: 'Hammer', store: 2, slot: 2, quantity: 3, unit: 'Stueck' },
+                { id: 3, name: 'Meissel', store: 1, slot: 3, quantity: 4, unit: 'Stueck' },
+                { id: 4, name: 'Presslufthammer', slot: 4, store: 1, quantity: 5, unit: 'Stueck' },
+                { id: 5, name: 'Schlauch dick', slot: 5, store: 2, quantity: 2, unit: 'm' },
+                { id: 6, name: 'Schlauch duenn', slot: 1, store: 2, quantity: 2, unit: 'm' },
+                { id: 7, name: 'Schlauch dick', slot: 2, store: 1, quantity: 4, unit: 'm' },
+                { id: 8, name: 'Silikon', store: 2, slot: 3, quantity: 2, unit: 'Stueck' },
+                { id: 9, name: 'Zange', store: 2, slot: 4, quantity: 3, unit: 'Stueck' },
+                { id: 10, name: 'Zange', store: 3, slot: 5, quantity: 2, unit: 'Stueck' },
+                { id: 11, name: 'Zollstock', store: 2, slot: 1, quantity: 2, unit: 'Stueck' },
+                { id: 12, name: 'Zollstock', store: 1, slot: 3, quantity: 7, unit: 'Stueck' },
             ],//.sort((a, b) => (a.name < b.name ? -1 : 1)),
             page: 0,
             rowsPerPage: 10,
+            selected: [],
 
             showFilters: false,
             searchTechnicalCrew: '',
@@ -75,6 +85,12 @@ export default class ItemListComponent extends React.Component {
             searchSlot: '',
             redirect: undefined,
         };
+    }
+
+    handleSelection = (index) => {
+        this.setState({
+            selected: this.state.selected.includes(index) ? this.state.selected.filter(item => item !== index) : this.state.selected.concat(index),
+        })
     }
 
     handleChangePage = (event, page) => {
@@ -86,7 +102,7 @@ export default class ItemListComponent extends React.Component {
     };
 
     handleToggleShowFilters = () => {
-        this.setState({ showFilters: !this.state.showFilters})
+        this.setState({ showFilters: !this.state.showFilters })
     }
 
     handleChangeSearchTechnicalCrew = event => {
@@ -105,16 +121,16 @@ export default class ItemListComponent extends React.Component {
         this.setState({ searchSlot: event.target.value })
     }
 
-    redirect (id) {
-        this.setState({ redirect: id})
+    redirect(id) {
+        this.setState({ redirect: id })
     }
 
     render() {
         const { classes } = this.props
-        const { rows, rowsPerPage, page, showFilters, searchTechnicalCrew, searchTag, searchStore, searchSlot } = this.state;
+        const { rows, rowsPerPage, page, showFilters, searchTechnicalCrew, searchTag, searchStore, searchSlot, selected } = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
-        if(this.state.redirect) {
-            return (<Redirect to={fullPathOfItem(this.state.redirect)}/>)
+        if (this.state.redirect) {
+            return (<Redirect to={fullPathOfItem(this.state.redirect)} />)
         }
         return (
             <SessionContext.Consumer>
@@ -227,25 +243,45 @@ export default class ItemListComponent extends React.Component {
                                     <TableCell align="right">Lager</TableCell>
                                     <TableCell align="right">Platz</TableCell>
                                     <TableCell align="right">Menge</TableCell>
+                                    <TableCell align="right" padding="checkbox" className={classes.selectionHeader}>
+                                        {selected.length > 0 ? (
+                                            <>
+                                                <span className={classes.selectionText}>
+                                                    Auswahl ({selected.length})
+                                                </span>
+                                                <IconButton onClick={() => alert('TODO: Ausgewählte Artikel verschieben')}>
+                                                    <ForwardIcon />
+                                                </IconButton>
+                                                <IconButton onClick={() => alert('TODO: Ausgewählte Artikel löschen')}>
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            </>
+                                        ) : null}
+                                    </TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
                                     <TableRow
                                         key={row.id}
-                                        onClick={event => this.redirect(row.id)}
                                     >
-                                        <TableCell component="th" scope="row">
+                                        <TableCell component="th" scope="row" onClick={event => this.redirect(row.id)}>
                                             {row.name}
                                         </TableCell>
-                                        <TableCell align="right">
+                                        <TableCell align="right" onClick={event => this.redirect(row.id)}>
                                             {row.store}
                                         </TableCell>
-                                        <TableCell align="right">
+                                        <TableCell align="right" onClick={event => this.redirect(row.id)}>
                                             {row.slot}
                                         </TableCell>
-                                        <TableCell align="right">
+                                        <TableCell align="right" onClick={event => this.redirect(row.id)}>
                                             {row.quantity} {row.unit}
+                                        </TableCell>
+                                        <TableCell align="right" padding="checkbox">
+                                            <Checkbox
+                                                checked={selected.includes(row.id)}
+                                                onChange={() => this.handleSelection(row.id)}
+                                            />
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -257,9 +293,11 @@ export default class ItemListComponent extends React.Component {
                             </TableBody>
                             <TableFooter>
                                 <TableRow>
-                                    <Button variant="contained" onClick={() => alert('TODO: Umleitung auf leere Bearbeiten-Seite')} className={classes.new}>
-                                        Hinzufügen
-                                    </Button>
+                                    <TableCell>
+                                        <Button variant="contained" onClick={() => alert('TODO: Umleitung auf leere Bearbeiten-Seite')} className={classes.new}>
+                                            Hinzufügen
+                                                    </Button>
+                                    </TableCell>
                                     <TablePagination
                                         rowsPerPageOptions={[5, 10, 25]}
                                         colSpan={3}
@@ -278,6 +316,6 @@ export default class ItemListComponent extends React.Component {
                     </>
                 )}
             </SessionContext.Consumer>
-    );
-}
+        );
+    }
 }
