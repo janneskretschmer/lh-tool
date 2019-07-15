@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { withSnackbar } from 'notistack';
 import { requiresLogin } from '../../util';
 import TextField from '@material-ui/core/TextField';
-import { changeApplicationStateForNeed} from '../../actions/need';
+import { changeApplicationStateForNeed } from '../../actions/need';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
 
@@ -33,38 +33,37 @@ class NeedApplyEditComponent extends React.Component {
         });
     }
 
-    toggleApplicationStatus(){
-      this.setState({
-        ...this.state,
-        updating: true,
-      })
-      changeApplicationStateForNeed({
-        accessToken: this.props.sessionState.accessToken,
-        userId: this.props.sessionState.currentUser.id,
-        needId: this.state.need.id,
-        state: this.state.need.ownState === 'NONE' ? 'APPLIED' : 'NONE',
-        handleFailure: null,
-      })
-              .then(newNeedUser => {
-                  this.setState({
+    toggleApplicationStatus() {
+        this.setState({
+            updating: true,
+        })
+        changeApplicationStateForNeed({
+            accessToken: this.props.sessionState.accessToken,
+            userId: this.props.sessionState.currentUser.id,
+            needId: this.state.need.id,
+            state: this.state.need.ownState === 'NONE' ? 'APPLIED' : 'NONE',
+            handleFailure: null,
+        })
+            .then(newNeedUser => {
+                this.setState({
                     need: {
-                      ...this.state.need,
-                      ownState: newNeedUser.state,
+                        ...this.state.need,
+                        ownState: newNeedUser.state,
                     },
                     updating: false,
-                  })
-              });
-      }
+                })
+            });
+    }
 
     render() {
         const { classes, label, sessionState } = this.props;
         const { need, updating } = this.state;
 
         return updating ? (
-                <span className={classes.apply}>
-                    <CircularProgress size={15}/>
-                </span>
-            ) : (
+            <span className={classes.apply}>
+                <CircularProgress size={15} />
+            </span>
+        ) : (
                 <>
                     <Button
                         variant={need.ownState === 'APPLIED' || need.ownState === 'APPROVED' ? 'contained' : 'outlined'}
