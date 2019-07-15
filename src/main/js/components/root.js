@@ -10,6 +10,7 @@ import { Helmet } from 'react-helmet';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import {
     fullPathOfStores,
+    fullPathOfStore,
     fullPathOfItems,
     fullPathOfItem,
     fullPathOfChangePw, 
@@ -34,6 +35,7 @@ import AppMenu from './menu';
 import NeedApplyComponent from './need/apply';
 import NeedApproveComponent from './need/approve';
 import NeedQuantityComponent from './need/quantities';
+import StoreDetailComponent from './store/store-detail';
 import ItemListComponent from './item/item-list';
 import ItemDetailComponent from './item/item-detail';
 import NotFoundComponent from './notfound';
@@ -147,7 +149,6 @@ export default class LHToolRoot extends React.Component {
                                     <Route path={fullPathOfNeedApprove()} component={NeedApproveComponent} />
                                     <Route path={fullPathOfStore()} component={StoreDetailComponent} />
                                     <Route path={fullPathOfStores()} component={StoreListComponent} />
-                                    <Route path={fullPathOfItem()} component={ItemDetailComponent} />
                                     <Route path={fullPathOfItem()} component={ItemDetailComponent} />
                                     <Route path={fullPathOfItems()} component={ItemListComponent} />
                                     <Route path={fullPathOfChangePw()} component={ChangePasswordComponent} />

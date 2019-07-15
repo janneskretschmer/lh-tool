@@ -35,34 +35,34 @@ export default class ItemDetailComponent extends React.Component {
 
     render () {
         const {classes} = this.props
-      return (
-        <>
-            [Detail-Ansicht für {this.props.match.params.id}]
-            {this.state.edit ? (
-                <>
-                    <ItemEditComponent></ItemEditComponent>
-                    <Button variant="contained" className={classes.button} type="submit" onClick={() => this.changeEditState(false)}>
+        return (
+            <>
+                [Detail-Ansicht für {this.props.match.params.id}]
+                {this.state.edit ? (
+                    <>
+                        <ItemEditComponent></ItemEditComponent>
+                        <Button variant="contained" className={classes.button} type="submit" onClick={() => this.changeEditState(false)}>
                             Speichern
-                    </Button>
-                </>
-            ):(
-                <>
-                    <ItemDisplayComponent></ItemDisplayComponent>
-                    <Button variant="contained" className={classes.button} onClick={() => this.changeEditState(true)}>
-                        Bearbeiten
-                    </Button>
-                    <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Verschieben"')}>
-                        Verschieben
-                    </Button>
-                    <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Kopieren"')}>
-                        Kopieren
-                    </Button>
-                    <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
-                        Defekt
-                    </Button>
-                </>
-            )}
-        </>
-      )
-    }
+                        </Button>
+                    </>
+                ):(
+                    <>
+                        <ItemDisplayComponent></ItemDisplayComponent>
+                        <Button variant="contained" className={classes.button} onClick={() => this.changeEditState(true)}>
+                            Bearbeiten
+                        </Button>
+                        <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Verschieben"')}>
+                            Verschieben
+                        </Button>
+                        <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Kopieren"')}>
+                            Kopieren
+                        </Button>
+                        <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
+                            Defekt
+                        </Button>
+                    </>
+                )}
+            </>
+)
+}
 }
