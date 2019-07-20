@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -26,7 +25,6 @@ import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.HelperType;
 import de.lh.tool.domain.model.Need;
-import de.lh.tool.domain.model.NeedUser;
 import de.lh.tool.domain.model.NeedUserState;
 import de.lh.tool.domain.model.Project;
 import de.lh.tool.domain.model.UserRole;
@@ -56,7 +54,8 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 			return super.convertToDto(need);
 		}
 		try {
-			List<NeedUserDto> needUsers = needUserService.findDtosByNeedId(need.getId()).stream()
+			List<NeedUserDto> needUsers = needUserService
+					.findDtosByNeedId(need.getId()).stream()
 					.filter(nu -> nu.getState() != NeedUserState.NONE).collect(Collectors.toList());
 			int appliedCount = (int) needUsers.stream().filter(nu -> nu.getState() == NeedUserState.APPLIED).count();
 			int approvedCount = (int) needUsers.stream().filter(nu -> nu.getState() == NeedUserState.APPROVED).count();
@@ -86,7 +85,9 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 		Date today = DateUtils.truncate(new Date(), Calendar.DATE);
 		Date start = DateUtils.addDays(today, ObjectUtils.defaultIfNull(startDiff, DEFAULT_START_DIFF));
 		Date end = DateUtils.addDays(today, ObjectUtils.defaultIfNull(endDiff, DEFAULT_END_DIFF));
-		Collection<Project> projects = projectId == null ? projectService.getOwnProjects() : List.of(projectService.findById(projectId).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID)));
+		Collection<Project> projects = projectId == null ? projectService.getOwnProjects()
+				: List.of(projectService.findById(projectId)
+						.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID)));
 		for (Project project : projects) {
 			// TODO write test
 			if (project.getEndDate().before(start) || project.getStartDate().after(end)) {

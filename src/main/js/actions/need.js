@@ -3,19 +3,13 @@ import { apiRequest, apiEndpoints } from '../apiclient';
 import { ID_VARIABLE, USER_ID_VARIABLE, PROJECT_ID_VARIABLE, NEED_START_DIFF_VARIABLE, NEED_END_DIFF_VARIABLE } from '../urlmappings';
 
 function mapNeedArray(accessToken, content) {
-    let needs = []
+    let needs = {}
     content.forEach(need => {
-        const date = moment(need.date, 'x');
-        let item = needs[needs.length - 1];
-        if (!item || !date.isSame(item.date, 'day') || item.projectName !== need.projectName) {
-            item = {
-                date,
-                projectName: need.projectName,
-                projectId: need.projectId
-            }
-            needs.push(item);
+        const date = moment.utc(need.date, 'x');
+        if(!needs[date]){
+            needs[date] = {}
         }
-        item[need.helperType] = need;
+        needs[date][need.helperType] = need;
     });
     return needs;
 }

@@ -7,6 +7,10 @@ export const fullPathOfLogin = () => fullPathOf('/login/');
 
 export const fullPathOfProjects = () => fullPathOf('/projects/');
 
-export const fullPathOfNeeds = () => fullPathOf('/needs/');
+export const fullPathOfNeedQuantities = () => fullPathOf('/needs/quantities/');
+
+export const fullPathOfNeedApply = () => fullPathOf('/needs/apply/');
+
+export const fullPathOfNeedApprove = () => fullPathOf('/needs/approve/');
 
 export const fullPathOfChangePw = () => fullPathOf('/changepw/');

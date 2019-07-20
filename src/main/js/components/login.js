@@ -15,7 +15,11 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { Redirect } from 'react-router'
-import { fullPathOfProjects, fullPathOfNeeds } from '../paths';
+import {
+    fullPathOfProjects,
+    fullPathOfNeedApply,
+    fullPathOfNeedQuantities,
+ } from '../paths';
 import { setWaitingState } from '../util';
 
 const styles = theme => ({
@@ -63,14 +67,14 @@ export default class LoginComponent extends React.Component {
             loading: false,
         });
     }
-    
+
     setWaiting() {
         setWaitingState(true);
         this.setState({
         	pwResetDialogOpen: this.state.pwResetDialogOpen,
         	loading: true,
         })
-    	
+
     }
 
     render() {
@@ -129,7 +133,7 @@ export default class LoginComponent extends React.Component {
                                         />
                                         <br />
                                         { this.state.loading ? (<CircularProgress />) : (
-	                                        <>	
+	                                        <>
                                         		<Button size="small" color="secondary" className={classes.button} onClick={this.openPwResetDialog.bind(this)}>
 		                                        	Passwort vergessen
 		                                        </Button>
@@ -186,8 +190,10 @@ export default class LoginComponent extends React.Component {
                     );
                 } else if(loginState.hasPermission('ROLE_ADMIN') || loginState.hasPermission('ROLE_CONSTRUCTION_SERVANT')){
                     return (<Redirect to={fullPathOfProjects()}/>);
-                } else if(loginState.hasPermission('ROLE_LOCAL_COORDINATOR') || loginState.hasPermission('ROLE_PUBLISHER')){
-                    return (<Redirect to={fullPathOfNeeds()}/>);
+                } else if(loginState.hasPermission('ROLE_LOCAL_COORDINATOR')){
+                    return (<Redirect to={fullPathOfNeedQuantities()}/>);
+                } else if(loginState.hasPermission('ROLE_PUBLISHER')){
+                    return (<Redirect to={fullPathOfNeedApply()}/>);
                 } else {
                     return (<div>Willkommen</div>);
                 }

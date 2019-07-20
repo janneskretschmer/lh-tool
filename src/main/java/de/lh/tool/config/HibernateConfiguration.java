@@ -1,6 +1,7 @@
 package de.lh.tool.config;
 
 import java.util.Properties;
+import java.util.TimeZone;
 
 import javax.sql.DataSource;
 
@@ -61,6 +62,8 @@ public class HibernateConfiguration {
 
 	@Bean
 	public DataSource getDataSource() {
+		TimeZone.setDefault(TimeZone.getTimeZone("Etc/UTC"));
+
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
 		dataSource.setUrl(environment.getRequiredProperty("jdbc.url"));

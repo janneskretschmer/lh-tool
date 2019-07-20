@@ -133,7 +133,8 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 	@Transactional
 	public List<NeedUserDto> findDtosByNeedId(Long needId) throws DefaultException {
 		Need need = needService.findById(needId).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
-		List<NeedUser> needUserList = newArrayList(getRepository().findByNeed(need));
+		List<NeedUser> needUserList = newArrayList(
+				getRepository().findByNeedOrderByUser_LastNameAscUser_FirstNameAsc(need));
 		if (!(needUserList.size() > 0 && projectService.isOwnProject(needUserList.get(0).getNeed().getProject()))
 				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT)) {
 			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);

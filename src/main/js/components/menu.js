@@ -6,7 +6,9 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import GroupWorkIcon from '@material-ui/icons/GroupWork';
-import GroupAddIcon from '@material-ui/icons/GroupAdd';
+import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
+import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
+import DateRangeIcon from '@material-ui/icons/DateRange';
 import FaceIcon from '@material-ui/icons/Face';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
@@ -18,7 +20,9 @@ import { logout } from '../actions/login';
 import {
   fullPathOfLogin,
   fullPathOfProjects,
-  fullPathOfNeeds,
+  fullPathOfNeedQuantities,
+  fullPathOfNeedApply,
+  fullPathOfNeedApprove,
   fullPathOfChangePw,
 } from '../paths';
 
@@ -34,7 +38,7 @@ const CurrentUserItem = props => (
 );
 
 const ProjectsItem = () => (
-  <WithPermission permission="ROLE_RIGHT_PROJECTS_GET">
+  <WithPermission permission="ROLE_RIGHT_PROJECTS_POST">
     <Link to={fullPathOfProjects()} style={linkStyle}>
       <ListItem button>
         <ListItemIcon>
@@ -46,14 +50,40 @@ const ProjectsItem = () => (
   </WithPermission>
 );
 
-const NeedsItem = () => (
-  <WithPermission permission="ROLE_RIGHT_NEEDS_GET">
-    <Link to={fullPathOfNeeds()} style={linkStyle}>
+const NeedQuantitiesItem = () => (
+  <WithPermission permission="ROLE_RIGHT_NEEDS_POST">
+    <Link to={fullPathOfNeedQuantities()} style={linkStyle}>
       <ListItem button>
         <ListItemIcon>
-          <GroupAddIcon />
+          <DateRangeIcon />
         </ListItemIcon>
-        <ListItemText primary="Helfer" />
+        <ListItemText primary="Bedarf" />
+      </ListItem>
+    </Link>
+  </WithPermission>
+);
+
+const NeedApplyItem = () => (
+  <WithPermission permission="ROLE_RIGHT_NEEDS_APPLY">
+    <Link to={fullPathOfNeedApply()} style={linkStyle}>
+      <ListItem button>
+        <ListItemIcon>
+          <AssignmentIndIcon />
+        </ListItemIcon>
+        <ListItemText primary="Bewerben" />
+      </ListItem>
+    </Link>
+  </WithPermission>
+);
+
+const NeedApproveItem = () => (
+  <WithPermission permission="ROLE_RIGHT_NEEDS_APPROVE">
+    <Link to={fullPathOfNeedApprove()} style={linkStyle}>
+      <ListItem button>
+        <ListItemIcon>
+          <AssignmentTurnedInIcon />
+        </ListItemIcon>
+        <ListItemText primary="Zuteilen" />
       </ListItem>
     </Link>
   </WithPermission>
@@ -113,7 +143,9 @@ export default function AppMenu() {
           <Divider />
           <List>
             <ProjectsItem />
-            <NeedsItem />
+            <NeedQuantitiesItem />
+            <NeedApplyItem />
+            <NeedApproveItem />
           </List>
           <Divider />
           <List>
