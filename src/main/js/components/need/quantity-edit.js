@@ -53,7 +53,6 @@ class NeedQuantityEditComponent extends React.Component {
             createOrUpdateNeed({
                 need: { ...this.state.need, quantity: this.latestQuantity}, sessionState: this.props.sessionState, handleFailure: this.handleFailure.bind(this)
             }).then(need => this.setState({
-                ...this.state,
                 need,
                 updating: false,
             }, function(){

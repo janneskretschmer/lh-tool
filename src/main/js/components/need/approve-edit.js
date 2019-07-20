@@ -77,9 +77,11 @@ class NeedApproveEditComponent extends React.Component {
         value.state = newState
         value.updating = true
         let diff = (newState === 'APPROVED' ? 1 : -1)
-        this.setState({
-            users: this.state.users.map(user => user.userId === value.userId ? value : user),
-            approved: this.state.approved + diff,
+        this.setState(prevState => {
+            return {
+                users: prevState.users.map(user => user.userId === value.userId ? value : user),
+                approved: prevState.approved + diff,
+            }
         });
         changeApplicationStateForNeed({
             accessToken:this.props.sessionState.accessToken,
@@ -145,9 +147,5 @@ class NeedApproveEditComponent extends React.Component {
     )
   }
 }
-
-NeedApproveEditComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 
 export default requiresLogin(withStyles(styles)(NeedApproveEditComponent));
