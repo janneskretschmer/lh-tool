@@ -11,13 +11,9 @@ import { Helmet } from 'react-helmet';
 import {
     fullPathOfLogin,
     fullPathOfProjects,
-<<<<<<< HEAD
     fullPathOfNeedQuantities,
     fullPathOfNeedApply,
     fullPathOfNeedApprove,
-=======
-    fullPathOfNeeds,
->>>>>>> branch 'warehousing-ui-dummy' of https://github.com/janneskretschmer/lh-tool.git
     fullPathOfStores,
     fullPathOfStore,
     fullPathOfItems,
@@ -27,13 +23,9 @@ import {
 import AppHeader from './header';
 import LoginComponent from './login';
 import ProjectsComponent from './project';
-<<<<<<< HEAD
 import NeedQuantityComponent from './need/quantities';
 import NeedApplyComponent from './need/apply';
 import NeedApproveComponent from './need/approve';
-=======
-import NeedsComponent from './need-list';
->>>>>>> branch 'warehousing-ui-dummy' of https://github.com/janneskretschmer/lh-tool.git
 import StoreListComponent from './store/store-list';
 import StoreDetailComponent from './store/store-detail';
 import ItemListComponent from './item/item-list';
@@ -144,15 +136,10 @@ export default class LHToolRoot extends React.Component {
                                 <Switch>
                                     <Route path={fullPathOfLogin()} component={LoginComponent} />
                                     <Route path={fullPathOfProjects()} component={ProjectsComponent} />
-<<<<<<< HEAD
                                     <Route path={fullPathOfNeedQuantities()} component={NeedQuantityComponent} />
                                     <Route path={fullPathOfNeedApply()} component={NeedApplyComponent} />
                                     <Route path={fullPathOfNeedApprove()} component={NeedApproveComponent} />
 									<Route path={fullPathOfStore()} component={StoreDetailComponent} />
-=======
-                                    <Route path={fullPathOfNeeds()} component={NeedsComponent} />
-                                    <Route path={fullPathOfStore()} component={StoreDetailComponent} />
->>>>>>> branch 'warehousing-ui-dummy' of https://github.com/janneskretschmer/lh-tool.git
                                     <Route path={fullPathOfStores()} component={StoreListComponent} />
                                     <Route path={fullPathOfItem()} component={ItemDetailComponent} />
                                     <Route path={fullPathOfItems()} component={ItemListComponent} />

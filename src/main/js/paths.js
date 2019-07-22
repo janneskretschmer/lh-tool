@@ -14,18 +14,6 @@ export const fullPathOfNeedApply = () => fullPathOf('/needs/apply/');
 export const fullPathOfNeedApprove = () => fullPathOf('/needs/approve/');
 
 export const fullPathOfStores = () => fullPathOf('/stores/');
-
-export const fullPathOfItems = () => fullPathOf('/items/');
-
-export const fullPathOfItem = (id) => fullPathOf('/item/');
-
-export const fullPathOfStores = () => fullPathOf('/stores/');
-export const fullPathOfStore = (id) => fullPathOf('/stores/' + (id ? id : ':id'));
-
-export const fullPathOfItems = () => fullPathOf('/items');
-export const fullPathOfItem = (id) => fullPathOf('/items/' + (id ? id : ':id'));
-
-export const fullPathOfStores = () => fullPathOf('/stores/');
 export const fullPathOfStore = (id) => fullPathOf('/stores/' + (id ? id : ':id'));
 
 export const fullPathOfItems = () => fullPathOf('/items');
