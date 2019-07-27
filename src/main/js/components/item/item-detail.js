@@ -33,8 +33,8 @@ export default class ItemDetailComponent extends React.Component {
         })
     }
 
-    render () {
-        const {classes} = this.props
+    render() {
+        const { classes } = this.props
         return (
             <>
                 [Detail-Ansicht für {this.props.match.params.id}]
@@ -45,30 +45,30 @@ export default class ItemDetailComponent extends React.Component {
                             Speichern
                         </Button>
                     </>
-                ):(
-                    <>
-                        <ItemDisplayComponent></ItemDisplayComponent>
-                        <Button variant="contained" className={classes.button} onClick={() => this.changeEditState(true)}>
-                            Bearbeiten
+                ) : (
+                        <>
+                            <ItemDisplayComponent></ItemDisplayComponent>
+                            <Button variant="contained" className={classes.button} onClick={() => this.changeEditState(true)}>
+                                Bearbeiten
                         </Button>
-                        <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Verschieben"')}>
-                            Verschieben
+                            <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Verschieben"')}>
+                                Verschieben
                         </Button>
-                        <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Kopieren"')}>
-                            Kopieren
+                            <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Kopieren"')}>
+                                Kopieren
                         </Button>
-                        <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
-                            Defekt
+                            <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
+                                Defekt
                         </Button>
-                        <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Ausleihen"')}>
-                            Ausleihen
+                            <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Ausleihen"')}>
+                                Ausleihen
                         </Button>
-                        <Button variant="outlined" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
-                            Löschen
+                            <Button variant="outlined" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
+                                Löschen
                         </Button>
-                    </>
-                )}
+                        </>
+                    )}
             </>
-)
-}
+        )
+    }
 }
