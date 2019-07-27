@@ -51,6 +51,9 @@ const styles = theme => ({
     selectionText: {
         marginRight: '18px',
     },
+    clickable: {
+        cursor: 'pointer',
+    }
 });
 
 @withStyles(styles)
@@ -61,19 +64,109 @@ export default class ItemListComponent extends React.Component {
         super(props);
         this.state = {
             rows: [
-                { id: 1, name: 'Hammer', store: 1, slot: 1, quantity: 3, unit: 'Stueck' },
-                { id: 2, name: 'Hammer', store: 2, slot: 2, quantity: 3, unit: 'Stueck' },
-                { id: 3, name: 'Meissel', store: 1, slot: 3, quantity: 4, unit: 'Stueck' },
-                { id: 4, name: 'Presslufthammer', slot: 4, store: 1, quantity: 5, unit: 'Stueck' },
-                { id: 5, name: 'Schlauch dick', slot: 5, store: 2, quantity: 2, unit: 'm' },
-                { id: 6, name: 'Schlauch duenn', slot: 1, store: 2, quantity: 2, unit: 'm' },
-                { id: 7, name: 'Schlauch dick', slot: 2, store: 1, quantity: 4, unit: 'm' },
-                { id: 8, name: 'Silikon', store: 2, slot: 3, quantity: 2, unit: 'Stueck' },
-                { id: 9, name: 'Zange', store: 2, slot: 4, quantity: 3, unit: 'Stueck' },
-                { id: 10, name: 'Zange', store: 3, slot: 5, quantity: 2, unit: 'Stueck' },
-                { id: 11, name: 'Zollstock', store: 2, slot: 1, quantity: 2, unit: 'Stueck' },
-                { id: 12, name: 'Zollstock', store: 1, slot: 3, quantity: 7, unit: 'Stueck' },
-            ],//.sort((a, b) => (a.name < b.name ? -1 : 1)),
+                {
+                    id: 1, name: 'Hammer', store: 1, slot: 1, quantity: 3, unit: 'Stueck', broken: false, rentals: [
+                        { id: 1, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                        { id: 2, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
+                        { id: 3, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
+                        { id: 4, userName: "Bauhelfer 34", timestamp: null, givenBack: true },
+                        { id: 5, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
+                        { id: 6, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                        { id: 7, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                        { id: 8, userName: "Bauhelfer 4", timestamp: null, givenBack: true },
+                        { id: 9, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
+                        { id: 10, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                        { id: 11, userName: "Bauhelfer 5", timestamp: null, givenBack: false },
+                    ]
+                },
+                { id: 2, name: 'Hammer', store: 2, slot: 2, quantity: 3, unit: 'Stueck', broken: false, rentals: [
+                    { id: 1, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                    { id: 2, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
+                    { id: 3, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
+                    { id: 4, userName: "Bauhelfer 34", timestamp: null, givenBack: true },
+                    { id: 5, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
+                    { id: 6, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                ] },
+                { id: 3, name: 'Meissel', store: 1, slot: 3, quantity: 4, unit: 'Stueck', broken: false, rentals: [
+                    { id: 1, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                    { id: 2, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
+                    { id: 3, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
+                    { id: 4, userName: "Bauhelfer 34", timestamp: null, givenBack: true },
+                    { id: 5, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
+                    { id: 6, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                    { id: 7, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                    { id: 8, userName: "Bauhelfer 4", timestamp: null, givenBack: true },
+                ] },
+                { id: 4, name: 'Presslufthammer', slot: 4, store: 1, quantity: 5, unit: 'Stueck', broken: false, rentals: [
+                    { id: 1, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                    { id: 2, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
+                    { id: 3, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
+                    { id: 4, userName: "Bauhelfer 34", timestamp: null, givenBack: true },
+                    { id: 5, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
+                    { id: 6, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                    { id: 7, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                    { id: 8, userName: "Bauhelfer 4", timestamp: null, givenBack: true },
+                    { id: 9, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
+                    { id: 10, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                    { id: 11, userName: "Bauhelfer 5", timestamp: null, givenBack: false },
+                ] },
+                { id: 5, name: 'Schlauch dick', slot: 5, store: 2, quantity: 2, unit: 'm', broken: false, rentals: [
+                    { id: 1, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                    { id: 2, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
+                    { id: 3, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
+                    { id: 4, userName: "Bauhelfer 34", timestamp: null, givenBack: true },
+                    { id: 5, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
+                ] },
+                { id: 6, name: 'Schlauch duenn', slot: 1, store: 2, quantity: 2, unit: 'm', broken: true, rentals: [
+                    { id: 1, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                ] },
+                { id: 7, name: 'Schlauch dick', slot: 2, store: 1, quantity: 4, unit: 'm', broken: true, rentals: [
+                    { id: 1, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                    { id: 2, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
+                ] },
+                { id: 8, name: 'Silikon', store: 2, slot: 3, quantity: 2, unit: 'Stueck', broken: false, rentals: [
+                    { id: 1, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                    { id: 2, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
+                    { id: 3, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
+                    { id: 4, userName: "Bauhelfer 34", timestamp: null, givenBack: true },
+                    { id: 5, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
+                    { id: 11, userName: "Bauhelfer 5", timestamp: null, givenBack: false },
+                ] },
+                { id: 9, name: 'Zange', store: 2, slot: 4, quantity: 3, unit: 'Stueck', broken: false, rentals: [
+                    { id: 1, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                    { id: 2, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
+                ] },
+                { id: 10, name: 'Zange', store: 3, slot: 5, quantity: 2, unit: 'Stueck', broken: false, rentals: [
+                    { id: 1, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                    { id: 2, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
+                    { id: 3, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
+                    { id: 4, userName: "Bauhelfer 34", timestamp: null, givenBack: true },
+                    { id: 5, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
+                ] },
+                { id: 11, name: 'Zollstock', store: 2, slot: 1, quantity: 2, unit: 'Stueck', broken: true, rentals: [
+                    { id: 1, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                    { id: 2, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
+                    { id: 3, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
+                    { id: 4, userName: "Bauhelfer 34", timestamp: null, givenBack: true },
+                    { id: 5, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
+                    { id: 6, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                    { id: 9, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
+                    { id: 10, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                ] },
+                { id: 12, name: 'Zollstock', store: 1, slot: 3, quantity: 7, unit: 'Stueck', broken: false, rentals: [
+                    { id: 1, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                    { id: 2, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
+                    { id: 3, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
+                    { id: 4, userName: "Bauhelfer 34", timestamp: null, givenBack: true },
+                    { id: 5, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
+                    { id: 6, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                    { id: 7, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                    { id: 8, userName: "Bauhelfer 4", timestamp: null, givenBack: true },
+                    { id: 9, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
+                    { id: 10, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
+                    { id: 11, userName: "Bauhelfer 5", timestamp: null, givenBack: false },
+                ] },
+            ].filter(v => !props.store || v.store === props.store),//.sort((a, b) => (a.name < b.name ? -1 : 1)),
             page: 0,
             rowsPerPage: 10,
             selected: [],
@@ -125,8 +218,19 @@ export default class ItemListComponent extends React.Component {
         this.setState({ redirect: id })
     }
 
+    getState(item) {
+        if(item.broken){
+            return "Defekt"
+        }
+        let lastRental =  item.rentals[item.rentals.length -1];
+        if (!lastRental.givenBack) {
+            return "Ausgeliehen an " + lastRental.userName;
+        }
+        return "Verfügbar"
+    }
+
     render() {
-        const { classes } = this.props
+        const { classes, store } = this.props
         const { rows, rowsPerPage, page, showFilters, searchTechnicalCrew, searchTag, searchStore, searchSlot, selected } = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
         if (this.state.redirect) {
@@ -240,9 +344,13 @@ export default class ItemListComponent extends React.Component {
                             <TableHead>
                                 <TableRow>
                                     <TableCell>Bezeichnung</TableCell>
-                                    <TableCell align="right">Lager</TableCell>
+                                    <TableCell>Status</TableCell>
+                                    {!store ? (
+                                        <TableCell align="right">Lager</TableCell>
+                                    ) : null}
                                     <TableCell align="right">Platz</TableCell>
                                     <TableCell align="right">Menge</TableCell>
+                                    <TableCell align="right">Beliebtheit</TableCell>
                                     <TableCell align="right" padding="checkbox" className={classes.selectionHeader}>
                                         {selected.length > 0 ? (
                                             <>
@@ -264,18 +372,27 @@ export default class ItemListComponent extends React.Component {
                                 {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
                                     <TableRow
                                         key={row.id}
+                                        className={classes.clickable}
                                     >
                                         <TableCell component="th" scope="row" onClick={event => this.redirect(row.id)}>
                                             {row.name}
                                         </TableCell>
-                                        <TableCell align="right" onClick={event => this.redirect(row.id)}>
-                                            {row.store}
+                                        <TableCell component="th" scope="row" onClick={event => this.redirect(row.id)}>
+                                            {this.getState(row)}
                                         </TableCell>
+                                        {!store ? (
+                                            <TableCell align="right" onClick={event => this.redirect(row.id)}>
+                                                {row.store}
+                                            </TableCell>
+                                        ) : null}
                                         <TableCell align="right" onClick={event => this.redirect(row.id)}>
                                             {row.slot}
                                         </TableCell>
                                         <TableCell align="right" onClick={event => this.redirect(row.id)}>
                                             {row.quantity} {row.unit}
+                                        </TableCell>
+                                        <TableCell align="right" onClick={event => this.redirect(row.id)}>
+                                            {row.rentals.length}
                                         </TableCell>
                                         <TableCell align="right" padding="checkbox">
                                             <Checkbox

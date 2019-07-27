@@ -11,11 +11,13 @@ import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
+import SaveIcon from '@material-ui/icons/Save';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { fullPathOfItem } from '../../paths';
 import { SessionContext } from '../../providers/session-provider';
 import { withContext } from '../../util';
+import ItemListComponent from '../item/item-list';
 
 const styles = theme => ({
     button: {
@@ -91,133 +93,6 @@ export default class StoreDetailComponent extends React.Component {
         super(props);
         this.state = {
             edit: false,
-            shelves: [
-                {
-                    id: 0, name: 'A', outside: false, slots: [
-                        {
-                            id: 0, name: 1, width: 30, height: 40, depth: 50, items: [
-                                { id: 1, name: 'Hammer' },
-                                { id: 2, name: 'Nagel' },
-                                { id: 3, name: 'Säge' },
-                            ]
-                        },
-                        {
-                            id: 1, name: 2, width: 30, height: 40, depth: 50, items: [
-                                { id: 1, name: 'Schrauben' },
-                                { id: 2, name: 'Wasserwaage' },
-                                { id: 3, name: 'Silikon' },
-                                { id: 4, name: 'Spritzpistole' },
-                            ]
-                        },
-                        {
-                            id: 2, name: 3, width: 30, height: 40, depth: 50, items: [
-                                { id: 1, name: 'Zange' },
-                                { id: 2, name: 'Schraubenzieher' },
-                            ]
-                        },
-                        {
-                            id: 3, name: 4, width: 30, height: 40, depth: 50, items: [
-                                { id: 1, name: 'Seitenschneider' },
-                                { id: 2, name: 'Schraubenzieher' },
-                                { id: 3, name: 'Kombizange' },
-                            ]
-                        },
-                        {
-                            id: 4, name: 5, width: 30, height: 40, depth: 50, items: [
-                                { id: 1, name: 'Seitenschneider' },
-                            ]
-                        },
-                        {
-                            id: 5, name: 6, width: 30, height: 40, depth: 50, items: [
-                                { id: 1, name: 'Schrauben' },
-                                { id: 2, name: 'Wasserwaage' },
-                                { id: 3, name: 'Silikon' },
-                                { id: 4, name: 'Spritzpistole' },
-                            ]
-                        },
-                    ]
-                },
-                {
-                    id: 1, name: 'B', outside: false, slots: [
-                        {
-                            id: 0, name: 1, width: 30, height: 40, depth: 50, items: [
-                                { id: 1, name: 'Hammer' },
-                                { id: 2, name: 'Nagel' },
-                                { id: 3, name: 'Säge' },
-                            ]
-                        },
-                        {
-                            id: 1, name: 2, width: 30, height: 40, depth: 50, items: [
-                                { id: 1, name: 'Schrauben' },
-                                { id: 2, name: 'Wasserwaage' },
-                                { id: 3, name: 'Silikon' },
-                                { id: 4, name: 'Spritzpistole' },
-                            ]
-                        },
-                        {
-                            id: 2, name: 3, width: 30, height: 40, depth: 50, items: [
-                                { id: 1, name: 'Zange' },
-                                { id: 2, name: 'Schraubenzieher' },
-                            ]
-                        },
-                        {
-                            id: 3, name: 4, width: 30, height: 40, depth: 50, items: [
-                                { id: 1, name: 'Seitenschneider' },
-                                { id: 2, name: 'Schraubenzieher' },
-                                { id: 3, name: 'Kombizange' },
-                            ]
-                        },
-                        {
-                            id: 4, name: 5, width: 30, height: 40, depth: 50, items: [
-                                { id: 1, name: 'Seitenschneider' },
-                            ]
-                        },
-                        {
-                            id: 5, name: 6, width: 30, height: 40, depth: 50, items: [
-                                { id: 1, name: 'Schrauben' },
-                                { id: 2, name: 'Wasserwaage' },
-                                { id: 3, name: 'Silikon' },
-                                { id: 4, name: 'Spritzpistole' },
-                            ]
-                        },
-                    ]
-                },
-                {
-                    id: 2, name: 'C', outside: false, slots: [
-                        {
-                            id: 0, name: 1, width: 30, height: 40, depth: 50, items: [
-                                { id: 1, name: 'Hammer' },
-                                { id: 2, name: 'Nagel' },
-                                { id: 3, name: 'Säge' },
-                            ]
-                        },
-                        {
-                            id: 4, name: 5, width: 30, height: 40, depth: 50, items: [
-                                { id: 1, name: 'Seitenschneider' },
-                            ]
-                        },
-                        {
-                            id: 5, name: 6, width: 30, height: 40, depth: 50, items: [
-                                { id: 1, name: 'Schrauben' },
-                                { id: 2, name: 'Wasserwaage' },
-                                { id: 3, name: 'Silikon' },
-                                { id: 4, name: 'Spritzpistole' },
-                            ]
-                        },
-                    ]
-                },
-                {
-                    id: 3, name: 'Schaufelständer', outside: true, slots: [
-                        {
-                            id: 0, name: null, width: 30, height: 40, depth: 50, items: [
-                                { id: 1, name: 'Grabschaufel' },
-                                { id: 2, name: 'Grabschaufel' },
-                                { id: 3, name: 'Spaten' },
-                            ]
-                        },
-                    ]
-                },
-            ],
         };
     }
 
@@ -230,11 +105,30 @@ export default class StoreDetailComponent extends React.Component {
     render() {
         const { classes, match } = this.props
         const { shelves, edit } = this.state
+        const id = match.params.id * 1;
         return (
             <>
-                [Detail-Ansicht für {match.params.id}]
+                [Detail-Ansicht für {id}]
                 <div>
-                    <div className={classes.title}>Kehlheim</div>
+                    <div className={classes.title}>
+                        Kehlheim
+                        {edit ? (
+                            <>
+                                <IconButton variant="contained" className={classes.button} type="submit" onClick={() => this.changeEditState(false)}>
+                                    <SaveIcon />
+                                </IconButton>
+                                <IconButton variant="contained" className={classes.button} type="submit" onClick={() => this.changeEditState(false)}>
+                                    <CloseIcon />
+                                </IconButton>
+                            </>
+                        ) : (
+                                <>
+                                    <IconButton variant="contained" className={classes.button} type="submit" onClick={() => this.changeEditState(true)}>
+                                        <EditIcon />
+                                    </IconButton>
+                                </>
+                            )}
+                    </div>
                     <div className={classes.container}>
                         {edit ? (
                             <>
@@ -326,125 +220,8 @@ export default class StoreDetailComponent extends React.Component {
                                 </>
                             )}
                     </div>
-                    {shelves.map((shelf) => (
-                        <table key={shelf.id} className={classes.shelfWrapper}>
-                            <thead>
-                                <tr>
-                                    <td className={classes.shelfHeader}>
-                                        <div className={classes.leftRight}>
-                                            <div className={classes.shelfName}>
-                                                {shelf.name}
-                                            </div>
-                                            {edit ? (
-                                                <span>
-                                                    <IconButton className={classes.noPadding}
-                                                        onClick={() => alert('TODO: Dialog öffnen, um Daten ändern und speichern zu können.')}>
-                                                        <EditIcon />
-                                                    </IconButton>
-                                                    <IconButton className={classes.noPadding}
-                                                        onClick={() => alert('TODO: Fragen, ob nur Regal oder auch Artikel gelöscht werden sollen.')}>
-                                                        <DeleteIcon />
-                                                    </IconButton>
-                                                </span>
-                                            ) : null}
-                                        </div>
-                                        <div>
-                                            {shelf.outside ? 'Draußen' : 'Drinnen'}
-                                        </div>
-                                    </td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {shelf.slots.map((slot) => (
-                                    <tr key={slot.id}>
-                                        <td className={classes.slot}>
-                                            <div className={classes.leftRight}>
-                                                <span>{shelf.name} {slot.name}</span>
-                                                {edit ? (
-                                                    <span>
-                                                        <IconButton className={classes.noPadding}
-                                                            onClick={() => alert('TODO: Dialog öffnen, um Daten ändern und speichern zu können.')}>
-                                                            <EditIcon />
-                                                        </IconButton>
-                                                        <IconButton className={classes.noPadding}
-                                                            onClick={() => alert('TODO: Fragen, ob nur Fach oder auch Artikel gelöscht werden sollen.')}>
-                                                            <DeleteIcon />
-                                                        </IconButton>
-                                                    </span>
-                                                ) : null}
-                                            </div>
-                                            <div className={classes.items}>
-                                                {slot.items.map((item) => (
-                                                    <div className={classes.leftRight}>
-                                                        <Link key={item.id} to={fullPathOfItem(item.id)}>{item.name}</Link>
-                                                        {edit ? (
-                                                            <IconButton className={classes.noPadding}
-                                                                onClick={() => alert('TODO: Artikel aus Regal entfernen (jedoch nicht löschen?).')}>
-                                                                <CloseIcon />
-                                                            </IconButton>
-                                                        ) : null}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                            {edit ? (
-                                                <div className={classes.centered}>
-                                                    <IconButton
-                                                        onClick={() => alert('TODO: Seite zum Anlegen von Artikeln öffnen.')}>
-                                                        <AddIcon />
-                                                    </IconButton>
-                                                </div>
-                                            ) : null}
-                                        </td>
-                                    </tr>
-                                ))}
-                                {edit ? (
-                                    <tr>
-                                        <td className={classes.slot}>
-                                            <div className={classes.centered}>
-                                                <Button
-                                                    onClick={() => alert('TODO: Dialog öffnen, um Daten eingeben und speichern zu können.')}>
-                                                    Fach hinzufügen
-                                                </Button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ) : null}
-                            </tbody>
-                        </table>
-                    ))}
-                    {edit ? (
-                        <table className={classes.shelfWrapper}>
-                            <thead>
-                                <tr>
-                                    <td className={classes.shelfHeader}>
-                                        <div className={classes.centered}>
-                                            <Button
-                                                onClick={() => alert('TODO: Dialog öffnen, um Daten eingeben und speichern zu können.')}>
-                                                Regal hinzufügen
-                                            </Button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </thead>
-                        </table>
-                    ) : null}
                 </div>
-                {edit ? (
-                    <>
-                        <Button variant="contained" className={classes.button} type="submit" onClick={() => this.changeEditState(false)}>
-                            Speichern
-                        </Button>
-                    </>
-                ) : (
-                        <>
-                            <Button variant="contained" className={classes.button} onClick={() => this.changeEditState(true)}>
-                                Bearbeiten
-                        </Button>
-                            <Button variant="outlined" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
-                                Löschen
-                        </Button>
-                        </>
-                    )}
+                <ItemListComponent store={id}/>
             </>
         )
     }
