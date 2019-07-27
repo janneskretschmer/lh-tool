@@ -105,7 +105,7 @@ const NeedApproveItem = () => (
 );
 
 const StoresItem = () => (
-  <WithPermission permission="ROLE_ADMIN">
+  <WithPermission permission="ROLE_RIGHT_STORES_GET">
     <Link to={fullPathOfStores()} style={linkStyle}>
       <ListItem button>
         <ListItemIcon>
@@ -119,7 +119,7 @@ const StoresItem = () => (
 
 
 const ItemsItem = () => (
-  <WithPermission permission="ROLE_ADMIN">
+  <WithPermission permission="ROLE_RIGHT_ITEMS_GET">
     <Link to={fullPathOfItems()} style={linkStyle}>
       <ListItem button>
         <ListItemIcon>

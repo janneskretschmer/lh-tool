@@ -60,6 +60,12 @@ export default class ItemDetailComponent extends React.Component {
                         <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
                             Defekt
                         </Button>
+                        <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Ausleihen"')}>
+                            Ausleihen
+                        </Button>
+                        <Button variant="outlined" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
+                            Löschen
+                        </Button>
                     </>
                 )}
             </>
