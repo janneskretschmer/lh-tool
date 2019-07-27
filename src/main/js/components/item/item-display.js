@@ -93,6 +93,15 @@ const ItemDisplayComponent = props => {
                 </div>
                 <a href="javascript:alert('Umleitung zum Nagel')">Nagel</a><br />
                 <a href="javascript:alert('Umleitung zum Meißel')">Meißel</a><br />
+                <br />
+                <div className={classes.bold}>
+                    Notizen
+                </div>
+                Jannes Kretschmer, 14.03.19:<br />
+                Das ist eine sehr wichtige Notiz<br />
+                <br />
+                Magaziner, 10.08.18:<br />
+                Notiz zum Hammer<br />
             </div>
         </div>
     )
