@@ -114,13 +114,13 @@ public class UserRole implements GrantedAuthority {
 	public static final String RIGHT_ITEMS_GET_BY_ID = "ROLE_RIGHT_ITEMS_GET_BY_ID";
 	public static final String RIGHT_ITEMS_POST = "ROLE_RIGHT_ITEMS_POST";
 	public static final String RIGHT_ITEMS_PUT = "ROLE_RIGHT_ITEMS_PUT";
-	public static final String RIGHT_ITEMS_GET_FOREIGN_PROJECT = "ROLE_ITEMS_GET_FOREIGN_PROJECT";
+	public static final String RIGHT_ITEMS_GET_FOREIGN_PROJECT = "ROLE_RIGHT_ITEMS_GET_FOREIGN_PROJECT";
 
 	public static final String RIGHT_STORES_GET = "ROLE_RIGHT_STORES_GET";
 	public static final String RIGHT_STORES_GET_BY_ID = "ROLE_RIGHT_STORES_GET_BY_ID";
 	public static final String RIGHT_STORES_POST = "ROLE_RIGHT_STORES_POST";
 	public static final String RIGHT_STORES_PUT = "ROLE_RIGHT_STORES_PUT";
-	public static final String RIGHT_STORES_GET_FOREIGN_PROJECT = "ROLE_STORES_GET_FOREIGN_PROJECT";
+	public static final String RIGHT_STORES_GET_FOREIGN_PROJECT = "ROLE_RIGHT_STORES_GET_FOREIGN_PROJECT";
 
 	private static class RoleRightManager {
 		private static RoleRightManager instance;
