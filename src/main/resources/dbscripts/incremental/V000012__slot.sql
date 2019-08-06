@@ -1,0 +1,3 @@
+CREATE TABLE `slot` ( `id` INT NOT NULL AUTO_INCREMENT , `store_id` INT NOT NULL , `name` VARCHAR(100) NOT NULL , `description` VARCHAR(1000) NULL , `width` FLOAT NULL , `height` FLOAT NULL , `depth` FLOAT NULL , `outside` BOOLEAN NOT NULL DEFAULT FALSE , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+ALTER TABLE `slot` ADD UNIQUE( `store_id`, `name`);
+ALTER TABLE `slot` ADD FOREIGN KEY (`store_id`) REFERENCES `store`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

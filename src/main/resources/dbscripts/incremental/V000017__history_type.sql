@@ -1,0 +1,2 @@
+CREATE TABLE `history_type` ( `id` INT NOT NULL AUTO_INCREMENT , `key` VARCHAR(100) NOT NULL , `description` VARCHAR(500) NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+INSERT INTO `history_type` (`id`, `key`, `description`) VALUES (NULL, 'CREATED', 'Angelegt'), (NULL, 'EDITED', 'Bearbeitet'), (NULL, 'MOVED', 'Projekt %s zugeordnet'), (NULL, 'BROKEN', 'Als defekt gemeldet'), (NULL, 'REPAIRED', 'Als repariert gemeldet')
