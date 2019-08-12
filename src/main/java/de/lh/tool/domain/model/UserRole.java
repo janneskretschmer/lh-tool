@@ -116,6 +116,11 @@ public class UserRole implements GrantedAuthority {
 	public static final String RIGHT_ITEMS_PUT = "ROLE_RIGHT_ITEMS_PUT";
 	public static final String RIGHT_ITEMS_GET_FOREIGN_PROJECT = "ROLE_RIGHT_ITEMS_GET_FOREIGN_PROJECT";
 
+	public static final String RIGHT_SLOTS_GET = "ROLE_RIGHT_SLOTS_GET";
+	public static final String RIGHT_SLOTS_GET_BY_ID = "ROLE_RIGHT_SLOTS_GET_BY_ID";
+	public static final String RIGHT_SLOTS_POST = "ROLE_RIGHT_SLOTS_POST";
+	public static final String RIGHT_SLOTS_PUT = "ROLE_RIGHT_SLOTS_PUT";
+
 	public static final String RIGHT_STORES_GET = "ROLE_RIGHT_STORES_GET";
 	public static final String RIGHT_STORES_GET_BY_ID = "ROLE_RIGHT_STORES_GET_BY_ID";
 	public static final String RIGHT_STORES_POST = "ROLE_RIGHT_STORES_POST";
@@ -154,6 +159,8 @@ public class UserRole implements GrantedAuthority {
 					RIGHT_ITEMS_GET, RIGHT_ITEMS_GET_BY_ID, RIGHT_ITEMS_GET_FOREIGN_PROJECT, RIGHT_ITEMS_POST,
 					RIGHT_ITEMS_PUT,
 					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+					RIGHT_SLOTS_GET, RIGHT_SLOTS_GET_BY_ID, RIGHT_SLOTS_POST, RIGHT_SLOTS_PUT,
+					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
 					RIGHT_STORES_GET, RIGHT_STORES_GET_BY_ID, RIGHT_STORES_GET_FOREIGN_PROJECT, RIGHT_STORES_POST,
 					RIGHT_STORES_PUT));
 
@@ -172,6 +179,8 @@ public class UserRole implements GrantedAuthority {
 							// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
 							RIGHT_ITEMS_GET, RIGHT_ITEMS_GET_BY_ID, RIGHT_ITEMS_GET_FOREIGN_PROJECT, RIGHT_ITEMS_POST,
 							RIGHT_ITEMS_PUT,
+							// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+							RIGHT_SLOTS_GET, RIGHT_SLOTS_GET_BY_ID, RIGHT_SLOTS_POST, RIGHT_SLOTS_PUT,
 							// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
 							RIGHT_STORES_GET, RIGHT_STORES_GET_BY_ID, RIGHT_STORES_GET_FOREIGN_PROJECT,
 							RIGHT_STORES_POST, RIGHT_STORES_PUT));

@@ -18,6 +18,8 @@ import { fullPathOfItem } from '../../paths';
 import { SessionContext } from '../../providers/session-provider';
 import { withContext } from '../../util';
 import ItemListComponent from '../item/item-list';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { fetchStore, createOrUpdateStore } from '../../actions/store';
 
 const styles = theme => ({
     button: {
@@ -26,54 +28,9 @@ const styles = theme => ({
     bold: {
         fontWeight: '500',
     },
-    centered: {
-        textAlign: 'center'
-    },
     title: {
         fontSize: '30px',
         marginBottom: '10px',
-    },
-    image: {
-        maxWidth: '400px',
-        display: 'inline-block',
-        verticalAlign: 'top',
-        marginRight: '30px',
-    },
-    container: {
-        display: 'inline-block',
-        marginBottom: '20px',
-    },
-    chip: {
-        marginRight: theme.spacing.unit,
-    },
-    shelfWrapper: {
-        borderCollapse: 'collapse',
-        display: 'inline-block',
-        verticalAlign: 'top',
-        margin: theme.spacing.unit,
-    },
-    shelfHeader: {
-        border: '1px solid ' + theme.palette.primary.main,
-        padding: theme.spacing.unit,
-    },
-    shelfName: {
-        fontWeight: 'bold',
-    },
-    slot: {
-        border: '1px solid ' + theme.palette.primary.main,
-        padding: theme.spacing.unit,
-    },
-    slotName: {
-        fontWeight: '500',
-    },
-    leftRight: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: theme.spacing.unit,
-    },
-    noPadding: {
-        padding: 0,
     },
     container: {
         display: 'inline-block',
@@ -92,42 +49,132 @@ export default class StoreDetailComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            edit: false,
+            edit: props.new,
+            store: null,
+
         };
     }
 
-    changeEditState(edit) {
+
+    changeEditState(edit, callback) {
         this.setState({
-            edit
+            edit,
+            saving: false,
+        }, callback)
+    }
+
+    changeTitle(event) {
+        let name = event.target.value
+        this.setState(prevState => ({
+            store: {
+                ...prevState.store,
+                name,
+            }
+        }))
+    }
+
+    changeAddress(event) {
+        let address = event.target.value
+        this.setState(prevState => ({
+            store: {
+                ...prevState.store,
+                address,
+            }
+        }))
+    }
+
+    changeType(event) {
+        let type = event.target.value
+        this.setState(prevState => ({
+            store: {
+                ...prevState.store,
+                type,
+            }
+        }))
+    }
+
+    loadStore() {
+        let id = this.props.match.params.id
+        if (id === 'new') {
+            this.setState({
+                edit: true,
+                store: {
+                    name: '',
+                    address: '',
+                    type: 'STANDARD'
+                },
+            })
+        } else {
+            fetchStore({ accessToken: this.props.sessionState.accessToken, storeId: id }).then(store => this.changeStore(store))
+        }
+    }
+
+    changeStore(store, callback) {
+        this.setState({
+            store
+        }, callback)
+    }
+
+    componentDidMount() {
+        this.loadStore()
+    }
+
+    save() {
+        this.setState({
+            saving: true
         })
+        createOrUpdateStore({ accessToken: this.props.sessionState.accessToken, store: this.state.store }).then(store => this.changeStore(store, () => this.changeEditState(false)))
+    }
+
+    cancel() {
+        this.changeEditState(false,
+            this.changeStore(null, () => {
+                this.loadStore()
+            })
+        )
     }
 
     render() {
         const { classes, match } = this.props
-        const { shelves, edit } = this.state
-        const id = match.params.id * 1;
-        return (
+        const { edit, store, saving } = this.state
+        const types = {
+            MAIN: 'Hauptlager',
+            STANDARD: 'Lager',
+            MOBILE: 'Magazin',
+        }
+        return store || edit ? (
             <>
-                [Detail-Ansicht für {id}]
                 <div>
                     <div className={classes.title}>
-                        Kehlheim
                         {edit ? (
-                            <>
-                                <IconButton variant="contained" className={classes.button} type="submit" onClick={() => this.changeEditState(false)}>
-                                    <SaveIcon />
-                                </IconButton>
-                                <IconButton variant="contained" className={classes.button} type="submit" onClick={() => this.changeEditState(false)}>
-                                    <CloseIcon />
-                                </IconButton>
-                            </>
-                        ) : (
+                            <TextField
+                                id="name"
+                                label="Name"
+                                className={classes.textField}
+                                value={store.name}
+                                onChange={this.changeTitle.bind(this)}
+                                margin="dense"
+                                variant="outlined"
+                            />
+                        ) : (store.name)}
+                        {edit ? (
+                            saving ? (<>&nbsp;<CircularProgress /></>) : (
                                 <>
-                                    <IconButton variant="contained" className={classes.button} type="submit" onClick={() => this.changeEditState(true)}>
-                                        <EditIcon />
+                                    <IconButton variant="contained" className={classes.button} type="submit" onClick={this.save.bind(this)}>
+                                        <SaveIcon />
+                                    </IconButton>
+                                    <IconButton variant="contained" className={classes.button} type="submit" onClick={this.cancel.bind(this)}>
+                                        <CloseIcon />
                                     </IconButton>
                                 </>
-                            )}
+                            )
+                        ) : store ? (
+                            <>
+                                <IconButton variant="contained" className={classes.button} type="submit" onClick={() => this.changeEditState(true)}>
+                                    <EditIcon />
+                                </IconButton>
+                            </>
+                        ) : null}
                     </div>
                     <div className={classes.container}>
                         {edit ? (
@@ -137,8 +184,8 @@ export default class StoreDetailComponent extends React.Component {
                                     label="Adresse"
                                     multiline
                                     className={classes.textField}
-                                    value={'Giselastr. 39 93309 Kelheim'}
-                                    onChange={null}
+                                    value={store.address}
+                                    onChange={this.changeAddress.bind(this)}
                                     margin="dense"
                                     variant="outlined"
                                 /><br />
@@ -149,7 +196,7 @@ export default class StoreDetailComponent extends React.Component {
                                     <div className={classes.bold}>
                                         Adresse
                                 </div>
-                                    Giselastr. 39 93309 Kelheim<br />
+                                    {store.address}<br />
                                     <br />
                                 </>
                             )}
@@ -158,16 +205,16 @@ export default class StoreDetailComponent extends React.Component {
                                 <FormControl className={classes.formControl}>
                                     <InputLabel htmlFor="type">Typ</InputLabel>
                                     <Select
-                                        value={3}
-                                        onChange={null}
+                                        value={store.type}
+                                        onChange={this.changeType.bind(this)}
                                         inputProps={{
                                             name: 'type',
                                             id: 'type',
                                         }}
                                     >
-                                        <MenuItem value={1}>Lager</MenuItem>
-                                        <MenuItem value={2}>Magazin</MenuItem>
-                                        <MenuItem value={3}>Hauptlager</MenuItem>
+                                        <MenuItem value={'STANDARD'}>{types['STANDARD']}</MenuItem>
+                                        <MenuItem value={'MOBILE'}>{types['MOBILE']}</MenuItem>
+                                        <MenuItem value={'MAIN'}>{types['MAIN']}</MenuItem>
                                     </Select>
                                 </FormControl><br />
                                 <br />
@@ -177,7 +224,7 @@ export default class StoreDetailComponent extends React.Component {
                                     <div className={classes.bold}>
                                         Typ
                         </div>
-                                    Hauptlager<br />
+                                    {types[store.type]}<br />
                                 </>
                             )}
                         <br />
@@ -221,8 +268,8 @@ export default class StoreDetailComponent extends React.Component {
                             )}
                     </div>
                 </div>
-                <ItemListComponent store={id}/>
+                <ItemListComponent store={match.params.id * 1} />
             </>
-        )
+        ) : (<CircularProgress />)
     }
 }

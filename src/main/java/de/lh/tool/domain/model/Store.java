@@ -11,9 +11,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -43,9 +40,8 @@ public class Store {
 	@Column(name = "address", length = 500, nullable = true)
 	private String address;
 
-	@ManyToMany()
-	@JoinTable(name = "store_project", inverseJoinColumns = @JoinColumn(name = "project_id"), joinColumns = @JoinColumn(name = "store_id"))
-	private Collection<Project> projects;
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private Collection<StoreProject> storeProjects;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Collection<Slot> slots;
