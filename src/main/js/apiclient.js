@@ -20,6 +20,7 @@ import {
     NEED_PREFIX,
     START_DIFF_VARIABLE,
     END_DIFF_VARIABLE,
+    STORE_PREFIX,
     
 } from './urlmappings';
 
@@ -235,4 +236,25 @@ export const apiEndpoints = {
             path: NEED_PREFIX + ID_USER_ID_EXTENSION,
         }
     },
+    store: {
+        get: {
+            method: 'GET',
+            path: STORE_PREFIX + '/',
+        },
+        getById: {
+            method: 'GET',
+            path: STORE_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
+        createNew: {
+            method: 'POST',
+            // TODO Trailing '/' also necessary?
+            path: STORE_PREFIX + '/',
+        },
+        update: {
+            method: 'PUT',
+            path: STORE_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
+    }
 };

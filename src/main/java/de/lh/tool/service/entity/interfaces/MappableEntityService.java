@@ -1,9 +1,9 @@
 package de.lh.tool.service.entity.interfaces;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.modelmapper.ModelMapper;
 
@@ -23,18 +23,20 @@ public interface MappableEntityService<E, D> {
 		return modelMapper.map(entity, getDtoClass());
 	}
 
-	default List<E> convertToEntityList(Collection<D> dtoList) {
+	default List<E> convertToEntityList(Iterable<D> dtoList) {
 		if (dtoList == null) {
 			return Collections.emptyList();
 		}
-		return dtoList.stream().map(this::convertToEntity).collect(Collectors.toList());
+		return StreamSupport.stream(dtoList.spliterator(), false).map(this::convertToEntity)
+				.collect(Collectors.toList());
 	}
 
-	default List<D> convertToDtoList(Collection<E> entityList) {
+	default List<D> convertToDtoList(Iterable<E> entityList) {
 		if (entityList == null) {
 			return Collections.emptyList();
 		}
-		return entityList.stream().map(this::convertToDto).collect(Collectors.toList());
+		return StreamSupport.stream(entityList.spliterator(), false).map(this::convertToDto)
+				.collect(Collectors.toList());
 	}
 
 	Class<D> getDtoClass();

@@ -18,6 +18,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import { fetchOwnStores } from '../../actions/store';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = theme => ({
     noDecoration: {
@@ -32,7 +34,7 @@ export default class StoreListComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-
+            stores: null
         };
     }
 
@@ -40,62 +42,39 @@ export default class StoreListComponent extends React.Component {
         this.setState({ redirect: id })
     }
 
+    componentDidMount() {
+        fetchOwnStores(this.props.sessionState.accessToken).then(stores => this.setState({
+            stores
+        }));
+    }
+
     render() {
-        const { } = this.state;
+        const { stores } = this.state;
         const { classes } = this.props;
         return (
             <SessionContext.Consumer>
                 {sessionState => (
                     <>
                         <List>
-                            <Link to={fullPathOfStore(1)} className={classes.noDecoration}>
-                                <ListItem button>
-                                    <ListItemIcon>
-                                        <HomeIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Kehlheim" secondary="Giselastr. 39 93309 Kelheim" />
-                                </ListItem>
-                            </Link>
-                            <Divider />
-                            <Link to={fullPathOfStore(2)} className={classes.noDecoration}>
-                                <ListItem button>
-                                    <ListItemIcon>
-                                        <LocalShippingIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Magazin 1" />
-                                </ListItem>
-                            </Link>
-                            <Divider />
-                            <Link to={fullPathOfStore(3)} className={classes.noDecoration}>
-                                <ListItem button>
-                                    <ListItemIcon>
-                                        <LocalShippingIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Magazin 2" />
-                                </ListItem>
-                            </Link>
-                            <Divider />
-                            <Link to={fullPathOfStore(4)} className={classes.noDecoration}>
-                                <ListItem button>
-                                    <ListItemIcon>
-                                        <HomeIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Stuttgart" />
-                                </ListItem>
-                            </Link>
-                            <Divider />
-                            <Link to={fullPathOfStore(5)} className={classes.noDecoration}>
-                                <ListItem button>
-                                    <ListItemIcon>
-                                        <HomeIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Vöhringen" secondary="Johannisweg 10 89269 Vöhringen" />
-                                </ListItem>
-                            </Link>
+                            {stores ? stores.map(store => (
+                                <>
+                                    <Link to={fullPathOfStore(store.id)} className={classes.noDecoration} key={store.id}>
+                                        <ListItem button>
+                                            <ListItemIcon>
+                                                {store.type === 'MOBIL' ? (<LocalShippingIcon />) : (<HomeIcon />)}
+                                            </ListItemIcon>
+                                            <ListItemText primary={store.name} secondary={store.address} />
+                                        </ListItem>
+                                    </Link>
+                                    <Divider />
+                                </>
+                            )) : (<CircularProgress />)}
                         </List>
-                        <Button variant="contained" onClick={() => alert('TODO: Dialog zum eingeben und Speichern der Daten öffnen')} className={classes.new}>
-                            Hinzufügen
-                        </Button>
+                        <Link to={fullPathOfStore('new')} className={classes.noDecoration}>
+                            <Button variant="contained" onClick={() => alert('TODO: Dialog zum eingeben und Speichern der Daten öffnen')} className={classes.new}>
+                                Hinzufügen
+                            </Button>
+                        </Link>
                     </>
                 )}
             </SessionContext.Consumer>
