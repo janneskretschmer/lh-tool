@@ -19,7 +19,8 @@ import { SessionContext } from '../../providers/session-provider';
 import { withContext } from '../../util';
 import ItemListComponent from '../item/item-list';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { fetchStore, createOrUpdateStore } from '../../actions/store';
+import { fetchStore, createOrUpdateStore, fetchStoreProjects } from '../../actions/store';
+import { fetchOwnProjects } from '../../actions/project';
 
 const styles = theme => ({
     button: {
@@ -41,6 +42,27 @@ const styles = theme => ({
     }
 
 });
+
+const ProjectList = (props) => {
+    return props.storeProjects ? (
+        props.storeProjects.length > 0 ?
+            props.storeProjects.map(storeProject => (
+                <span key={storeProject.id}>
+                    <ProjectName projects={props.projects} projectId={storeProject.projectId}></ProjectName> ({storeProject.start.format('DD.MM.YYYY')} - {storeProject.end.format('DD.MM.YYYY')})<br />
+                </span>
+            )) : (<>-<br /></>)
+    ) : (<CircularProgress />)
+}
+
+const ProjectName = (props) => {
+    if (props.projects) {
+        let project = props.projects.filter(project => project.id = props.projectId)[0];
+        if (project) {
+            return (<>{project.name}</>)
+        }
+    }
+    return (<CircularProgress size={15} />)
+}
 
 @withStyles(styles)
 @withContext('sessionState', SessionContext)
@@ -106,6 +128,7 @@ export default class StoreDetailComponent extends React.Component {
             })
         } else {
             fetchStore({ accessToken: this.props.sessionState.accessToken, storeId: id }).then(store => this.changeStore(store))
+            fetchStoreProjects({ accessToken: this.props.sessionState.accessToken, storeId: id }).then(storeProjects => this.setState({ storeProjects }))
         }
     }
 
@@ -117,6 +140,7 @@ export default class StoreDetailComponent extends React.Component {
 
     componentDidMount() {
         this.loadStore()
+        fetchOwnProjects({ accessToken: this.props.sessionState.accessToken }).then(projects => this.setState({ projects }))
     }
 
     save() {
@@ -136,7 +160,7 @@ export default class StoreDetailComponent extends React.Component {
 
     render() {
         const { classes, match } = this.props
-        const { edit, store, saving } = this.state
+        const { edit, store, saving, storeProjects, projects } = this.state
         const types = {
             MAIN: 'Hauptlager',
             STANDARD: 'Lager',
@@ -232,40 +256,10 @@ export default class StoreDetailComponent extends React.Component {
                             Projekte
                         </div>
                         {edit ? (
-                            <>
-                                <Checkbox
-                                    checked={true}
-                                    disableRipple
-                                />
-                                Altötting&nbsp;(01.11.17&nbsp;-&nbsp;01.12.18)<br />
-                                <Checkbox
-                                    checked={false}
-                                    disableRipple
-                                />
-                                Project&nbsp;X&nbsp;(01.12.18&nbsp;-&nbsp;02.12.18)<br />
-                                <Checkbox
-                                    checked={true}
-                                    disableRipple
-                                />
-                                Vöhringen&nbsp;(01.02.19&nbsp;-&nbsp;15.02.19)<br />
-                                <Checkbox
-                                    checked={true}
-                                    disableRipple
-                                />
-                                Stuttgart&nbsp;(01.05.19&nbsp;-&nbsp;01.05.20)<br />
-                                <Checkbox
-                                    checked={false}
-                                    disableRipple
-                                />
-                                Project&nbsp;Z&nbsp;(01.12.18&nbsp;-&nbsp;02.12.18)
-                            </>
-                        ) : (
-                                <>
-                                    Altötting&nbsp;(01.11.17&nbsp;-&nbsp;01.12.18)<br />
-                                    Vöhringen&nbsp;(01.02.19&nbsp;-&nbsp;15.02.19)<br />
-                                    Stuttgart&nbsp;(01.05.19&nbsp;-&nbsp;01.05.20)<br />
-                                </>
-                            )}
+                            projects ? projects.map(project => (
+                                <>TODO: Möglichkeit schaffen Projekte hinzuzufügen</>
+                            )) : (<CircularProgress />)
+                        ) : <ProjectList storeProjects={storeProjects} projects={projects}></ProjectList>}
                     </div>
                 </div>
                 <ItemListComponent store={match.params.id * 1} />

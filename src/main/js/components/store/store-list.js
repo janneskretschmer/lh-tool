@@ -71,7 +71,7 @@ export default class StoreListComponent extends React.Component {
                             )) : (<CircularProgress />)}
                         </List>
                         <Link to={fullPathOfStore('new')} className={classes.noDecoration}>
-                            <Button variant="contained" onClick={() => alert('TODO: Dialog zum eingeben und Speichern der Daten öffnen')} className={classes.new}>
+                            <Button variant="contained" className={classes.new}>
                                 Hinzufügen
                             </Button>
                         </Link>

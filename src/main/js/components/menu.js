@@ -1,41 +1,37 @@
-import React from 'react';
-import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
+import BuildIcon from '@material-ui/icons/Build';
 import DateRangeIcon from '@material-ui/icons/DateRange';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import GroupWorkIcon from '@material-ui/icons/GroupWork';
 import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import FaceIcon from '@material-ui/icons/Face';
-import HomeIcon from '@material-ui/icons/Home';
-import BuildIcon from '@material-ui/icons/Build';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import GroupWorkIcon from '@material-ui/icons/GroupWork';
+import HomeIcon from '@material-ui/icons/Home';
 import SecurityIcon from '@material-ui/icons/Security';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import WithPermission from './with-permission';
-import { SessionContext } from '../providers/session-provider';
 import { logout } from '../actions/login';
+
 import {
-    fullPathOfLogin,
-    fullPathOfChangePw,
+  fullPathOfLogin,
+  fullPathOfProjects,
+  fullPathOfChangePw,
   fullPathOfDataProtection,
   fullPathOfImprint,
-    fullPathOfStores,
-    fullPathOfItems,
+  fullPathOfStores,
+  fullPathOfItems,
   fullPathOfNeedApply,
   fullPathOfNeedApprove,
   fullPathOfNeedQuantities,
   fullPathOfProjects
-  fullPathOfItems,
 } from '../paths';
 import { SessionContext } from '../providers/session-provider';
 import WithPermission from './with-permission';

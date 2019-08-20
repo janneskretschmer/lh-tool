@@ -21,6 +21,7 @@ import {
     START_DIFF_VARIABLE,
     END_DIFF_VARIABLE,
     STORE_PREFIX,
+    STORE_PROJECTS,
     
 } from './urlmappings';
 
@@ -244,6 +245,11 @@ export const apiEndpoints = {
         getById: {
             method: 'GET',
             path: STORE_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
+        getProjects: {
+            method: 'GET',
+            path: STORE_PREFIX + STORE_PROJECTS,
             parameters: [ID_VARIABLE],
         },
         createNew: {

@@ -1,5 +1,5 @@
 import { apiRequest, apiEndpoints } from '../apiclient';
-import { ID_VARIABLE, USER_ID_VARIABLE } from '../urlmappings';
+import { ID_VARIABLE, USER_ID_VARIABLE, STORE_ID_VARIABLE } from '../urlmappings';
 import { fetchUsersByProjectIdAndRole } from './user';
 import moment from 'moment';
 
