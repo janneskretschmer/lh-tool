@@ -30,5 +30,6 @@ export const NEED_START_DIFF_VARIABLE = 'start_diff';
 export const NEED_END_DIFF_VARIABLE = 'end_diff';
 
 export const STORE_PREFIX = REST_PREFIX + '/stores';
+export const STORE_PROJECTS = ID_EXTENSION + "/projects";
 
 export const MEDIA_TYPE_JSON = 'application/json';

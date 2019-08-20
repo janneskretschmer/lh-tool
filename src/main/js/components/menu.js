@@ -1,36 +1,25 @@
-import React from 'react';
-import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
+import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import GroupWorkIcon from '@material-ui/icons/GroupWork';
-import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
-import DateRangeIcon from '@material-ui/icons/DateRange';
-import FaceIcon from '@material-ui/icons/Face';
-import HomeIcon from '@material-ui/icons/Home';
 import BuildIcon from '@material-ui/icons/Build';
+import DateRangeIcon from '@material-ui/icons/DateRange';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import FaceIcon from '@material-ui/icons/Face';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
-import VpnKeyIcon from '@material-ui/icons/VpnKey';
+import GroupWorkIcon from '@material-ui/icons/GroupWork';
+import HomeIcon from '@material-ui/icons/Home';
 import SecurityIcon from '@material-ui/icons/Security';
-import SettingsIcon from '@material-ui/icons/Settings';
+import VpnKeyIcon from '@material-ui/icons/VpnKey';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import WithPermission from './with-permission';
-import { SessionContext } from '../providers/session-provider';
 import { logout } from '../actions/login';
-import {
-  fullPathOfLogin,
-  fullPathOfProjects,
-  fullPathOfNeedQuantities,
-  fullPathOfNeedApply,
-  fullPathOfNeedApprove,
-  fullPathOfChangePw,
-  fullPathOfStores,
-  fullPathOfItems,
-} from '../paths';
+import { fullPathOfChangePw, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfStores } from '../paths';
+import { SessionContext } from '../providers/session-provider';
+import WithPermission from './with-permission';
 
 const linkStyle = { textDecoration: 'none' };
 

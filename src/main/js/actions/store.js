@@ -1,5 +1,6 @@
 import { apiEndpoints, apiRequest } from '../apiclient';
 import { ID_VARIABLE } from '../urlmappings';
+import moment from 'moment';
 
 export function fetchOwnStores(accessToken) {
     if (accessToken) {
@@ -25,6 +26,25 @@ export function fetchStore({ accessToken, storeId }) {
             .catch(e => console.log(e));
     } else {
         return Promise.resolve(null);
+    }
+}
+
+export function fetchStoreProjects({ accessToken, storeId }) {
+    if (accessToken) {
+        return apiRequest({
+            apiEndpoint: apiEndpoints.store.getProjects,
+            authToken: accessToken,
+            parameters: { [ID_VARIABLE]: storeId }
+        })
+            .then(result => result.response.content.map(tmp => ({
+                ...tmp,
+                start: moment(tmp.start, 'x'),
+                end: moment(tmp.end, 'x'),
+            })))
+            // TODO Proper error message
+            .catch(e => console.log(e));
+    } else {
+        return Promise.resolve([]);
     }
 }
 

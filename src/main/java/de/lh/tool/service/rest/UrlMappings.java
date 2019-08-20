@@ -34,6 +34,7 @@ public abstract class UrlMappings {
 	public static final String NEED_END_DIFF_VARIABLE = "end_diff";
 
 	public static final String STORE_PREFIX = REST_PREFIX + "/stores";
+	public static final String STORE_PROJECTS = ID_EXTENSION + "/projects";
 
 	public static final String MEDIA_TYPE_JSON = "application/json";
 

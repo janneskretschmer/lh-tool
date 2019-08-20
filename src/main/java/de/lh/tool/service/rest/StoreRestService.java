@@ -3,6 +3,7 @@ package de.lh.tool.service.rest;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.lh.tool.domain.dto.StoreDto;
+import de.lh.tool.domain.dto.StoreProjectDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.model.UserRole;
+import de.lh.tool.service.entity.interfaces.StoreProjectService;
 import de.lh.tool.service.entity.interfaces.StoreService;
 import io.swagger.annotations.ApiOperation;
 
@@ -28,6 +31,8 @@ import io.swagger.annotations.ApiOperation;
 public class StoreRestService {
 	@Autowired
 	private StoreService storeService;
+	@Autowired
+	private StoreProjectService storeProjectService;
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of own stores")
@@ -69,5 +74,16 @@ public class StoreRestService {
 		StoreDto storeDto = storeService.updateNeedDto(dto, id);
 
 		return new Resource<>(storeDto, linkTo(methodOn(StoreRestService.class).update(id, dto)).withSelfRel());
+	}
+
+	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.STORE_PROJECTS)
+	@ApiOperation(value = "Get a list of projects for store")
+	@Secured(UserRole.RIGHT_STORES_GET)
+	public Resources<StoreProjectDto> getProjects(
+			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long storeId) throws DefaultException {
+
+		Collection<StoreProjectDto> dtoList = storeProjectService.findDtosByStoreId(storeId);
+
+		return new Resources<>(dtoList, linkTo(methodOn(StoreRestService.class).getProjects(storeId)).withSelfRel());
 	}
 }
