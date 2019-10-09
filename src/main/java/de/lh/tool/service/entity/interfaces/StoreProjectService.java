@@ -8,4 +8,7 @@ import de.lh.tool.domain.model.StoreProject;
 
 public interface StoreProjectService extends BasicEntityService<StoreProject, Long> {
 	Collection<StoreProjectDto> findDtosByStoreId(Long storeId) throws DefaultException;
+
+	Collection<StoreProjectDto> bulkDeleteAndCreateByStoreId(Long storeId, Collection<StoreProjectDto> dtos)
+			throws DefaultException;
 }

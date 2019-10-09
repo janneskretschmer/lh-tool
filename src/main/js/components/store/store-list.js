@@ -57,7 +57,7 @@ export default class StoreListComponent extends React.Component {
                     <>
                         <List>
                             {stores ? stores.map(store => (
-                                <>
+                                <div key={store.id}>
                                     <Link to={fullPathOfStore(store.id)} className={classes.noDecoration} key={store.id}>
                                         <ListItem button>
                                             <ListItemIcon>
@@ -67,7 +67,7 @@ export default class StoreListComponent extends React.Component {
                                         </ListItem>
                                     </Link>
                                     <Divider />
-                                </>
+                                </div>
                             )) : (<CircularProgress />)}
                         </List>
                         <Link to={fullPathOfStore('new')} className={classes.noDecoration}>

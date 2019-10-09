@@ -14,6 +14,6 @@ public interface StoreService extends BasicEntityService<Store, Long> {
 
 	StoreDto createStoreDto(StoreDto dto) throws DefaultException;
 
-	StoreDto updateNeedDto(StoreDto dto, Long id) throws DefaultException;
+	StoreDto updateStoreDto(StoreDto dto, Long id) throws DefaultException;
 
 }

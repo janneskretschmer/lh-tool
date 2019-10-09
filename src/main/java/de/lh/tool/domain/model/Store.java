@@ -40,9 +40,9 @@ public class Store {
 	@Column(name = "address", length = 500, nullable = true)
 	private String address;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "store")
 	private Collection<StoreProject> storeProjects;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "store")
 	private Collection<Slot> slots;
 }

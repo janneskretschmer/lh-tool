@@ -64,7 +64,7 @@ public class StoreServiceImpl extends BasicMappableEntityServiceImpl<StoreReposi
 
 	@Override
 	@Transactional
-	public StoreDto updateNeedDto(StoreDto dto, Long id) throws DefaultException {
+	public StoreDto updateStoreDto(StoreDto dto, Long id) throws DefaultException {
 		dto.setId(ObjectUtils.defaultIfNull(id, dto.getId()));
 		if (dto.getId() == null) {
 			throw new DefaultException(ExceptionEnum.EX_NO_ID_PROVIDED);

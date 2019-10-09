@@ -251,6 +251,11 @@ export const apiEndpoints = {
             path: STORE_PREFIX + STORE_PROJECTS,
             parameters: [ID_VARIABLE],
         },
+        setProjects: {
+            method: 'POST',
+            path: STORE_PREFIX + STORE_PROJECTS,
+            parameters: [ID_VARIABLE],
+        },
         createNew: {
             method: 'POST',
             // TODO Trailing '/' also necessary?
