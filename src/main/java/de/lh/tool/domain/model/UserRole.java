@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 
 import lombok.AllArgsConstructor;
@@ -47,6 +48,11 @@ public class UserRole implements GrantedAuthority {
 	@Column(name = "role", length = 100, nullable = false)
 	@NonNull
 	private String role;
+
+	@Override
+	public String toString() {
+		return StringUtils.join(user.getFirstName(), " ", user.getLastName(), " has right", role);
+	}
 
 //  ██████╗__██████╗_██╗_____███████╗███████╗
 //  ██╔══██╗██╔═══██╗██║_____██╔════╝██╔════╝

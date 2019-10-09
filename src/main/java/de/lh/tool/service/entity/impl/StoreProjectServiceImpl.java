@@ -1,7 +1,13 @@
 package de.lh.tool.service.entity.impl;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
@@ -26,11 +32,32 @@ public class StoreProjectServiceImpl
 	private StoreService storeService;
 	@Autowired
 	private ProjectService projectService;
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	@Override
+	@Transactional
 	public Collection<StoreProjectDto> findDtosByStoreId(Long storeId) throws DefaultException {
 		return convertToDtoList(getRepository().findByStore_Id(
 				Optional.ofNullable(storeId).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_NO_ID_PROVIDED))));
+	}
+
+	@Override
+	@Transactional
+	public Collection<StoreProjectDto> bulkDeleteAndCreateByStoreId(Long storeId, Collection<StoreProjectDto> dtos)
+			throws DefaultException {
+//		Store store = storeService.findById(storeId).get();
+//		store.setStoreProjects(null);
+//		storeService.save(store);
+		getRepository().deleteByStore_Id(
+				Optional.ofNullable(storeId).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_NO_ID_PROVIDED)));
+		entityManager.flush();
+
+		List<StoreProject> result = Optional.ofNullable(dtos).map(Collection::stream).map(
+				stream -> stream.map(this::convertToEntity).map(getRepository()::save).collect(Collectors.toList()))
+				.orElse(List.of());
+
+		return convertToDtoList(result);
 	}
 
 	@Override
@@ -40,9 +67,9 @@ public class StoreProjectServiceImpl
 			@Override
 			protected void configure() {
 				using(c -> Optional.ofNullable(((StoreProjectDto) c.getSource()).getStoreId())
-						.map(storeService::findById).orElse(null)).map(source).setStore(null);
+						.flatMap(storeService::findById).orElse(null)).map(source).setStore(null);
 				using(c -> Optional.ofNullable(((StoreProjectDto) c.getSource()).getProjectId())
-						.map(projectService::findById).orElse(null)).map(source).setProject(null);
+						.flatMap(projectService::findById).orElse(null)).map(source).setProject(null);
 			}
 		});
 		return modelMapper.map(dto, StoreProject.class);

@@ -71,7 +71,7 @@ public class StoreRestService {
 	public Resource<StoreDto> update(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@RequestBody(required = true) StoreDto dto) throws DefaultException {
 
-		StoreDto storeDto = storeService.updateNeedDto(dto, id);
+		StoreDto storeDto = storeService.updateStoreDto(dto, id);
 
 		return new Resource<>(storeDto, linkTo(methodOn(StoreRestService.class).update(id, dto)).withSelfRel());
 	}
@@ -85,5 +85,18 @@ public class StoreRestService {
 		Collection<StoreProjectDto> dtoList = storeProjectService.findDtosByStoreId(storeId);
 
 		return new Resources<>(dtoList, linkTo(methodOn(StoreRestService.class).getProjects(storeId)).withSelfRel());
+	}
+
+	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.STORE_PROJECTS)
+	@ApiOperation(value = "Set projects for store")
+	@Secured(UserRole.RIGHT_STORES_PUT)
+	public Resources<StoreProjectDto> connectToProject(
+			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long storeId,
+			@RequestBody(required = true) List<StoreProjectDto> dtos) throws DefaultException {
+
+		Collection<StoreProjectDto> storeProjectDtos = storeProjectService.bulkDeleteAndCreateByStoreId(storeId, dtos);
+
+		return new Resources<>(storeProjectDtos,
+				linkTo(methodOn(StoreRestService.class).connectToProject(storeId, dtos)).withSelfRel());
 	}
 }

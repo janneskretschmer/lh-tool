@@ -16,10 +16,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { fullPathOfItem } from '../../paths';
 import { SessionContext } from '../../providers/session-provider';
-import { withContext } from '../../util';
+import { withContext, convertToMUIFormat, convertFromMUIFormat } from '../../util';
 import ItemListComponent from '../item/item-list';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { fetchStore, createOrUpdateStore, fetchStoreProjects } from '../../actions/store';
+import { fetchStore, createOrUpdateStore, fetchStoreProjects, deleteAndCreateStoreProjects } from '../../actions/store';
 import { fetchOwnProjects } from '../../actions/project';
 
 const styles = theme => ({
@@ -39,6 +39,13 @@ const styles = theme => ({
         marginRight: theme.spacing.unit,
         marginBottom: theme.spacing.unit,
         marginTop: theme.spacing.unit,
+    },
+    verticalCenteredContainer: {
+        display: 'flex',
+        alignItems: 'baseline',
+    },
+    margin: {
+        margin: theme.spacing.unit,
     }
 
 });
@@ -47,16 +54,16 @@ const ProjectList = (props) => {
     return props.storeProjects ? (
         props.storeProjects.length > 0 ?
             props.storeProjects.map(storeProject => (
-                <span key={storeProject.id}>
-                    <ProjectName projects={props.projects} projectId={storeProject.projectId}></ProjectName> ({storeProject.start.format('DD.MM.YYYY')} - {storeProject.end.format('DD.MM.YYYY')})<br />
+                <span key={storeProject.projectId + storeProject.start}>
+                    <ProjectName projects={props.projects} projectId={storeProject.projectId}></ProjectName> ({storeProject.start.format('DD.MM.YYYY')} - {storeProject.end.format('DD.MM.YYYY')}) {props.edit ? (<IconButton onClick={() => props.deletionHandler(storeProject)}><DeleteIcon /></IconButton>) : null}<br />
                 </span>
             )) : (<>-<br /></>)
-    ) : (<CircularProgress />)
+    ) : props.edit ? null : (<CircularProgress />)
 }
 
 const ProjectName = (props) => {
     if (props.projects) {
-        let project = props.projects.filter(project => project.id = props.projectId)[0];
+        let project = props.projects.filter(project => project.id == props.projectId)[0];
         if (project) {
             return (<>{project.name}</>)
         }
@@ -73,7 +80,10 @@ export default class StoreDetailComponent extends React.Component {
         this.state = {
             edit: props.new,
             store: null,
-
+            storeProjects: null,
+            selectedProjectIndex: 0,
+            selectedProjectStartDate: null,
+            selectedProjectEndDate: null,
         };
     }
 
@@ -115,6 +125,68 @@ export default class StoreDetailComponent extends React.Component {
         }))
     }
 
+    changeSelectedProject(event) {
+        this.changeSelectedProjectIndex(event.target.value)
+    }
+
+    changeSelectedProjectIndex(selectedProjectIndex) {
+        this.setState(prevState => ({
+            selectedProjectIndex,
+            selectedProjectStartDate: convertToMUIFormat(prevState.projects[selectedProjectIndex].startDate),
+            selectedProjectEndDate: convertToMUIFormat(prevState.projects[selectedProjectIndex].endDate),
+        }))
+    }
+
+    changeSelectedProjectStartDate(event) {
+        var selectedProjectStartDate = event.target.value
+        if (selectedProjectStartDate > this.state.selectedProjectEndDate) {
+            this.changeSelectedProjectEndDate(event)
+        }
+        this.setState({
+            selectedProjectStartDate: this.getDateWithinProjectRange(selectedProjectStartDate)
+        })
+    }
+
+    changeSelectedProjectEndDate(event) {
+        var selectedProjectEndDate = event.target.value
+        if (selectedProjectEndDate < this.state.selectedProjectStartDate) {
+            this.changeSelectedProjectStartDate(event)
+        }
+        this.setState({
+            selectedProjectEndDate: this.getDateWithinProjectRange(selectedProjectEndDate)
+        })
+    }
+
+    getDateWithinProjectRange(date) {
+        let projectStartDate = convertToMUIFormat(this.state.projects[this.state.selectedProjectIndex].startDate)
+        if (date <= projectStartDate) {
+            return projectStartDate
+        }
+        let projectEndDate = convertToMUIFormat(this.state.projects[this.state.selectedProjectIndex].endDate)
+        if (date >= projectEndDate) {
+            return projectEndDate
+        }
+        return date
+    }
+
+    addProject() {
+        this.setState(prevState => ({
+            storeProjects: [...(prevState.storeProjects ? prevState.storeProjects : []), {
+                //doesn't work with prevState...
+                projectId: this.state.projects[this.state.selectedProjectIndex].id,
+                storeId: prevState.store.id,
+                start: convertFromMUIFormat(this.state.selectedProjectStartDate),
+                end: convertFromMUIFormat(this.state.selectedProjectEndDate),
+            }],
+        }), this.changeSelectedProjectIndex(0))
+    }
+
+    removeProject(storeProject) {
+        this.setState(prevState => ({
+            storeProjects: prevState.storeProjects.filter(tmp => tmp.projectId != storeProject.projectId || tmp.start != storeProject.start)
+        }))
+    }
+
     loadStore() {
         let id = this.props.match.params.id
         if (id === 'new') {
@@ -133,21 +205,28 @@ export default class StoreDetailComponent extends React.Component {
     }
 
     changeStore(store, callback) {
-        this.setState({
-            store
-        }, callback)
+        this.setState(prevState => ({
+            store,
+            storeProjects: prevState.storeProjects ? prevState.storeProjects.map(storeProject => ({
+                ...storeProject,
+                storeId: store.id,
+            })) : null,
+        }), callback)
     }
 
     componentDidMount() {
         this.loadStore()
-        fetchOwnProjects({ accessToken: this.props.sessionState.accessToken }).then(projects => this.setState({ projects }))
+        fetchOwnProjects({ accessToken: this.props.sessionState.accessToken }).then(projects => this.setState({ projects }, () => this.changeSelectedProjectIndex(0)))
     }
 
     save() {
         this.setState({
             saving: true
         })
-        createOrUpdateStore({ accessToken: this.props.sessionState.accessToken, store: this.state.store }).then(store => this.changeStore(store, () => this.changeEditState(false)))
+        createOrUpdateStore({ accessToken: this.props.sessionState.accessToken, store: this.state.store }).then(store => this.changeStore(store,
+            () => deleteAndCreateStoreProjects({ accessToken: this.props.sessionState.accessToken, storeId: this.state.store.id, storeProjects: this.state.storeProjects }).then(
+                storeProjects => this.setState({ storeProjects }, () => this.changeEditState(false))
+            )))
     }
 
     cancel() {
@@ -160,7 +239,7 @@ export default class StoreDetailComponent extends React.Component {
 
     render() {
         const { classes, match } = this.props
-        const { edit, store, saving, storeProjects, projects } = this.state
+        const { edit, store, saving, storeProjects, projects, selectedProjectIndex, selectedProjectStartDate, selectedProjectEndDate } = this.state
         const types = {
             MAIN: 'Hauptlager',
             STANDARD: 'Lager',
@@ -175,7 +254,7 @@ export default class StoreDetailComponent extends React.Component {
                                 id="name"
                                 label="Name"
                                 className={classes.textField}
-                                value={store.name}
+                                value={store.name ? store.name : ''}
                                 onChange={this.changeTitle.bind(this)}
                                 margin="dense"
                                 variant="outlined"
@@ -208,7 +287,7 @@ export default class StoreDetailComponent extends React.Component {
                                     label="Adresse"
                                     multiline
                                     className={classes.textField}
-                                    value={store.address}
+                                    value={store.address ? store.address : ''}
                                     onChange={this.changeAddress.bind(this)}
                                     margin="dense"
                                     variant="outlined"
@@ -229,7 +308,7 @@ export default class StoreDetailComponent extends React.Component {
                                 <FormControl className={classes.formControl}>
                                     <InputLabel htmlFor="type">Typ</InputLabel>
                                     <Select
-                                        value={store.type}
+                                        value={store.type ? store.type : 'STANDARD'}
                                         onChange={this.changeType.bind(this)}
                                         inputProps={{
                                             name: 'type',
@@ -255,12 +334,45 @@ export default class StoreDetailComponent extends React.Component {
                         <div className={classes.bold}>
                             Projekte
                         </div>
-                        {edit ? (
-                            projects ? projects.map(project => (
-                                <>TODO: Möglichkeit schaffen Projekte hinzuzufügen</>
-                            )) : (<CircularProgress />)
-                        ) : <ProjectList storeProjects={storeProjects} projects={projects}></ProjectList>}
+                        {edit ? projects ? (
+                            <div className={classes.verticalCenteredContainer}>
+                                <FormControl className={classes.formControl}>
+                                    <InputLabel htmlFor="project">Projekt</InputLabel>
+                                    <Select
+                                        value={selectedProjectIndex ? selectedProjectIndex : 0}
+                                        onChange={this.changeSelectedProject.bind(this)}
+                                        inputProps={{
+                                            name: 'project',
+                                            id: 'project',
+                                        }}
+                                    >
+                                        {projects.map((project, index) => (
+                                            <MenuItem key={project.id} value={index}>{project.name}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl> von <TextField
+                                    type="date"
+                                    value={selectedProjectStartDate ? selectedProjectStartDate : ''}
+                                    className={classes.margin}
+                                    margin="dense"
+                                    variant="outlined"
+                                    onChange={this.changeSelectedProjectStartDate.bind(this)}
+                                /> bis <TextField
+                                    type="date"
+                                    value={selectedProjectEndDate ? selectedProjectEndDate : ''}
+                                    className={classes.margin}
+                                    margin="dense"
+                                    variant="outlined"
+                                    onChange={this.changeSelectedProjectEndDate.bind(this)}
+                                />
+                                <Button variant="contained" onClick={this.addProject.bind(this)}>Hinzufügen</Button>
+                            </div>
+                        ) : (<CircularProgress />) : null}
+                        <ProjectList storeProjects={storeProjects} projects={projects} edit={edit} deletionHandler={this.removeProject.bind(this)}></ProjectList>
                     </div>
+                </div>
+                <div className={classes.bold}>
+                    Artikel
                 </div>
                 <ItemListComponent store={match.params.id * 1} />
             </>

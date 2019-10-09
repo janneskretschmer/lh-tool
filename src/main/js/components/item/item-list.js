@@ -234,7 +234,7 @@ export default class ItemListComponent extends React.Component {
     }
 
     handleRowClick(id) {
-        if(this.state.selected.length > 0) {
+        if (this.state.selected.length > 0) {
             this.handleSelection(id)
         } else {
             this.setState({ redirect: id })
@@ -394,23 +394,30 @@ export default class ItemListComponent extends React.Component {
                                         </TableRow>
                                     </TableHead>
                                 </>
-                            ) : (
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>Bezeichnung</TableCell>
-                                            <TableCell>ID</TableCell>
-                                            <TableCell>Status</TableCell>
-                                            {!store ? (
-                                                <TableCell align="right">Lager</TableCell>
-                                            ) : null}
-                                            <TableCell align="right">Platz</TableCell>
-                                            <TableCell align="right">Menge</TableCell>
-                                            <TableCell align="right">Beliebtheit</TableCell>
-                                            <TableCell align="right" padding="checkbox">
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                )}
+                            ) : (<>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell align="right" colSpan="8">
+                                            &nbsp;
+                                        </TableCell>
+                                    </TableRow>
+                                </TableHead>
+                            </>)}
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Bezeichnung</TableCell>
+                                    <TableCell>ID</TableCell>
+                                    <TableCell>Status</TableCell>
+                                    {!store ? (
+                                        <TableCell align="right">Lager</TableCell>
+                                    ) : null}
+                                    <TableCell align="right">Platz</TableCell>
+                                    <TableCell align="right">Menge</TableCell>
+                                    <TableCell align="right">Beliebtheit</TableCell>
+                                    <TableCell align="right" padding="checkbox">
+                                    </TableCell>
+                                </TableRow>
+                            </TableHead>
                             <TableBody>
                                 {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
                                     <TableRow

@@ -48,6 +48,26 @@ export function fetchStoreProjects({ accessToken, storeId }) {
     }
 }
 
+export function deleteAndCreateStoreProjects({ accessToken, storeId, storeProjects }) {
+    if (accessToken) {
+        return apiRequest({
+            apiEndpoint: apiEndpoints.store.setProjects,
+            authToken: accessToken,
+            parameters: { [ID_VARIABLE]: storeId },
+            data: storeProjects,
+        })
+            .then(result => result.response.content.map(tmp => ({
+                ...tmp,
+                start: moment(tmp.start, 'x'),
+                end: moment(tmp.end, 'x'),
+            })))
+            // TODO Proper error message
+            .catch(e => console.log(e));
+    } else {
+        return Promise.resolve([]);
+    }
+}
+
 export function createOrUpdateStore({ accessToken, store, handleFailure }) {
     return apiRequest({
         apiEndpoint: store.id ? apiEndpoints.store.update : apiEndpoints.store.createNew,
