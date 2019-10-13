@@ -24,13 +24,13 @@ import de.lh.tool.service.entity.interfaces.UserService;
 public class StoreServiceImpl extends BasicMappableEntityServiceImpl<StoreRepository, Store, StoreDto, Long>
 		implements StoreService {
 	@Autowired
-	UserService userService;
+	private UserService userService;
 
 	@Autowired
-	UserRoleService userRoleService;
+	private UserRoleService userRoleService;
 
 	@Autowired
-	ProjectService projectService;
+	private ProjectService projectService;
 
 	@Override
 	@Transactional
