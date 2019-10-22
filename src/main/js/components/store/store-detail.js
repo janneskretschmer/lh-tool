@@ -21,6 +21,7 @@ import ItemListComponent from '../item/item-list';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { fetchStore, createOrUpdateStore, fetchStoreProjects, deleteAndCreateStoreProjects } from '../../actions/store';
 import { fetchOwnProjects } from '../../actions/project';
+import SlotListComponent from '../slot/slot-list';
 
 const styles = theme => ({
     button: {
@@ -371,10 +372,33 @@ export default class StoreDetailComponent extends React.Component {
                         <ProjectList storeProjects={storeProjects} projects={projects} edit={edit} deletionHandler={this.removeProject.bind(this)}></ProjectList>
                     </div>
                 </div>
-                <div className={classes.bold}>
-                    Artikel
-                </div>
-                <ItemListComponent store={match.params.id * 1} />
+                {edit ?
+                    saving ? (<>&nbsp;<CircularProgress /></>) : (
+                        <>
+                            <Button variant="contained" className={classes.button} type="submit" onClick={this.save.bind(this)}>
+                                Speichern
+                            </Button>
+                            <Button variant="outlined" className={classes.button} type="submit" onClick={this.cancel.bind(this)}>
+                                Abbrechen
+                            </Button>
+                        </>
+                    )
+                    : (
+                        <>
+                            <br />
+                            <br />
+                            <div className={classes.bold}>
+                                Lagerplätze
+                             </div>
+                            <SlotListComponent storeId={match.params.id * 1} />
+                            <br />
+                            <br />
+                            <div className={classes.bold}>
+                                Artikel
+                            </div>
+                            <ItemListComponent store={match.params.id * 1} />
+                        </>
+                    )}
             </>
         ) : (<CircularProgress />)
     }

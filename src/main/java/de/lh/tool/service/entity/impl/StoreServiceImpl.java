@@ -35,9 +35,7 @@ public class StoreServiceImpl extends BasicMappableEntityServiceImpl<StoreReposi
 	@Override
 	@Transactional
 	public List<StoreDto> getStoreDtos() {
-		return convertToDtoList(
-				userRoleService.hasCurrentUserRight(UserRole.RIGHT_STORES_GET_FOREIGN_PROJECT) ? findAll()
-						: getRepository().findByCurrentProjectMembership(userService.getCurrentUser().getId()));
+		return convertToDtoList(getOwnStores());
 	}
 
 	@Override
@@ -71,6 +69,13 @@ public class StoreServiceImpl extends BasicMappableEntityServiceImpl<StoreReposi
 		}
 		Store store = save(convertToEntity(dto));
 		return convertToDto(store);
+	}
+
+	@Override
+	@Transactional
+	public Iterable<Store> getOwnStores() {
+		return userRoleService.hasCurrentUserRight(UserRole.RIGHT_STORES_GET_FOREIGN_PROJECT) ? findAll()
+				: getRepository().findByCurrentProjectMembership(userService.getCurrentUser().getId());
 	}
 
 }

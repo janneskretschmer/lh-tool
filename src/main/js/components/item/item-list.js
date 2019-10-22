@@ -1,30 +1,22 @@
+import Button from '@material-ui/core/Button';
+import FormControl from '@material-ui/core/FormControl';
+import IconButton from '@material-ui/core/IconButton';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import { withStyles } from '@material-ui/core/styles';
+import TableCell from '@material-ui/core/TableCell';
+import TextField from '@material-ui/core/TextField';
+import ExpandLessIcon from '@material-ui/icons/ExpandLess';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import SearchIcon from '@material-ui/icons/Search';
 import React from 'react';
+import { Redirect } from 'react-router';
+import { fullPathOfItem } from '../../paths';
 import { SessionContext } from '../../providers/session-provider';
 import { withContext } from '../../util';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableFooter from '@material-ui/core/TableFooter';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import SearchIcon from '@material-ui/icons/Search';
-import DeleteIcon from '@material-ui/icons/Delete';
-import ForwardIcon from '@material-ui/icons/Forward';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ExpandLessIcon from '@material-ui/icons/ExpandLess';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import TextField from '@material-ui/core/TextField';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import { withStyles } from '@material-ui/core/styles';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import { fullPathOfItem } from '../../paths';
-import { Redirect } from 'react-router'
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
-import Checkbox from '@material-ui/core/Checkbox';
+import PagedTable from '../table';
 
 
 const styles = theme => ({
@@ -185,33 +177,15 @@ export default class ItemListComponent extends React.Component {
                         { id: 11, userName: "Bauhelfer 5", timestamp: null, givenBack: false },
                     ]
                 },
-            ].filter(v => !props.store || v.store === props.store),//.sort((a, b) => (a.name < b.name ? -1 : 1)),
-            page: 0,
-            rowsPerPage: 10,
-            selected: [],
+            ].filter(v => !props.storeId || v.store === props.storeId && !props.slotId || v.slot == props.slotId),//.sort((a, b) => (a.name < b.name ? -1 : 1)),
 
             showFilters: false,
             searchTechnicalCrew: '',
             searchTag: '',
             searchStore: '',
             searchSlot: '',
-            redirect: undefined,
         };
     }
-
-    handleSelection = (index) => {
-        this.setState({
-            selected: this.state.selected.includes(index) ? this.state.selected.filter(item => item !== index) : this.state.selected.concat(index),
-        })
-    }
-
-    handleChangePage = (event, page) => {
-        this.setState({ page });
-    };
-
-    handleChangeRowsPerPage = event => {
-        this.setState({ page: 0, rowsPerPage: event.target.value });
-    };
 
     handleToggleShowFilters = () => {
         this.setState({ showFilters: !this.state.showFilters })
@@ -233,14 +207,6 @@ export default class ItemListComponent extends React.Component {
         this.setState({ searchSlot: event.target.value })
     }
 
-    handleRowClick(id) {
-        if (this.state.selected.length > 0) {
-            this.handleSelection(id)
-        } else {
-            this.setState({ redirect: id })
-        }
-    }
-
     getState(item) {
         if (item.broken) {
             return "Defekt"
@@ -253,9 +219,10 @@ export default class ItemListComponent extends React.Component {
     }
 
     render() {
-        const { classes, store } = this.props
+        const { classes, storeId, slotId } = this.props
         const { rows, rowsPerPage, page, showFilters, searchTechnicalCrew, searchTag, searchStore, searchSlot, selected } = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+        const singlePage = emptyRows < rows.length;
         if (this.state.redirect) {
             return (<Redirect to={fullPathOfItem(this.state.redirect)} />)
         }
@@ -363,126 +330,78 @@ export default class ItemListComponent extends React.Component {
                         <Button variant="contained" onClick={() => alert('Vergeblich nach der Search-Funktion gesucht ;(')}>
                             Suchen
                         </Button>
-                        <Table>
-                            {selected.length > 0 ? (
+
+
+
+                        <PagedTable
+                            selectionHeader={(
                                 <>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell align="right" colSpan="8">
-                                                <span className={classes.selectionText}>
-                                                    Auswahl ({selected.length})
-                                                </span>
-                                                <Button variant="outlined" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
-                                                    Löschen
-                                                </Button>
-                                                <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Verschieben"')}>
-                                                    Verschieben
-                                                </Button>
-                                                <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
-                                                    Defekt
-                                                </Button>
-                                                <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
-                                                    Repariert
-                                                </Button>
-                                                <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Ausleihen"')}>
-                                                    Ausleihen
-                                                </Button>
-                                                <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Zurückgeben"')}>
-                                                    Zurückgeben
-                                                </Button>
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableHead>
+                                    <Button variant="outlined" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
+                                        Löschen
+                                    </Button>
+                                    <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Verschieben"')}>
+                                        Verschieben
+                                    </Button>
+                                    <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
+                                        Defekt
+                                     </Button>
+                                    <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
+                                        Repariert
+                                    </Button>
+                                    <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Ausleihen"')}>
+                                        Ausleihen
+                                    </Button>
+                                    <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Zurückgeben"')}>
+                                        Zurückgeben
+                                    </Button>
                                 </>
-                            ) : (<>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell align="right" colSpan="8">
-                                            &nbsp;
-                                        </TableCell>
-                                    </TableRow>
-                                </TableHead>
-                            </>)}
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Bezeichnung</TableCell>
-                                    <TableCell>ID</TableCell>
-                                    <TableCell>Status</TableCell>
-                                    {!store ? (
-                                        <TableCell align="right">Lager</TableCell>
-                                    ) : null}
-                                    <TableCell align="right">Platz</TableCell>
-                                    <TableCell align="right">Menge</TableCell>
-                                    <TableCell align="right">Beliebtheit</TableCell>
-                                    <TableCell align="right" padding="checkbox">
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
-                                    <TableRow
-                                        key={row.id}
-                                        className={classes.clickable}
-                                    >
-                                        <TableCell component="th" scope="row" onClick={event => this.handleRowClick(row.id)}>
-                                            {row.name}
-                                        </TableCell>
-                                        <TableCell component="th" scope="row" onClick={event => this.handleRowClick(row.id)}>
-                                            {row.id}
-                                        </TableCell>
-                                        <TableCell component="th" scope="row" onClick={event => this.handleRowClick(row.id)}>
-                                            {this.getState(row)}
-                                        </TableCell>
-                                        {!store ? (
-                                            <TableCell align="right" onClick={event => this.handleRowClick(row.id)}>
-                                                {row.store}
-                                            </TableCell>
-                                        ) : null}
-                                        <TableCell align="right" onClick={event => this.handleRowClick(row.id)}>
-                                            {row.slot}
-                                        </TableCell>
-                                        <TableCell align="right" onClick={event => this.handleRowClick(row.id)}>
-                                            {row.quantity} {row.unit}
-                                        </TableCell>
-                                        <TableCell align="right" onClick={event => this.handleRowClick(row.id)}>
-                                            {row.rentals.length}
-                                        </TableCell>
-                                        <TableCell align="right" padding="checkbox">
-                                            <Checkbox
-                                                checked={selected.includes(row.id)}
-                                                onChange={() => this.handleSelection(row.id)}
-                                            />
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                                {emptyRows > 0 && (
-                                    <TableRow style={{ height: 48 * emptyRows }}>
-                                        <TableCell colSpan={6} />
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                            <TableFooter>
-                                <TableRow>
-                                    <TableCell>
-                                        <Button variant="contained" onClick={() => alert('TODO: Umleitung auf leere Bearbeiten-Seite')} className={classes.new}>
-                                            Hinzufügen
-                                        </Button>
-                                    </TableCell>
-                                    <TablePagination
-                                        rowsPerPageOptions={[5, 10, 25]}
-                                        colSpan={3}
-                                        count={rows.length}
-                                        rowsPerPage={rowsPerPage}
-                                        page={page}
-                                        SelectProps={{
-                                            native: true,
-                                        }}
-                                        onChangePage={this.handleChangePage}
-                                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                                    />
-                                </TableRow>
-                            </TableFooter>
-                        </Table>
+                            )}
+                            headers={[
+                                {
+                                    key: 'name',
+                                    name: 'Bezeichnung',
+                                },
+                                {
+                                    key: 'identifier',
+                                    name: 'ID',
+                                },
+                                {
+                                    key: 'state',
+                                    name: 'Status',
+                                },
+                                {
+                                    key: 'store',
+                                    name: 'Lager',
+                                    hidden: !!storeId,
+                                    align: 'right',
+                                },
+                                {
+                                    key: 'slot',
+                                    name: 'Platz',
+                                    hidden: !!slotId,
+                                    align: 'right',
+                                },
+                                {
+                                    key: 'quantity',
+                                    name: 'Menge',
+                                    align: 'right',
+                                },
+                                {
+                                    key: 'popularity',
+                                    name: 'Beliebtheit',
+                                    align: 'right',
+                                },
+
+                            ]}
+                            rows={rows.map(row => {
+                                return {
+                                    ...row,
+                                    state: this.getState(row),
+                                    popularity: row.rentals.length,
+                                    quantity: row.quantity + ' ' + row.unit,
+                                }
+                            })}
+                            redirect={fullPathOfItem} />
                     </>
                 )}
             </SessionContext.Consumer>

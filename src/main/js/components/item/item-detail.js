@@ -33,6 +33,24 @@ export default class ItemDetailComponent extends React.Component {
         })
     }
 
+    loadItem() {
+        let id = this.props.match.params.id
+        if (id === 'new') {
+            this.setState({
+                edit: true,
+                item: {
+                    name: '',
+                    id: '',
+                    
+                    type: 'STANDARD'
+                },
+            })
+        } else {
+            fetchStore({ accessToken: this.props.sessionState.accessToken, storeId: id }).then(store => this.changeStore(store))
+            fetchStoreProjects({ accessToken: this.props.sessionState.accessToken, storeId: id }).then(storeProjects => this.setState({ storeProjects }))
+        }
+    }
+
     render() {
         const { classes } = this.props
         return (

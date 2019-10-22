@@ -8,17 +8,24 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SlotDto {
+public class ItemDto {
 	private Long id;
-	private Long storeId;
+	private Long slotId;
+	private String identifier;
+	private Boolean hasBarcode;
 	private String name;
 	private String description;
+	private Double quantity;
+	private String unit;
 	private Float width;
 	private Float height;
 	private Float depth;
-	private Boolean outside;
+	private Boolean outsideQualified;
+	private Boolean consumable;
+	private Boolean broken;
+	private String picture_url;
 }
