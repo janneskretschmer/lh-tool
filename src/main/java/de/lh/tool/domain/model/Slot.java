@@ -52,6 +52,6 @@ public class Slot {
 	@Column(name = "outside", nullable = false)
 	private Boolean outside;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "slot")
 	private Collection<Item> items;
 }

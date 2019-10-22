@@ -16,6 +16,7 @@ import {
     fullPathOfNeedApprove,
     fullPathOfStores,
     fullPathOfStore,
+    fullPathOfSlot,
     fullPathOfItems,
     fullPathOfItem,
     fullPathOfChangePw,
@@ -34,6 +35,7 @@ import NotFoundComponent from './notfound';
 import AppMenu from './menu';
 import ChangePasswordComponent from './changepw';
 import SessionProvider from '../providers/session-provider';
+import SlotDetailComponent from './slot/slot-detail';
 
 const drawerWidth = 240;
 
@@ -141,6 +143,7 @@ export default class LHToolRoot extends React.Component {
                                     <Route path={fullPathOfNeedApprove()} component={NeedApproveComponent} />
 									<Route path={fullPathOfStore()} component={StoreDetailComponent} />
                                     <Route path={fullPathOfStores()} component={StoreListComponent} />
+                                    <Route path={fullPathOfSlot()} component={SlotDetailComponent} />
                                     <Route path={fullPathOfItem()} component={ItemDetailComponent} />
                                     <Route path={fullPathOfItems()} component={ItemListComponent} />
                                     <Route path={fullPathOfChangePw()} component={ChangePasswordComponent} />

@@ -16,4 +16,6 @@ public interface StoreService extends BasicEntityService<Store, Long> {
 
 	StoreDto updateStoreDto(StoreDto dto, Long id) throws DefaultException;
 
+	Iterable<Store> getOwnStores();
+
 }

@@ -55,8 +55,8 @@ export default class ProjectCreatePanel extends React.Component {
                                 createNewProject({
                                     accessToken: sessionState.accessToken,
                                     projectsState,
-                                    startMoment: moment(this.state.startDate, MUI_DATE_FORMAT),
-                                    endMoment: moment(this.state.endDate, MUI_DATE_FORMAT),
+                                    startMoment: convertToMUIFormat(moment(this.state.startDate)),
+                                    endMoment: convertToMUIFormat(moment(this.state.endDate)),
                                     name: this.state.name,
                                     handleFailure: this.handleFailure.bind(this),
                                 });

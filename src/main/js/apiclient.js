@@ -22,6 +22,8 @@ import {
     END_DIFF_VARIABLE,
     STORE_PREFIX,
     STORE_PROJECTS,
+    SLOT_PREFIX,
+    SLOT_STORE_VARIABLE,
     
 } from './urlmappings';
 
@@ -264,6 +266,28 @@ export const apiEndpoints = {
         update: {
             method: 'PUT',
             path: STORE_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
+    },
+    slot: {
+        getByStore: {
+            method: 'GET',
+            path: SLOT_PREFIX + '/',
+            queries: [SLOT_STORE_VARIABLE],
+        },
+        getById: {
+            method: 'GET',
+            path: SLOT_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
+        createNew: {
+            method: 'POST',
+            // TODO Trailing '/' also necessary?
+            path: SLOT_PREFIX + '/',
+        },
+        update: {
+            method: 'PUT',
+            path: SLOT_PREFIX + ID_EXTENSION,
             parameters: [ID_VARIABLE],
         },
     }

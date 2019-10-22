@@ -36,6 +36,9 @@ public abstract class UrlMappings {
 	public static final String STORE_PREFIX = REST_PREFIX + "/stores";
 	public static final String STORE_PROJECTS = ID_EXTENSION + "/projects";
 
+	public static final String SLOT_PREFIX = REST_PREFIX + "/slots";
+	public static final String SLOT_STORE_VARIABLE = "store";
+
 	public static final String MEDIA_TYPE_JSON = "application/json";
 
 	private UrlMappings() {

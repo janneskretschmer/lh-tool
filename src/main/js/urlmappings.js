@@ -32,4 +32,7 @@ export const NEED_END_DIFF_VARIABLE = 'end_diff';
 export const STORE_PREFIX = REST_PREFIX + '/stores';
 export const STORE_PROJECTS = ID_EXTENSION + '/projects';
 
+export const SLOT_PREFIX = REST_PREFIX + '/slots';
+export const SLOT_STORE_VARIABLE = 'store';
+
 export const MEDIA_TYPE_JSON = 'application/json';
