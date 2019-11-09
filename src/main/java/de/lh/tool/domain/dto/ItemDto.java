@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ItemDto {
 	private Long id;
@@ -27,5 +27,6 @@ public class ItemDto {
 	private Boolean outsideQualified;
 	private Boolean consumable;
 	private Boolean broken;
-	private String picture_url;
+	private String pictureUrl;
+	private Long technicalCrewId;
 }

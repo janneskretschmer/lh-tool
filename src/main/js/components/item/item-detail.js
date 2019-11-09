@@ -1,10 +1,12 @@
-import React from 'react';
+import { CircularProgress } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
+import React from 'react';
+import { createOrUpdateItem, fetchItem } from '../../actions/item';
 import { SessionContext } from '../../providers/session-provider';
 import { withContext } from '../../util';
 import ItemDisplayComponent from './item-display';
 import ItemEditComponent from './item-edit';
-import Button from '@material-ui/core/Button';
 
 const styles = theme => ({
     bold: {
@@ -39,33 +41,65 @@ export default class ItemDetailComponent extends React.Component {
             this.setState({
                 edit: true,
                 item: {
+                    broken: false,
+                    consumable: false,
+                    depth: '',
+                    description: '',
+                    hasBarcode: false,
+                    height: '',
+                    identifier: Date.now().toString(36),
                     name: '',
-                    id: '',
-                    
-                    type: 'STANDARD'
+                    outsideQualified: false,
+                    pictureUrl: '',
+                    quantity: 1,
+                    unit: 'Stück',
+                    width: '',
                 },
             })
         } else {
-            fetchStore({ accessToken: this.props.sessionState.accessToken, storeId: id }).then(store => this.changeStore(store))
-            fetchStoreProjects({ accessToken: this.props.sessionState.accessToken, storeId: id }).then(storeProjects => this.setState({ storeProjects }))
+            fetchItem({ accessToken: this.props.sessionState.accessToken, itemId: id }).then(item => this.setState({ item }))
         }
+    }
+
+    saveIfBroken(broken) {
+        this.setState(prevState => ({
+            savingIfBroken: true,
+            item: {
+                ...prevState.item,
+                broken,
+            }
+        }), () => createOrUpdateItem({
+            accessToken: this.props.sessionState.accessToken,
+            item: this.state.item,
+        }).then(item => this.setState({
+            savingIfBroken: false,
+        })))
+
+    }
+
+    componentDidMount() {
+        this.loadItem();
     }
 
     render() {
         const { classes } = this.props
+        const { item, savingIfBroken } = this.state
+        if (!item) {
+            return (<CircularProgress />)
+        }
         return (
             <>
                 [Detail-Ansicht für {this.props.match.params.id}]
                 {this.state.edit ? (
                     <>
-                        <ItemEditComponent></ItemEditComponent>
+                        <ItemEditComponent item={item}></ItemEditComponent>
                         <Button variant="contained" className={classes.button} type="submit" onClick={() => this.changeEditState(false)}>
                             Speichern
                         </Button>
                     </>
                 ) : (
                         <>
-                            <ItemDisplayComponent></ItemDisplayComponent>
+                            <ItemDisplayComponent item={item}></ItemDisplayComponent>
                             <Button variant="contained" className={classes.button} onClick={() => this.changeEditState(true)}>
                                 Bearbeiten
                         </Button>
@@ -75,9 +109,9 @@ export default class ItemDetailComponent extends React.Component {
                             <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Kopieren"')}>
                                 Kopieren
                         </Button>
-                            <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
-                                Defekt
-                        </Button>
+                            <Button variant="contained" className={classes.button} onClick={() => this.saveIfBroken(!item.broken)}>
+                                {savingIfBroken ? (<CircularProgress size="12" />) : item.broken ? 'Repariert' : 'Defekt'}
+                            </Button>
                             <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Ausleihen"')}>
                                 Ausleihen
                         </Button>

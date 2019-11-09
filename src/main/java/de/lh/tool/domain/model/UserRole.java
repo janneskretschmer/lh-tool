@@ -133,6 +133,9 @@ public class UserRole implements GrantedAuthority {
 	public static final String RIGHT_STORES_PUT = "ROLE_RIGHT_STORES_PUT";
 	public static final String RIGHT_STORES_GET_FOREIGN_PROJECT = "ROLE_RIGHT_STORES_GET_FOREIGN_PROJECT";
 
+	public static final String RIGHT_TECHNICAL_CREWS_GET = "ROLE_RIGHT_TECHNICAL_CREWS_GET";
+	public static final String RIGHT_TECHNICAL_CREWS_GET_BY_ID = "ROLE_RIGHT_TECHNICAL_CREWS_GET_BY_ID";
+
 	private static class RoleRightManager {
 		private static RoleRightManager instance;
 		private final Map<String, Collection<String>> roleRights;
@@ -168,7 +171,9 @@ public class UserRole implements GrantedAuthority {
 					RIGHT_SLOTS_GET, RIGHT_SLOTS_GET_BY_ID, RIGHT_SLOTS_POST, RIGHT_SLOTS_PUT,
 					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
 					RIGHT_STORES_GET, RIGHT_STORES_GET_BY_ID, RIGHT_STORES_GET_FOREIGN_PROJECT, RIGHT_STORES_POST,
-					RIGHT_STORES_PUT));
+					RIGHT_STORES_PUT,
+					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+					RIGHT_TECHNICAL_CREWS_GET, RIGHT_TECHNICAL_CREWS_GET_BY_ID));
 
 			roleRights.put(ROLE_CONSTRUCTION_SERVANT,
 					List.of(RIGHT_USERS_GET_ALL, RIGHT_USERS_GET_BY_ID, RIGHT_USERS_CREATE, RIGHT_USERS_PUT,
@@ -188,7 +193,9 @@ public class UserRole implements GrantedAuthority {
 							RIGHT_SLOTS_GET, RIGHT_SLOTS_GET_BY_ID, RIGHT_SLOTS_POST, RIGHT_SLOTS_PUT,
 							// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
 							RIGHT_STORES_GET, RIGHT_STORES_GET_BY_ID, RIGHT_STORES_GET_FOREIGN_PROJECT,
-							RIGHT_STORES_POST, RIGHT_STORES_PUT));
+							RIGHT_STORES_POST, RIGHT_STORES_PUT,
+							// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+							RIGHT_TECHNICAL_CREWS_GET, RIGHT_TECHNICAL_CREWS_GET_BY_ID));
 
 			roleRights.put(ROLE_LOCAL_COORDINATOR,
 					List.of(RIGHT_USERS_GET_ALL, RIGHT_USERS_GET_BY_ID, RIGHT_USERS_CREATE, RIGHT_USERS_PUT,

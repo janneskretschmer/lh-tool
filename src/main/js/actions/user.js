@@ -44,6 +44,7 @@ export function fetchUser({ accessToken, userId }) {
             [ID_VARIABLE]: userId,
         }
     })
+    .then(result => result.response)
   // TODO Error message
         .catch(e => console.log(e));
 }

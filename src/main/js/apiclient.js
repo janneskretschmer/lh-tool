@@ -24,7 +24,12 @@ import {
     STORE_PROJECTS,
     SLOT_PREFIX,
     SLOT_STORE_VARIABLE,
-    
+    ITEM_PREFIX,
+    ITEM_NOTES,
+    ITEM_TAGS,
+    ITEM_HISTORY,
+    TECHNICAL_CREW_PREFIX,
+
 } from './urlmappings';
 
 function isWellFormedEndpoint(apiEndpoint) {
@@ -291,5 +296,58 @@ export const apiEndpoints = {
             path: SLOT_PREFIX + ID_EXTENSION,
             parameters: [ID_VARIABLE],
         },
-    }
+    },
+    item: {
+        get: {
+            method: 'GET',
+            path: ITEM_PREFIX + '/',
+        },
+        getById: {
+            method: 'GET',
+            path: ITEM_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
+        createNew: {
+            method: 'POST',
+            // TODO Trailing '/' also necessary?
+            path: ITEM_PREFIX + '/',
+        },
+        update: {
+            method: 'PUT',
+            path: ITEM_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
+        getNotes: {
+            method: 'GET',
+            path: ITEM_PREFIX + ITEM_NOTES,
+            parameters: [ID_VARIABLE],
+        },
+        createNotes: {
+            method: 'POST',
+            // TODO Trailing '/' also necessary?
+            path: ITEM_PREFIX + ITEM_NOTES,
+            parameters: [ID_VARIABLE],
+        },
+        getTags: {
+            method: 'GET',
+            path: ITEM_PREFIX + ITEM_TAGS,
+            parameters: [ID_VARIABLE],
+        },
+        getHistory: {
+            method: 'GET',
+            path: ITEM_PREFIX + ITEM_HISTORY,
+            parameters: [ID_VARIABLE],
+        },
+    },
+    technicalCrew: {
+        get: {
+            method: 'GET',
+            path: TECHNICAL_CREW_PREFIX + '/',
+        },
+        getById: {
+            method: 'GET',
+            path: TECHNICAL_CREW_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
+    },
 };
