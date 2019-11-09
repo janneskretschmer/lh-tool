@@ -16,6 +16,7 @@ import SimpleDialog from './simple-dialog.js'
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
+import { DialogContentText } from '@material-ui/core';
 
 const styles = theme => ({
     root: {
@@ -118,7 +119,11 @@ export default class ProjectEditPanel extends React.Component {
                                     <WithPermission permission="ROLE_RIGHT_PROJECTS_DELETE">
                                         <SimpleDialog
                                             title={`Projekt ${project.name} löschen`}
-                                            text={`Soll das Projekt ${project.name} wirklich entfernt werden? Das lässt sich nicht rückgängig machen.`}
+                                            content={(
+                                                <DialogContentText id="alert-dialog-slide-description">
+                                                    {`Soll das Projekt ${project.name} wirklich entfernt werden? Das lässt sich nicht rückgängig machen.`}
+                                                </DialogContentText>
+                                            )}
                                             cancelText="Nein"
                                             okText={`Ja, Projekt ${project.name} löschen`}
                                             onOK={() => {
