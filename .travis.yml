@@ -7,3 +7,14 @@ script:
   # other script steps might be done before running the actual analysis
   - mvn verify
   - sonar-scanner
+deploy:
+  - provider: script
+    script: bash scripts/deploy.sh stage
+    on:
+      branch: stage
+    skip_cleanup: true
+  - provider: script
+    script: bash scripts/deploy.sh prod
+    on:
+      branch: production
+    skip_cleanup: true
