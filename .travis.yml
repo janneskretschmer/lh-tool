@@ -11,8 +11,10 @@ deploy:
   - provider: script
     script: bash scripts/deploy.sh stage
     on:
-      branch: master
+      branch: stage
+    skip_cleanup: true
   - provider: script
     script: bash scripts/deploy.sh prod
     on:
       branch: production
+    skip_cleanup: true
