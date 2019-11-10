@@ -41,7 +41,7 @@ echo "-----BEGIN RSA PRIVATE KEY-----" > $ssh_key
 echo $DEPLOY_KEY >> $ssh_key
 echo "-----END RSA PRIVATE KEY-----" >> $ssh_key
 
-scp -P $DEPLOY_PORT -i $ssh_key $war_file $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_WAR_PATH/tmp.war
+scp -P $DEPLOY_PORT -i $ssh_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $war_file $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_WAR_PATH/tmp.war
 
 wget -qO- "https://travis:$DEPLOY_PW@$DEPLOY_TARGET/manager/text/undeploy?path=/$path"
 
