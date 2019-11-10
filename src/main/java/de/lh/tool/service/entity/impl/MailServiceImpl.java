@@ -90,11 +90,11 @@ public class MailServiceImpl implements MailService {
 		if (user != null) {
 			if (user.getEmail() != null) {
 				StringBuilder text = getGreeting(user).append(user.getLastName()).append(
-								"es wurde für dich ein Account auf lh-tool.de angelegt. Auf dieser Webseite kannst du dich als Helfer bei der Baustelle an deinem Saal bewerben.\n")
-								.append("Bitte rufe folgenden Link auf, um ein Passwort zu setzen. Anschließend kannst du angeben, an welchen Tagen es dir möglich wäre mitzuhelfen.\n\n")
-								.append(urlService.getPasswordChangeUrl(user.getId(), passwordChangeToken.getToken()))
-								.append("\n\nVielen Dank für deine Bereitschaft. Wir wünschen dir Jehovas Segen.\n\nIn brüderlicher Liebe\n")
-								.append(SENDER_NAME).append("\n\n").append(FOOTER);
+						"es wurde für dich ein Account auf lh-tool.de angelegt. Auf dieser Webseite kannst du dich als Helfer bei der Baustelle an deinem Saal bewerben.\n")
+						.append("Bitte rufe folgenden Link auf, um ein Passwort zu setzen. Anschließend kannst du angeben, an welchen Tagen es dir möglich wäre mitzuhelfen.\n\n")
+						.append(urlService.getPasswordChangeUrl(user.getId(), passwordChangeToken.getToken()))
+						.append("\n\nVielen Dank für deine Bereitschaft. Wir wünschen dir Jehovas Segen.\n\nIn brüderlicher Liebe\n")
+						.append(SENDER_NAME).append("\n\n").append(FOOTER);
 				sendMail(user.getEmail(), "Account bei lh-tool.de", text.toString());
 				if (log.isInfoEnabled()) {
 					log.info("Mail for local coordinator " + user.getFirstName() + " " + user.getLastName()
@@ -111,26 +111,28 @@ public class MailServiceImpl implements MailService {
 
 	@Override
 	public void sendPwResetMail(User user, PasswordChangeToken passwordChangeToken) {
-		// Preliminary implementation:
 		if (user != null && passwordChangeToken != null && user.getEmail() != null) {
-			String text = "Link um dein Passwort zurückzusetzen:\n"
-					+ urlService.getPasswordChangeUrl(user.getId(), passwordChangeToken.getToken());
-			sendMail(user.getEmail(), "[LH-Tool] Passwort zurücksetzen", text);
+			String text = getGreeting(user).append(user.getLastName()).append(
+					"bitte rufe folgenden Link auf, um ein neues Passwort für lh-tool.de zu setzen. Anschließend kannst du dich wie gewohnt mit dem neuen Passwort anmelden.\n\n")
+					.append(urlService.getPasswordChangeUrl(user.getId(), passwordChangeToken.getToken()))
+					.append("\n\nVielen Dank für deine Bereitschaft. Wir wünschen dir Jehovas Segen.\n\nIn brüderlicher Liebe\n")
+					.append(SENDER_NAME).append("\n\n").append(FOOTER).toString();
+			sendMail(user.getEmail(), "Passwort für lh-tool.de zurücksetzen", text);
 		}
 	}
-	
 
 	@Override
 	public void sendNeedUserStateChangedMailToUser(NeedUser needUser) {
 		if (ObjectUtils.allNotNull(needUser, needUser.getUser(), needUser.getNeed())) {
 			User user = needUser.getUser();
 			if (user.getEmail() != null) {
-				StringBuilder text = getGreeting(user).append(
-						"deine Bewerbung für den ").append(DateUtil.getReadableFormat(needUser.getNeed().getDate()))
-						.append(" wurde ").append(getNeedUserStateDescription(needUser.getState()))
+				StringBuilder text = getGreeting(user).append("deine Bewerbung für den ")
+						.append(DateUtil.getReadableFormat(needUser.getNeed().getDate())).append(" wurde ")
+						.append(getNeedUserStateDescription(needUser.getState()))
 						.append(".\n\nVielen Dank für deine Bereitschaft. Wir wünschen dir Jehovas Segen.\n\nIn brüderlicher Liebe\n")
 						.append(SENDER_NAME).append("\n\n").append(FOOTER);
-				sendMail(user.getEmail(), "Bewerbung fuer " + DateUtil.getReadableFormat(needUser.getNeed().getDate()) + " " + getNeedUserStateDescription(needUser.getState()), text.toString());
+				sendMail(user.getEmail(), "Bewerbung fuer " + DateUtil.getReadableFormat(needUser.getNeed().getDate())
+						+ " " + getNeedUserStateDescription(needUser.getState()), text.toString());
 				if (log.isInfoEnabled()) {
 					log.info("NeedUserState mail for user " + user.getFirstName() + " " + user.getLastName()
 							+ " sent to " + user.getEmail());
@@ -143,31 +145,35 @@ public class MailServiceImpl implements MailService {
 			}
 		}
 	}
-	
+
 	@Override
 	public void sendNeedUserStateChangedMailToCoordinator(NeedUser needUser, User coordinator) {
 		if (ObjectUtils.allNotNull(needUser, needUser.getUser(), needUser.getNeed(), coordinator)) {
 			User user = needUser.getUser();
 			if (user.getEmail() != null) {
-				StringBuilder text = getGreeting(coordinator).append(
-						"die Bewerbung von ").append(user.getFirstName()).append(" ").append(user.getLastName()).append(" für den ").append(DateUtil.getReadableFormat(needUser.getNeed().getDate()))
-						.append(" wurde ").append(getNeedUserStateDescription(needUser.getState()))
+				StringBuilder text = getGreeting(coordinator).append("die Bewerbung von ").append(user.getFirstName())
+						.append(" ").append(user.getLastName()).append(" für den ")
+						.append(DateUtil.getReadableFormat(needUser.getNeed().getDate())).append(" wurde ")
+						.append(getNeedUserStateDescription(needUser.getState()))
 						.append(".\n\nBitte prüfe, ob an diesem Tag genügend Helfer zur Verfügung stehen. Wir wünschen dir Jehovas Segen.\n\nIn brüderlicher Liebe\n")
 						.append(SENDER_NAME).append("\n\n").append(FOOTER);
-				sendMail(coordinator.getEmail(), "Bewerbung fuer " + DateUtil.getReadableFormat(needUser.getNeed().getDate()) + " " + getNeedUserStateDescription(needUser.getState()), text.toString());
+				sendMail(coordinator.getEmail(),
+						"Bewerbung fuer " + DateUtil.getReadableFormat(needUser.getNeed().getDate()) + " "
+								+ getNeedUserStateDescription(needUser.getState()),
+						text.toString());
 				if (log.isInfoEnabled()) {
-					log.info("NeedUserState mail for local coordinator " + coordinator.getFirstName() + " " + coordinator.getLastName()
-							+ " sent to " + coordinator.getEmail());
+					log.info("NeedUserState mail for local coordinator " + coordinator.getFirstName() + " "
+							+ coordinator.getLastName() + " sent to " + coordinator.getEmail());
 				}
 			} else {
 				if (log.isInfoEnabled()) {
-					log.warn("NeedUserState mail for local coordinator " + coordinator.getFirstName() + " " + coordinator.getLastName()
-							+ " with id " + coordinator.getId() + " not sent");
+					log.warn("NeedUserState mail for local coordinator " + coordinator.getFirstName() + " "
+							+ coordinator.getLastName() + " with id " + coordinator.getId() + " not sent");
 				}
 			}
 		}
 	}
-	
+
 	private String getNeedUserStateDescription(NeedUserState state) {
 		switch (state) {
 		case APPLIED:
@@ -181,10 +187,10 @@ public class MailServiceImpl implements MailService {
 		}
 		return "";
 	}
-	
+
 	private StringBuilder getGreeting(User user) {
-		return new StringBuilder(User.Gender.FEMALE.equals(user.getGender()) ? "Liebe Schwester "
-				: "Lieber Bruder ").append(user.getLastName()).append(",\n\n");
+		return new StringBuilder(User.Gender.FEMALE.equals(user.getGender()) ? "Liebe Schwester " : "Lieber Bruder ")
+				.append(user.getLastName()).append(",\n\n");
 	}
 
 	private void sendMail(String toEmailAddress, String subject, String messageText) {

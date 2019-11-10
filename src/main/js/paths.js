@@ -14,3 +14,6 @@ export const fullPathOfNeedApply = () => fullPathOf('/needs/apply/');
 export const fullPathOfNeedApprove = () => fullPathOf('/needs/approve/');
 
 export const fullPathOfChangePw = () => fullPathOf('/changepw/');
+
+export const fullPathOfImprint = () => fullPathOf('/imprint/');
+export const fullPathOfDataProtection = () => fullPathOf('/data-protection/');

@@ -15,6 +15,8 @@ import {
     fullPathOfNeedApply,
     fullPathOfNeedApprove,
     fullPathOfChangePw,
+    fullPathOfImprint as fullPathOfImprint,
+    fullPathOfDataProtection,
 } from '../paths';
 import AppHeader from './header';
 import LoginComponent from './login';
@@ -26,6 +28,8 @@ import NotFoundComponent from './notfound';
 import AppMenu from './menu';
 import ChangePasswordComponent from './changepw';
 import SessionProvider from '../providers/session-provider';
+import Imprint from './util/imprint';
+import DataProtection from './util/data-protection';
 
 const drawerWidth = 240;
 
@@ -132,6 +136,8 @@ export default class LHToolRoot extends React.Component {
                                     <Route path={fullPathOfNeedApply()} component={NeedApplyComponent} />
                                     <Route path={fullPathOfNeedApprove()} component={NeedApproveComponent} />
                                     <Route path={fullPathOfChangePw()} component={ChangePasswordComponent} />
+                                    <Route path={fullPathOfImprint()} component={Imprint} />
+                                    <Route path={fullPathOfDataProtection()} component={DataProtection} />
                                     <Route component={NotFoundComponent} />
                                 </Switch>
                             </main>
