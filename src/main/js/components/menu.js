@@ -31,7 +31,8 @@ const CurrentUserItem = props => (
 );
 
 const ProjectsItem = () => (
-  <WithPermission permission="ROLE_RIGHT_PROJECTS_POST">
+  // TODO: pick better right
+  <WithPermission permission="ROLE_RIGHT_USERS_CREATE">
     <Link to={fullPathOfProjects()} style={linkStyle}>
       <ListItem button>
         <ListItemIcon>
