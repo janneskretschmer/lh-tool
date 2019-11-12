@@ -7,6 +7,7 @@ import TextField from '@material-ui/core/TextField';
 import { createOrUpdateNeed, applyForNeed, revokeApplicationForNeed, fetchNeed, fetchOwnNeeds } from '../../actions/need';
 import NeedApplyEditComponent from './apply-edit';
 import Button from '@material-ui/core/Button';
+import { yellow, green } from '@material-ui/core/colors';
 
 const styles = theme => ({
     applyInput: {
@@ -26,7 +27,14 @@ const styles = theme => ({
     },
     red: {
         color: '#f00',
-    }
+    },
+
+    applied: {
+        backgroundColor: yellow[600],
+    },
+    approved: {
+        backgroundColor: green[600],
+    },
 });
 
 @withStyles(styles)
@@ -44,23 +52,23 @@ class NeedApplyComponent extends React.Component {
     }
 
     getQuantities(monthData, projectId, callback) {
-        const {classes, sessionState} = this.props
-        fetchOwnNeeds({accessToken:sessionState.accessToken, userId:sessionState.currentUser.id, projectId, startDiff: monthData.startDiff, endDiff: monthData.endDiff}).then(result => {
+        const { classes, sessionState } = this.props
+        fetchOwnNeeds({ accessToken: sessionState.accessToken, userId: sessionState.currentUser.id, projectId, startDiff: monthData.startDiff, endDiff: monthData.endDiff }).then(result => {
             callback(
                 {
                     ...monthData,
                     days: monthData.days.map(day => {
                         let needs = result[day.date];
-                        if(needs){
+                        if (needs) {
                             day.content = (
                                 <>
                                     <div className={classes.applyWrapper}>
-                                        <NeedApplyEditComponent need={needs.CONSTRUCTION_WORKER} label="Bauhelfer"/>
-                                        <NeedApplyEditComponent need={needs.STORE_KEEPER} label="Magaziner"/>
+                                        <NeedApplyEditComponent need={needs.CONSTRUCTION_WORKER} label="Bauhelfer" />
+                                        <NeedApplyEditComponent need={needs.STORE_KEEPER} label="Magaziner" />
                                     </div>
                                     <div className={classes.applyWrapper}>
-                                        <NeedApplyEditComponent need={needs.KITCHEN_HELPER} label="Küche"/>
-                                        <NeedApplyEditComponent need={needs.CLEANER} label="Putzen"/>
+                                        <NeedApplyEditComponent need={needs.KITCHEN_HELPER} label="Küche" />
+                                        <NeedApplyEditComponent need={needs.CLEANER} label="Putzen" />
                                     </div>
                                 </>
                             )
@@ -73,6 +81,7 @@ class NeedApplyComponent extends React.Component {
     }
 
     render() {
+        console.log(yellow)
         const { classes, sessionState } = this.props;
         setWaitingState(false);
         return (
@@ -85,13 +94,13 @@ class NeedApplyComponent extends React.Component {
                 </div>
 
                 <div className={classes.legendItem}>
-                    <Button variant="contained">Aufgabe</Button> &nbsp;Beworben, jedoch noch nicht zugeteilt. Du kannst die Bewerbung zurückziehen, indem du auf den Button klickst.
+                    <Button variant="contained" className={classes.applied}>Aufgabe</Button> &nbsp;Beworben, jedoch noch nicht zugeteilt. Du kannst die Bewerbung zurückziehen, indem du auf den Button klickst.
                 </div>
                 <div className={classes.legendItem}>
-                    <Button variant="contained" color="primary">Aufgabe</Button> &nbsp;Zugeteilt,<span className={classes.red}> komme bitte nur dann zur Baustelle</span>, vielen Dank! Du kannst die Bewerbung zurückziehen, indem du auf den Button klickst.
+                    <Button variant="contained" className={classes.approved}>Aufgabe</Button> &nbsp;Zugeteilt,<span className={classes.red}> komme bitte nur dann zur Baustelle</span>, vielen Dank! Du kannst die Bewerbung zurückziehen, indem du auf den Button klickst.
                 </div>
                 <br />
-                <ProjectCalendar loadDayContent={this.getQuantities.bind(this)}/>
+                <ProjectCalendar loadDayContent={this.getQuantities.bind(this)} />
             </>
         )
     }

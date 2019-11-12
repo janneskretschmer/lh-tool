@@ -129,7 +129,7 @@ public class MailServiceImpl implements MailService {
 						.append(DateUtil.getReadableFormat(needUser.getNeed().getDate())).append(" wurde ")
 						.append(getNeedUserStateDescription(needUser.getState())).append(".\n\nViele Grüße\n")
 						.append(SENDER_NAME).append("\n\n").append(FOOTER);
-				sendMail(user.getEmail(), "Bewerbung fuer " + DateUtil.getReadableFormat(needUser.getNeed().getDate())
+				sendMail(user.getEmail(), "Schicht am  " + DateUtil.getReadableFormat(needUser.getNeed().getDate())
 						+ " " + getNeedUserStateDescription(needUser.getState()), text.toString());
 				if (log.isInfoEnabled()) {
 					log.info("NeedUserState mail for user " + user.getFirstName() + " " + user.getLastName()
@@ -156,7 +156,7 @@ public class MailServiceImpl implements MailService {
 						.append(".\n\nBitte prüfe, ob an diesem Tag genügend Helfer zur Verfügung stehen.\n\nViele Grüße\n")
 						.append(SENDER_NAME).append("\n\n").append(FOOTER);
 				sendMail(coordinator.getEmail(),
-						"Bewerbung fuer " + DateUtil.getReadableFormat(needUser.getNeed().getDate()) + " "
+						"Schicht am " + DateUtil.getReadableFormat(needUser.getNeed().getDate()) + " "
 								+ getNeedUserStateDescription(needUser.getState()),
 						text.toString());
 				if (log.isInfoEnabled()) {
