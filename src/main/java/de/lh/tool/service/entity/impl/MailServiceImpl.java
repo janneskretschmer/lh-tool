@@ -69,7 +69,7 @@ public class MailServiceImpl implements MailService {
 						",\n\nes wurde für dich ein Account auf lh-tool.de angelegt. Diese Webseite hilft dir als lokalen Koordinator, den Bedarf an Helfern zu verwalten.\n")
 						.append("Bitte rufe folgenden Link auf, um ein Passwort zu setzen. Anschließend kannst du Accounts für alle Brüder und Schwestern erstellen, welche geeignet sind, bei der Baustelle mitzuhelfen.\n\n")
 						.append(urlService.getPasswordChangeUrl(user.getId(), passwordChangeToken.getToken()))
-						.append("\n\nVielen Dank für deine Bereitschaft. Wir wünschen dir Jehovas Segen bei deiner Aufgabe.\n\nIn brüderlicher Liebe\n")
+						.append("\n\nVielen Dank für deine Bereitschaft. Wir wünschen dir Jehovas Segen bei deiner Aufgabe.\n\nViele Grüße\n")
 						.append(SENDER_NAME).append("\n\n").append(FOOTER);
 				sendMail(user.getEmail(), "Account bei lh-tool.de", text.toString());
 				if (log.isInfoEnabled()) {
@@ -89,11 +89,11 @@ public class MailServiceImpl implements MailService {
 	public void sendNewPublisherMail(User user, PasswordChangeToken passwordChangeToken) {
 		if (user != null) {
 			if (user.getEmail() != null) {
-				StringBuilder text = getGreeting(user).append(user.getLastName()).append(
+				StringBuilder text = getGreeting(user).append(
 						"es wurde für dich ein Account auf lh-tool.de angelegt. Auf dieser Webseite kannst du dich als Helfer bei der Baustelle an deinem Saal bewerben.\n")
 						.append("Bitte rufe folgenden Link auf, um ein Passwort zu setzen. Anschließend kannst du angeben, an welchen Tagen es dir möglich wäre mitzuhelfen.\n\n")
 						.append(urlService.getPasswordChangeUrl(user.getId(), passwordChangeToken.getToken()))
-						.append("\n\nVielen Dank für deine Bereitschaft. Wir wünschen dir Jehovas Segen.\n\nIn brüderlicher Liebe\n")
+						.append("\n\nVielen Dank für deine Bereitschaft. Wir wünschen dir Jehovas Segen.\n\nViele Grüße\n")
 						.append(SENDER_NAME).append("\n\n").append(FOOTER);
 				sendMail(user.getEmail(), "Account bei lh-tool.de", text.toString());
 				if (log.isInfoEnabled()) {
@@ -112,11 +112,10 @@ public class MailServiceImpl implements MailService {
 	@Override
 	public void sendPwResetMail(User user, PasswordChangeToken passwordChangeToken) {
 		if (user != null && passwordChangeToken != null && user.getEmail() != null) {
-			String text = getGreeting(user).append(user.getLastName()).append(
+			String text = getGreeting(user).append(
 					"bitte rufe folgenden Link auf, um ein neues Passwort für lh-tool.de zu setzen. Anschließend kannst du dich wie gewohnt mit dem neuen Passwort anmelden.\n\n")
 					.append(urlService.getPasswordChangeUrl(user.getId(), passwordChangeToken.getToken()))
-					.append("\n\nVielen Dank für deine Bereitschaft. Wir wünschen dir Jehovas Segen.\n\nIn brüderlicher Liebe\n")
-					.append(SENDER_NAME).append("\n\n").append(FOOTER).toString();
+					.append("\n\nViele Grüße\n").append(SENDER_NAME).append("\n\n").append(FOOTER).toString();
 			sendMail(user.getEmail(), "Passwort für lh-tool.de zurücksetzen", text);
 		}
 	}
@@ -126,10 +125,9 @@ public class MailServiceImpl implements MailService {
 		if (ObjectUtils.allNotNull(needUser, needUser.getUser(), needUser.getNeed())) {
 			User user = needUser.getUser();
 			if (user.getEmail() != null) {
-				StringBuilder text = getGreeting(user).append("deine Bewerbung für den ")
+				StringBuilder text = getGreeting(user).append("deine Schicht am ")
 						.append(DateUtil.getReadableFormat(needUser.getNeed().getDate())).append(" wurde ")
-						.append(getNeedUserStateDescription(needUser.getState()))
-						.append(".\n\nVielen Dank für deine Bereitschaft. Wir wünschen dir Jehovas Segen.\n\nIn brüderlicher Liebe\n")
+						.append(getNeedUserStateDescription(needUser.getState())).append(".\n\nViele Grüße\n")
 						.append(SENDER_NAME).append("\n\n").append(FOOTER);
 				sendMail(user.getEmail(), "Bewerbung fuer " + DateUtil.getReadableFormat(needUser.getNeed().getDate())
 						+ " " + getNeedUserStateDescription(needUser.getState()), text.toString());
@@ -155,7 +153,7 @@ public class MailServiceImpl implements MailService {
 						.append(" ").append(user.getLastName()).append(" für den ")
 						.append(DateUtil.getReadableFormat(needUser.getNeed().getDate())).append(" wurde ")
 						.append(getNeedUserStateDescription(needUser.getState()))
-						.append(".\n\nBitte prüfe, ob an diesem Tag genügend Helfer zur Verfügung stehen. Wir wünschen dir Jehovas Segen.\n\nIn brüderlicher Liebe\n")
+						.append(".\n\nBitte prüfe, ob an diesem Tag genügend Helfer zur Verfügung stehen.\n\nViele Grüße\n")
 						.append(SENDER_NAME).append("\n\n").append(FOOTER);
 				sendMail(coordinator.getEmail(),
 						"Bewerbung fuer " + DateUtil.getReadableFormat(needUser.getNeed().getDate()) + " "
