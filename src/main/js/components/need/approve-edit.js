@@ -106,8 +106,7 @@ class NeedApproveEditComponent extends React.Component {
         this.setState({
             saving: true,
         })
-        Object.keys(this.state.changes).forEach(userId => {
-            let newState = this.state.changes[userId]
+        for (let [userId, newState] of Object.entries(this.state.changes)) {
             requests.push(
                 changeApplicationStateForNeed({
                     accessToken: this.props.sessionState.accessToken,
@@ -117,7 +116,7 @@ class NeedApproveEditComponent extends React.Component {
                     handleFailure: err => { }
                 })
             )
-        });
+        };
         Promise.all(requests).then(() => this.setState({
             saving: false,
             changes: {},

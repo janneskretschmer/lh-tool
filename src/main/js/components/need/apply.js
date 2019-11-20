@@ -81,7 +81,6 @@ class NeedApplyComponent extends React.Component {
     }
 
     render() {
-        console.log(yellow)
         const { classes, sessionState } = this.props;
         setWaitingState(false);
         return (
