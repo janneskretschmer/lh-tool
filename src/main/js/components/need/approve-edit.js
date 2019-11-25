@@ -86,7 +86,6 @@ class NeedApproveEditComponent extends React.Component {
     handleToggle = value => {
         const newState = value.state === 'APPROVED' ? 'APPLIED' : 'APPROVED'
         value.state = newState
-        //value.updating = true
         let diff = (newState === 'APPROVED' ? 1 : -1)
         this.setState(prevState => {
             let res = {

@@ -15,7 +15,16 @@ import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { logout } from '../actions/login';
-import { fullPathOfChangePw, fullPathOfImprint, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfDataProtection } from '../paths';
+import {
+  fullPathOfChangePw,
+  fullPathOfDataProtection,
+  fullPathOfImprint,
+  fullPathOfLogin,
+  fullPathOfNeedApply,
+  fullPathOfNeedApprove,
+  fullPathOfNeedQuantities,
+  fullPathOfProjects
+} from '../paths';
 import { SessionContext } from '../providers/session-provider';
 import WithPermission from './with-permission';
 
