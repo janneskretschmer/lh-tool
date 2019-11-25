@@ -163,14 +163,13 @@ class NeedApproveComponent extends React.Component {
         return ready
     }
 
-    updateApprovedCount(type, diff) {
+    updateApprovedCount(type, approvedCount) {
         this.setState({
             data: {
                 ...this.state.data,
                 days: this.state.data.days.map((day,i) => {
                     if(i === this.state.selectedDay){
-                        day.needs[type].appliedCount -= diff
-                        day.needs[type].approvedCount += diff
+                        day.needs[type].approvedCount = approvedCount
                     }
                     return day
                 })
@@ -241,12 +240,12 @@ class NeedApproveComponent extends React.Component {
                                         <Date date={data.days[selectedDay].date}/>
                                     </div>
                                     <div className={classes.needsWrapper}>
-                                        <NeedApproveEditComponent label="Bauhelfer" need={data.days[selectedDay].needs.CONSTRUCTION_WORKER} onApprove={(diff) => this.updateApprovedCount('CONSTRUCTION_WORKER',diff)}/>
-                                        <NeedApproveEditComponent label="Magaziner" need={data.days[selectedDay].needs.STORE_KEEPER} onApprove={(diff) => this.updateApprovedCount('STORE_KEEPER',diff)}/>
+                                        <NeedApproveEditComponent label="Bauhelfer" need={data.days[selectedDay].needs.CONSTRUCTION_WORKER} onApprove={(approvedCount) => this.updateApprovedCount('CONSTRUCTION_WORKER',approvedCount)}/>
+                                        <NeedApproveEditComponent label="Magaziner" need={data.days[selectedDay].needs.STORE_KEEPER} onApprove={(approvedCount) => this.updateApprovedCount('STORE_KEEPER',approvedCount)}/>
                                     </div>
                                     <div className={classes.needsWrapper}>
-                                        <NeedApproveEditComponent label="Küche" need={data.days[selectedDay].needs.KITCHEN_HELPER} onApprove={(diff) => this.updateApprovedCount('KITCHEN_HELPER',diff)}/>
-                                        <NeedApproveEditComponent label="Putzen" need={data.days[selectedDay].needs.CLEANER} onApprove={(diff) => this.updateApprovedCount('CLEANER',diff)}/>
+                                        <NeedApproveEditComponent label="Küche" need={data.days[selectedDay].needs.KITCHEN_HELPER} onApprove={(approvedCount) => this.updateApprovedCount('KITCHEN_HELPER',approvedCount)}/>
+                                        <NeedApproveEditComponent label="Putzen" need={data.days[selectedDay].needs.CLEANER} onApprove={(approvedCount) => this.updateApprovedCount('CLEANER',approvedCount)}/>
                                     </div>
                                 </div>
                             </>

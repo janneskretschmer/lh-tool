@@ -6,7 +6,7 @@ import TextField from '@material-ui/core/TextField';
 import { changeApplicationStateForNeed } from '../../actions/need';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
-import { green, yellow } from '@material-ui/core/colors';
+import { green, yellow, red } from '@material-ui/core/colors';
 
 const styles = theme => ({
     none: {
@@ -25,6 +25,12 @@ const styles = theme => ({
         width: 'calc(50% - 6px)',
         margin: '3px',
         backgroundColor: green[600],
+    },
+    rejected: {
+        minWidth: '105px',
+        width: 'calc(50% - 6px)',
+        margin: '3px',
+        backgroundColor: red[600],
     },
 });
 
@@ -68,10 +74,11 @@ class NeedApplyEditComponent extends React.Component {
             });
     }
 
-    getClassName(need){
-        switch(need.ownState){
-            case 'APPLIED' : return this.props.classes.applied
+    getClassName(need) {
+        switch (need.ownState) {
+            case 'APPLIED': return this.props.classes.applied
             case 'APPROVED': return this.props.classes.approved
+            case 'REJECTED': return this.props.classes.rejected
             default: return this.props.classes.none
         }
     }
@@ -87,10 +94,10 @@ class NeedApplyEditComponent extends React.Component {
         ) : (
                 <>
                     <Button
-                        variant={need.ownState === 'APPLIED' || need.ownState === 'APPROVED' ? 'contained' : 'outlined'}
+                        variant={need.ownState === 'APPLIED' || need.ownState === 'APPROVED' || need.ownState === 'REJECTED' ? 'contained' : 'outlined'}
                         disabled={!this.props.sessionState.hasPermission('ROLE_RIGHT_NEEDS_APPLY') || !need.id || need.quantity === 0}
                         className={this.getClassName(need)}
-                        onClick={this.toggleApplicationStatus.bind(this)}
+                        onClick={need.ownState !== 'REJECTED' ? this.toggleApplicationStatus.bind(this) : null}
                         color="inherit">
                         {label}
                     </Button>

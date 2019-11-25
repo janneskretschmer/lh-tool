@@ -8,12 +8,17 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import CommentIcon from '@material-ui/icons/Comment';
+import EventAvailableIcon from '@material-ui/icons/EventAvailable';
+import EventBusyIcon from '@material-ui/icons/EventBusy';
+import CheckIcon from '@material-ui/icons/Check';
+import CloseIcon from '@material-ui/icons/Close';
 import { requiresLogin } from '../../util';
 import { fetchUser } from '../../actions/user';
 import { changeApplicationStateForNeed } from '../../actions/need';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { Button } from '@material-ui/core';
 import { Prompt } from 'react-router'
+import { yellow, green } from '@material-ui/core/colors';
 
 
 const styles = theme => ({
@@ -38,6 +43,9 @@ const styles = theme => ({
         textAlign: 'center',
         paddingBottom: '16px',
     },
+    approved: {
+        color: green[600],
+    }
 });
 
 class NeedApproveEditComponent extends React.Component {
@@ -53,11 +61,10 @@ class NeedApproveEditComponent extends React.Component {
 
     componentWillReceiveProps(props) {
         if (this.props.need.id !== props.need.id) {
-            this.setState({
+            this.setState(prevState => ({
                 users: props.need.users,
                 approved: props.need.approvedCount,
-                changes: {},
-            }, this.componentDidMount)
+            }), this.componentDidMount)
         }
     }
 
@@ -83,21 +90,26 @@ class NeedApproveEditComponent extends React.Component {
         }
     }
 
-    handleToggle = value => {
-        const newState = value.state === 'APPROVED' ? 'APPLIED' : 'APPROVED'
+    handleToggle = (value, newState) => {
         value.state = newState
-        let diff = (newState === 'APPROVED' ? 1 : -1)
         this.setState(prevState => {
+            let users = prevState.users.map(user => user.userId === value.userId ? value : user)
+            let approved = users.filter(user => user.state === 'APPROVED').length
             let res = {
                 ...prevState,
-                users: prevState.users.map(user => user.userId === value.userId ? value : user),
-                approved: prevState.approved + diff,
+                users,
+                approved,
             }
-            res.changes[value.userId] = newState
+            let needId = this.props.need.id
+            if(!res.changes[needId]){
+                res.changes[needId] = {}
+            }
+            res.changes[needId][value.userId] = newState
+           
+            this.props.onApprove(approved)
+
             return res
         });
-
-        this.props.onApprove(diff)
     };
 
     save() {
@@ -105,7 +117,7 @@ class NeedApproveEditComponent extends React.Component {
         this.setState({
             saving: true,
         })
-        for (let [userId, newState] of Object.entries(this.state.changes)) {
+        for (let [userId, newState] of Object.entries(this.state.changes[this.props.need.id])) {
             requests.push(
                 changeApplicationStateForNeed({
                     accessToken: this.props.sessionState.accessToken,
@@ -125,7 +137,7 @@ class NeedApproveEditComponent extends React.Component {
     render() {
         const { classes, label, need } = this.props
         const { users, approved, changes, saving } = this.state
-        const thingsToSave = Object.entries(changes).length > 0
+        const thingsToSave = changes[need.id] && Object.entries(changes[need.id]).length > 0
         return (
             <>
                 <Prompt when={thingsToSave} message="Es wurden nicht alle Änderungen gespeichert. Möchtest du diese Seite trotzdem verlassen?" />
@@ -138,19 +150,35 @@ class NeedApproveEditComponent extends React.Component {
                             <List className={classes.root}>
                                 {users.map(user => {
                                     return (
-                                        <ListItem key={user.id} role={null} dense button onClick={() => this.handleToggle(user)} disabled={user.state !== 'APPROVED' && approved >= need.quantity}>
+                                        <ListItem key={user.id} role={null} dense>
                                             {user.lastName ? (
                                                 <>
+                                                    <ListItemText primary={`${user.lastName}, ${user.firstName}`} />
                                                     {user.updating ? (
                                                         <CircularProgress size={16} className={classes.updating} />
                                                     ) : (
-                                                            <Checkbox
-                                                                checked={user.state === 'APPROVED'}
-                                                                disabled={user.state !== 'APPROVED' && approved > need.quantity}
-                                                                disableRipple
-                                                            />
+                                                            <>
+                                                                <IconButton
+                                                                    disabled={user.state !== 'APPROVED' && approved >= need.quantity}
+                                                                    onClick={() => this.handleToggle(user, user.state !== 'APPROVED' ? 'APPROVED' : 'APPLIED')}
+                                                                >
+                                                                    {user.state === 'APPROVED' ? (
+                                                                        <EventAvailableIcon />
+                                                                    ) : (
+                                                                            <CheckIcon />
+                                                                        )}
+                                                                </IconButton>
+                                                                <IconButton
+                                                                    onClick={() => this.handleToggle(user, user.state !== 'REJECTED' ? 'REJECTED' : 'APPLIED')}
+                                                                >
+                                                                    {user.state === 'REJECTED' ? (
+                                                                        <EventBusyIcon />
+                                                                    ) : (
+                                                                            <CloseIcon />
+                                                                        )}
+                                                                </IconButton>
+                                                            </>
                                                         )}
-                                                    <ListItemText primary={`${user.lastName}, ${user.firstName}`} />
                                                 </>
                                             ) : (
                                                     <>

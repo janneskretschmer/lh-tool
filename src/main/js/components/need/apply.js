@@ -7,7 +7,7 @@ import TextField from '@material-ui/core/TextField';
 import { createOrUpdateNeed, applyForNeed, revokeApplicationForNeed, fetchNeed, fetchOwnNeeds } from '../../actions/need';
 import NeedApplyEditComponent from './apply-edit';
 import Button from '@material-ui/core/Button';
-import { yellow, green } from '@material-ui/core/colors';
+import { yellow, green, red } from '@material-ui/core/colors';
 
 const styles = theme => ({
     applyInput: {
@@ -34,6 +34,9 @@ const styles = theme => ({
     },
     approved: {
         backgroundColor: green[600],
+    },
+    rejected: {
+        backgroundColor: red[600],
     },
 });
 
@@ -97,6 +100,9 @@ class NeedApplyComponent extends React.Component {
                 </div>
                 <div className={classes.legendItem}>
                     <Button variant="contained" className={classes.approved}>Aufgabe</Button> &nbsp;Zugeteilt,<span className={classes.red}> komme bitte nur dann zur Baustelle</span>, vielen Dank! Du kannst die Bewerbung zurückziehen, indem du auf den Button klickst.
+                </div>
+                <div className={classes.legendItem}>
+                    <Button variant="contained" className={classes.rejected}>Aufgabe</Button> &nbsp;Nicht zugeteilt, bitte bewerbe dich für ein anderes Datum.
                 </div>
                 <br />
                 <ProjectCalendar loadDayContent={this.getQuantities.bind(this)} />

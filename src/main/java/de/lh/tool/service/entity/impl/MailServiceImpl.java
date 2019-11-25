@@ -180,6 +180,8 @@ public class MailServiceImpl implements MailService {
 			return "genehmigt";
 		case NONE:
 			return "zurückgezogen";
+		case REJECTED:
+			return "abgelehnt";
 		default:
 			break;
 		}
