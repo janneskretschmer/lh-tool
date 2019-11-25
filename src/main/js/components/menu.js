@@ -1,30 +1,32 @@
-import React from 'react';
-import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
+import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import GroupWorkIcon from '@material-ui/icons/GroupWork';
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 import DateRangeIcon from '@material-ui/icons/DateRange';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import FaceIcon from '@material-ui/icons/Face';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
-import VpnKeyIcon from '@material-ui/icons/VpnKey';
+import GroupWorkIcon from '@material-ui/icons/GroupWork';
 import SecurityIcon from '@material-ui/icons/Security';
+import VpnKeyIcon from '@material-ui/icons/VpnKey';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import WithPermission from './with-permission';
-import { SessionContext } from '../providers/session-provider';
 import { logout } from '../actions/login';
 import {
+  fullPathOfChangePw,
+  fullPathOfDataProtection,
+  fullPathOfImprint,
   fullPathOfLogin,
-  fullPathOfProjects,
-  fullPathOfNeedQuantities,
   fullPathOfNeedApply,
   fullPathOfNeedApprove,
-  fullPathOfChangePw,
+  fullPathOfNeedQuantities,
+  fullPathOfProjects
 } from '../paths';
+import { SessionContext } from '../providers/session-provider';
+import WithPermission from './with-permission';
 
 const linkStyle = { textDecoration: 'none' };
 
@@ -38,7 +40,8 @@ const CurrentUserItem = props => (
 );
 
 const ProjectsItem = () => (
-  <WithPermission permission="ROLE_RIGHT_PROJECTS_POST">
+  // TODO: pick better right
+  <WithPermission permission="ROLE_RIGHT_USERS_CREATE">
     <Link to={fullPathOfProjects()} style={linkStyle}>
       <ListItem button>
         <ListItemIcon>
@@ -122,14 +125,26 @@ const LogoutItem = props => (
   </ListItem>
 );
 
-// TODO Implementation missing
-const LegalItem = () => (
-  <ListItem button>
-    <ListItemIcon>
-      <FileCopyIcon />
-    </ListItemIcon>
-    <ListItemText primary="Impressum / Rechtliches" />
-  </ListItem>
+const ImprintItem = () => (
+  <Link to={fullPathOfImprint()} style={linkStyle}>
+    <ListItem button>
+      <ListItemIcon>
+        <FileCopyIcon />
+      </ListItemIcon>
+      <ListItemText primary="Impressum" />
+    </ListItem>
+  </Link>
+);
+
+const DataProtectionItem = () => (
+  <Link to={fullPathOfDataProtection()} style={linkStyle}>
+    <ListItem button>
+      <ListItemIcon>
+        <FileCopyIcon />
+      </ListItemIcon>
+      <ListItemText primary="Datenschutz" />
+    </ListItem>
+  </Link>
 );
 
 export default function AppMenu() {
@@ -150,7 +165,8 @@ export default function AppMenu() {
           <Divider />
           <List>
             <LogoutItem loginState={loginState} />
-            <LegalItem />
+            <ImprintItem />
+            <DataProtectionItem />
           </List>
         </>
       ) : (
@@ -160,7 +176,8 @@ export default function AppMenu() {
             </List>
             <Divider />
             <List>
-              <LegalItem />
+              <ImprintItem />
+              <DataProtectionItem />
             </List>
           </>
         )}

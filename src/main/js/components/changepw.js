@@ -8,6 +8,8 @@ import Typography from '@material-ui/core/Typography';
 import { SessionContext } from '../providers/session-provider';
 import { changePassword } from '../actions/user';
 import { withContext } from '../util';
+import { Link } from '@material-ui/core';
+import { fullPathOfDataProtection } from '../paths';
 
 @withSnackbar
 @withContext('sessionState', SessionContext)
@@ -68,6 +70,9 @@ export default class ChangePasswordComponent extends React.Component {
                                     this.props.enqueueSnackbar('Fehler beim Ändern des Passworts', { variant: 'error', });
                                 });
                             }}>
+                                <>
+                                    Mit dem Anlegen eines Passworts stimmst du der <a href={fullPathOfDataProtection()} target="_blank">Datenschutzerklärung</a> dieser Webseite zu.
+                                </>
                                 {!credentials.isTokenBased ? (
                                     <TextField
                                         id="passwordCurrent"
