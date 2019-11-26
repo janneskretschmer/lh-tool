@@ -50,7 +50,7 @@ class NeedApproveEditComponent extends React.Component {
         this.state = {
             users: props.need.users,
             approved: props.need.approvedCount,
-            changes: [],
+            changes: new Map(),
             saving: false,
         };
     }
@@ -97,11 +97,11 @@ class NeedApproveEditComponent extends React.Component {
                 approved,
             }
             let needId = this.props.need.id
-            if(!res.changes[needId]){
-                res.changes[needId] = []
+            if (!res.changes.has(needId)) {
+                res.changes.set(needId, new Map())
             }
-            res.changes[needId][value.userId] = newState
-           
+            res.changes.get(needId).set(value.userId, newState)
+
             this.props.onApprove(approved)
 
             return res
@@ -113,7 +113,7 @@ class NeedApproveEditComponent extends React.Component {
         this.setState({
             saving: true,
         })
-        for (let [userId, newState] of Object.entries(this.state.changes[this.props.need.id])) {
+        for (let [userId, newState] of this.state.changes.get(this.props.need.id)) {
             requests.push(
                 changeApplicationStateForNeed({
                     accessToken: this.props.sessionState.accessToken,
@@ -126,14 +126,14 @@ class NeedApproveEditComponent extends React.Component {
         };
         Promise.all(requests).then(() => this.setState({
             saving: false,
-            changes: {},
+            changes: Map(),
         }))
     }
 
     render() {
         const { classes, label, need } = this.props
         const { users, approved, changes, saving } = this.state
-        const thingsToSave = !!(changes[need.id] && Object.entries(changes[need.id]).length > 0)
+        const thingsToSave = !!(changes.has(need.id) && changes.get(need.id).size > 0)
         return (
             <>
                 <Prompt when={thingsToSave} message="Es wurden nicht alle Änderungen gespeichert. Möchtest du diese Seite trotzdem verlassen?" />
