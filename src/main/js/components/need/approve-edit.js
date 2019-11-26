@@ -50,7 +50,7 @@ class NeedApproveEditComponent extends React.Component {
         this.state = {
             users: props.need.users,
             approved: props.need.approvedCount,
-            changes: {},
+            changes: [],
             saving: false,
         };
     }
@@ -98,7 +98,7 @@ class NeedApproveEditComponent extends React.Component {
             }
             let needId = this.props.need.id
             if(!res.changes[needId]){
-                res.changes[needId] = {}
+                res.changes[needId] = []
             }
             res.changes[needId][value.userId] = newState
            
