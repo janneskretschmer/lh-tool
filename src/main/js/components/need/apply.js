@@ -61,17 +61,17 @@ class NeedApplyComponent extends React.Component {
                 {
                     ...monthData,
                     days: monthData.days.map(day => {
-                        let needs = result[day.date];
+                        let needs = result.get(day.date.valueOf());
                         if (needs) {
                             day.content = (
                                 <>
                                     <div className={classes.applyWrapper}>
-                                        <NeedApplyEditComponent need={needs.CONSTRUCTION_WORKER} label="Bauhelfer" />
-                                        <NeedApplyEditComponent need={needs.STORE_KEEPER} label="Magaziner" />
+                                        <NeedApplyEditComponent need={needs.get('CONSTRUCTION_WORKER')} label="Bauhelfer" />
+                                        <NeedApplyEditComponent need={needs.get('STORE_KEEPER')} label="Magaziner" />
                                     </div>
                                     <div className={classes.applyWrapper}>
-                                        <NeedApplyEditComponent need={needs.KITCHEN_HELPER} label="Küche" />
-                                        <NeedApplyEditComponent need={needs.CLEANER} label="Putzen" />
+                                        <NeedApplyEditComponent need={needs.get('KITCHEN_HELPER')} label="Küche" />
+                                        <NeedApplyEditComponent need={needs.get('CLEANER')} label="Putzen" />
                                     </div>
                                 </>
                             )

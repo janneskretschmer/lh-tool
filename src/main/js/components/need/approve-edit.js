@@ -126,7 +126,7 @@ class NeedApproveEditComponent extends React.Component {
         };
         Promise.all(requests).then(() => this.setState({
             saving: false,
-            changes: Map(),
+            changes: new Map(),
         }))
     }
 

@@ -126,7 +126,7 @@ class NeedApproveComponent extends React.Component {
             var selected = null;
             var firstActive = null;
             let days = data.days.map((day, i) => {
-                let needs = result[day.date];
+                let needs = result.get(day.date.valueOf());
                 if (needs) {
                     if (!firstActive) {
                         firstActive = i
@@ -163,7 +163,7 @@ class NeedApproveComponent extends React.Component {
     }
     areNeedsReady(needs) {
         var ready = true
-        Object.values(needs).forEach((need) => {
+        needs.forEach((need) => {
             ready = ready && need.approvedCount >= need.quantity
         })
         return ready
@@ -175,7 +175,8 @@ class NeedApproveComponent extends React.Component {
                 ...this.state.data,
                 days: this.state.data.days.map((day, i) => {
                     if (i === this.state.selectedDay) {
-                        day.needs[type].approvedCount = approvedCount
+                        //causes "Generic Object Injection Sink”
+                        day.needs.get(type).approvedCount = approvedCount
                     }
                     return day
                 })
@@ -236,7 +237,7 @@ class NeedApproveComponent extends React.Component {
                             </tbody>
                         </table>
                         <div className={classes.legend}>
-                            Bitte klicke auf einen Tag, um die Bewerber zuzuteilen.<br /> 
+                            Bitte klicke auf einen Tag, um die Bewerber zuzuteilen.<br />
                             Wenn alle Positionen besetzt sind, erscheint ein Haken.<br />
                             <br />
                             Bedeutung der Klammern neben der Aufgabenbezeichnung: ( Anzahl der Genehmigungen / Bedarf )<br />
@@ -269,12 +270,12 @@ class NeedApproveComponent extends React.Component {
                                             <Date date={data.days[parseInt(selectedDay)].date} />
                                         </div>
                                         <div className={classes.needsWrapper}>
-                                            <NeedApproveEditComponent label="Bauhelfer" need={data.days[parseInt(selectedDay)].needs.CONSTRUCTION_WORKER} onApprove={(approvedCount) => this.updateApprovedCount('CONSTRUCTION_WORKER', approvedCount)} />
-                                            <NeedApproveEditComponent label="Magaziner" need={data.days[parseInt(selectedDay)].needs.STORE_KEEPER} onApprove={(approvedCount) => this.updateApprovedCount('STORE_KEEPER', approvedCount)} />
+                                            <NeedApproveEditComponent label="Bauhelfer" need={data.days[parseInt(selectedDay)].needs.get('CONSTRUCTION_WORKER')} onApprove={(approvedCount) => this.updateApprovedCount('CONSTRUCTION_WORKER', approvedCount)} />
+                                            <NeedApproveEditComponent label="Magaziner" need={data.days[parseInt(selectedDay)].needs.get('STORE_KEEPER')} onApprove={(approvedCount) => this.updateApprovedCount('STORE_KEEPER', approvedCount)} />
                                         </div>
                                         <div className={classes.needsWrapper}>
-                                            <NeedApproveEditComponent label="Küche" need={data.days[parseInt(selectedDay)].needs.KITCHEN_HELPER} onApprove={(approvedCount) => this.updateApprovedCount('KITCHEN_HELPER', approvedCount)} />
-                                            <NeedApproveEditComponent label="Putzen" need={data.days[parseInt(selectedDay)].needs.CLEANER} onApprove={(approvedCount) => this.updateApprovedCount('CLEANER', approvedCount)} />
+                                            <NeedApproveEditComponent label="Küche" need={data.days[parseInt(selectedDay)].needs.get('KITCHEN_HELPER')} onApprove={(approvedCount) => this.updateApprovedCount('KITCHEN_HELPER', approvedCount)} />
+                                            <NeedApproveEditComponent label="Putzen" need={data.days[parseInt(selectedDay)].needs.get('CLEANER')} onApprove={(approvedCount) => this.updateApprovedCount('CLEANER', approvedCount)} />
                                         </div>
                                     </div>
                                 </>
