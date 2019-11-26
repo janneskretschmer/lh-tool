@@ -1,24 +1,20 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { Button } from '@material-ui/core';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { green } from '@material-ui/core/colors';
+import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
-import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
-import CommentIcon from '@material-ui/icons/Comment';
-import EventAvailableIcon from '@material-ui/icons/EventAvailable';
-import EventBusyIcon from '@material-ui/icons/EventBusy';
+import { withStyles } from '@material-ui/core/styles';
 import CheckIcon from '@material-ui/icons/Check';
 import CloseIcon from '@material-ui/icons/Close';
-import { requiresLogin } from '../../util';
-import { fetchUser } from '../../actions/user';
+import EventAvailableIcon from '@material-ui/icons/EventAvailable';
+import EventBusyIcon from '@material-ui/icons/EventBusy';
+import React from 'react';
+import { Prompt } from 'react-router';
 import { changeApplicationStateForNeed } from '../../actions/need';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { Button } from '@material-ui/core';
-import { Prompt } from 'react-router'
-import { yellow, green } from '@material-ui/core/colors';
+import { fetchUser } from '../../actions/user';
+import { requiresLogin } from '../../util';
 
 
 const styles = theme => ({
@@ -137,13 +133,13 @@ class NeedApproveEditComponent extends React.Component {
     render() {
         const { classes, label, need } = this.props
         const { users, approved, changes, saving } = this.state
-        const thingsToSave = changes[need.id] && Object.entries(changes[need.id]).length > 0
+        const thingsToSave = !!(changes[need.id] && Object.entries(changes[need.id]).length > 0)
         return (
             <>
                 <Prompt when={thingsToSave} message="Es wurden nicht alle Änderungen gespeichert. Möchtest du diese Seite trotzdem verlassen?" />
                 <div className={classes.wrapper}>
                     <div className={classes.label}>
-                        {label} ({approved} / {need.quantity})
+                        {label} ({approved ? approved : 0} / {need.quantity})
                 </div>
                     {users ? (
                         <>
