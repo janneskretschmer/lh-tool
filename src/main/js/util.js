@@ -61,7 +61,8 @@ export function isMonthOffsetWithinRange(offset, startDate, endDate) {
 
 export function getMonthOffsetWithinRange(originalOffset, startDate, endDate){
     if(!isMonthOffsetWithinRange(originalOffset, startDate, endDate)){
-        return startDate.diff(moment().utc(),'months');
+        // it seems like moment.diff(...,'months') calculates the difference of full months
+        return getMonthsSinceYear1AD(startDate) - getMonthsSinceYear1AD(moment().utc());
     }
     return originalOffset;
 }
@@ -74,6 +75,8 @@ export function getMonthNameForOffset(offset) {
 export function getProjectMonth(monthOffset, startDate, endDate) {
     var date = moment().utc().startOf('month').add(monthOffset,'months');
     let month = date.clone().month();
+    //necessary for december -> january 
+    let continiousMonth = getMonthsSinceYear1AD(date.clone())
     let endOfMonth = date.clone().endOf('month');
     var result = {
         monthOffset,
@@ -91,7 +94,7 @@ export function getProjectMonth(monthOffset, startDate, endDate) {
     }
     date.add(offset, 'days');
 
-    while(date.month() <= month || (date.isoWeekday() > 2 && date.isoWeekday() < 7)) {
+    while(getMonthsSinceYear1AD(date) <= continiousMonth || (date.isoWeekday() > 2 && date.isoWeekday() < 7)) {
         if(date.isoWeekday() > 1 && date.isoWeekday() < 7){
             let day = {
                 date: date.clone(),
@@ -102,4 +105,8 @@ export function getProjectMonth(monthOffset, startDate, endDate) {
         date =  date.add(1, 'days')
     }
     return result;
+}
+
+function getMonthsSinceYear1AD(date){
+    return date.year() * 12 + date.month()
 }
