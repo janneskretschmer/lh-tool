@@ -1,13 +1,13 @@
-import React from 'react';
+import Button from '@material-ui/core/Button';
+import { green, red, yellow } from '@material-ui/core/colors';
 import { withStyles } from '@material-ui/core/styles';
 import { withSnackbar } from 'notistack';
+import React from 'react';
+import { Helmet } from 'react-helmet';
+import { fetchOwnNeeds } from '../../actions/need';
 import { requiresLogin, setWaitingState } from '../../util';
 import ProjectCalendar from '../util/project-calendar';
-import TextField from '@material-ui/core/TextField';
-import { createOrUpdateNeed, applyForNeed, revokeApplicationForNeed, fetchNeed, fetchOwnNeeds } from '../../actions/need';
 import NeedApplyEditComponent from './apply-edit';
-import Button from '@material-ui/core/Button';
-import { yellow, green, red } from '@material-ui/core/colors';
 
 const styles = theme => ({
     applyInput: {
@@ -88,6 +88,7 @@ class NeedApplyComponent extends React.Component {
         setWaitingState(false);
         return (
             <>
+                <Helmet titleTemplate="%s › Bewerben" />
                 <div className={classes.legendItem}>
                     <Button variant="outlined" disabled={true}>Aufgabe</Button> &nbsp;Es besteht noch kein Bedarf an diesem Tag.
                 </div>

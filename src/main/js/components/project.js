@@ -105,7 +105,7 @@ class StatefulProjectsComponent extends React.Component {
 
 const ProjectsComponent = props => (
     <>
-        <Helmet titleTemplate="Projekte - %s" />
+        <Helmet titleTemplate="%s › Projekte" />
         <ProjectsProvider>
             <StatefulProjectsComponent {...props} />
         </ProjectsProvider>

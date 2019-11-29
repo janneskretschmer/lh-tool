@@ -1,10 +1,10 @@
-import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { withSnackbar } from 'notistack';
+import React from 'react';
+import { Helmet } from 'react-helmet';
+import { fetchOwnNeeds } from '../../actions/need';
 import { requiresLogin, setWaitingState } from '../../util';
 import ProjectCalendar from '../util/project-calendar';
-import TextField from '@material-ui/core/TextField';
-import { createOrUpdateNeed, applyForNeed, revokeApplicationForNeed, fetchNeed, fetchOwnNeeds } from '../../actions/need';
 import NeedQuantityEditComponent from './quantity-edit';
 
 const styles = theme => ({
@@ -69,6 +69,7 @@ class NeedQuantityComponent extends React.Component {
         setWaitingState(false);
         return (
             <>
+                <Helmet titleTemplate="%s › Bedarf" />
                 <ProjectCalendar loadDayContent={this.getQuantities.bind(this)}/>
             </>
         )

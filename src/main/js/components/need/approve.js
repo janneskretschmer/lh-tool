@@ -11,6 +11,7 @@ import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import classNames from 'classnames';
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import { fetchOwnNeeds } from '../../actions/need';
 import { getMonthOffsetWithinRange, getProjectMonth, isMonthOffsetWithinRange, requiresLogin } from '../../util';
 import ProjectSelection from '../util/project-selection';
@@ -191,6 +192,7 @@ class NeedApproveComponent extends React.Component {
 
         return (
             <>
+                <Helmet titleTemplate="%s › Zuteilen" />
                 <div>
                     <ProjectSelection onChange={project => this.switchProject(project)} accessToken={sessionState.accessToken} />
                 </div>
