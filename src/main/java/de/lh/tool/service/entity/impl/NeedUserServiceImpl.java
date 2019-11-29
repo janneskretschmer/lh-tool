@@ -47,9 +47,9 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 	private MailService mailService;
 
 	// necessary rights:
-	// +-apply-+ . +-approve-+
-	// v . . . v . v . . . . v
-	// NONE . APPLIED . APPROVED
+	// +-apply-+ . +-approve-+-approve-+
+	// v . . . v . v . . . . v . . . . v
+	// NONE . APPLIED . APPROVED . REJECTED
 	// ^ | . . . . . . . . ^ |
 	// | +------approve----+ |
 	// +--------apply--------+
@@ -88,8 +88,19 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 			if (!userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPROVE)) {
 				throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
 			}
-			if (NeedUserState.APPLIED.equals(needUser.getState())) {
+			if (NeedUserState.APPLIED.equals(needUser.getState())
+					|| NeedUserState.REJECTED.equals(needUser.getState())) {
 				needUser.setState(NeedUserState.APPROVED);
+				mailService.sendNeedUserStateChangedMailToUser(needUser);
+			}
+			break;
+		case REJECTED:
+			if (!userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPROVE)) {
+				throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
+			}
+			if (NeedUserState.APPLIED.equals(needUser.getState())
+					|| NeedUserState.APPROVED.equals(needUser.getState())) {
+				needUser.setState(NeedUserState.REJECTED);
 				mailService.sendNeedUserStateChangedMailToUser(needUser);
 			}
 			break;

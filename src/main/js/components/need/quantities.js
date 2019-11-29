@@ -42,17 +42,17 @@ class NeedQuantityComponent extends React.Component {
                 {
                     ...monthData,
                     days: monthData.days.map(day => {
-                        let needs = result[day.date];
+                        let needs = result.get(day.date.valueOf());
                         if(needs){
                             day.content = (
                                 <>
                                     <div className={classes.quantityWrapper}>
-                                        <NeedQuantityEditComponent need={needs.CONSTRUCTION_WORKER} label="Bauhelfer"/>
-                                        <NeedQuantityEditComponent need={needs.STORE_KEEPER} label="Magaziner"/>
+                                        <NeedQuantityEditComponent need={needs.get('CONSTRUCTION_WORKER')} label="Bauhelfer"/>
+                                        <NeedQuantityEditComponent need={needs.get('STORE_KEEPER')} label="Magaziner"/>
                                     </div>
                                     <div className={classes.quantityWrapper}>
-                                        <NeedQuantityEditComponent need={needs.KITCHEN_HELPER} label="Küche"/>
-                                        <NeedQuantityEditComponent need={needs.CLEANER} label="Putzen"/>
+                                        <NeedQuantityEditComponent need={needs.get('KITCHEN_HELPER')} label="Küche"/>
+                                        <NeedQuantityEditComponent need={needs.get('CLEANER')} label="Putzen"/>
                                     </div>
                                 </>
                             )
