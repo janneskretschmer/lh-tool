@@ -59,6 +59,11 @@ export function isMonthOffsetWithinRange(offset, startDate, endDate) {
     return !moment().utc().add(offset,'months').endOf('month').isBefore(startDate) && !moment().utc().add(offset,'months').startOf('month').isAfter(endDate)
 }
 
+
+function getMonthsSinceYear1AD(date){
+    return date.year() * 12 + date.month()
+}
+
 export function getMonthOffsetWithinRange(originalOffset, startDate, endDate){
     if(!isMonthOffsetWithinRange(originalOffset, startDate, endDate)){
         // it seems like moment.diff(...,'months') calculates the difference of full months
@@ -105,8 +110,4 @@ export function getProjectMonth(monthOffset, startDate, endDate) {
         date =  date.add(1, 'days')
     }
     return result;
-}
-
-function getMonthsSinceYear1AD(date){
-    return date.year() * 12 + date.month()
 }
