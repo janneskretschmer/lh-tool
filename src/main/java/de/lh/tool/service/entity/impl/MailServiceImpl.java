@@ -29,7 +29,7 @@ import lombok.extern.log4j.Log4j2;
 @Service
 public class MailServiceImpl implements MailService {
 
-	private static final String SENDER_NAME = "Lokale Planungs- und Baugruppe (LDC)";
+	private static final String SENDER_NAME = "LDC Baugruppe";
 	private static final String FOOTER = "p.s. Das ist eine automatisch generierte Mail, bitte antworte nicht darauf. Bei Problemen mit dieser E-Mail wende dich bitte an jannes.kretschmer@gmx.de.";
 	private static final String DEFAULT_MSG_CHARSET = "utf-8";
 
