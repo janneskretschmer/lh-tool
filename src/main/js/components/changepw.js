@@ -9,7 +9,9 @@ import { SessionContext } from '../providers/session-provider';
 import { changePassword } from '../actions/user';
 import { withContext } from '../util';
 import { Link } from '@material-ui/core';
-import { fullPathOfDataProtection } from '../paths';
+import { fullPathOfDataProtection, fullPathOfLogin } from '../paths';
+import SimpleDialog from './simple-dialog';
+import { Redirect } from 'react-router'
 
 @withSnackbar
 @withContext('sessionState', SessionContext)
@@ -17,7 +19,10 @@ export default class ChangePasswordComponent extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            success: false,
+            redirect: false,
+        };
     }
 
     getUserCredentials(sessionState) {
@@ -31,6 +36,18 @@ export default class ChangePasswordComponent extends React.Component {
         if (!this.getUserCredentials(this.props.sessionState)) {
             // FUTURE: Redirect for login
         }
+    }
+
+    success() {
+        this.setState({
+            success: true,
+        })
+    }
+
+    redirect() {
+        this.setState({
+            redirect: true,
+        })
     }
 
     render() {
@@ -53,6 +70,27 @@ export default class ChangePasswordComponent extends React.Component {
                         )
                     }
 
+                    if (this.state.redirect) {
+                        return (
+                            <Redirect to={fullPathOfLogin()} />
+                        )
+                    }
+
+                    if (this.state.success) {
+                        return (
+                            <>
+                                <SimpleDialog
+                                    open={true}
+                                    title="Vielen Dank für deine Anmeldung"
+                                    text="Du wirst jetzt auf die Login-Seite umgeleitet. Dort kannst du dich in Zukunft mit deiner E-Mail-Adresse und dem gewählten Passwort anmelden und deine Schichten verwalten."
+                                    okText="OK"
+                                    onOK={this.redirect.bind(this)}
+                                >
+                                </SimpleDialog>
+                            </>
+                        )
+                    }
+
                     return (
                         <>
                             <Helmet titleTemplate="Passwort ändern - %s" />
@@ -63,12 +101,12 @@ export default class ChangePasswordComponent extends React.Component {
                                 const newPassword = this.inputPasswordNew.value;
                                 const confirmPassword = this.inputPasswordNewConfirm.value;
                                 changePassword({ userId, token, oldPassword, newPassword, confirmPassword })
-                                .then(user => {
-                                    this.props.enqueueSnackbar(`Passwort für ${user.firstName} ${user.lastName} geändert`, { variant: 'success', });
-                                })
-                                .catch(() => {
-                                    this.props.enqueueSnackbar('Fehler beim Ändern des Passworts', { variant: 'error', });
-                                });
+                                    .then(user => {
+                                        this.success();
+                                    })
+                                    .catch(() => {
+                                        this.props.enqueueSnackbar('Fehler beim Ändern des Passworts', { variant: 'error', });
+                                    });
                             }}>
                                 <>
                                     Mit dem Anlegen eines Passworts stimmst du der <a href={fullPathOfDataProtection()} target="_blank">Datenschutzerklärung</a> dieser Webseite zu.
