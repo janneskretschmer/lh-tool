@@ -38,7 +38,10 @@ module.exports = {
 	module : {
 		rules : [ {
 			test : path.join(__dirname, '.'),
-			exclude : /(node_modules)/,
+			include: [
+			    path.resolve(__dirname, "src"),
+			    path.resolve(__dirname, "node_modules/superagent")
+			  ],
 			use : [ {
 				loader : 'babel-loader',
 				options : {
