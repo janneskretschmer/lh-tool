@@ -3,7 +3,6 @@
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=lh-tool&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=lh-tool)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=lh-tool&metric=code_smells)](https://sonarcloud.io/dashboard?id=lh-tool)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/848f01d70fe748aebbc667062c587d8c)](https://www.codacy.com/app/janneskretschmer/lh-tool?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=janneskretschmer/lh-tool&amp;utm_campaign=Badge_Grade)
-[![Build Status](http://jk-dev.de/Browserstack-logo.svg)](https://www.browserstack.com/)
 # API Documentation
 [Swagger](https://lh-tool.de/swagger-ui.html)
 # Local Config
@@ -80,3 +79,8 @@
 	5. Right click on hibernate.properties > Assume unchanged
 	6. It should disappear from the view
 	7. Never commit your credentials from hibernate.properties!
+
+# Technologies
+## Browserstack
+We use Browserstack to test the website in more browsers than you can think of.
+[![Browserstack](http://jk-dev.de/Browserstack-logo.svg)](https://www.browserstack.com/)
