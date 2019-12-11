@@ -33,7 +33,16 @@ export default class ProjectsProvider extends React.Component {
             projects: prevState.projects.map(project => {
                 if (project.id === projectId) {
                     if (role === 'ROLE_LOCAL_COORDINATOR') {
-                        project.localCoordinator = user;
+                        project.localCoordinators = project.localCoordinators.concat([user]);
+                        project.localCoordinators.sort((a, b) => {
+                            if (a.lastName < b.lastName) {
+                                return -1;
+                            } else if (a.lastName > b.lastName) {
+                                return 1;
+                            } else {
+                                return a.firstName < b.firstName ? -1 : 1;
+                            }
+                        });
                     } else if (role === 'ROLE_PUBLISHER') {
                         project.publishers = project.publishers.concat([user]);
                         project.publishers.sort((a, b) => {
@@ -55,8 +64,8 @@ export default class ProjectsProvider extends React.Component {
     userUpdated  = (user) => {
         this.setState(prevState => ({
             projects: prevState.projects.map(project => {
-                if (project.localCoordinator && project.localCoordinator.id === user.id) {
-                    project.localCoordinator = user;
+                if(project.localCoordinators){
+                    project.localCoordinators = project.localCoordinators.map(tmpUser => tmpUser.id === user.id ? user : tmpUser);
                 }
                 if(project.publishers){
                     project.publishers = project.publishers.map(tmpUser => tmpUser.id === user.id ? user : tmpUser);
@@ -69,8 +78,8 @@ export default class ProjectsProvider extends React.Component {
     userRemoved = (userId) => {
         this.setState(prevState => ({
             projects: prevState.projects.map(project => {
-                if (project.localCoordinator && project.localCoordinator.id === userId) {
-                    project.localCoordinator = undefined;
+                if (project.localCoordinators) {
+                    project.localCoordinators = project.localCoordinators.filter(user => user.id !== userId);
                 }
                 if(project.publishers){
                     project.publishers = project.publishers.filter(user => user.id !== userId);

@@ -2,17 +2,17 @@ import React from 'react';
 import { withSnackbar } from 'notistack';
 import { withStyles } from '@material-ui/core/styles';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { ProjectsContext } from '../providers/projects-provider';
-import { SessionContext } from '../providers/session-provider';
-import { deleteProject } from '../actions/project';
-import WithPermission from './with-permission';
+import { ProjectsContext } from '../../providers/projects-provider';
+import { SessionContext } from '../../providers/session-provider';
+import { deleteProject } from '../../actions/project';
+import WithPermission from '../with-permission';
 import Typography from '@material-ui/core/Typography';
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import UserComponent from './user-detail';
-import { createNewUser, updateUser, deleteUser } from '../actions/user'
-import SimpleDialog from './simple-dialog.js'
+import UserComponent from '../user-detail';
+import { createNewUser, updateUser, deleteUser } from '../../actions/user'
+import SimpleDialog from '../simple-dialog.js'
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
@@ -38,15 +38,21 @@ export default class ProjectEditPanel extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            editPublishers: false,
+            editLocalCoordinators: props.project.localCoordinators.length === 0,
+            editPublishers: props.project.localCoordinators.length > 0 && props.project.publishers.length === 0,
         };
     }
 
     handlePublisherEditButtonClicked() {
-        this.setState({
-            ...this.state,
-            editPublishers: !this.state.editPublishers,
-        })
+        this.setState(prevState => ({
+            editPublishers: !prevState.editPublishers,
+        }))
+    }
+
+    handleLocalCoordinatorEditButtonClicked() {
+        this.setState(prevState => ({
+            editLocalCoordinators: !prevState.editLocalCoordinators,
+        }))
     }
 
     handleDeleteFailure() {
@@ -65,7 +71,7 @@ export default class ProjectEditPanel extends React.Component {
 
     render() {
         const { classes, project } = this.props;
-        const { editPublishers } = this.state;
+        const { editPublishers, editLocalCoordinators } = this.state;
         return (
             <div>
                 <SessionContext.Consumer>
@@ -74,18 +80,45 @@ export default class ProjectEditPanel extends React.Component {
                             {projectsState => (
                                 <>
                                     <div><Typography variant="h6">Baudiener</Typography></div>
-                                    TODO: Auswahlliste der Baudiener
-                                    <div><Typography variant="h6">Helferkoordinator</Typography></div>
-                                    <UserComponent
-                                        user={project.localCoordinator}
+                                    TODO: Auswahlliste der Baudiener<br />
+                                    <br />
+
+                                    <Typography variant="h6">
+                                    Helferkoordinator 
+                                        <IconButton onClick={() => this.handleLocalCoordinatorEditButtonClicked()}>
+                                            <Icon>{editLocalCoordinators ? 'close' : 'create'}</Icon>
+                                        </IconButton>
+                                        {!editLocalCoordinators ? (
+                                            <IconButton onClick={() => this.handleLocalCoordinatorEditButtonClicked()}>
+                                                <Icon>group_add</Icon>
+                                            </IconButton>
+                                        ) : null}
+                                    </Typography>
+                                    {sessionState.hasPermission('ROLE_RIGHT_USERS_CREATE') && sessionState.hasPermission('ROLE_RIGHT_USERS_GRANT_ROLE_LOCAL_COORDINATOR') && editLocalCoordinators  ? (<UserComponent
                                         role="ROLE_LOCAL_COORDINATOR"
-                                        showEdit={sessionState.hasPermission('ROLE_RIGHT_USERS_PUT') && sessionState.hasPermission('ROLE_RIGHT_USERS_GRANT_ROLE_LOCAL_COORDINATOR')}
-                                        onSave={user => createNewUser({ accessToken: sessionState.accessToken, ...user, projectId: project.id, projectsState, handleFailure: this.handleCreateFailure.bind(this), })}
-                                        onUpdate={user => updateUser({accessToken: sessionState.accessToken, user, projectsState})}
-                                        showDelete={sessionState.hasPermission('ROLE_RIGHT_USERS_DELETE') && sessionState.hasPermission('ROLE_RIGHT_USERS_GRANT_ROLE_LOCAL_COORDINATOR')}
-                                        onDelete={user => deleteUser({accessToken: sessionState.accessToken, userId: user.id, projectsState})}
-                                    />
-                                    <Typography variant="h6">Verkündiger 
+                                        showEdit={false}
+                                        onSave={(user) => createNewUser({ accessToken: sessionState.accessToken, ...user, projectId:project.id, projectsState, handleFailure: this.handleCreateFailure.bind(this), })}
+                                        onlyNewUsers={true}
+                                        showDelete={false}
+                                    />) : null }
+                                    {project.localCoordinators ? project.localCoordinators.map(user => (
+                                            <UserComponent user={user}
+                                                key={user.email}
+                                                role="ROLE_LOCAL_COORDINATOR"
+                                                showEdit={sessionState.hasPermission('ROLE_RIGHT_USERS_PUT') && sessionState.hasPermission('ROLE_RIGHT_USERS_GRANT_ROLE_LOCAL_COORDINATOR') && editLocalCoordinators}
+                                                onUpdate={(user) => updateUser({accessToken: sessionState.accessToken, user, projectsState})}
+                                                showDelete={sessionState.hasPermission('ROLE_RIGHT_USERS_DELETE') && sessionState.hasPermission('ROLE_RIGHT_USERS_GRANT_ROLE_LOCAL_COORDINATOR') && editLocalCoordinators}
+                                                onDelete={(user) => deleteUser({accessToken: sessionState.accessToken, userId: user.id, projectsState})}
+                                            />
+                                        ))
+                                    :
+                                        <Typography variant="body1">Bitte füge alle geeigneten Verkündiger hinzu.</Typography>
+                                    }
+
+                                    <br />
+                                    <br />
+                                    <Typography variant="h6">
+                                        Verkündiger 
                                         <IconButton onClick={() => this.handlePublisherEditButtonClicked()}>
                                             <Icon>{editPublishers ? 'close' : 'create'}</Icon>
                                         </IconButton>
@@ -95,7 +128,7 @@ export default class ProjectEditPanel extends React.Component {
                                             </IconButton>
                                         ) : null}
                                     </Typography>
-                                    {sessionState.hasPermission('ROLE_RIGHT_USERS_CREATE') && sessionState.hasPermission('ROLE_RIGHT_USERS_GRANT_ROLE_PUBLISHER') && (editPublishers || project.publishers.length === 0)  ? (<UserComponent
+                                    {sessionState.hasPermission('ROLE_RIGHT_USERS_CREATE') && sessionState.hasPermission('ROLE_RIGHT_USERS_GRANT_ROLE_PUBLISHER') && editPublishers ? (<UserComponent
                                         role="ROLE_PUBLISHER"
                                         showEdit={false}
                                         onSave={(user) => createNewUser({ accessToken: sessionState.accessToken, ...user, projectId:project.id, projectsState, handleFailure: this.handleCreateFailure.bind(this), })}

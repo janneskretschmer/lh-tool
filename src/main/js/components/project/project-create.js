@@ -4,9 +4,9 @@ import { withSnackbar } from 'notistack';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { withStyles } from '@material-ui/core/styles';
-import { ProjectsContext } from '../providers/projects-provider';
-import { SessionContext } from '../providers/session-provider';
-import { createNewProject } from '../actions/project';
+import { ProjectsContext } from '../../providers/projects-provider';
+import { SessionContext } from '../../providers/session-provider';
+import { createNewProject } from '../../actions/project';
 
 const MUI_DATE_FORMAT = 'YYYY-MM-DD';
 

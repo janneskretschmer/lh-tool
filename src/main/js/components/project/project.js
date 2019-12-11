@@ -11,12 +11,12 @@ import Collapse from '@material-ui/core/Collapse';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import GroupWorkIcon from '@material-ui/icons/GroupWork';
-import ProjectsProvider, { ProjectsContext } from '../providers/projects-provider';
-import { SessionContext } from '../providers/session-provider';
+import ProjectsProvider, { ProjectsContext } from '../../providers/projects-provider';
+import { SessionContext } from '../../providers/session-provider';
 import ProjectCreatePanel from './project-create';
 import ProjectEditPanel from './project-edit';
-import WithPermission from './with-permission';
-import { requiresLogin, setWaitingState } from '../util';
+import WithPermission from '../with-permission';
+import { requiresLogin, setWaitingState } from '../../util';
 
 const styles = theme => ({
     root: {
