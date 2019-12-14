@@ -54,6 +54,9 @@ class NeedQuantityComponent extends React.Component {
                                         <NeedQuantityEditComponent need={needs.get('KITCHEN_HELPER')} label="Küche"/>
                                         <NeedQuantityEditComponent need={needs.get('CLEANER')} label="Putzen"/>
                                     </div>
+                                    <div className={classes.quantityWrapper}>
+                                        <NeedQuantityEditComponent need={needs.get('DRIVER')} label="Stadtfahrer"/>
+                                    </div>
                                 </>
                             )
                         }

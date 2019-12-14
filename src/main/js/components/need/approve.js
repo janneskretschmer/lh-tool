@@ -64,7 +64,7 @@ const styles = theme => ({
     },
     dayWrapper: {
         display: 'inline-block',
-        maxWidth: '1440px',
+        maxWidth: '2160px',
         width: '100%',
         verticalAlign: 'top',
     },
@@ -304,6 +304,9 @@ class NeedApproveComponent extends React.Component {
                                     <div className={classes.needsWrapper}>
                                         <NeedApproveEditComponent label="Küche" need={day.needs.get('KITCHEN_HELPER')} onApprove={(approvedCount) => this.updateApprovedCount(index, 'KITCHEN_HELPER', approvedCount)} />
                                         <NeedApproveEditComponent label="Putzen" need={day.needs.get('CLEANER')} onApprove={(approvedCount) => this.updateApprovedCount(index, 'CLEANER', approvedCount)} />
+                                    </div>
+                                    <div className={classes.needsWrapper}>
+                                        <NeedApproveEditComponent label="Stadtfahrer" need={day.needs.get('DRIVER')} onApprove={(approvedCount) => this.updateApprovedCount(index, 'DRIVER', approvedCount)} />
                                     </div>
                                 </div>
                             )

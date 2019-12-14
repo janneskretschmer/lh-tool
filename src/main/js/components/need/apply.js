@@ -73,6 +73,9 @@ class NeedApplyComponent extends React.Component {
                                         <NeedApplyEditComponent need={needs.get('KITCHEN_HELPER')} label="Küche" />
                                         <NeedApplyEditComponent need={needs.get('CLEANER')} label="Putzen" />
                                     </div>
+                                    <div className={classes.applyWrapper}>
+                                        <NeedApplyEditComponent need={needs.get('DRIVER')} label="Stadtfahrer" />
+                                    </div>
                                 </>
                             )
                         }
