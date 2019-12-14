@@ -79,9 +79,9 @@ export default class ProjectEditPanel extends React.Component {
                         <ProjectsContext.Consumer>
                             {projectsState => (
                                 <>
-                                    <div><Typography variant="h6">Baudiener</Typography></div>
+                                    {/* <div><Typography variant="h6">Baudiener</Typography></div>
                                     TODO: Auswahlliste der Baudiener<br />
-                                    <br />
+                                    <br /> */}
 
                                     <Typography variant="h6">
                                     Helferkoordinator 
