@@ -299,14 +299,14 @@ class NeedApproveComponent extends React.Component {
                                     </div>
                                     <div className={classes.needsWrapper}>
                                         <NeedApproveEditComponent label="Bauhelfer" need={day.needs.get('CONSTRUCTION_WORKER')} onApprove={(approvedCount) => this.updateApprovedCount(index, 'CONSTRUCTION_WORKER', approvedCount)} />
-                                        <NeedApproveEditComponent label="Magaziner" need={day.needs.get('STORE_KEEPER')} onApprove={(approvedCount) => this.updateApprovedCount(index, 'STORE_KEEPER', approvedCount)} />
-                                    </div>
-                                    <div className={classes.needsWrapper}>
                                         <NeedApproveEditComponent label="Küche" need={day.needs.get('KITCHEN_HELPER')} onApprove={(approvedCount) => this.updateApprovedCount(index, 'KITCHEN_HELPER', approvedCount)} />
-                                        <NeedApproveEditComponent label="Putzen" need={day.needs.get('CLEANER')} onApprove={(approvedCount) => this.updateApprovedCount(index, 'CLEANER', approvedCount)} />
                                     </div>
                                     <div className={classes.needsWrapper}>
+                                        <NeedApproveEditComponent label="Magaziner" need={day.needs.get('STORE_KEEPER')} onApprove={(approvedCount) => this.updateApprovedCount(index, 'STORE_KEEPER', approvedCount)} />
                                         <NeedApproveEditComponent label="Stadtfahrer" need={day.needs.get('DRIVER')} onApprove={(approvedCount) => this.updateApprovedCount(index, 'DRIVER', approvedCount)} />
+                                    </div>
+                                        <NeedApproveEditComponent label="Putzen" need={day.needs.get('CLEANER')} onApprove={(approvedCount) => this.updateApprovedCount(index, 'CLEANER', approvedCount)} />
+                                    <div className={classes.needsWrapper}>
                                     </div>
                                 </div>
                             )

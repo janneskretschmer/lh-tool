@@ -67,14 +67,14 @@ class NeedApplyComponent extends React.Component {
                                 <>
                                     <div className={classes.applyWrapper}>
                                         <NeedApplyEditComponent need={needs.get('CONSTRUCTION_WORKER')} label="Bauhelfer" />
-                                        <NeedApplyEditComponent need={needs.get('STORE_KEEPER')} label="Magaziner" />
-                                    </div>
-                                    <div className={classes.applyWrapper}>
                                         <NeedApplyEditComponent need={needs.get('KITCHEN_HELPER')} label="Küche" />
-                                        <NeedApplyEditComponent need={needs.get('CLEANER')} label="Putzen" />
                                     </div>
                                     <div className={classes.applyWrapper}>
+                                        <NeedApplyEditComponent need={needs.get('STORE_KEEPER')} label="Magaziner" />
                                         <NeedApplyEditComponent need={needs.get('DRIVER')} label="Stadtfahrer" />
+                                    </div>
+                                    <div className={classes.applyWrapper}>
+                                        <NeedApplyEditComponent need={needs.get('CLEANER')} label="Putzen" />
                                     </div>
                                 </>
                             )

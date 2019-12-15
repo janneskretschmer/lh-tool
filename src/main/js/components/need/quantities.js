@@ -48,14 +48,14 @@ class NeedQuantityComponent extends React.Component {
                                 <>
                                     <div className={classes.quantityWrapper}>
                                         <NeedQuantityEditComponent need={needs.get('CONSTRUCTION_WORKER')} label="Bauhelfer"/>
-                                        <NeedQuantityEditComponent need={needs.get('STORE_KEEPER')} label="Magaziner"/>
-                                    </div>
-                                    <div className={classes.quantityWrapper}>
                                         <NeedQuantityEditComponent need={needs.get('KITCHEN_HELPER')} label="Küche"/>
-                                        <NeedQuantityEditComponent need={needs.get('CLEANER')} label="Putzen"/>
                                     </div>
                                     <div className={classes.quantityWrapper}>
+                                        <NeedQuantityEditComponent need={needs.get('STORE_KEEPER')} label="Magaziner"/>
                                         <NeedQuantityEditComponent need={needs.get('DRIVER')} label="Stadtfahrer"/>
+                                    </div>
+                                    <div className={classes.quantityWrapper}>
+                                        <NeedQuantityEditComponent need={needs.get('CLEANER')} label="Putzen"/>
                                     </div>
                                 </>
                             )
