@@ -180,6 +180,7 @@ public class UserRole implements GrantedAuthority {
 							RIGHT_USERS_DELETE, RIGHT_PROJECTS_GET, RIGHT_PROJECTS_GET_BY_ID, RIGHT_PROJECTS_POST,
 							RIGHT_PROJECTS_PUT, RIGHT_PROJECTS_USERS_DELETE, RIGHT_PROJECTS_USERS_POST,
 							// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+							// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
 							RIGHT_USERS_GRANT_ROLE_INVENTORY_MANAGER, RIGHT_USERS_GRANT_ROLE_LOCAL_COORDINATOR,
 							RIGHT_USERS_GRANT_ROLE_PUBLISHER, RIGHT_USERS_GRANT_ROLE_STORE_KEEPER,
 							// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\

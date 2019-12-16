@@ -11,14 +11,19 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItem, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfSlot, fullPathOfStore, fullPathOfStores } from '../paths';
 import SessionProvider from '../providers/session-provider';
 import ChangePasswordComponent from './changepw';
+    fullPathOfStores,
+    fullPathOfStore,
+    fullPathOfSlot,
+    fullPathOfItems,
+    fullPathOfItem,
 import AppHeader from './header';
-import ItemDetailComponent from './item/item-detail';
-import ItemListComponent from './item/item-list';
 import LoginComponent from './login';
 import AppMenu from './menu';
 import NeedApplyComponent from './need/apply';
 import NeedApproveComponent from './need/approve';
 import NeedQuantityComponent from './need/quantities';
+import ItemListComponent from './item/item-list';
+import ItemDetailComponent from './item/item-detail';
 import NotFoundComponent from './notfound';
 import ProjectsComponent from './project/project';
 import SlotDetailComponent from './slot/slot-detail';
