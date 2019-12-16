@@ -54,8 +54,7 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 			return super.convertToDto(need);
 		}
 		try {
-			List<NeedUserDto> needUsers = needUserService
-					.findDtosByNeedId(need.getId()).stream()
+			List<NeedUserDto> needUsers = needUserService.findDtosByNeedId(need.getId()).stream()
 					.filter(nu -> nu.getState() != NeedUserState.NONE).collect(Collectors.toList());
 			int appliedCount = (int) needUsers.stream().filter(nu -> nu.getState() == NeedUserState.APPLIED).count();
 			int approvedCount = (int) needUsers.stream().filter(nu -> nu.getState() == NeedUserState.APPROVED).count();

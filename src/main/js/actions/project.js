@@ -4,12 +4,12 @@ import { fetchUsersByProjectIdAndRole } from './user';
 import moment from 'moment';
 
 function fetchAllUsersForProject({ projectId, accessToken }) {
-    const localCoordinatorPromise = fetchUsersByProjectIdAndRole({
+    const localCoordinatorsPromise = fetchUsersByProjectIdAndRole({
         accessToken,
         projectId: projectId,
         role: 'ROLE_LOCAL_COORDINATOR',
     })
-        .then(users => users[0])
+        .then(users => users)
         .catch(() => []);
 
     const publishersPromise = fetchUsersByProjectIdAndRole({
@@ -20,9 +20,9 @@ function fetchAllUsersForProject({ projectId, accessToken }) {
         .then(users => users)
         .catch(() => []);
 
-    return Promise.all([localCoordinatorPromise, publishersPromise])
-        .then(([localCoordinator, publishers]) => ({
-            localCoordinator,
+    return Promise.all([localCoordinatorsPromise, publishersPromise])
+        .then(([localCoordinators, publishers]) => ({
+            localCoordinators,
             publishers,
         }));
 }
@@ -42,7 +42,7 @@ function mapProjectObject(accessToken, responseObj) {
             name: responseObj.name,
             startDate: moment(responseObj.startDate, 'x'),
             endDate: moment(responseObj.endDate, 'x'),
-            localCoordinator: users.localCoordinator,
+            localCoordinators: users.localCoordinators,
             publishers: users.publishers,
         }))
         // TODO Blow => error msg.

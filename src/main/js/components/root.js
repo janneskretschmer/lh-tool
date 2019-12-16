@@ -27,7 +27,7 @@ import NeedApplyComponent from './need/apply';
 import NeedApproveComponent from './need/approve';
 import NeedQuantityComponent from './need/quantities';
 import NotFoundComponent from './notfound';
-import ProjectsComponent from './project';
+import ProjectsComponent from './project/project';
 import DataProtection from './util/data-protection';
 import Imprint from './util/imprint';
 

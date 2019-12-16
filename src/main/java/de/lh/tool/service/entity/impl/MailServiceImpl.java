@@ -29,8 +29,8 @@ import lombok.extern.log4j.Log4j2;
 @Service
 public class MailServiceImpl implements MailService {
 
-	private static final String SENDER_NAME = "Lokale Planungs- und Bauabteilung (LDC)";
-	private static final String FOOTER = "p.s. Das ist eine automatisch generierte Mail, bitte antworte nicht darauf. Bei Problemen mit dieser E-Mail wende dich bitte an jannes.kretschmer@gmx.de.";
+	private static final String SENDER_NAME = "LDC Baugruppe";
+	private static final String FOOTER = "p.s. Das ist eine automatisch generierte Mail, bitte antworte nicht darauf. Bei Fragen wende dich bitte an den zuständigen Helferkoordinator.";
 	private static final String DEFAULT_MSG_CHARSET = "utf-8";
 
 	private Properties properties;
@@ -73,12 +73,12 @@ public class MailServiceImpl implements MailService {
 						.append(SENDER_NAME).append("\n\n").append(FOOTER);
 				sendMail(user.getEmail(), "Account bei lh-tool.de", text.toString());
 				if (log.isInfoEnabled()) {
-					log.info("Mail for local coordinator " + user.getFirstName() + " " + user.getLastName()
+					log.info("Mail for new local coordinator " + user.getFirstName() + " " + user.getLastName()
 							+ " sent to " + user.getEmail());
 				}
 			} else {
 				if (log.isInfoEnabled()) {
-					log.warn("Mail for local coordinator " + user.getFirstName() + " " + user.getLastName()
+					log.warn("Mail for new local coordinator " + user.getFirstName() + " " + user.getLastName()
 							+ " with id " + user.getId() + " not sent");
 				}
 			}
@@ -97,13 +97,13 @@ public class MailServiceImpl implements MailService {
 						.append(SENDER_NAME).append("\n\n").append(FOOTER);
 				sendMail(user.getEmail(), "Account bei lh-tool.de", text.toString());
 				if (log.isInfoEnabled()) {
-					log.info("Mail for local coordinator " + user.getFirstName() + " " + user.getLastName()
-							+ " sent to " + user.getEmail());
+					log.info("Mail for new publisher " + user.getFirstName() + " " + user.getLastName() + " sent to "
+							+ user.getEmail());
 				}
 			} else {
 				if (log.isInfoEnabled()) {
-					log.warn("Mail for local coordinator " + user.getFirstName() + " " + user.getLastName()
-							+ " with id " + user.getId() + " not sent");
+					log.warn("Mail for new publisher " + user.getFirstName() + " " + user.getLastName() + " with id "
+							+ user.getId() + " not sent");
 				}
 			}
 		}
@@ -117,6 +117,10 @@ public class MailServiceImpl implements MailService {
 					.append(urlService.getPasswordChangeUrl(user.getId(), passwordChangeToken.getToken()))
 					.append("\n\nViele Grüße\n").append(SENDER_NAME).append("\n\n").append(FOOTER).toString();
 			sendMail(user.getEmail(), "Passwort für lh-tool.de zurücksetzen", text);
+			if (log.isInfoEnabled()) {
+				log.info("Password reset mail for " + user.getFirstName() + " " + user.getLastName() + " sent to "
+						+ user.getEmail());
+			}
 		}
 	}
 
@@ -132,8 +136,8 @@ public class MailServiceImpl implements MailService {
 				sendMail(user.getEmail(), "Schicht am  " + DateUtil.getReadableFormat(needUser.getNeed().getDate())
 						+ " " + getNeedUserStateDescription(needUser.getState()), text.toString());
 				if (log.isInfoEnabled()) {
-					log.info("NeedUserState mail for user " + user.getFirstName() + " " + user.getLastName()
-							+ " sent to " + user.getEmail());
+					log.info("NeedUserState (" + needUser.getState() + ") mail for user " + user.getFirstName() + " "
+							+ user.getLastName() + " sent to " + user.getEmail());
 				}
 			} else {
 				if (log.isInfoEnabled()) {
@@ -160,8 +164,9 @@ public class MailServiceImpl implements MailService {
 								+ getNeedUserStateDescription(needUser.getState()),
 						text.toString());
 				if (log.isInfoEnabled()) {
-					log.info("NeedUserState mail for local coordinator " + coordinator.getFirstName() + " "
-							+ coordinator.getLastName() + " sent to " + coordinator.getEmail());
+					log.info("NeedUserState (" + needUser.getState() + ") mail for local coordinator "
+							+ coordinator.getFirstName() + " " + coordinator.getLastName() + " sent to "
+							+ coordinator.getEmail());
 				}
 			} else {
 				if (log.isInfoEnabled()) {

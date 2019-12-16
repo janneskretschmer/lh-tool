@@ -11,6 +11,7 @@ import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import classNames from 'classnames';
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import { fetchOwnNeeds } from '../../actions/need';
 import { getMonthOffsetWithinRange, getProjectMonth, isMonthOffsetWithinRange, requiresLogin } from '../../util';
 import ProjectSelection from '../util/project-selection';
@@ -51,7 +52,7 @@ const styles = theme => ({
         padding: '3px',
     },
     selected: {
-        backgroundColor: grey[200],
+        backgroundColor: grey[300],
     },
     monthWrapper: {
         width: '100%',
@@ -63,7 +64,7 @@ const styles = theme => ({
     },
     dayWrapper: {
         display: 'inline-block',
-        maxWidth: '1440px',
+        maxWidth: '2160px',
         width: '100%',
         verticalAlign: 'top',
     },
@@ -97,7 +98,8 @@ class NeedApproveComponent extends React.Component {
             project: null,
             data: null,
             month: 0,
-            selectedDay: null,
+            selectedStart: null,
+            selectedEnd: null,
         };
     }
 
@@ -107,7 +109,8 @@ class NeedApproveComponent extends React.Component {
             project,
             month,
             data: getProjectMonth(month, project.startDate, project.endDate),
-            selectedDay: null,
+            selectedStart: null,
+            selectedEnd: null,
         }, this.loadNeeds);
     }
 
@@ -115,7 +118,8 @@ class NeedApproveComponent extends React.Component {
         this.setState({
             month,
             data: getProjectMonth(month, this.state.project.startDate, this.state.project.endDate),
-            selectedDay: null,
+            selectedStart: null,
+            selectedEnd: null,
         }, this.loadNeeds);
     }
 
@@ -123,17 +127,9 @@ class NeedApproveComponent extends React.Component {
         const { classes, sessionState } = this.props
         const { data, project } = this.state
         fetchOwnNeeds({ accessToken: sessionState.accessToken, userId: sessionState.currentUser.id, projectId: project.id, startDiff: data.startDiff, endDiff: data.endDiff }).then(result => {
-            var selected = null;
-            var firstActive = null;
             let days = data.days.map((day, i) => {
                 let needs = result.get(day.date.valueOf());
                 if (needs) {
-                    if (!firstActive) {
-                        firstActive = i
-                    }
-                    if (!selected && !this.areNeedsReady(needs)) {
-                        selected = i
-                    }
                     day.needs = needs
                 }
                 return day
@@ -143,14 +139,22 @@ class NeedApproveComponent extends React.Component {
                     ...data,
                     days,
                 },
-                selectedDay: selected ? selected : firstActive,
+                selectedStart: 0,
+                selectedEnd: days.length - 1,
             })
         })
     }
 
-    selectDay(selectedDay) {
+    selectDay(selectedStart) {
         this.setState({
-            selectedDay,
+            selectedStart,
+            selectedEnd: selectedStart,
+        })
+    }
+    selectDays(selectedStart, selectedEnd) {
+        this.setState({
+            selectedStart,
+            selectedEnd,
         })
     }
 
@@ -169,12 +173,12 @@ class NeedApproveComponent extends React.Component {
         return ready
     }
 
-    updateApprovedCount(type, approvedCount) {
+    updateApprovedCount(index, type, approvedCount) {
         this.setState({
             data: {
                 ...this.state.data,
                 days: this.state.data.days.map((day, i) => {
-                    if (i === this.state.selectedDay) {
+                    if (i === index) {
                         //causes "Generic Object Injection Sink”
                         day.needs.get(type).approvedCount = approvedCount
                     }
@@ -187,10 +191,11 @@ class NeedApproveComponent extends React.Component {
     //{data.days[i*5+j].content ? data.days[i*5+j].content : !data.days[i*5+j].disabled ? (<CircularProgress size={15}/>) : null}
     render() {
         const { classes, sessionState } = this.props;
-        const { data, selectedDay, month, project } = this.state;
+        const { data, selectedStart, selectedEnd, month, project } = this.state;
 
         return (
             <>
+                <Helmet titleTemplate="%s › Zuteilen" />
                 <div>
                     <ProjectSelection onChange={project => this.switchProject(project)} accessToken={sessionState.accessToken} />
                 </div>
@@ -199,12 +204,16 @@ class NeedApproveComponent extends React.Component {
                         <table className={classes.calendar}>
                             <thead>
                                 <tr>
-                                    <th colSpan="5">
+                                    <th colSpan="6">
                                         <div className={classes.monthWrapper}>
                                             <IconButton onClick={() => this.setMonth(month - 1)} disabled={!isMonthOffsetWithinRange(month - 1, project.startDate, project.endDate)}>
                                                 <NavigateBeforeIcon />
                                             </IconButton>
-                                            {data.monthName}
+                                            <Button
+                                                onClick={() => this.selectDays(0, data.days.length - 1)}
+                                            >
+                                                {data.monthName}
+                                            </Button>
                                             <IconButton onClick={() => this.setMonth(month + 1)} disabled={!isMonthOffsetWithinRange(month + 1, project.startDate, project.endDate)}>
                                                 <NavigateNextIcon />
                                             </IconButton>
@@ -213,14 +222,16 @@ class NeedApproveComponent extends React.Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {Array.from(Array(data.days.length / 5)).map((_, i) =>
-                                    (<tr className={classes.calendarRow} key={i}>
+                                {Array.from(Array(data.days.length / 5)).map((_, i) => {
+                                    let disabled = true;
+                                    return (<tr className={classes.calendarRow} key={i}>
                                         {Array.from(Array(5)).map((_, j) => {
                                             let index = i * 5 + j
+                                            disabled = disabled && data.days[index].disabled
                                             return (
                                                 <td className={classNames({
                                                     [classes.calendarCell]: true,
-                                                    [classes.selected]: index === selectedDay,
+                                                    [classes.selected]: !data.days[index].disabled && index >= selectedStart && index <= selectedEnd,
                                                 })} key={j}>
                                                     <Button
                                                         disabled={data.days[index].disabled}
@@ -232,12 +243,24 @@ class NeedApproveComponent extends React.Component {
                                                 </td>
                                             )
                                         })}
+                                        <td className={classNames({
+                                            [classes.calendarCell]: true,
+                                            [classes.selected]: !disabled && i * 5 >= selectedStart && i * 5 + 4 <= selectedEnd,
+                                        })} >
+                                            <Button
+                                                disabled={disabled}
+                                                onClick={() => this.selectDays(i * 5, i * 5 + 4)}
+                                            >
+                                                KW<br />{data.days[i * 5].date.isoWeek()}
+                                            </Button>
+                                        </td>
                                     </tr>
-                                    ))}
+                                    )
+                                })}
                             </tbody>
                         </table>
                         <div className={classes.legend}>
-                            Bitte klicke auf einen Tag, um die Bewerber zuzuteilen.<br />
+                            Bitte klicke auf einen Tag, eine Kalenderwoche oder den Monat, um die Bewerber zuzuteilen.<br />
                             Wenn alle Positionen besetzt sind, erscheint ein Haken.<br />
                             <br />
                             Bedeutung der Klammern neben der Aufgabenbezeichnung: ( Anzahl der Genehmigungen / Bedarf )<br />
@@ -262,24 +285,32 @@ class NeedApproveComponent extends React.Component {
                             Abgelehnt, klicke hier um die Ablehnung zurückzuziehen.
                         </div>
 
-                        {
-                            selectedDay ? (
-                                <>
-                                    <div className={classes.dayWrapper}>
-                                        <div className={classes.dateWrapper}>
-                                            <Date date={data.days[parseInt(selectedDay)].date} />
-                                        </div>
-                                        <div className={classes.needsWrapper}>
-                                            <NeedApproveEditComponent label="Bauhelfer" need={data.days[parseInt(selectedDay)].needs.get('CONSTRUCTION_WORKER')} onApprove={(approvedCount) => this.updateApprovedCount('CONSTRUCTION_WORKER', approvedCount)} />
-                                            <NeedApproveEditComponent label="Magaziner" need={data.days[parseInt(selectedDay)].needs.get('STORE_KEEPER')} onApprove={(approvedCount) => this.updateApprovedCount('STORE_KEEPER', approvedCount)} />
-                                        </div>
-                                        <div className={classes.needsWrapper}>
-                                            <NeedApproveEditComponent label="Küche" need={data.days[parseInt(selectedDay)].needs.get('KITCHEN_HELPER')} onApprove={(approvedCount) => this.updateApprovedCount('KITCHEN_HELPER', approvedCount)} />
-                                            <NeedApproveEditComponent label="Putzen" need={data.days[parseInt(selectedDay)].needs.get('CLEANER')} onApprove={(approvedCount) => this.updateApprovedCount('CLEANER', approvedCount)} />
-                                        </div>
+
+                        {selectedStart !== null && selectedEnd && Array.from(Array(selectedEnd - selectedStart + 1)).map((_, i) => {
+                            const index = i + parseInt(selectedStart)
+                            const day = data.days[index]
+                            if (day.disabled || !day.needs) {
+                                return null
+                            }
+                            return (
+                                <div className={classes.dayWrapper} key={i}>
+                                    <div className={classes.dateWrapper}>
+                                        <Date date={day.date} />
                                     </div>
-                                </>
-                            ) : null
+                                    <div className={classes.needsWrapper}>
+                                        <NeedApproveEditComponent label="Bauhelfer" need={day.needs.get('CONSTRUCTION_WORKER')} onApprove={(approvedCount) => this.updateApprovedCount(index, 'CONSTRUCTION_WORKER', approvedCount)} />
+                                        <NeedApproveEditComponent label="Küche" need={day.needs.get('KITCHEN_HELPER')} onApprove={(approvedCount) => this.updateApprovedCount(index, 'KITCHEN_HELPER', approvedCount)} />
+                                    </div>
+                                    <div className={classes.needsWrapper}>
+                                        <NeedApproveEditComponent label="Magaziner" need={day.needs.get('STORE_KEEPER')} onApprove={(approvedCount) => this.updateApprovedCount(index, 'STORE_KEEPER', approvedCount)} />
+                                        <NeedApproveEditComponent label="Stadtfahrer" need={day.needs.get('DRIVER')} onApprove={(approvedCount) => this.updateApprovedCount(index, 'DRIVER', approvedCount)} />
+                                    </div>
+                                        <NeedApproveEditComponent label="Putzen" need={day.needs.get('CLEANER')} onApprove={(approvedCount) => this.updateApprovedCount(index, 'CLEANER', approvedCount)} />
+                                    <div className={classes.needsWrapper}>
+                                    </div>
+                                </div>
+                            )
+                        })
                         }
                     </>
                 ) : null

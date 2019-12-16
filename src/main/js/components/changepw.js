@@ -8,8 +8,10 @@ import Typography from '@material-ui/core/Typography';
 import { SessionContext } from '../providers/session-provider';
 import { changePassword } from '../actions/user';
 import { withContext } from '../util';
-import { Link } from '@material-ui/core';
-import { fullPathOfDataProtection } from '../paths';
+import { Link, Checkbox, FormControlLabel } from '@material-ui/core';
+import { fullPathOfDataProtection, fullPathOfLogin } from '../paths';
+import SimpleDialog from './simple-dialog';
+import { Redirect } from 'react-router'
 
 @withSnackbar
 @withContext('sessionState', SessionContext)
@@ -17,7 +19,11 @@ export default class ChangePasswordComponent extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            success: false,
+            redirect: false,
+            checkedDataprotection: false,
+        };
     }
 
     getUserCredentials(sessionState) {
@@ -33,11 +39,31 @@ export default class ChangePasswordComponent extends React.Component {
         }
     }
 
+    success() {
+        this.setState({
+            success: true,
+        })
+    }
+
+    redirect() {
+        this.setState({
+            redirect: true,
+        })
+    }
+
+    checkDataprotection(event){
+        this.setState({
+            checkedDataprotection: event.target.checked,
+        })
+    }
+
     render() {
         return (
             <SessionContext.Consumer>
                 {sessionState => {
                     const credentials = this.getUserCredentials(sessionState);
+
+                    const {redirect, success, checkedDataprotection} = this.state
 
                     if (!credentials) {
                         return (
@@ -53,6 +79,27 @@ export default class ChangePasswordComponent extends React.Component {
                         )
                     }
 
+                    if (redirect) {
+                        return (
+                            <Redirect to={fullPathOfLogin()} />
+                        )
+                    }
+
+                    if (success) {
+                        return (
+                            <>
+                                <SimpleDialog
+                                    open={true}
+                                    title="Vielen Dank für deine Anmeldung"
+                                    text="Du wirst jetzt auf die Login-Seite umgeleitet. Dort kannst du dich in Zukunft mit deiner E-Mail-Adresse und dem gewählten Passwort anmelden und deine Schichten verwalten."
+                                    okText="OK"
+                                    onOK={this.redirect.bind(this)}
+                                >
+                                </SimpleDialog>
+                            </>
+                        )
+                    }
+
                     return (
                         <>
                             <Helmet titleTemplate="Passwort ändern - %s" />
@@ -63,16 +110,13 @@ export default class ChangePasswordComponent extends React.Component {
                                 const newPassword = this.inputPasswordNew.value;
                                 const confirmPassword = this.inputPasswordNewConfirm.value;
                                 changePassword({ userId, token, oldPassword, newPassword, confirmPassword })
-                                .then(user => {
-                                    this.props.enqueueSnackbar(`Passwort für ${user.firstName} ${user.lastName} geändert`, { variant: 'success', });
-                                })
-                                .catch(() => {
-                                    this.props.enqueueSnackbar('Fehler beim Ändern des Passworts', { variant: 'error', });
-                                });
+                                    .then(user => {
+                                        this.success();
+                                    })
+                                    .catch(() => {
+                                        this.props.enqueueSnackbar('Fehler beim Ändern des Passworts', { variant: 'error', });
+                                    });
                             }}>
-                                <>
-                                    Mit dem Anlegen eines Passworts stimmst du der <a href={fullPathOfDataProtection()} target="_blank">Datenschutzerklärung</a> dieser Webseite zu.
-                                </>
                                 {!credentials.isTokenBased ? (
                                     <TextField
                                         id="passwordCurrent"
@@ -111,8 +155,17 @@ export default class ChangePasswordComponent extends React.Component {
                                         inputRef: ref => this.inputPasswordNewConfirm = ref
                                     }}
                                 />
+                                <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={checkedDataprotection}
+                                        onChange={this.checkDataprotection.bind(this)}
+                                    />
+                                }
+                                    label={(<>Ich stimme der <a href={fullPathOfDataProtection()} target="_blank">Datenschutzerklärung</a> dieser Webseite zu.</>)}
+                                />
                                 <br />
-                                <Button color="primary" type="submit">
+                                <Button disabled={!checkedDataprotection} color="primary" variant="contained" type="submit">
                                     Passwort ändern
                                 </Button>
                             </form>

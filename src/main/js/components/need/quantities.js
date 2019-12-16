@@ -1,10 +1,10 @@
-import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { withSnackbar } from 'notistack';
+import React from 'react';
+import { Helmet } from 'react-helmet';
+import { fetchOwnNeeds } from '../../actions/need';
 import { requiresLogin, setWaitingState } from '../../util';
 import ProjectCalendar from '../util/project-calendar';
-import TextField from '@material-ui/core/TextField';
-import { createOrUpdateNeed, applyForNeed, revokeApplicationForNeed, fetchNeed, fetchOwnNeeds } from '../../actions/need';
 import NeedQuantityEditComponent from './quantity-edit';
 
 const styles = theme => ({
@@ -48,10 +48,13 @@ class NeedQuantityComponent extends React.Component {
                                 <>
                                     <div className={classes.quantityWrapper}>
                                         <NeedQuantityEditComponent need={needs.get('CONSTRUCTION_WORKER')} label="Bauhelfer"/>
-                                        <NeedQuantityEditComponent need={needs.get('STORE_KEEPER')} label="Magaziner"/>
+                                        <NeedQuantityEditComponent need={needs.get('KITCHEN_HELPER')} label="Küche"/>
                                     </div>
                                     <div className={classes.quantityWrapper}>
-                                        <NeedQuantityEditComponent need={needs.get('KITCHEN_HELPER')} label="Küche"/>
+                                        <NeedQuantityEditComponent need={needs.get('STORE_KEEPER')} label="Magaziner"/>
+                                        <NeedQuantityEditComponent need={needs.get('DRIVER')} label="Stadtfahrer"/>
+                                    </div>
+                                    <div className={classes.quantityWrapper}>
                                         <NeedQuantityEditComponent need={needs.get('CLEANER')} label="Putzen"/>
                                     </div>
                                 </>
@@ -69,6 +72,7 @@ class NeedQuantityComponent extends React.Component {
         setWaitingState(false);
         return (
             <>
+                <Helmet titleTemplate="%s › Bedarf" />
                 <ProjectCalendar loadDayContent={this.getQuantities.bind(this)}/>
             </>
         )

@@ -54,6 +54,7 @@ function buildRequest({ method, path, authToken, queries, data }) {
     if (authToken) {
         pendingReq = pendingReq.set('Authorization', `Bearer ${authToken}`);
     }
+    pendingReq.set('Pragma','no-cache');
     Object.keys(queries).forEach(queryKey => {
         pendingReq = pendingReq.query({
             // eslint-disable-next-line security/detect-object-injection

@@ -1,3 +1,4 @@
+import '@babel/polyfill';
 import React from 'react';
 import { SnackbarProvider } from 'notistack';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';

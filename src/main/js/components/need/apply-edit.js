@@ -7,6 +7,8 @@ import { changeApplicationStateForNeed } from '../../actions/need';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
 import { green, yellow, red } from '@material-ui/core/colors';
+import SimpleDialog from '../simple-dialog';
+import moment from 'moment';
 
 const styles = theme => ({
     none: {
@@ -83,26 +85,54 @@ class NeedApplyEditComponent extends React.Component {
         }
     }
 
+    getDialogText(need) {
+        return need.ownState === 'NONE' ? 'Möchtest du dich für die diese Schicht bewerben?' : 'Möchtest du die Bewerbung für diese Schicht wirklich zurückziehen?'
+    }
+
+    getDialogTitle(need, label) {
+        const date = moment(need.date, 'x').format('DD.MM.YYYY')
+        return label + ' am ' + date
+    }
+
     render() {
         const { classes, label, sessionState } = this.props;
         const { need, updating } = this.state;
-
         return updating ? (
             <span className={classes.apply}>
                 <CircularProgress size={15} />
             </span>
-        ) : (
-                <>
+        ) : need.ownState !== 'REJECTED' ? (
+            <>
+                <SimpleDialog
+                    onOK={this.toggleApplicationStatus.bind(this)}
+                    title={this.getDialogTitle(need, label)}
+                    text={this.getDialogText(need)}
+                    okText="Ja"
+                    cancelText="Nein"
+                >
                     <Button
                         variant={need.ownState === 'APPLIED' || need.ownState === 'APPROVED' || need.ownState === 'REJECTED' ? 'contained' : 'outlined'}
                         disabled={!this.props.sessionState.hasPermission('ROLE_RIGHT_NEEDS_APPLY') || !need.id || need.quantity === 0}
                         className={this.getClassName(need)}
-                        onClick={need.ownState !== 'REJECTED' ? this.toggleApplicationStatus.bind(this) : null}
                         color="inherit">
                         {label}
                     </Button>
-                </>
-            )
+                </SimpleDialog>
+            </>
+        ) : (
+                    <SimpleDialog
+                        title={this.getDialogTitle(need, label)}
+                        text="Für diese Schicht stehen bereits genügend Helfer zur Verfügung. Bitte bewerbe dich für eine andere Aufgabe oder an einem anderen Datum."
+                        cancelText="OK"
+                    >
+                        <Button
+                            variant={'contained'}
+                            className={this.getClassName(need)}
+                            color="inherit">
+                            {label}
+                        </Button>
+                    </SimpleDialog>
+                )
     }
 }
 
