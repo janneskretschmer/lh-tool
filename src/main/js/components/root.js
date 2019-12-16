@@ -1,7 +1,4 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import classNames from 'classnames';
-import { withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
@@ -9,45 +6,26 @@ import IconButton from '@material-ui/core/IconButton';
 import { withStyles } from '@material-ui/core/styles';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import classNames from 'classnames';
-import React from 'react';
 import { Helmet } from 'react-helmet';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import {
-    fullPathOfStores,
-    fullPathOfStore,
-    fullPathOfSlot,
-    fullPathOfItems,
-    fullPathOfItem,
-    fullPathOfChangePw, 
-    fullPathOfDataProtection, 
-    fullPathOfImprint, 
-    fullPathOfLogin, 
-    fullPathOfNeedApply, 
-    fullPathOfNeedApprove, 
-    fullPathOfNeedQuantities, 
-    fullPathOfProjects 
-} from '../paths';
+import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItem, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfSlot, fullPathOfStore, fullPathOfStores } from '../paths';
 import SessionProvider from '../providers/session-provider';
 import ChangePasswordComponent from './changepw';
 import AppHeader from './header';
-import LoginComponent from './login';
-import StoreListComponent from './store/store-list';
-import StoreDetailComponent from './store/store-detail';
-import ItemListComponent from './item/item-list';
 import ItemDetailComponent from './item/item-detail';
-import ItemListComponent from './item-list';
+import ItemListComponent from './item/item-list';
+import LoginComponent from './login';
 import AppMenu from './menu';
 import NeedApplyComponent from './need/apply';
 import NeedApproveComponent from './need/approve';
 import NeedQuantityComponent from './need/quantities';
-import StoreDetailComponent from './store/store-detail';
-import ItemListComponent from './item/item-list';
-import ItemDetailComponent from './item/item-detail';
 import NotFoundComponent from './notfound';
 import ProjectsComponent from './project/project';
+import SlotDetailComponent from './slot/slot-detail';
+import StoreDetailComponent from './store/store-detail';
+import StoreListComponent from './store/store-list';
 import DataProtection from './util/data-protection';
 import Imprint from './util/imprint';
-import SlotDetailComponent from './slot/slot-detail';
 
 const drawerWidth = 240;
 

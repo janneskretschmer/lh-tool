@@ -8,8 +8,6 @@ import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 import BuildIcon from '@material-ui/icons/Build';
 import DateRangeIcon from '@material-ui/icons/DateRange';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import GroupWorkIcon from '@material-ui/icons/GroupWork';
-import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import FaceIcon from '@material-ui/icons/Face';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import GroupWorkIcon from '@material-ui/icons/GroupWork';
@@ -19,22 +17,10 @@ import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { logout } from '../actions/login';
-
-import {
-  fullPathOfLogin,
-  fullPathOfProjects,
-  fullPathOfChangePw,
-  fullPathOfDataProtection,
-  fullPathOfImprint,
-  fullPathOfStores,
-  fullPathOfItems,
-  fullPathOfNeedApply,
-  fullPathOfNeedApprove,
-  fullPathOfNeedQuantities,
-  fullPathOfProjects
-} from '../paths';
+import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfStores } from '../paths';
 import { SessionContext } from '../providers/session-provider';
 import WithPermission from './with-permission';
+
 
 const linkStyle = { textDecoration: 'none' };
 
@@ -116,32 +102,6 @@ const StoresItem = () => (
 
 const ItemsItem = () => (
   <WithPermission permission="ROLE_RIGHT_ITEMS_GET">
-    <Link to={fullPathOfItems()} style={linkStyle}>
-      <ListItem button>
-        <ListItemIcon>
-          <BuildIcon />
-        </ListItemIcon>
-        <ListItemText primary="Artikel" />
-      </ListItem>
-    </Link>
-  </WithPermission>
-);
-
-const StoresItem = () => (
-  <WithPermission permission="ROLE_ADMIN">
-    <Link to={fullPathOfStores()} style={linkStyle}>
-      <ListItem button>
-        <ListItemIcon>
-          <HomeIcon />
-        </ListItemIcon>
-        <ListItemText primary="Lager" />
-      </ListItem>
-    </Link>
-  </WithPermission>
-);
-
-const ItemsItem = () => (
-  <WithPermission permission="ROLE_ADMIN">
     <Link to={fullPathOfItems()} style={linkStyle}>
       <ListItem button>
         <ListItemIcon>

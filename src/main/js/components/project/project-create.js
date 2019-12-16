@@ -7,7 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { ProjectsContext } from '../../providers/projects-provider';
 import { SessionContext } from '../../providers/session-provider';
 import { createNewProject } from '../../actions/project';
-import { convertToMUIFormat } from '../util';
+import { convertToMUIFormat } from '../../util';
 
 const styles = theme => ({
     textField: {
