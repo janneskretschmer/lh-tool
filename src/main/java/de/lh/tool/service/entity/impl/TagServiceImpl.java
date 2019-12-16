@@ -14,17 +14,10 @@ import de.lh.tool.domain.model.Tag;
 import de.lh.tool.repository.TagRepository;
 import de.lh.tool.service.entity.interfaces.ItemService;
 import de.lh.tool.service.entity.interfaces.TagService;
-import de.lh.tool.service.entity.interfaces.UserRoleService;
-import de.lh.tool.service.entity.interfaces.UserService;
 
 @Service
 public class TagServiceImpl extends BasicMappableEntityServiceImpl<TagRepository, Tag, TagDto, Long>
 		implements TagService {
-	@Autowired
-	private UserService userService;
-
-	@Autowired
-	private UserRoleService userRoleService;
 
 	@Autowired
 	private ItemService itemService;

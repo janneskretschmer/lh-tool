@@ -1,8 +1,4 @@
-<<<<<<< Upstream, based on origin/master
 /* Needs to be inlined in JSP */
-=======
-/* TODO Currently ${contextPath} is constantly set to /warehousing */
->>>>>>> aa83f2e finished 1st version of click dummy
 
 /* roboto-300 - cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext */
 @font-face {

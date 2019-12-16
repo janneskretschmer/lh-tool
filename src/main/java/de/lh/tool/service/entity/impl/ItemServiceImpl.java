@@ -21,7 +21,7 @@ public class ItemServiceImpl extends BasicMappableEntityServiceImpl<ItemReposito
 		implements ItemService {
 
 	@Autowired
-	ItemHistoryService itemHistoryService;
+	private ItemHistoryService itemHistoryService;
 
 	@Override
 	@Transactional
