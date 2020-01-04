@@ -66,13 +66,14 @@ class NeedApplyEditComponent extends React.Component {
             handleFailure: null,
         })
             .then(newNeedUser => {
-                this.setState({
+                this.setState(prevState => ({
                     need: {
-                        ...this.state.need,
+                        ...prevState.need,
                         ownState: newNeedUser.state,
+                        appliedCount: prevState.need.appliedCount + (newNeedUser.state === 'NONE' ? -1 : 1),
                     },
                     updating: false,
-                })
+                }));
             });
     }
 
@@ -112,10 +113,10 @@ class NeedApplyEditComponent extends React.Component {
                 >
                     <Button
                         variant={need.ownState === 'APPLIED' || need.ownState === 'APPROVED' || need.ownState === 'REJECTED' ? 'contained' : 'outlined'}
-                        disabled={!this.props.sessionState.hasPermission('ROLE_RIGHT_NEEDS_APPLY') || !need.id || need.quantity === 0}
+                        disabled={!this.props.sessionState.hasPermission('ROLE_RIGHT_NEEDS_APPLY') || !need.id || need.quantity === 0 || need.approvedCount >= need.quantity}
                         className={this.getClassName(need)}
                         color="inherit">
-                        {label}
+                        {label} {need.appliedCount + need.approvedCount}/{need.quantity}
                     </Button>
                 </SimpleDialog>
             </>

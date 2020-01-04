@@ -93,20 +93,20 @@ class NeedApplyComponent extends React.Component {
             <>
                 <Helmet titleTemplate="%s › Bewerben" />
                 <div className={classes.legendItem}>
-                    <Button variant="outlined" disabled={true}>Aufgabe</Button> &nbsp;Es besteht noch kein Bedarf an diesem Tag.
+                    <Button variant="outlined" disabled={true}>Aufgabe Bewerberanzahl/Bedarf</Button> &nbsp;Es besteht kein Bedarf an diesem Tag.
                 </div>
                 <div className={classes.legendItem}>
-                    <Button variant="outlined">Aufgabe</Button> &nbsp;Nicht beworben. Bitte klicke auf den jeweiligen Button, um dich zu bewerben.
+                    <Button variant="outlined">Aufgabe Bewerberanzahl/Bedarf</Button> &nbsp;Nicht beworben. Bitte klicke auf den jeweiligen Button, um dich zu bewerben.
                 </div>
 
                 <div className={classes.legendItem}>
-                    <Button variant="contained" className={classes.applied}>Aufgabe</Button> &nbsp;Beworben, jedoch noch nicht zugeteilt. Du kannst die Bewerbung zurückziehen, indem du auf den Button klickst.
+                    <Button variant="contained" className={classes.applied}>Aufgabe Bewerberanzahl/Bedarf</Button> &nbsp;Beworben, jedoch noch nicht zugeteilt. Du kannst die Bewerbung zurückziehen, indem du auf den Button klickst.
                 </div>
                 <div className={classes.legendItem}>
-                    <Button variant="contained" className={classes.approved}>Aufgabe</Button> &nbsp;Zugeteilt,<span className={classes.red}> komme bitte nur dann zur Baustelle</span>, vielen Dank! Du kannst die Bewerbung zurückziehen, indem du auf den Button klickst.
+                    <Button variant="contained" className={classes.approved}>Aufgabe Bewerberanzahl/Bedarf</Button> &nbsp;Zugeteilt,<span className={classes.red}> komme bitte nur dann zur Baustelle</span>, vielen Dank! Du kannst die Bewerbung zurückziehen, indem du auf den Button klickst.
                 </div>
                 <div className={classes.legendItem}>
-                    <Button variant="contained" className={classes.rejected}>Aufgabe</Button> &nbsp;Nicht zugeteilt, bitte bewerbe dich für ein anderes Datum.
+                    <Button variant="contained" className={classes.rejected}>Aufgabe Bewerberanzahl/Bedarf</Button> &nbsp;Nicht zugeteilt, bitte bewerbe dich für ein anderes Datum.
                 </div>
                 <br />
                 <ProjectCalendar loadDayContent={this.getQuantities.bind(this)} />
