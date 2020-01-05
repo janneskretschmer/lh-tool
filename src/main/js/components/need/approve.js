@@ -305,6 +305,10 @@ class NeedApproveComponent extends React.Component {
                                         <NeedApproveEditComponent label="Magaziner" need={day.needs.get('STORE_KEEPER')} onApprove={(approvedCount) => this.updateApprovedCount(index, 'STORE_KEEPER', approvedCount)} />
                                         <NeedApproveEditComponent label="Stadtfahrer" need={day.needs.get('DRIVER')} onApprove={(approvedCount) => this.updateApprovedCount(index, 'DRIVER', approvedCount)} />
                                     </div>
+                                    <div className={classes.needsWrapper}>
+                                        <NeedApproveEditComponent label="Pforte Vormittag" need={day.needs.get('GATEKEEPER_MORNING')} onApprove={(approvedCount) => this.updateApprovedCount(index, 'GATEKEEPER_MORNING', approvedCount)} />
+                                        <NeedApproveEditComponent label="Pforte Nachmittag" need={day.needs.get('GATEKEEPER_AFTERNOON')} onApprove={(approvedCount) => this.updateApprovedCount(index, 'DRIVER', approvedCount)} />
+                                    </div>
                                         <NeedApproveEditComponent label="Putzen" need={day.needs.get('CLEANER')} onApprove={(approvedCount) => this.updateApprovedCount(index, 'CLEANER', approvedCount)} />
                                     <div className={classes.needsWrapper}>
                                     </div>
