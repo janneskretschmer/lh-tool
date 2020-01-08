@@ -113,7 +113,7 @@ class NeedApplyEditComponent extends React.Component {
                 >
                     <Button
                         variant={need.ownState === 'APPLIED' || need.ownState === 'APPROVED' || need.ownState === 'REJECTED' ? 'contained' : 'outlined'}
-                        disabled={!this.props.sessionState.hasPermission('ROLE_RIGHT_NEEDS_APPLY') || !need.id || need.quantity === 0 || need.approvedCount >= need.quantity}
+                        disabled={!this.props.sessionState.hasPermission('ROLE_RIGHT_NEEDS_APPLY') || !need.id || need.quantity === 0 || (need.ownState !== 'APPROVED' && need.approvedCount >= need.quantity)}
                         className={this.getClassName(need)}
                         color="inherit">
                         {label} {need.appliedCount + need.approvedCount}/{need.quantity}
