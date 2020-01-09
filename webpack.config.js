@@ -3,7 +3,7 @@ var webpack = require('webpack');
 var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 
-var PROD_BUILD = true;
+var PROD_BUILD = false;
 
 module.exports = {
 	entry: './src/main/js/browser.js',
