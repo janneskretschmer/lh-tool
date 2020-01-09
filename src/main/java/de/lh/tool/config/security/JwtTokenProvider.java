@@ -3,13 +3,14 @@ package de.lh.tool.config.security;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import de.lh.tool.domain.model.User;
+import de.lh.tool.service.entity.interfaces.UserRoleService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -32,9 +33,13 @@ public class JwtTokenProvider {
 	@Setter
 	private int jwtExpirationInMs;
 
-	public String generateToken(Authentication authentication) {
+	@Autowired
+	private UserRoleService userRoleService;
 
-		User user = (User) authentication.getPrincipal();
+	public String generateToken(User user) {
+		if (user == null) {
+			return null;
+		}
 
 		Date now = new Date();
 		Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);

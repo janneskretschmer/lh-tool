@@ -3,6 +3,7 @@ import { apiRequest, apiEndpoints } from '../apiclient';
 export function login({ loginState, email, password, handleLoginFailure }) {
     apiRequest({
         apiEndpoint: apiEndpoints.login.login,
+        authToken: loginState.accessToken,
         data: { email, password },
     })
         .then(result => {
