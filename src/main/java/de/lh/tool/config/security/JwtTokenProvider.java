@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
@@ -32,9 +31,10 @@ public class JwtTokenProvider {
 	@Setter
 	private int jwtExpirationInMs;
 
-	public String generateToken(Authentication authentication) {
-
-		User user = (User) authentication.getPrincipal();
+	public String generateToken(User user) {
+		if (user == null) {
+			return null;
+		}
 
 		Date now = new Date();
 		Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);

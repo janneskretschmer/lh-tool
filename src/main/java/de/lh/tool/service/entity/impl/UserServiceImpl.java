@@ -19,6 +19,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import de.lh.tool.config.security.JwtTokenProvider;
+import de.lh.tool.domain.dto.JwtAuthenticationDto;
+import de.lh.tool.domain.dto.LoginDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.PasswordChangeToken;
@@ -30,8 +33,10 @@ import de.lh.tool.service.entity.interfaces.PasswordChangeTokenService;
 import de.lh.tool.service.entity.interfaces.UserRoleService;
 import de.lh.tool.service.entity.interfaces.UserService;
 import de.lh.tool.util.StringUtil;
+import lombok.extern.apachecommons.CommonsLog;
 
 @Service
+@CommonsLog
 public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User, Long>
 		implements UserService, UserDetailsService {
 
@@ -49,6 +54,9 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 
 	@Autowired
 	private MailService mailService;
+
+	@Autowired
+	private JwtTokenProvider tokenProvider;
 
 	@Override
 	@Transactional
@@ -216,5 +224,25 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 		} catch (UsernameNotFoundException ex) {
 			// pass
 		}
+	}
+
+	@Override
+	@Transactional
+	public JwtAuthenticationDto login(LoginDto loginDto) {
+		// admin can login as any user
+		if (userRoleService.hasCurrentUserRight(UserRole.ROLE_ADMIN)) {
+			log.info(getCurrentUser().getEmail() + " logged himself in as " + loginDto.getEmail());
+			User user = loadUserByEmail(loginDto.getEmail());
+			String jwt = tokenProvider.generateToken(user);
+			return new JwtAuthenticationDto(jwt);
+		}
+
+		// default login
+		Authentication authentication = authenticationManager
+				.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
+
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		String jwt = tokenProvider.generateToken((User) authentication.getPrincipal());
+		return new JwtAuthenticationDto(jwt);
 	}
 }

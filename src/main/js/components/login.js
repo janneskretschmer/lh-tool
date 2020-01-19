@@ -42,6 +42,7 @@ export default class LoginComponent extends React.Component {
     state = {
         pwResetDialogOpen: false,
         loading: false,
+        redirectAdmin: false,
     };
 
     handleLoginFailure() {
@@ -72,7 +73,8 @@ export default class LoginComponent extends React.Component {
         setWaitingState(true);
         this.setState({
         	pwResetDialogOpen: this.state.pwResetDialogOpen,
-        	loading: true,
+            loading: true,
+            redirectAdmin: true,
         })
 
     }
@@ -83,7 +85,7 @@ export default class LoginComponent extends React.Component {
         return (
             <SessionContext.Consumer>
                 {loginState => {
-                    if(!loginState.isLoggedIn()) {
+                    if(!loginState.isLoggedIn() || (!this.state.redirectAdmin && loginState.hasPermission('ROLE_ADMIN'))) {
                         return (
                         <form onSubmit={evt => {
                             evt.preventDefault();
