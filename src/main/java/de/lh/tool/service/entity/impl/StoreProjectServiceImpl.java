@@ -46,9 +46,6 @@ public class StoreProjectServiceImpl
 	@Transactional
 	public Collection<StoreProjectDto> bulkDeleteAndCreateByStoreId(Long storeId, Collection<StoreProjectDto> dtos)
 			throws DefaultException {
-//		Store store = storeService.findById(storeId).get();
-//		store.setStoreProjects(null);
-//		storeService.save(store);
 		getRepository().deleteByStore_Id(
 				Optional.ofNullable(storeId).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_NO_ID_PROVIDED)));
 		entityManager.flush();

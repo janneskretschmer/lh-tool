@@ -51,7 +51,7 @@ public class UserRole implements GrantedAuthority {
 
 	@Override
 	public String toString() {
-		return StringUtils.join(user.getFirstName(), " ", user.getLastName(), " has right", role);
+		return StringUtils.join(user.getFirstName(), " ", user.getLastName(), " has right ", role);
 	}
 
 //  ██████╗__██████╗_██╗_____███████╗███████╗

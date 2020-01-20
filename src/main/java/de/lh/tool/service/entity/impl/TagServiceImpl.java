@@ -32,6 +32,7 @@ public class TagServiceImpl extends BasicMappableEntityServiceImpl<TagRepository
 	@Override
 	@Transactional
 	public TagDto getTagDtoById(Long id) throws DefaultException {
+		// TODO add implementation
 		// Tag tag = findById(id).orElseThrow(() -> new
 		// DefaultException(ExceptionEnum.EX_INVALID_ID));
 
@@ -51,6 +52,7 @@ public class TagServiceImpl extends BasicMappableEntityServiceImpl<TagRepository
 	@Override
 	@Transactional
 	public TagDto updateTagDto(TagDto dto, Long id) throws DefaultException {
+		// TODO add implementation
 //		dto.setId(ObjectUtils.defaultIfNull(id, dto.getId()));
 //		if (dto.getId() == null) {
 //			throw new DefaultException(ExceptionEnum.EX_NO_ID_PROVIDED);

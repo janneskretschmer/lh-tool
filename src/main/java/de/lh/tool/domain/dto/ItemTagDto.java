@@ -15,9 +15,7 @@ import lombok.NoArgsConstructor;
 public class ItemTagDto {
 
 	private Long id;
-
 	private Long itemId;
-
 	private Long tagId;
 
 }
