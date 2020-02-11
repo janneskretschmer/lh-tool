@@ -66,7 +66,7 @@ export default class ItemDisplayComponent extends React.Component {
                     ...prevState.notes,
                     note,
                 ]
-            })))
+            })));
         }
     }
 
@@ -75,7 +75,7 @@ export default class ItemDisplayComponent extends React.Component {
             slot => this.setState({ slot }, () => fetchStore({ accessToken: this.props.sessionState.accessToken, storeId: this.state.slot.storeId }).then(
                 store => this.setState({ store })
             ))
-        )
+        );
         fetchItemNotes({ accessToken: this.props.sessionState.accessToken, itemId: this.props.item.id }).then(
             notes => this.setState({ notes }, () => this.state.notes.map(note => note.userId).filter((v, i, a) => a.indexOf(v) === i).map(
                 userId => fetchUser({ accessToken: this.props.sessionState.accessToken, userId }).then(
@@ -87,16 +87,16 @@ export default class ItemDisplayComponent extends React.Component {
                     }))
                 )
             ))
-        )
+        );
         fetchItemTags({ accessToken: this.props.sessionState.accessToken, itemId: this.props.item.id }).then(
             tags => this.setState({ tags })
-        )
+        );
         fetchItemHistory({ accessToken: this.props.sessionState.accessToken, itemId: this.props.item.id }).then(
             history => this.setState({ history })
-        )
+        );
         fetchTechnicalCrew({ accessToken: this.props.sessionState.accessToken, technicalCrewId: this.props.item.technicalCrewId }).then(
             technicalCrew => this.setState({ technicalCrew })
-        )
+        );
     }
 
     getHistoryText(historyEntry) {
@@ -119,15 +119,15 @@ export default class ItemDisplayComponent extends React.Component {
                 break;
         }
         if (historyEntry.userId) {
-            const { users } = this.state
-            res += ' von ' + (users[historyEntry.userId] ? users[historyEntry.userId] : (<CircularProgress size="12" />))
+            const { users } = this.state;
+            res += ' von ' + (users[historyEntry.userId] ? users[historyEntry.userId] : (<CircularProgress size="12" />));
         }
-        return res
+        return res;
     }
 
     render() {
-        const { classes, item } = this.props
-        const { store, slot, notes, note, users, tags, history, technicalCrew } = this.state
+        const { classes, item } = this.props;
+        const { store, slot, notes, note, users, tags, history, technicalCrew } = this.state;
 
         return (
             <div>
@@ -225,6 +225,6 @@ export default class ItemDisplayComponent extends React.Component {
                     </SimpleDialog>
                 </div>
             </div>
-        )
+        );
     }
 }
