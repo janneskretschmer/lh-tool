@@ -26,7 +26,10 @@ export function fetchItem({ accessToken, itemId }) {
         })
             .then(result => result.response)
             // TODO Proper error message
-            .catch(e => console.log(e));
+            .catch(e => {
+                console.log(e);
+                return Promise.resolve(null);
+            });
     } else {
         return Promise.resolve(null);
     }
