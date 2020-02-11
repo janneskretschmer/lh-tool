@@ -1,8 +1,9 @@
 package de.lh.tool.service.entity.impl;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import javax.transaction.Transactional;
@@ -40,9 +41,9 @@ public class SlotServiceImpl extends BasicMappableEntityServiceImpl<SlotReposito
 	@Override
 	@Transactional
 	public List<SlotDto> getSlotDtosByStore(Long storeId) {
-		List<Slot> slots = new ArrayList<Slot>();
-		StreamSupport.stream(storeService.getOwnStores().spliterator(), false)
-				.filter(s -> storeId == null || storeId.equals(s.getId())).forEach(s -> slots.addAll(s.getSlots()));
+		List<Slot> slots = StreamSupport.stream(storeService.getOwnStores().spliterator(), false)
+				.filter(s -> storeId == null || storeId.equals(s.getId())).map(Store::getSlots)
+				.flatMap(Collection::stream).collect(Collectors.toList());
 		return convertToDtoList(slots);
 	}
 
