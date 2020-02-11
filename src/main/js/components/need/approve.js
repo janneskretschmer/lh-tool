@@ -169,7 +169,7 @@ class NeedApproveComponent extends React.Component {
         var ready = true;
         needs.forEach((need) => {
             ready = ready && need.approvedCount >= need.quantity;
-        })
+        });
         return ready;
     }
 
@@ -241,7 +241,7 @@ class NeedApproveComponent extends React.Component {
                                                     </Button><br />
                                                     {this.isDayReady(i * 5 + j) ? (<DoneIcon />) : (<>&nbsp;</>)}
                                                 </td>
-                                            )
+                                            );
                                         })}
                                         <td className={classNames({
                                             [classes.calendarCell]: true,

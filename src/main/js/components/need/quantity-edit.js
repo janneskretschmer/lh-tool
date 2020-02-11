@@ -90,7 +90,7 @@ class NeedQuantityEditComponent extends React.Component {
                     <CircularProgress size={30}/>
                 ) : null}
             </>
-        )
+        );
     }
 }
 

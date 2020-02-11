@@ -1,8 +1,8 @@
-import React from 'react';
-import { Redirect } from 'react-router'
-import { SessionContext } from './providers/session-provider';
-import { fullPathOfLogin } from './paths';
 import moment from 'moment';
+import React from 'react';
+import { Redirect } from 'react-router';
+import { fullPathOfLogin } from './paths';
+import { SessionContext } from './providers/session-provider';
 
 export function wrapComponent(Component, additionalProps) {
     return props => (<Component {...props} {...additionalProps} />);

@@ -79,7 +79,7 @@ class NeedApproveEditComponent extends React.Component {
                                 }
                                 return user;
                             })
-                        })
+                        });
                     });
                 }
             });

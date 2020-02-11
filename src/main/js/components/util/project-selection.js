@@ -61,4 +61,4 @@ class ProjectSelection extends React.Component {
   }
 }
 
-export default ProjectSelection
+export default ProjectSelection;
