@@ -76,7 +76,7 @@ const UserComponent = props => {
                 setDirty(true);
             }
         }
-    }
+    };
 
     if (dirty) {
         setEdit(!props.user);

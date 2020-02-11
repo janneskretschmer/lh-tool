@@ -87,7 +87,7 @@ const styles = theme => ({
 
 const Date = props => (
     <>{['Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'][props.date.format('E') - 2]}, {props.date.format('DD.MM.YYYY')}</>
-)
+);
 
 @withStyles(styles)
 class NeedApproveComponent extends React.Component {
