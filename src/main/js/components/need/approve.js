@@ -16,6 +16,7 @@ import { fetchOwnNeeds } from '../../actions/need';
 import { getMonthOffsetWithinRange, getProjectMonth, isMonthOffsetWithinRange, requiresLogin } from '../../util';
 import ProjectSelection from '../util/project-selection';
 import NeedApproveEditComponent from './approve-edit';
+import WithPermission from '../with-permission';
 
 
 const styles = theme => ({
@@ -259,31 +260,33 @@ class NeedApproveComponent extends React.Component {
                                 })}
                             </tbody>
                         </table>
-                        <div className={classes.legend}>
-                            Bitte klicke auf einen Tag, eine Kalenderwoche oder den Monat, um die Bewerber zuzuteilen.<br />
-                            Wenn alle Positionen besetzt sind, erscheint ein Haken.<br />
+                        <WithPermission permission="ROLE_RIGHT_NEEDS_APPROVE">
+                            <div className={classes.legend}>
+                                Bitte klicke auf einen Tag, eine Kalenderwoche oder den Monat, um die Bewerber zuzuteilen.<br />
+                                Wenn alle Positionen besetzt sind, erscheint ein Haken.<br />
+                                <br />
+                                Bedeutung der Klammern neben der Aufgabenbezeichnung: ( Anzahl der Genehmigungen / Bedarf )<br />
+                                <IconButton>
+                                    <CheckIcon />
+                                </IconButton>
+                                Nicht genehmigt, klicke hier um die Person für diese Schicht einzuteilen.
                             <br />
-                            Bedeutung der Klammern neben der Aufgabenbezeichnung: ( Anzahl der Genehmigungen / Bedarf )<br />
-                            <IconButton>
-                                <CheckIcon />
-                            </IconButton>
-                            Nicht genehmigt, klicke hier um die Person für diese Schicht einzuteilen.
+                                <IconButton>
+                                    <EventAvailableIcon />
+                                </IconButton>
+                                Genehmigt, klicke hier um die Genehmigung zurückzuziehen.
                             <br />
-                            <IconButton>
-                                <EventAvailableIcon />
-                            </IconButton>
-                            Genehmigt, klicke hier um die Genehmigung zurückzuziehen.
+                                <IconButton>
+                                    <CloseIcon />
+                                </IconButton>
+                                Nicht abgelehnt, klicke hier um die Person für diese Schicht explizit abzulehnen.
                             <br />
-                            <IconButton>
-                                <CloseIcon />
-                            </IconButton>
-                            Nicht abgelehnt, klicke hier um die Person für diese Schicht explizit abzulehnen.
-                            <br />
-                            <IconButton>
-                                <EventBusyIcon />
-                            </IconButton>
-                            Abgelehnt, klicke hier um die Ablehnung zurückzuziehen.
+                                <IconButton>
+                                    <EventBusyIcon />
+                                </IconButton>
+                                Abgelehnt, klicke hier um die Ablehnung zurückzuziehen.
                         </div>
+                        </WithPermission>
 
 
                         {selectedStart !== null && selectedEnd && Array.from(Array(selectedEnd - selectedStart + 1)).map((_, i) => {
@@ -309,7 +312,7 @@ class NeedApproveComponent extends React.Component {
                                         <NeedApproveEditComponent label="Pforte Vormittag" need={day.needs.get('GATEKEEPER_MORNING')} onApprove={(approvedCount) => this.updateApprovedCount(index, 'GATEKEEPER_MORNING', approvedCount)} />
                                         <NeedApproveEditComponent label="Pforte Nachmittag" need={day.needs.get('GATEKEEPER_AFTERNOON')} onApprove={(approvedCount) => this.updateApprovedCount(index, 'DRIVER', approvedCount)} />
                                     </div>
-                                        <NeedApproveEditComponent label="Putzen" need={day.needs.get('CLEANER')} onApprove={(approvedCount) => this.updateApprovedCount(index, 'CLEANER', approvedCount)} />
+                                    <NeedApproveEditComponent label="Putzen" need={day.needs.get('CLEANER')} onApprove={(approvedCount) => this.updateApprovedCount(index, 'CLEANER', approvedCount)} />
                                     <div className={classes.needsWrapper}>
                                     </div>
                                 </div>

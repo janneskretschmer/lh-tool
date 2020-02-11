@@ -65,9 +65,10 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 			}
 			if (NeedUserState.APPROVED.equals(needUser.getState())) {
 				needUser.setState(NeedUserState.NONE);
-				mailService.sendNeedUserStateChangedMailToCoordinator(needUser,
-						userService.findByProjectIdAndRoleIgnoreCase(needUser.getNeed().getProject().getId(),
-								UserRole.ROLE_LOCAL_COORDINATOR).iterator().next());
+				userService
+						.findByProjectIdAndRoleIgnoreCase(needUser.getNeed().getProject().getId(),
+								UserRole.ROLE_LOCAL_COORDINATOR)
+						.stream().forEach(u -> mailService.sendNeedUserStateChangedMailToCoordinator(needUser, u));
 			}
 			delete(needUser);
 			dto.setId(null);

@@ -1,5 +1,6 @@
 package de.lh.tool.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.repository.CrudRepository;
@@ -16,6 +17,6 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
 	Iterable<User> findByRoles_RoleIgnoreCaseOrderByLastNameAscFirstNameAsc(String role);
 
-	Iterable<User> findByProjects_IdAndRoles_RoleIgnoreCaseOrderByLastNameAscFirstNameAsc(Long projectId, String role);
+	List<User> findByProjects_IdAndRoles_RoleIgnoreCaseOrderByLastNameAscFirstNameAsc(Long projectId, String role);
 
 }

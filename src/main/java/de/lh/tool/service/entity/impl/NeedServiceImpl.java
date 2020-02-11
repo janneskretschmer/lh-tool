@@ -61,6 +61,9 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 			NeedDto needDto = super.convertToDto(need);
 			if (userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPROVE)) {
 				needDto.setUsers(needUsers);
+			} else if (userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_VIEW_APPROVED)) {
+				needDto.setUsers(needUsers.stream().filter(nu -> nu.getState() == NeedUserState.APPROVED)
+						.collect(Collectors.toList()));
 			}
 			needDto.setAppliedCount(appliedCount);
 			needDto.setApprovedCount(approvedCount);
