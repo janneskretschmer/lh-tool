@@ -79,20 +79,20 @@ class NeedApplyEditComponent extends React.Component {
 
     getClassName(need) {
         switch (need.ownState) {
-            case 'APPLIED': return this.props.classes.applied
-            case 'APPROVED': return this.props.classes.approved
-            case 'REJECTED': return this.props.classes.rejected
-            default: return this.props.classes.none
+            case 'APPLIED': return this.props.classes.applied;
+            case 'APPROVED': return this.props.classes.approved;
+            case 'REJECTED': return this.props.classes.rejected;
+            default: return this.props.classes.none;
         }
     }
 
     getDialogText(need) {
-        return need.ownState === 'NONE' ? 'Möchtest du dich für die diese Schicht bewerben?' : 'Möchtest du die Bewerbung für diese Schicht wirklich zurückziehen?'
+        return need.ownState === 'NONE' ? 'Möchtest du dich für die diese Schicht bewerben?' : 'Möchtest du die Bewerbung für diese Schicht wirklich zurückziehen?';
     }
 
     getDialogTitle(need, label) {
-        const date = moment(need.date, 'x').format('DD.MM.YYYY')
-        return label + ' am ' + date
+        const date = moment(need.date, 'x').format('DD.MM.YYYY');
+        return label + ' am ' + date;
     }
 
     render() {
@@ -133,7 +133,7 @@ class NeedApplyEditComponent extends React.Component {
                             {label}
                         </Button>
                     </SimpleDialog>
-                )
+                );
     }
 }
 

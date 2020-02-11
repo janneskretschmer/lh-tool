@@ -38,9 +38,9 @@ class NeedQuantityEditComponent extends React.Component {
     }
 
     handleQuantityChange(event) {
-        let quantity = parseInt(event.target.value, 10)
-        this.latestQuantity = quantity ? quantity : 0
-        this.updateValue()
+        const quantity = parseInt(event.target.value, 10);
+        this.latestQuantity = quantity ? quantity : 0;
+        this.updateValue();
     }
 
     //keeps calling the api, until the quantity is up to date. is "threadsafe"

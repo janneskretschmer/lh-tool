@@ -55,7 +55,7 @@ class NeedApplyComponent extends React.Component {
     }
 
     getQuantities(monthData, projectId, callback) {
-        const { classes, sessionState } = this.props
+        const { classes, sessionState } = this.props;
         fetchOwnNeeds({ accessToken: sessionState.accessToken, userId: sessionState.currentUser.id, projectId, startDiff: monthData.startDiff, endDiff: monthData.endDiff }).then(result => {
             callback(
                 {
@@ -81,13 +81,13 @@ class NeedApplyComponent extends React.Component {
                                         <NeedApplyEditComponent need={needs.get('CLEANER')} label="Putzen" />
                                     </div>
                                 </>
-                            )
+                            );
                         }
-                        return day
-                    })
+                        return day;
+                    }),
                 }
-            )
-        })
+            );
+        });
     }
 
     render() {
@@ -115,7 +115,7 @@ class NeedApplyComponent extends React.Component {
                 <br />
                 <ProjectCalendar loadDayContent={this.getQuantities.bind(this)} />
             </>
-        )
+        );
     }
 }
 

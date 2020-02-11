@@ -124,16 +124,16 @@ class NeedApproveComponent extends React.Component {
     }
 
     loadNeeds() {
-        const { classes, sessionState } = this.props
-        const { data, project } = this.state
+        const { classes, sessionState } = this.props;
+        const { data, project } = this.state;
         fetchOwnNeeds({ accessToken: sessionState.accessToken, userId: sessionState.currentUser.id, projectId: project.id, startDiff: data.startDiff, endDiff: data.endDiff }).then(result => {
             let days = data.days.map((day, i) => {
                 let needs = result.get(day.date.valueOf());
                 if (needs) {
-                    day.needs = needs
+                    day.needs = needs;
                 }
-                return day
-            })
+                return day;
+            });
             this.setState({
                 data: {
                     ...data,
@@ -141,36 +141,36 @@ class NeedApproveComponent extends React.Component {
                 },
                 selectedStart: 0,
                 selectedEnd: days.length - 1,
-            })
-        })
+            });
+        });
     }
 
     selectDay(selectedStart) {
         this.setState({
             selectedStart,
             selectedEnd: selectedStart,
-        })
+        });
     }
     selectDays(selectedStart, selectedEnd) {
         this.setState({
             selectedStart,
             selectedEnd,
-        })
+        });
     }
 
     isDayReady(index) {
-        const { data } = this.state
+        const { data } = this.state;
         if (data.days[index] && data.days[index].needs) {
-            return this.areNeedsReady(data.days[index].needs)
+            return this.areNeedsReady(data.days[index].needs);
         }
-        return false
+        return false;
     }
     areNeedsReady(needs) {
-        var ready = true
+        var ready = true;
         needs.forEach((need) => {
-            ready = ready && need.approvedCount >= need.quantity
+            ready = ready && need.approvedCount >= need.quantity;
         })
-        return ready
+        return ready;
     }
 
     updateApprovedCount(index, type, approvedCount) {
@@ -180,9 +180,9 @@ class NeedApproveComponent extends React.Component {
                 days: this.state.data.days.map((day, i) => {
                     if (i === index) {
                         //causes "Generic Object Injection Sink”
-                        day.needs.get(type).approvedCount = approvedCount
+                        day.needs.get(type).approvedCount = approvedCount;
                     }
-                    return day
+                    return day;
                 })
             }
         })
@@ -287,10 +287,10 @@ class NeedApproveComponent extends React.Component {
 
 
                         {selectedStart !== null && selectedEnd && Array.from(Array(selectedEnd - selectedStart + 1)).map((_, i) => {
-                            const index = i + parseInt(selectedStart)
-                            const day = data.days[index]
+                            const index = i + parseInt(selectedStart);
+                            const day = data.days[index];
                             if (day.disabled || !day.needs) {
-                                return null
+                                return null;
                             }
                             return (
                                 <div className={classes.dayWrapper} key={i}>
@@ -313,14 +313,14 @@ class NeedApproveComponent extends React.Component {
                                     <div className={classes.needsWrapper}>
                                     </div>
                                 </div>
-                            )
+                            );
                         })
                         }
                     </>
                 ) : null
                 }
             </>
-        )
+        );
     }
 }
 

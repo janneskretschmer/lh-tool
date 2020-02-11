@@ -36,7 +36,7 @@ class NeedQuantityComponent extends React.Component {
     }
 
     getQuantities(monthData, projectId, callback) {
-        const {classes, sessionState} = this.props
+        const {classes, sessionState} = this.props;
         fetchOwnNeeds({accessToken:sessionState.accessToken, userId:sessionState.currentUser.id, projectId, startDiff: monthData.startDiff, endDiff: monthData.endDiff}).then(result => {
             callback(
                 {
@@ -64,11 +64,11 @@ class NeedQuantityComponent extends React.Component {
                                 </>
                             )
                         }
-                        return day
+                        return day;
                     })
                 }
-            )
-        })
+            );
+        });
     }
 
     render() {
@@ -79,7 +79,7 @@ class NeedQuantityComponent extends React.Component {
                 <Helmet titleTemplate="%s › Bedarf" />
                 <ProjectCalendar loadDayContent={this.getQuantities.bind(this)}/>
             </>
-        )
+        );
     }
 }
 
