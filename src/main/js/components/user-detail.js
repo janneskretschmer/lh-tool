@@ -64,7 +64,7 @@ const UserComponent = props => {
             setEdit(false);
         }
         
-    }
+    };
 
     // TODO Ugly fix to handle state managemant in stateless component 😜
     const handleDelete = () => {
