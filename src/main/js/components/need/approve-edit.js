@@ -73,9 +73,9 @@ class NeedApproveEditComponent extends React.Component {
                     fetchUser({ accessToken: this.props.sessionState.accessToken, userId: user.userId }).then(result => {
                         self.setState({
                             users: self.state.users.map(user => {
-                                if (user.userId === result.response.id) {
-                                    user.firstName = result.response.firstName
-                                    user.lastName = result.response.lastName
+                                if(user.userId === result.id) {
+                                    user.firstName = result.firstName
+                                    user.lastName = result.lastName
                                 }
                                 return user
                             })

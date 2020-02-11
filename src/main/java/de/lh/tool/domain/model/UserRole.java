@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 
 import lombok.AllArgsConstructor;
@@ -47,6 +48,11 @@ public class UserRole implements GrantedAuthority {
 	@Column(name = "role", length = 100, nullable = false)
 	@NonNull
 	private String role;
+
+	@Override
+	public String toString() {
+		return StringUtils.join(user.getFirstName(), " ", user.getLastName(), " has right ", role);
+	}
 
 //  ██████╗__██████╗_██╗_____███████╗███████╗
 //  ██╔══██╗██╔═══██╗██║_____██╔════╝██╔════╝
@@ -110,6 +116,26 @@ public class UserRole implements GrantedAuthority {
 	public static final String RIGHT_NEEDS_USERS_PUT = "ROLE_RIGHT_NEEDS_USERS_PUT";
 	public static final String RIGHT_NEEDS_USERS_GET = "ROLE_RIGHT_NEEDS_USERS_GET";
 
+	public static final String RIGHT_ITEMS_GET = "ROLE_RIGHT_ITEMS_GET";
+	public static final String RIGHT_ITEMS_GET_BY_ID = "ROLE_RIGHT_ITEMS_GET_BY_ID";
+	public static final String RIGHT_ITEMS_POST = "ROLE_RIGHT_ITEMS_POST";
+	public static final String RIGHT_ITEMS_PUT = "ROLE_RIGHT_ITEMS_PUT";
+	public static final String RIGHT_ITEMS_GET_FOREIGN_PROJECT = "ROLE_RIGHT_ITEMS_GET_FOREIGN_PROJECT";
+
+	public static final String RIGHT_SLOTS_GET = "ROLE_RIGHT_SLOTS_GET";
+	public static final String RIGHT_SLOTS_GET_BY_ID = "ROLE_RIGHT_SLOTS_GET_BY_ID";
+	public static final String RIGHT_SLOTS_POST = "ROLE_RIGHT_SLOTS_POST";
+	public static final String RIGHT_SLOTS_PUT = "ROLE_RIGHT_SLOTS_PUT";
+
+	public static final String RIGHT_STORES_GET = "ROLE_RIGHT_STORES_GET";
+	public static final String RIGHT_STORES_GET_BY_ID = "ROLE_RIGHT_STORES_GET_BY_ID";
+	public static final String RIGHT_STORES_POST = "ROLE_RIGHT_STORES_POST";
+	public static final String RIGHT_STORES_PUT = "ROLE_RIGHT_STORES_PUT";
+	public static final String RIGHT_STORES_GET_FOREIGN_PROJECT = "ROLE_RIGHT_STORES_GET_FOREIGN_PROJECT";
+
+	public static final String RIGHT_TECHNICAL_CREWS_GET = "ROLE_RIGHT_TECHNICAL_CREWS_GET";
+	public static final String RIGHT_TECHNICAL_CREWS_GET_BY_ID = "ROLE_RIGHT_TECHNICAL_CREWS_GET_BY_ID";
+
 	private static class RoleRightManager {
 		private static RoleRightManager instance;
 		private final Map<String, Collection<String>> roleRights;
@@ -137,17 +163,40 @@ public class UserRole implements GrantedAuthority {
 					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
 					RIGHT_NEEDS_GET, RIGHT_NEEDS_GET_BY_ID, RIGHT_NEEDS_GET_FOREIGN, RIGHT_NEEDS_POST, RIGHT_NEEDS_PUT,
 					RIGHT_NEEDS_DELETE, RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT, RIGHT_NEEDS_CHANGE_FOREIGN_USER,
-					RIGHT_NEEDS_USERS_PUT, RIGHT_NEEDS_USERS_GET, RIGHT_NEEDS_APPLY, RIGHT_NEEDS_APPROVE));
+					RIGHT_NEEDS_USERS_PUT, RIGHT_NEEDS_USERS_GET, RIGHT_NEEDS_APPLY, RIGHT_NEEDS_APPROVE,
+					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+					RIGHT_ITEMS_GET, RIGHT_ITEMS_GET_BY_ID, RIGHT_ITEMS_GET_FOREIGN_PROJECT, RIGHT_ITEMS_POST,
+					RIGHT_ITEMS_PUT,
+					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+					RIGHT_SLOTS_GET, RIGHT_SLOTS_GET_BY_ID, RIGHT_SLOTS_POST, RIGHT_SLOTS_PUT,
+					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+					RIGHT_STORES_GET, RIGHT_STORES_GET_BY_ID, RIGHT_STORES_GET_FOREIGN_PROJECT, RIGHT_STORES_POST,
+					RIGHT_STORES_PUT,
+					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+					RIGHT_TECHNICAL_CREWS_GET, RIGHT_TECHNICAL_CREWS_GET_BY_ID));
 
 			roleRights.put(ROLE_CONSTRUCTION_SERVANT,
 					List.of(RIGHT_USERS_GET_ALL, RIGHT_USERS_GET_BY_ID, RIGHT_USERS_CREATE, RIGHT_USERS_PUT,
 							RIGHT_USERS_DELETE, RIGHT_PROJECTS_GET, RIGHT_PROJECTS_GET_BY_ID, RIGHT_PROJECTS_POST,
 							RIGHT_PROJECTS_PUT, RIGHT_PROJECTS_USERS_DELETE, RIGHT_PROJECTS_USERS_POST,
+							// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+							// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
 							RIGHT_USERS_GRANT_ROLE_INVENTORY_MANAGER, RIGHT_USERS_GRANT_ROLE_LOCAL_COORDINATOR,
-							RIGHT_USERS_GRANT_ROLE_PUBLISHER, RIGHT_USERS_GRANT_ROLE_STORE_KEEPER, RIGHT_NEEDS_GET,
-							RIGHT_NEEDS_GET_BY_ID, RIGHT_NEEDS_POST, RIGHT_NEEDS_PUT, RIGHT_NEEDS_DELETE,
-							RIGHT_NEEDS_CHANGE_FOREIGN_USER, RIGHT_NEEDS_USERS_PUT, RIGHT_NEEDS_USERS_GET,
-							RIGHT_NEEDS_APPROVE));
+							RIGHT_USERS_GRANT_ROLE_PUBLISHER, RIGHT_USERS_GRANT_ROLE_STORE_KEEPER,
+							// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+							RIGHT_NEEDS_GET, RIGHT_NEEDS_GET_BY_ID, RIGHT_NEEDS_POST, RIGHT_NEEDS_PUT,
+							RIGHT_NEEDS_DELETE, RIGHT_NEEDS_CHANGE_FOREIGN_USER, RIGHT_NEEDS_USERS_PUT,
+							RIGHT_NEEDS_USERS_GET, RIGHT_NEEDS_APPROVE,
+							// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+							RIGHT_ITEMS_GET, RIGHT_ITEMS_GET_BY_ID, RIGHT_ITEMS_GET_FOREIGN_PROJECT, RIGHT_ITEMS_POST,
+							RIGHT_ITEMS_PUT,
+							// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+							RIGHT_SLOTS_GET, RIGHT_SLOTS_GET_BY_ID, RIGHT_SLOTS_POST, RIGHT_SLOTS_PUT,
+							// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+							RIGHT_STORES_GET, RIGHT_STORES_GET_BY_ID, RIGHT_STORES_GET_FOREIGN_PROJECT,
+							RIGHT_STORES_POST, RIGHT_STORES_PUT,
+							// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+							RIGHT_TECHNICAL_CREWS_GET, RIGHT_TECHNICAL_CREWS_GET_BY_ID));
 
 			roleRights.put(ROLE_LOCAL_COORDINATOR,
 					List.of(RIGHT_USERS_GET_ALL, RIGHT_USERS_GET_BY_ID, RIGHT_USERS_CREATE, RIGHT_USERS_PUT,
@@ -158,7 +207,7 @@ public class UserRole implements GrantedAuthority {
 
 			roleRights.put(ROLE_PUBLISHER, List.of(RIGHT_PROJECTS_GET, RIGHT_NEEDS_USERS_GET, RIGHT_NEEDS_USERS_PUT,
 					RIGHT_NEEDS_APPLY, RIGHT_NEEDS_GET, RIGHT_NEEDS_GET_BY_ID));
-			roleRights.put(ROLE_STORE_KEEPER, List.of());
+			roleRights.put(ROLE_STORE_KEEPER, List.of(RIGHT_ITEMS_GET, RIGHT_ITEMS_GET_BY_ID, RIGHT_ITEMS_PUT));
 			roleRights.put(ROLE_INVENTORY_MANAGER, List.of());
 		}
 

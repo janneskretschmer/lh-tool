@@ -6,6 +6,10 @@ if [ "${1,,}" = "stage" ]; then
     db_url=$CREDENTIALS_STAGE_DB_URL
     jwt_secret=$CREDENTIALS_STAGE_JWT_SECRET
     base=$CREDENTIALS_STAGE_BASE
+    
+    #make stage red
+    sed -i -e 's/deepPurple/red/g' src/main/js/app.js
+
 elif [ "${1,,}" = "prod" ]; then
     echo "Executing prod deployment..."
     env="prod"

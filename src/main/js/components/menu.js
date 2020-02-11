@@ -5,28 +5,22 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
+import BuildIcon from '@material-ui/icons/Build';
 import DateRangeIcon from '@material-ui/icons/DateRange';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import FaceIcon from '@material-ui/icons/Face';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import GroupWorkIcon from '@material-ui/icons/GroupWork';
+import HomeIcon from '@material-ui/icons/Home';
 import SecurityIcon from '@material-ui/icons/Security';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { logout } from '../actions/login';
-import {
-  fullPathOfChangePw,
-  fullPathOfDataProtection,
-  fullPathOfImprint,
-  fullPathOfLogin,
-  fullPathOfNeedApply,
-  fullPathOfNeedApprove,
-  fullPathOfNeedQuantities,
-  fullPathOfProjects
-} from '../paths';
+import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfStores } from '../paths';
 import { SessionContext } from '../providers/session-provider';
 import WithPermission from './with-permission';
+
 
 const linkStyle = { textDecoration: 'none' };
 
@@ -92,37 +86,64 @@ const NeedApproveItem = () => (
   </WithPermission>
 );
 
+const StoresItem = () => (
+  <WithPermission permission="ROLE_RIGHT_STORES_GET">
+    <Link to={fullPathOfStores()} style={linkStyle}>
+      <ListItem button>
+        <ListItemIcon>
+          <HomeIcon />
+        </ListItemIcon>
+        <ListItemText primary="Lager" />
+      </ListItem>
+    </Link>
+  </WithPermission>
+);
+
+
+const ItemsItem = () => (
+  <WithPermission permission="ROLE_RIGHT_ITEMS_GET">
+    <Link to={fullPathOfItems()} style={linkStyle}>
+      <ListItem button>
+        <ListItemIcon>
+          <BuildIcon />
+        </ListItemIcon>
+        <ListItemText primary="Artikel" />
+      </ListItem>
+    </Link>
+  </WithPermission>
+);
+
 const ChangePwItem = () => (
-  <Link to={fullPathOfChangePw()} style={linkStyle}>
-    <ListItem button>
-      <ListItemIcon>
-        <SecurityIcon />
-      </ListItemIcon>
-      <ListItemText primary="Passwort ändern" />
-    </ListItem>
-  </Link>
+    <Link to={fullPathOfChangePw()} style={linkStyle}>
+        <ListItem button>
+            <ListItemIcon>
+                <SecurityIcon />
+            </ListItemIcon>
+            <ListItemText primary="Passwort ändern" />
+        </ListItem>
+    </Link>
 );
 
 const LoginItem = () => (
-  <Link to={fullPathOfLogin()} style={linkStyle}>
-    <ListItem button>
-      <ListItemIcon>
-        <VpnKeyIcon />
-      </ListItemIcon>
-      <ListItemText primary="Anmelden" />
-    </ListItem>
-  </Link>
+    <Link to={fullPathOfLogin()} style={linkStyle}>
+        <ListItem button>
+            <ListItemIcon>
+                <VpnKeyIcon />
+            </ListItemIcon>
+            <ListItemText primary="Anmelden" />
+        </ListItem>
+    </Link>
 );
 
 const LogoutItem = props => (
-  <ListItem button onClick={() => {
-    logout({ loginState: props.loginState });
-  }}>
-    <ListItemIcon>
-      <ExitToAppIcon />
-    </ListItemIcon>
-    <ListItemText primary="Abmelden" />
-  </ListItem>
+    <ListItem button onClick={() => {
+        logout({ loginState: props.loginState });
+    }}>
+        <ListItemIcon>
+            <ExitToAppIcon />
+        </ListItemIcon>
+        <ListItemText primary="Abmelden" />
+    </ListItem>
 );
 
 const ImprintItem = () => (
@@ -147,6 +168,18 @@ const DataProtectionItem = () => (
   </Link>
 );
 
+// TODO Settings not implemented
+const SettingsItem = () => (
+    <a href="javascript:alert('TODO: Einstellungen implementieren u.a. zum Pflegen von Gewerken')" style={linkStyle}>
+        <ListItem button>
+            <ListItemIcon>
+                <SettingsIcon />
+            </ListItemIcon>
+            <ListItemText primary="Einstellungen" />
+        </ListItem>
+    </a>
+)
+
 export default function AppMenu() {
   return (
     <SessionContext.Consumer>
@@ -161,6 +194,8 @@ export default function AppMenu() {
             <NeedQuantitiesItem />
             <NeedApplyItem />
             <NeedApproveItem />
+            <StoresItem />
+            <ItemsItem />
           </List>
           <Divider />
           <List>

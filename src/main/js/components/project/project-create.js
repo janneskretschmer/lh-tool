@@ -7,8 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { ProjectsContext } from '../../providers/projects-provider';
 import { SessionContext } from '../../providers/session-provider';
 import { createNewProject } from '../../actions/project';
-
-const MUI_DATE_FORMAT = 'YYYY-MM-DD';
+import { convertToMUIFormat } from '../../util';
 
 const styles = theme => ({
     textField: {
@@ -28,8 +27,8 @@ export default class ProjectCreatePanel extends React.Component {
     constructor(props) {
         super(props);
 
-        this.defaultStartDate = moment().format(MUI_DATE_FORMAT);
-        this.defaultEndDate = moment().add(1, 'day').format(MUI_DATE_FORMAT);
+        this.defaultStartDate = convertToMUIFormat(moment())
+        this.defaultEndDate = convertToMUIFormat(moment().add(1, 'day'))
 
         this.state = {
             name: '',
@@ -56,8 +55,8 @@ export default class ProjectCreatePanel extends React.Component {
                                 createNewProject({
                                     accessToken: sessionState.accessToken,
                                     projectsState,
-                                    startMoment: moment(this.state.startDate, MUI_DATE_FORMAT),
-                                    endMoment: moment(this.state.endDate, MUI_DATE_FORMAT),
+                                    startMoment: convertToMUIFormat(moment(this.state.startDate)),
+                                    endMoment: convertToMUIFormat(moment(this.state.endDate)),
                                     name: this.state.name,
                                     handleFailure: this.handleFailure.bind(this),
                                 });

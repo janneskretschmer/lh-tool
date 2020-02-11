@@ -1,3 +1,4 @@
+import React from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
@@ -5,19 +6,9 @@ import IconButton from '@material-ui/core/IconButton';
 import { withStyles } from '@material-ui/core/styles';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import classNames from 'classnames';
-import React from 'react';
 import { Helmet } from 'react-helmet';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { 
-    fullPathOfChangePw, 
-    fullPathOfDataProtection, 
-    fullPathOfImprint, 
-    fullPathOfLogin, 
-    fullPathOfNeedApply, 
-    fullPathOfNeedApprove, 
-    fullPathOfNeedQuantities, 
-    fullPathOfProjects 
-} from '../paths';
+import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItem, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfSlot, fullPathOfStore, fullPathOfStores } from '../paths';
 import SessionProvider from '../providers/session-provider';
 import ChangePasswordComponent from './changepw';
 import AppHeader from './header';
@@ -26,8 +17,13 @@ import AppMenu from './menu';
 import NeedApplyComponent from './need/apply';
 import NeedApproveComponent from './need/approve';
 import NeedQuantityComponent from './need/quantities';
+import ItemListComponent from './item/item-list';
+import ItemDetailComponent from './item/item-detail';
 import NotFoundComponent from './notfound';
 import ProjectsComponent from './project/project';
+import SlotDetailComponent from './slot/slot-detail';
+import StoreDetailComponent from './store/store-detail';
+import StoreListComponent from './store/store-list';
 import DataProtection from './util/data-protection';
 import Imprint from './util/imprint';
 
@@ -135,6 +131,11 @@ export default class LHToolRoot extends React.Component {
                                     <Route path={fullPathOfNeedQuantities()} component={NeedQuantityComponent} />
                                     <Route path={fullPathOfNeedApply()} component={NeedApplyComponent} />
                                     <Route path={fullPathOfNeedApprove()} component={NeedApproveComponent} />
+                                    <Route path={fullPathOfStore()} component={StoreDetailComponent} />
+                                    <Route path={fullPathOfStores()} component={StoreListComponent} />
+                                    <Route path={fullPathOfSlot()} component={SlotDetailComponent} />
+                                    <Route path={fullPathOfItem()} component={ItemDetailComponent} />
+                                    <Route path={fullPathOfItems()} component={ItemListComponent} />
                                     <Route path={fullPathOfChangePw()} component={ChangePasswordComponent} />
                                     <Route path={fullPathOfImprint()} component={Imprint} />
                                     <Route path={fullPathOfDataProtection()} component={DataProtection} />

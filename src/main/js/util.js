@@ -111,3 +111,16 @@ export function getProjectMonth(monthOffset, startDate, endDate) {
     }
     return result;
 }
+
+const READABLE_DATE_FORMAT = 'DD.MM.YYYY';
+export function convertToReadableFormat(moment) {
+    return moment.format(READABLE_DATE_FORMAT)
+}
+
+const MUI_DATE_FORMAT = 'YYYY-MM-DD';
+export function convertToMUIFormat(moment) {
+    return moment.format(MUI_DATE_FORMAT)
+}
+export function convertFromMUIFormat(date) {
+    return moment(date, MUI_DATE_FORMAT)
+}

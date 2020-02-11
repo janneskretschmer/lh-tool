@@ -8,6 +8,7 @@ import LHToolRoot from './components/root';
 
 const theme = createMuiTheme({
 	palette: {
+		//needs to be changed in deploy.sh as well
 		primary: deepPurple,
 		secondary: blueGrey,
 	},

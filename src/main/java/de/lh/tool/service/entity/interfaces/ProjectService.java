@@ -7,7 +7,6 @@ import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.model.Project;
 
 public interface ProjectService extends BasicEntityService<Project, Long> {
-	Collection<ProjectDto> getProjectDtos();
 
 	boolean isOwnProject(Project project);
 
@@ -18,6 +17,8 @@ public interface ProjectService extends BasicEntityService<Project, Long> {
 	ProjectDto getProjectDtoById(Long id) throws DefaultException;
 
 	void deleteOwn(Long id) throws DefaultException;
+
+	Collection<ProjectDto> getProjectDtos();
 
 	Collection<Project> getOwnProjects();
 }

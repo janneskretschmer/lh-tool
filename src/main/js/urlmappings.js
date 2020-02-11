@@ -29,4 +29,17 @@ export const NEED_PREFIX = REST_PREFIX + '/needs';
 export const NEED_START_DIFF_VARIABLE = 'start_diff';
 export const NEED_END_DIFF_VARIABLE = 'end_diff';
 
+export const STORE_PREFIX = REST_PREFIX + '/stores';
+export const STORE_PROJECTS = ID_EXTENSION + '/projects';
+
+export const SLOT_PREFIX = REST_PREFIX + '/slots';
+export const SLOT_STORE_VARIABLE = 'store';
+
+export const ITEM_PREFIX = REST_PREFIX + '/items';
+export const ITEM_NOTES = ID_EXTENSION + '/notes';
+export const ITEM_TAGS = ID_EXTENSION + '/tags';
+export const ITEM_HISTORY = ID_EXTENSION + '/history';
+
+export const TECHNICAL_CREW_PREFIX = REST_PREFIX + '/technical_crews';
+
 export const MEDIA_TYPE_JSON = 'application/json';

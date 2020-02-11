@@ -18,9 +18,18 @@ import {
     PROJECT_DELETE,
     PROJECT_ID_VARIABLE,
     NEED_PREFIX,
-    START_DIFF_VARIABLE,
-    END_DIFF_VARIABLE,
-    
+    NEED_START_DIFF_VARIABLE,
+    NEED_END_DIFF_VARIABLE,
+    STORE_PREFIX,
+    STORE_PROJECTS,
+    SLOT_PREFIX,
+    SLOT_STORE_VARIABLE,
+    ITEM_PREFIX,
+    ITEM_NOTES,
+    ITEM_TAGS,
+    ITEM_HISTORY,
+    TECHNICAL_CREW_PREFIX,
+
 } from './urlmappings';
 
 function isWellFormedEndpoint(apiEndpoint) {
@@ -55,6 +64,7 @@ function buildRequest({ method, path, authToken, queries, data }) {
         pendingReq = pendingReq.set('Authorization', `Bearer ${authToken}`);
     }
     pendingReq.set('Pragma','no-cache');
+    pendingReq.set('Cache-Control','no-cache');
     Object.keys(queries).forEach(queryKey => {
         pendingReq = pendingReq.query({
             // eslint-disable-next-line security/detect-object-injection
@@ -208,7 +218,7 @@ export const apiEndpoints = {
             method: 'GET',
             // TODO Trailing '/' also necessary?
             path: NEED_PREFIX + '/',
-            queries: [PROJECT_ID_VARIABLE, START_DIFF_VARIABLE, END_DIFF_VARIABLE],
+            queries: [PROJECT_ID_VARIABLE, NEED_START_DIFF_VARIABLE, NEED_END_DIFF_VARIABLE],
         },
         get: {
             method: 'GET',
@@ -234,5 +244,111 @@ export const apiEndpoints = {
             method: 'GET',
             path: NEED_PREFIX + ID_USER_ID_EXTENSION,
         }
+    },
+    store: {
+        get: {
+            method: 'GET',
+            path: STORE_PREFIX + '/',
+        },
+        getById: {
+            method: 'GET',
+            path: STORE_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
+        getProjects: {
+            method: 'GET',
+            path: STORE_PREFIX + STORE_PROJECTS,
+            parameters: [ID_VARIABLE],
+        },
+        setProjects: {
+            method: 'POST',
+            path: STORE_PREFIX + STORE_PROJECTS,
+            parameters: [ID_VARIABLE],
+        },
+        createNew: {
+            method: 'POST',
+            // TODO Trailing '/' also necessary?
+            path: STORE_PREFIX + '/',
+        },
+        update: {
+            method: 'PUT',
+            path: STORE_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
+    },
+    slot: {
+        getByStore: {
+            method: 'GET',
+            path: SLOT_PREFIX + '/',
+            queries: [SLOT_STORE_VARIABLE],
+        },
+        getById: {
+            method: 'GET',
+            path: SLOT_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
+        createNew: {
+            method: 'POST',
+            // TODO Trailing '/' also necessary?
+            path: SLOT_PREFIX + '/',
+        },
+        update: {
+            method: 'PUT',
+            path: SLOT_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
+    },
+    item: {
+        get: {
+            method: 'GET',
+            path: ITEM_PREFIX + '/',
+        },
+        getById: {
+            method: 'GET',
+            path: ITEM_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
+        createNew: {
+            method: 'POST',
+            // TODO Trailing '/' also necessary?
+            path: ITEM_PREFIX + '/',
+        },
+        update: {
+            method: 'PUT',
+            path: ITEM_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
+        getNotes: {
+            method: 'GET',
+            path: ITEM_PREFIX + ITEM_NOTES,
+            parameters: [ID_VARIABLE],
+        },
+        createNotes: {
+            method: 'POST',
+            // TODO Trailing '/' also necessary?
+            path: ITEM_PREFIX + ITEM_NOTES,
+            parameters: [ID_VARIABLE],
+        },
+        getTags: {
+            method: 'GET',
+            path: ITEM_PREFIX + ITEM_TAGS,
+            parameters: [ID_VARIABLE],
+        },
+        getHistory: {
+            method: 'GET',
+            path: ITEM_PREFIX + ITEM_HISTORY,
+            parameters: [ID_VARIABLE],
+        },
+    },
+    technicalCrew: {
+        get: {
+            method: 'GET',
+            path: TECHNICAL_CREW_PREFIX + '/',
+        },
+        getById: {
+            method: 'GET',
+            path: TECHNICAL_CREW_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
     },
 };
