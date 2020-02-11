@@ -46,7 +46,7 @@ const styles = theme => ({
 
 class NeedApproveEditComponent extends React.Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
             users: props.need.users,
             approved: props.need.approvedCount,
@@ -80,7 +80,7 @@ class NeedApproveEditComponent extends React.Component {
                                 return user;
                             })
                         })
-                    })
+                    });
                 }
             });
         }
@@ -95,7 +95,7 @@ class NeedApproveEditComponent extends React.Component {
                 ...prevState,
                 users,
                 approved,
-            }
+            };
             let needId = this.props.need.id;
             if (!res.changes.has(needId)) {
                 res.changes.set(needId, new Map());
@@ -183,7 +183,7 @@ class NeedApproveEditComponent extends React.Component {
                                                     </>
                                                 )}
                                         </ListItem>
-                                    )
+                                    );
                                 })}
                             </List>
                         </>

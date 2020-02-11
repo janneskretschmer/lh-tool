@@ -56,12 +56,12 @@ export function getMonthArrayWithOffsets(start, end) {
 }
 
 export function isMonthOffsetWithinRange(offset, startDate, endDate) {
-    return !moment().utc().add(offset,'months').endOf('month').isBefore(startDate) && !moment().utc().add(offset,'months').startOf('month').isAfter(endDate)
+    return !moment().utc().add(offset,'months').endOf('month').isBefore(startDate) && !moment().utc().add(offset,'months').startOf('month').isAfter(endDate);
 }
 
 
 function getMonthsSinceYear1AD(date){
-    return date.year() * 12 + date.month()
+    return date.year() * 12 + date.month();
 }
 
 export function getMonthOffsetWithinRange(originalOffset, startDate, endDate){
@@ -73,7 +73,7 @@ export function getMonthOffsetWithinRange(originalOffset, startDate, endDate){
 }
 
 export function getMonthNameForOffset(offset) {
-    return ['Januar','Februar','Maerz','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'][moment().utc().add(offset,'months').month()]
+    return ['Januar','Februar','Maerz','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'][moment().utc().add(offset,'months').month()];
 }
 
 
@@ -81,7 +81,7 @@ export function getProjectMonth(monthOffset, startDate, endDate) {
     var date = moment().utc().startOf('month').add(monthOffset,'months');
     let month = date.clone().month();
     //necessary for december -> january 
-    let continiousMonth = getMonthsSinceYear1AD(date.clone())
+    let continiousMonth = getMonthsSinceYear1AD(date.clone());
     let endOfMonth = date.clone().endOf('month');
     var result = {
         monthOffset,
@@ -101,26 +101,26 @@ export function getProjectMonth(monthOffset, startDate, endDate) {
 
     while(getMonthsSinceYear1AD(date) <= continiousMonth || (date.isoWeekday() > 2 && date.isoWeekday() < 7)) {
         if(date.isoWeekday() > 1 && date.isoWeekday() < 7){
-            let day = {
+            const day = {
                 date: date.clone(),
                 disabled: date.month() !== month || date.isBefore(startDate) || date.isAfter(endDate),
-            }
+            };
             result.days.push(day);
         }
-        date =  date.add(1, 'days')
+        date =  date.add(1, 'days');
     }
     return result;
 }
 
 const READABLE_DATE_FORMAT = 'DD.MM.YYYY';
 export function convertToReadableFormat(moment) {
-    return moment.format(READABLE_DATE_FORMAT)
+    return moment.format(READABLE_DATE_FORMAT);
 }
 
 const MUI_DATE_FORMAT = 'YYYY-MM-DD';
 export function convertToMUIFormat(moment) {
-    return moment.format(MUI_DATE_FORMAT)
+    return moment.format(MUI_DATE_FORMAT);
 }
 export function convertFromMUIFormat(date) {
-    return moment(date, MUI_DATE_FORMAT)
+    return moment(date, MUI_DATE_FORMAT);
 }

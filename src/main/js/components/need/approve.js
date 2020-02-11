@@ -185,7 +185,7 @@ class NeedApproveComponent extends React.Component {
                     return day;
                 })
             }
-        })
+        });
     }
 
     //{data.days[i*5+j].content ? data.days[i*5+j].content : !data.days[i*5+j].disabled ? (<CircularProgress size={15}/>) : null}
@@ -226,8 +226,8 @@ class NeedApproveComponent extends React.Component {
                                     let disabled = true;
                                     return (<tr className={classes.calendarRow} key={i}>
                                         {Array.from(Array(5)).map((_, j) => {
-                                            let index = i * 5 + j
-                                            disabled = disabled && data.days[index].disabled
+                                            const index = i * 5 + j;
+                                            disabled = disabled && data.days[index].disabled;
                                             return (
                                                 <td className={classNames({
                                                     [classes.calendarCell]: true,
@@ -255,7 +255,7 @@ class NeedApproveComponent extends React.Component {
                                             </Button>
                                         </td>
                                     </tr>
-                                    )
+                                    );
                                 })}
                             </tbody>
                         </table>

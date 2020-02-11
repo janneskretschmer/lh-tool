@@ -62,7 +62,7 @@ class NeedQuantityComponent extends React.Component {
                                         <NeedQuantityEditComponent need={needs.get('CLEANER')} label="Putzen"/>
                                     </div>
                                 </>
-                            )
+                            );
                         }
                         return day;
                     })

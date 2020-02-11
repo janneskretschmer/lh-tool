@@ -52,6 +52,6 @@ const SimpleDialog = props => {
             </DialogActions>
         </Dialog>
     </>);
-}
+};
 
 export default SimpleDialog;

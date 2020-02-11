@@ -57,7 +57,7 @@ class NeedApplyEditComponent extends React.Component {
     toggleApplicationStatus() {
         this.setState({
             updating: true,
-        })
+        });
         changeApplicationStateForNeed({
             accessToken: this.props.sessionState.accessToken,
             userId: this.props.sessionState.currentUser.id,
