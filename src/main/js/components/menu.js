@@ -178,7 +178,7 @@ const SettingsItem = () => (
             <ListItemText primary="Einstellungen" />
         </ListItem>
     </a>
-)
+);
 
 export default function AppMenu() {
   return (

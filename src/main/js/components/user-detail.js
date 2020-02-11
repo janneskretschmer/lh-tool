@@ -253,7 +253,7 @@ const UserComponent = props => {
                 </>)
             }
         </div>
-    )
+    );
 }
 
 const EmailLink = ({email, asIcon}) =>{ 

@@ -59,17 +59,17 @@ const ProjectList = (props) => {
                     <ProjectName projects={props.projects} projectId={storeProject.projectId}></ProjectName> ({storeProject.start.format('DD.MM.YYYY')} - {storeProject.end.format('DD.MM.YYYY')}) {props.edit ? (<IconButton onClick={() => props.deletionHandler(storeProject)}><DeleteIcon /></IconButton>) : null}<br />
                 </span>
             )) : (<>-<br /></>)
-    ) : props.edit ? null : (<CircularProgress />)
+    ) : props.edit ? null : (<CircularProgress />);
 }
 
 const ProjectName = (props) => {
     if (props.projects) {
         const project = props.projects.filter(project => project.id === props.projectId)[0];
         if (project) {
-            return (<>{project.name}</>)
+            return (<>{project.name}</>);
         }
     }
-    return (<CircularProgress size={15} />)
+    return (<CircularProgress size={15} />);
 }
 
 @withStyles(styles)
@@ -93,7 +93,7 @@ export default class StoreDetailComponent extends React.Component {
         this.setState({
             edit,
             saving: false,
-        }, callback)
+        }, callback);
     }
 
     changeTitle(event) {
@@ -103,7 +103,7 @@ export default class StoreDetailComponent extends React.Component {
                 ...prevState.store,
                 name,
             }
-        }))
+        }));
     }
 
     changeAddress(event) {
@@ -113,7 +113,7 @@ export default class StoreDetailComponent extends React.Component {
                 ...prevState.store,
                 address,
             }
-        }))
+        }));
     }
 
     changeType(event) {
@@ -123,11 +123,11 @@ export default class StoreDetailComponent extends React.Component {
                 ...prevState.store,
                 type,
             }
-        }))
+        }));
     }
 
     changeSelectedProject(event) {
-        this.changeSelectedProjectIndex(event.target.value)
+        this.changeSelectedProjectIndex(event.target.value);
     }
 
     changeSelectedProjectIndex(selectedProjectIndex) {
@@ -135,39 +135,39 @@ export default class StoreDetailComponent extends React.Component {
             selectedProjectIndex,
             selectedProjectStartDate: convertToMUIFormat(prevState.projects[selectedProjectIndex].startDate),
             selectedProjectEndDate: convertToMUIFormat(prevState.projects[selectedProjectIndex].endDate),
-        }))
+        }));
     }
 
     changeSelectedProjectStartDate(event) {
-        var selectedProjectStartDate = event.target.value
+        const selectedProjectStartDate = event.target.value;
         if (selectedProjectStartDate > this.state.selectedProjectEndDate) {
             this.changeSelectedProjectEndDate(event)
         }
         this.setState({
             selectedProjectStartDate: this.getDateWithinProjectRange(selectedProjectStartDate)
-        })
+        });
     }
 
     changeSelectedProjectEndDate(event) {
-        var selectedProjectEndDate = event.target.value
+        const selectedProjectEndDate = event.target.value;
         if (selectedProjectEndDate < this.state.selectedProjectStartDate) {
-            this.changeSelectedProjectStartDate(event)
+            this.changeSelectedProjectStartDate(event);
         }
         this.setState({
             selectedProjectEndDate: this.getDateWithinProjectRange(selectedProjectEndDate)
-        })
+        });
     }
 
     getDateWithinProjectRange(date) {
-        const projectStartDate = convertToMUIFormat(this.state.projects[this.state.selectedProjectIndex].startDate)
+        const projectStartDate = convertToMUIFormat(this.state.projects[this.state.selectedProjectIndex].startDate);
         if (date <= projectStartDate) {
-            return projectStartDate
+            return projectStartDate;
         }
-        const projectEndDate = convertToMUIFormat(this.state.projects[this.state.selectedProjectIndex].endDate)
+        const projectEndDate = convertToMUIFormat(this.state.projects[this.state.selectedProjectIndex].endDate);
         if (date >= projectEndDate) {
-            return projectEndDate
+            return projectEndDate;
         }
-        return date
+        return date;
     }
 
     addProject() {
@@ -179,17 +179,17 @@ export default class StoreDetailComponent extends React.Component {
                 start: convertFromMUIFormat(this.state.selectedProjectStartDate),
                 end: convertFromMUIFormat(this.state.selectedProjectEndDate),
             }],
-        }), this.changeSelectedProjectIndex(0))
+        }), this.changeSelectedProjectIndex(0));
     }
 
     removeProject(storeProject) {
         this.setState(prevState => ({
             storeProjects: prevState.storeProjects.filter(tmp => tmp.projectId != storeProject.projectId || tmp.start != storeProject.start)
-        }))
+        }));
     }
 
     loadStore() {
-        const id = this.props.match.params.id
+        const id = this.props.match.params.id;
         if (id === 'new') {
             this.setState({
                 edit: true,
@@ -198,10 +198,10 @@ export default class StoreDetailComponent extends React.Component {
                     address: '',
                     type: 'STANDARD'
                 },
-            })
+            });
         } else {
-            fetchStore({ accessToken: this.props.sessionState.accessToken, storeId: id }).then(store => this.changeStore(store))
-            fetchStoreProjects({ accessToken: this.props.sessionState.accessToken, storeId: id }).then(storeProjects => this.setState({ storeProjects }))
+            fetchStore({ accessToken: this.props.sessionState.accessToken, storeId: id }).then(store => this.changeStore(store));
+            fetchStoreProjects({ accessToken: this.props.sessionState.accessToken, storeId: id }).then(storeProjects => this.setState({ storeProjects }));
         }
     }
 
@@ -212,22 +212,22 @@ export default class StoreDetailComponent extends React.Component {
                 ...storeProject,
                 storeId: store.id,
             })) : null,
-        }), callback)
+        }), callback);
     }
 
     componentDidMount() {
-        this.loadStore()
-        fetchOwnProjects({ accessToken: this.props.sessionState.accessToken }).then(projects => this.setState({ projects }, () => this.changeSelectedProjectIndex(0)))
+        this.loadStore();
+        fetchOwnProjects({ accessToken: this.props.sessionState.accessToken }).then(projects => this.setState({ projects }, () => this.changeSelectedProjectIndex(0)));
     }
 
     save() {
         this.setState({
             saving: true
-        })
+        });
         createOrUpdateStore({ accessToken: this.props.sessionState.accessToken, store: this.state.store }).then(store => this.changeStore(store,
             () => deleteAndCreateStoreProjects({ accessToken: this.props.sessionState.accessToken, storeId: this.state.store.id, storeProjects: this.state.storeProjects }).then(
                 storeProjects => this.setState({ storeProjects }, () => this.changeEditState(false))
-            )))
+            )));
     }
 
     cancel() {
@@ -235,17 +235,17 @@ export default class StoreDetailComponent extends React.Component {
             this.changeStore(null, () => {
                 this.loadStore()
             })
-        )
+        );
     }
 
     render() {
-        const { classes, match } = this.props
-        const { edit, store, saving, storeProjects, projects, selectedProjectIndex, selectedProjectStartDate, selectedProjectEndDate } = this.state
+        const { classes, match } = this.props;
+        const { edit, store, saving, storeProjects, projects, selectedProjectIndex, selectedProjectStartDate, selectedProjectEndDate } = this.state;
         const types = {
             MAIN: 'Hauptlager',
             STANDARD: 'Lager',
             MOBILE: 'Magazin',
-        }
+        };
         return store || edit ? (
             <>
                 <div>
@@ -400,6 +400,6 @@ export default class StoreDetailComponent extends React.Component {
                         </>
                     )}
             </>
-        ) : (<CircularProgress />)
+        ) : (<CircularProgress />);
     }
 }

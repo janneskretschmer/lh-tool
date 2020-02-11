@@ -47,13 +47,13 @@ export default class ProjectEditPanel extends React.Component {
     handlePublisherEditButtonClicked() {
         this.setState(prevState => ({
             editPublishers: !prevState.editPublishers,
-        }))
+        }));
     }
 
     handleLocalCoordinatorEditButtonClicked() {
         this.setState(prevState => ({
             editLocalCoordinators: !prevState.editLocalCoordinators,
-        }))
+        }));
     }
 
     handleDeleteFailure() {
