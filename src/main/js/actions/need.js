@@ -3,7 +3,7 @@ import { apiRequest, apiEndpoints } from '../apiclient';
 import { ID_VARIABLE, USER_ID_VARIABLE, PROJECT_ID_VARIABLE, NEED_START_DIFF_VARIABLE, NEED_END_DIFF_VARIABLE } from '../urlmappings';
 
 function mapNeedArray(accessToken, content) {
-    let needs = new Map()
+    const needs = new Map()
     content.forEach(need => {
         if (!needs.has(need.date)) {
             needs.set(need.date, new Map())

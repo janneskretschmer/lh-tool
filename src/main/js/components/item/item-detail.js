@@ -36,7 +36,7 @@ export default class ItemDetailComponent extends React.Component {
     }
 
     loadItem() {
-        let id = this.props.match.params.id
+        const id = this.props.match.params.id
         if (id === 'new') {
             this.setState({
                 edit: true,

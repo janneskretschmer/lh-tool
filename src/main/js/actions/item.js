@@ -8,7 +8,10 @@ export function fetchItems(accessToken) {
             apiEndpoint: apiEndpoints.item.get,
             authToken: accessToken
         }).then(result => result.response.content)
-            .catch(e => console.log(e));
+            .catch(e => {
+                console.log(e);
+                return Promise.resolve([]);
+            });
     } else {
         return Promise.resolve([]);
     }
@@ -51,9 +54,9 @@ export function fetchItemNotes({ accessToken, itemId }) {
             authToken: accessToken,
             parameters: { [ID_VARIABLE]: itemId }
         })
-            .then(result => result.response.content.map(tmp => ({
-                ...tmp,
-                timestamp: moment(tmp.timestamp, 'x'),
+            .then(result => result.response.content.map(note => ({
+                ...note,
+                timestamp: moment(note.timestamp, 'x'),
             })))
             // TODO Proper error message
             .catch(e => console.log(e));

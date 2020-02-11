@@ -21,13 +21,13 @@ import org.springframework.web.bind.annotation.RestController;
 import de.lh.tool.domain.dto.ItemDto;
 import de.lh.tool.domain.dto.ItemHistoryDto;
 import de.lh.tool.domain.dto.ItemNoteDto;
-import de.lh.tool.domain.dto.TagDto;
+import de.lh.tool.domain.dto.ItemTagDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.service.entity.interfaces.ItemHistoryService;
 import de.lh.tool.service.entity.interfaces.ItemNoteService;
 import de.lh.tool.service.entity.interfaces.ItemService;
-import de.lh.tool.service.entity.interfaces.TagService;
+import de.lh.tool.service.entity.interfaces.ItemTagService;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
@@ -40,7 +40,7 @@ public class ItemRestService {
 	@Autowired
 	private ItemHistoryService itemHistoryService;
 	@Autowired
-	private TagService tagService;
+	private ItemTagService tagService;
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of items")
@@ -111,10 +111,10 @@ public class ItemRestService {
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ITEM_TAGS)
 	@ApiOperation(value = "Get a list of tags for item")
 	@Secured(UserRole.RIGHT_ITEMS_GET)
-	public Resources<TagDto> getTags(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long itemId)
+	public Resources<ItemTagDto> getTags(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long itemId)
 			throws DefaultException {
 
-		Collection<TagDto> dtoList = tagService.getTagDtosByItemId(itemId);
+		Collection<ItemTagDto> dtoList = tagService.getItemTagDtosByItemId(itemId);
 
 		return new Resources<>(dtoList, linkTo(methodOn(ItemRestService.class).getTags(itemId)).withSelfRel());
 	}

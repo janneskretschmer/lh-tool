@@ -18,8 +18,8 @@ import {
     PROJECT_DELETE,
     PROJECT_ID_VARIABLE,
     NEED_PREFIX,
-    START_DIFF_VARIABLE,
-    END_DIFF_VARIABLE,
+    NEED_START_DIFF_VARIABLE,
+    NEED_END_DIFF_VARIABLE,
     STORE_PREFIX,
     STORE_PROJECTS,
     SLOT_PREFIX,
@@ -64,6 +64,7 @@ function buildRequest({ method, path, authToken, queries, data }) {
         pendingReq = pendingReq.set('Authorization', `Bearer ${authToken}`);
     }
     pendingReq.set('Pragma','no-cache');
+    pendingReq.set('Cache-Control','no-cache');
     Object.keys(queries).forEach(queryKey => {
         pendingReq = pendingReq.query({
             // eslint-disable-next-line security/detect-object-injection
@@ -217,7 +218,7 @@ export const apiEndpoints = {
             method: 'GET',
             // TODO Trailing '/' also necessary?
             path: NEED_PREFIX + '/',
-            queries: [PROJECT_ID_VARIABLE, START_DIFF_VARIABLE, END_DIFF_VARIABLE],
+            queries: [PROJECT_ID_VARIABLE, NEED_START_DIFF_VARIABLE, NEED_END_DIFF_VARIABLE],
         },
         get: {
             method: 'GET',

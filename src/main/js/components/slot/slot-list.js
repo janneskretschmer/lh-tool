@@ -74,7 +74,7 @@ export default class SlotListComponent extends React.Component {
                 {sessionState => (
                     <>
                         <TextField
-                            id="free-search"
+                            id="free-store-search"
                             variant="outlined"
                             label="Freitextsuche"
                             margin="dense"

@@ -64,7 +64,7 @@ const ProjectList = (props) => {
 
 const ProjectName = (props) => {
     if (props.projects) {
-        let project = props.projects.filter(project => project.id == props.projectId)[0];
+        const project = props.projects.filter(project => project.id === props.projectId)[0];
         if (project) {
             return (<>{project.name}</>)
         }
@@ -97,7 +97,7 @@ export default class StoreDetailComponent extends React.Component {
     }
 
     changeTitle(event) {
-        let name = event.target.value
+        const name = event.target.value
         this.setState(prevState => ({
             store: {
                 ...prevState.store,
@@ -107,7 +107,7 @@ export default class StoreDetailComponent extends React.Component {
     }
 
     changeAddress(event) {
-        let address = event.target.value
+        const address = event.target.value
         this.setState(prevState => ({
             store: {
                 ...prevState.store,
@@ -117,7 +117,7 @@ export default class StoreDetailComponent extends React.Component {
     }
 
     changeType(event) {
-        let type = event.target.value
+        const type = event.target.value
         this.setState(prevState => ({
             store: {
                 ...prevState.store,
@@ -159,11 +159,11 @@ export default class StoreDetailComponent extends React.Component {
     }
 
     getDateWithinProjectRange(date) {
-        let projectStartDate = convertToMUIFormat(this.state.projects[this.state.selectedProjectIndex].startDate)
+        const projectStartDate = convertToMUIFormat(this.state.projects[this.state.selectedProjectIndex].startDate)
         if (date <= projectStartDate) {
             return projectStartDate
         }
-        let projectEndDate = convertToMUIFormat(this.state.projects[this.state.selectedProjectIndex].endDate)
+        const projectEndDate = convertToMUIFormat(this.state.projects[this.state.selectedProjectIndex].endDate)
         if (date >= projectEndDate) {
             return projectEndDate
         }
@@ -189,7 +189,7 @@ export default class StoreDetailComponent extends React.Component {
     }
 
     loadStore() {
-        let id = this.props.match.params.id
+        const id = this.props.match.params.id
         if (id === 'new') {
             this.setState({
                 edit: true,

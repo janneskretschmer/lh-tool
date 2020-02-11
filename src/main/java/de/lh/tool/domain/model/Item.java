@@ -82,6 +82,6 @@ public class Item {
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name = "item_tag", inverseJoinColumns = @JoinColumn(name = "tag_id"), joinColumns = @JoinColumn(name = "item_id"))
-	private Collection<Tag> tags;
+	private Collection<ItemTag> tags;
 
 }

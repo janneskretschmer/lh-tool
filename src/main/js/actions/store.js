@@ -36,10 +36,10 @@ export function fetchStoreProjects({ accessToken, storeId }) {
             authToken: accessToken,
             parameters: { [ID_VARIABLE]: storeId }
         })
-            .then(result => result.response.content.map(tmp => ({
-                ...tmp,
-                start: moment(tmp.start, 'x'),
-                end: moment(tmp.end, 'x'),
+            .then(result => result.response.content.map(storeProject => ({
+                ...storeProject,
+                start: moment(storeProject.start, 'x'),
+                end: moment(storeProject.end, 'x'),
             })))
             // TODO Proper error message
             .catch(e => console.log(e));
@@ -56,10 +56,10 @@ export function deleteAndCreateStoreProjects({ accessToken, storeId, storeProjec
             parameters: { [ID_VARIABLE]: storeId },
             data: storeProjects,
         })
-            .then(result => result.response.content.map(tmp => ({
-                ...tmp,
-                start: moment(tmp.start, 'x'),
-                end: moment(tmp.end, 'x'),
+            .then(result => result.response.content.map(storeProject => ({
+                ...storeProject,
+                start: moment(storeProject.start, 'x'),
+                end: moment(storeProject.end, 'x'),
             })))
             // TODO Proper error message
             .catch(e => console.log(e));

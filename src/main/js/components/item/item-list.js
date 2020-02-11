@@ -52,6 +52,7 @@ export default class ItemListComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            // TODO remove dummy data
             rows: [
                 {
                     id: 1235, name: 'Hammer', store: 1, slot: 1, quantity: 3, unit: 'Stueck', broken: false, rentals: [
