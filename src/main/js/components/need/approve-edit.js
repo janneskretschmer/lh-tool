@@ -15,6 +15,7 @@ import { Prompt } from 'react-router';
 import { changeApplicationStateForNeed } from '../../actions/need';
 import { fetchUser } from '../../actions/user';
 import { requiresLogin } from '../../util';
+import WithPermission from '../with-permission';
 
 
 const styles = theme => ({
@@ -73,7 +74,7 @@ class NeedApproveEditComponent extends React.Component {
                     fetchUser({ accessToken: this.props.sessionState.accessToken, userId: user.userId }).then(result => {
                         self.setState({
                             users: self.state.users.map(user => {
-                                if(user.userId === result.id) {
+                                if (user.userId === result.id) {
                                     user.firstName = result.firstName
                                     user.lastName = result.lastName
                                 }
@@ -153,7 +154,7 @@ class NeedApproveEditComponent extends React.Component {
                                                     {user.updating ? (
                                                         <CircularProgress size={16} className={classes.updating} />
                                                     ) : (
-                                                            <>
+                                                            <WithPermission permission="ROLE_RIGHT_NEEDS_APPROVE">
                                                                 <IconButton
                                                                     disabled={user.state !== 'APPROVED' && approved >= need.quantity}
                                                                     onClick={() => this.handleToggle(user, user.state !== 'APPROVED' ? 'APPROVED' : 'APPLIED')}
@@ -173,7 +174,7 @@ class NeedApproveEditComponent extends React.Component {
                                                                             <CloseIcon />
                                                                         )}
                                                                 </IconButton>
-                                                            </>
+                                                            </WithPermission>
                                                         )}
                                                 </>
                                             ) : (
