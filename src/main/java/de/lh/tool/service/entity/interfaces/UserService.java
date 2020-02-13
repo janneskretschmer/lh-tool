@@ -1,5 +1,7 @@
 package de.lh.tool.service.entity.interfaces;
 
+import java.util.List;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -19,7 +21,7 @@ public interface UserService extends BasicEntityService<User, Long> {
 
 	Iterable<User> findByRoleIgnoreCase(String role);
 
-	Iterable<User> findByProjectIdAndRoleIgnoreCase(Long projectId, String role);
+	List<User> findByProjectIdAndRoleIgnoreCase(Long projectId, String role);
 
 	User createUser(User user, String role) throws DefaultException;
 

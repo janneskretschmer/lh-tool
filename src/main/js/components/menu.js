@@ -74,7 +74,7 @@ const NeedApplyItem = () => (
 );
 
 const NeedApproveItem = () => (
-  <WithPermission permission="ROLE_RIGHT_NEEDS_APPROVE">
+  <WithPermission permission="ROLE_RIGHT_NEEDS_VIEW_APPROVED">
     <Link to={fullPathOfNeedApprove()} style={linkStyle}>
       <ListItem button>
         <ListItemIcon>

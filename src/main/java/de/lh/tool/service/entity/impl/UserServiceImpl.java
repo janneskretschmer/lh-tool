@@ -1,6 +1,7 @@
 package de.lh.tool.service.entity.impl;
 
 import java.util.Calendar;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -206,7 +207,7 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 	}
 
 	@Override
-	public Iterable<User> findByProjectIdAndRoleIgnoreCase(Long projectId, String role) {
+	public List<User> findByProjectIdAndRoleIgnoreCase(Long projectId, String role) {
 		return getRepository().findByProjects_IdAndRoles_RoleIgnoreCaseOrderByLastNameAscFirstNameAsc(projectId, role);
 	}
 
