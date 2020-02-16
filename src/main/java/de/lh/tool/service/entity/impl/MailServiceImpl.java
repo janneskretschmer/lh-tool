@@ -56,6 +56,7 @@ public class MailServiceImpl implements MailService {
 		properties.put("mail.smtp.socketFactory.port", "465");
 		if (tlsEnabled) {
 			properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			properties.put("mail.smtp.ssl.checkserveridentity", true);
 		}
 		properties.put("mail.smtp.auth", "true");
 		properties.put("mail.smtp.port", "465");
