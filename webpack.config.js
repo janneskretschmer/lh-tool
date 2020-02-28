@@ -1,9 +1,9 @@
 var path = require('path');
 var webpack = require('webpack');
 var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+var settings = require('./src/main/js/settings');
 
-
-var PROD_BUILD = true;
+var PROD_BUILD = settings.prodBuild;
 
 module.exports = {
 	entry: './src/main/js/browser.js',

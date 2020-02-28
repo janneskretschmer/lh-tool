@@ -7,8 +7,7 @@ if [ "${1,,}" = "stage" ]; then
     jwt_secret=$CREDENTIALS_STAGE_JWT_SECRET
     base=$CREDENTIALS_STAGE_BASE
     
-    #make stage red
-    sed -i -e 's/deepPurple/red/g' src/main/js/app.js
+    mv src/main/js/settings.stage.js src/main/js/settings.js
 
 elif [ "${1,,}" = "prod" ]; then
     echo "Executing prod deployment..."
@@ -17,6 +16,9 @@ elif [ "${1,,}" = "prod" ]; then
     db_url=$CREDENTIALS_PROD_DB_URL
     jwt_secret=$CREDENTIALS_PROD_JWT_SECRET
     base=$CREDENTIALS_PROD_BASE
+    
+    mv src/main/js/settings.prod.js src/main/js/settings.js
+    
 else
     echo "Fail! Please pass stage or prod as argument"
     exit 1
