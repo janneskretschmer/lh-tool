@@ -1,6 +1,6 @@
 var path = require('path');
 var webpack = require('webpack');
-var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+var TerserPlugin = require('terser-webpack-plugin');
 var settings = require('./src/main/js/settings');
 
 var PROD_BUILD = settings.prodBuild;
@@ -23,7 +23,7 @@ module.exports = {
 	] : [],
 	optimization: PROD_BUILD ? {
 		minimizer: [
-			new UglifyJsPlugin({
+			new TerserPlugin({
 				cache: true,
 				parallel: true,
 				uglifyOptions: {
