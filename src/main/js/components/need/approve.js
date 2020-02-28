@@ -289,7 +289,7 @@ class NeedApproveComponent extends React.Component {
                         </WithPermission>
 
 
-                        {selectedStart !== null && selectedEnd && Array.from(Array(selectedEnd - selectedStart + 1)).map((_, i) => {
+                        {selectedStart !== null && selectedEnd !== null && Array.from(Array(selectedEnd - selectedStart + 1)).map((_, i) => {
                             const index = i + parseInt(selectedStart);
                             const day = data.days[index];
                             if (day.disabled || !day.needs) {
