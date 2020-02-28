@@ -64,71 +64,71 @@ export default class SlotDetailComponent extends React.Component {
         this.setState({
             edit,
             saving: false,
-        }, callback)
+        }, callback);
     }
 
     changeTitle(event) {
-        let name = event.target.value
+        const name = event.target.value
         this.setState(prevState => ({
             slot: {
                 ...prevState.slot,
                 name,
             }
-        }))
+        }));
     }
 
     changeDescription(event) {
-        let description = event.target.value
+        const description = event.target.value
         this.setState(prevState => ({
             slot: {
                 ...prevState.slot,
                 description,
             }
-        }))
+        }));
     }
 
     changeWidth(event) {
-        let width = event.target.value
+        const width = event.target.value
         this.setState(prevState => ({
             slot: {
                 ...prevState.slot,
                 width,
             }
-        }))
+        }));
     }
 
     changeHeight(event) {
-        let height = event.target.value
+        const height = event.target.value
         this.setState(prevState => ({
             slot: {
                 ...prevState.slot,
                 height,
             }
-        }))
+        }));
     }
 
     changeDepth(event) {
-        let depth = event.target.value
+        const depth = event.target.value
         this.setState(prevState => ({
             slot: {
                 ...prevState.slot,
                 depth,
             }
-        }))
+        }));
     }
 
     changeOutside(event) {
-        let outside = event.target.checked
+        const outside = event.target.checked
         this.setState(prevState => ({
             slot: {
                 ...prevState.slot,
                 outside,
             }
-        }))
+        }));
     }
 
     loadSlot() {
-        let id = this.props.match.params.id
+        const id = this.props.match.params.id
         if (id === 'new') {
             this.setState({
                 edit: true,
@@ -140,16 +140,16 @@ export default class SlotDetailComponent extends React.Component {
                     depth: '',
                     outside: false,
                 },
-            })
+            });
         } else {
-            fetchSlot({ accessToken: this.props.sessionState.accessToken, slotId: id }).then(slot => this.changeSlot(slot))
+            fetchSlot({ accessToken: this.props.sessionState.accessToken, slotId: id }).then(slot => this.changeSlot(slot));
         }
     }
 
     changeSlot(slot, callback) {
         this.setState(prevState => ({
             slot,
-        }), callback)
+        }), callback);
     }
 
     loadStores() {
@@ -159,39 +159,39 @@ export default class SlotDetailComponent extends React.Component {
                 ...prevState.slot,
                 storeId: prevState.slotId ? prevState.slotId : stores[0].id,
             }
-        })))        
+        })));     
     }
 
     changeStore(event) {
         this.changeSlot({
             ...this.state.slot,
             storeId: event.target.value
-        })
+        });
     }
 
     componentDidMount() {
-        this.loadSlot()
-        this.loadStores()
+        this.loadSlot();
+        this.loadStores();
     }
 
     save() {
         this.setState({
             saving: true
-        })
-        createOrUpdateSlot({ accessToken: this.props.sessionState.accessToken, slot: this.state.slot }).then(slot => this.changeSlot(slot, () => this.changeEditState(false)))
+        });
+        createOrUpdateSlot({ accessToken: this.props.sessionState.accessToken, slot: this.state.slot }).then(slot => this.changeSlot(slot, () => this.changeEditState(false)));
     }
 
     cancel() {
         this.changeEditState(false,
             this.changeSlot(null, () => {
-                this.loadSlot()
+                this.loadSlot();
             })
-        )
+        );
     }
 
     render() {
-        const { classes, match } = this.props
-        const { edit, slot, stores, saving } = this.state
+        const { classes, match } = this.props;
+        const { edit, slot, stores, saving } = this.state;
         return slot || edit ? (
             <>
                 <div>
@@ -362,6 +362,6 @@ export default class SlotDetailComponent extends React.Component {
                     </>
                 )}
             </>
-        ) : (<CircularProgress />)
+        ) : (<CircularProgress />);
     }
 }

@@ -64,7 +64,7 @@ export default class ItemEditComponent extends React.Component {
                     technicalCrewId: prevState.item.technicalCrewId ? prevState.item.technicalCrewId : technicalCrews[0].id,
                 }
             }))
-        )
+        );
     }
 
     changeItem(attribute, value) {
@@ -73,11 +73,11 @@ export default class ItemEditComponent extends React.Component {
                 ...prevState.item,
                 [attribute]: value,
             }
-        }))
+        }));
     }
     render() {
-        const { classes } = this.props
-        const { technicalCrews, item } = this.state
+        const { classes } = this.props;
+        const { technicalCrews, item } = this.state;
         return (
             <div>
                 <div className={classes.verticallyCenteredContainer}>
@@ -248,7 +248,7 @@ export default class ItemEditComponent extends React.Component {
                 <br />
                 <br />
             </div>
-        )
+        );
     }
 }
 

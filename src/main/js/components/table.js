@@ -53,7 +53,7 @@ export default class PagedTable extends React.Component {
     handleSelection = (index) => {
         this.setState({
             selected: this.state.selected.includes(index) ? this.state.selected.filter(item => item !== index) : this.state.selected.concat(index),
-        })
+        });
     }
 
     handleChangePage = (event, page) => {
@@ -66,19 +66,19 @@ export default class PagedTable extends React.Component {
 
     handleRowClick(id) {
         if (this.state.selected.length > 0) {
-            this.handleSelection(id)
+            this.handleSelection(id);
         } else {
-            this.setState({ redirect: id })
+            this.setState({ redirect: id });
         }
     }
 
     render() {
-        const { classes, rows, selectionHeader, headers, redirect } = this.props
+        const { classes, rows, selectionHeader, headers, redirect } = this.props;
         const { rowsPerPage, page, selected } = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
         const singlePage = emptyRows < rows.length;
         if (this.state.redirect) {
-            return (<Redirect to={redirect(this.state.redirect)} />)
+            return (<Redirect to={redirect(this.state.redirect)} />);
         }
         return (
             <Table>
@@ -156,6 +156,6 @@ export default class PagedTable extends React.Component {
                     </TableRow>
                 </TableFooter>
             </Table>
-        )
+        );
     }
 }

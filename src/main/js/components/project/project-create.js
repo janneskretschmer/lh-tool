@@ -27,8 +27,8 @@ export default class ProjectCreatePanel extends React.Component {
     constructor(props) {
         super(props);
 
-        this.defaultStartDate = convertToMUIFormat(moment())
-        this.defaultEndDate = convertToMUIFormat(moment().add(1, 'day'))
+        this.defaultStartDate = convertToMUIFormat(moment());
+        this.defaultEndDate = convertToMUIFormat(moment().add(1, 'day'));
 
         this.state = {
             name: '',

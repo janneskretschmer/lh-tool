@@ -3,12 +3,12 @@ import { apiRequest, apiEndpoints } from '../apiclient';
 import { ID_VARIABLE, USER_ID_VARIABLE, PROJECT_ID_VARIABLE, NEED_START_DIFF_VARIABLE, NEED_END_DIFF_VARIABLE } from '../urlmappings';
 
 function mapNeedArray(accessToken, content) {
-    const needs = new Map()
+    const needs = new Map();
     content.forEach(need => {
         if (!needs.has(need.date)) {
-            needs.set(need.date, new Map())
+            needs.set(need.date, new Map());
         }
-        needs.get(need.date).set(need.helperType, need)
+        needs.get(need.date).set(need.helperType, need);
     });
     return needs;
 }
@@ -28,7 +28,7 @@ function attachOwnStateToNeeds({ needs, accessToken, userId }) {
     const promNeeds = needs.map(need => {
         if (need.id) {
             return fetchOwnNeedStatus({ accessToken, needId: need.id, userId })
-                .then(result => ({ ...need, ownState: result.response.state }))
+                .then(result => ({ ...need, ownState: result.response.state }));
         } else {
             return Promise.resolve(need);
         }

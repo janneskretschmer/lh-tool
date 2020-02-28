@@ -31,15 +31,15 @@ export default class SlotFieldComponent extends React.Component {
             slot => this.mounted && this.setState({ slot }, () => fetchStore({ accessToken: this.props.sessionState.accessToken, storeId: this.state.slot.storeId }).then(
                 store => this.mounted && this.setState({ store })
             ))
-        )
+        );
     }
     componentWillUnmount() {
         this.mounted = false
     }
 
     render() {
-        const { classes, slotId, edit } = this.props
-        const { store, slot } = this.state
+        const { classes, slotId, edit } = this.props;
+        const { store, slot } = this.state;
 
         return (
             <>
@@ -84,6 +84,6 @@ export default class SlotFieldComponent extends React.Component {
                     )
                 }
             </>
-        )
+        );
     }
 }

@@ -18,25 +18,25 @@ class ProjectSelection extends React.Component {
     this.setState({
       ...this.state,
       projects,
-    })
+    });
     if (this.props.onChange) {
-      this.props.onChange(projects[this.state.selected])
+      this.props.onChange(projects[this.state.selected]);
     }
   }
 
   handleChange(event) {
     if (this.props.onChange) {
-      this.props.onChange(this.state.projects[event.target.value])
+      this.props.onChange(this.state.projects[event.target.value]);
     }
     this.setState({
       ...this.state,
       selected: event.target.value,
-    })
+    });
   }
 
   componentDidMount() {
     const self = this;
-    fetchOwnProjects({ accessToken:this.props.accessToken }).then(result => self.setProjects(result))
+    fetchOwnProjects({ accessToken:this.props.accessToken }).then(result => self.setProjects(result));
   }
 
   render() {
@@ -57,8 +57,8 @@ class ProjectSelection extends React.Component {
           )
         }
       </>
-    )
+    );
   }
 }
 
-export default ProjectSelection
+export default ProjectSelection;

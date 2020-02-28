@@ -39,7 +39,7 @@ export default class StoreListComponent extends React.Component {
     }
 
     redirect(id) {
-        this.setState({ redirect: id })
+        this.setState({ redirect: id });
     }
 
     componentDidMount() {
@@ -78,24 +78,6 @@ export default class StoreListComponent extends React.Component {
                     </>
                 )}
             </SessionContext.Consumer>
-        )
-        /*
-        {sessionState => (
-                    <>
-                        <List>
-                            {rows.map(row => (
-                                <Link to={fullPathOfStore(row.id)} className={classes.noDecoration}>
-                                    <ListItem button>
-                                        <ListItemIcon>
-                                            <InboxIcon />
-                                        </ListItemIcon>
-                                        <ListItemText primary={row.name} />
-                                        </ListItem>
-                                </Link>
-                            ))}
-                        </List>
-                    </>
-                )}
-                */
+        );
     }
 }

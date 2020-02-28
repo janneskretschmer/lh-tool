@@ -59,15 +59,15 @@ export default class SlotListComponent extends React.Component {
     }
 
     handleToggleShowFilters = () => {
-        this.setState({ showFilters: !this.state.showFilters })
+        this.setState({ showFilters: !this.state.showFilters });
     }
 
     componentDidMount() {
-        fetchSlotsByStore({ accessToken: this.props.sessionState.accessToken, storeId: this.props.storeId }).then(slots => this.setState({ slots }))
+        fetchSlotsByStore({ accessToken: this.props.sessionState.accessToken, storeId: this.props.storeId }).then(slots => this.setState({ slots }));
     }
 
     render() {
-        const { classes, store } = this.props
+        const { classes, store } = this.props;
         const { slots, showFilters } = this.state;
         return (
             <SessionContext.Consumer>

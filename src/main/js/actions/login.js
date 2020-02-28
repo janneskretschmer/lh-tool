@@ -13,7 +13,7 @@ export function login({ loginState, email, password, handleLoginFailure }) {
             if (handleLoginFailure) {
                 handleLoginFailure(err);
             }
-        })
+        });
 }
 
 export function logout({ loginState }) {

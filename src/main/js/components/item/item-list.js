@@ -189,43 +189,43 @@ export default class ItemListComponent extends React.Component {
     }
 
     handleToggleShowFilters = () => {
-        this.setState({ showFilters: !this.state.showFilters })
+        this.setState({ showFilters: !this.state.showFilters });
     }
 
     handleChangeSearchTechnicalCrew = event => {
-        this.setState({ searchTechnicalCrew: event.target.value })
+        this.setState({ searchTechnicalCrew: event.target.value });
     }
 
     handleChangeSearchTag = event => {
-        this.setState({ searchTag: event.target.value })
+        this.setState({ searchTag: event.target.value });
     }
 
     handleChangeSearchStore = event => {
-        this.setState({ searchStore: event.target.value })
+        this.setState({ searchStore: event.target.value });
     }
 
     handleChangeSearchSlot = event => {
-        this.setState({ searchSlot: event.target.value })
+        this.setState({ searchSlot: event.target.value });
     }
 
     getState(item) {
         if (item.broken) {
-            return "Defekt"
+            return "Defekt";
         }
         let lastRental = item.rentals[item.rentals.length - 1];
         if (!lastRental.givenBack) {
             return "Ausgeliehen an " + lastRental.userName;
         }
-        return "Verfügbar"
+        return "Verfügbar";
     }
 
     render() {
-        const { classes, storeId, slotId } = this.props
+        const { classes, storeId, slotId } = this.props;
         const { rows, rowsPerPage, page, showFilters, searchTechnicalCrew, searchTag, searchStore, searchSlot, selected } = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
         const singlePage = emptyRows < rows.length;
         if (this.state.redirect) {
-            return (<Redirect to={fullPathOfItem(this.state.redirect)} />)
+            return (<Redirect to={fullPathOfItem(this.state.redirect)} />);
         }
         return (
             <SessionContext.Consumer>

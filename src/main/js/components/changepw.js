@@ -42,19 +42,19 @@ export default class ChangePasswordComponent extends React.Component {
     success() {
         this.setState({
             success: true,
-        })
+        });
     }
 
     redirect() {
         this.setState({
             redirect: true,
-        })
+        });
     }
 
     checkDataprotection(event){
         this.setState({
             checkedDataprotection: event.target.checked,
-        })
+        });
     }
 
     render() {
@@ -63,7 +63,7 @@ export default class ChangePasswordComponent extends React.Component {
                 {sessionState => {
                     const credentials = this.getUserCredentials(sessionState);
 
-                    const {redirect, success, checkedDataprotection} = this.state
+                    const {redirect, success, checkedDataprotection} = this.state;
 
                     if (!credentials) {
                         return (
@@ -76,13 +76,13 @@ export default class ChangePasswordComponent extends React.Component {
                                     So kannst du dein Passwort nicht ändern
                                 </Typography>
                             </>
-                        )
+                        );
                     }
 
                     if (redirect) {
                         return (
                             <Redirect to={fullPathOfLogin()} />
-                        )
+                        );
                     }
 
                     if (success) {
@@ -97,7 +97,7 @@ export default class ChangePasswordComponent extends React.Component {
                                 >
                                 </SimpleDialog>
                             </>
-                        )
+                        );
                     }
 
                     return (

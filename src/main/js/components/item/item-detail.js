@@ -32,7 +32,7 @@ export default class ItemDetailComponent extends React.Component {
     changeEditState(edit) {
         this.setState({
             edit
-        })
+        });
     }
 
     loadItem() {
@@ -55,9 +55,9 @@ export default class ItemDetailComponent extends React.Component {
                     unit: 'Stück',
                     width: '',
                 },
-            })
+            });
         } else {
-            fetchItem({ accessToken: this.props.sessionState.accessToken, itemId: id }).then(item => this.setState({ item }))
+            fetchItem({ accessToken: this.props.sessionState.accessToken, itemId: id }).then(item => this.setState({ item }));
         }
     }
 
@@ -73,7 +73,7 @@ export default class ItemDetailComponent extends React.Component {
             item: this.state.item,
         }).then(item => this.setState({
             savingIfBroken: false,
-        })))
+        })));
 
     }
 
@@ -82,10 +82,10 @@ export default class ItemDetailComponent extends React.Component {
     }
 
     render() {
-        const { classes } = this.props
-        const { item, savingIfBroken } = this.state
+        const { classes } = this.props;
+        const { item, savingIfBroken } = this.state;
         if (!item) {
-            return (<CircularProgress />)
+            return (<CircularProgress />);
         }
         return (
             <>
@@ -121,6 +121,6 @@ export default class ItemDetailComponent extends React.Component {
                         </>
                     )}
             </>
-        )
+        );
     }
 }

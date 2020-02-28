@@ -89,19 +89,19 @@ class ProjectCalendar extends React.Component {
         this.setState({
             month,
             data:  getProjectMonth(month, this.state.project.startDate, this.state.project.endDate),
-        },this.loadDayContent)
+        },this.loadDayContent);
     }
 
     loadDayContent() {
         if(this.props.loadDayContent) {
-            this.props.loadDayContent(this.state.data,this.state.project.id, this.setData.bind(this))
+            this.props.loadDayContent(this.state.data,this.state.project.id, this.setData.bind(this));
         }
     }
 
     setData(data) {
         this.setState({
             data,
-        })
+        });
     }
 
 
@@ -111,7 +111,7 @@ class ProjectCalendar extends React.Component {
         const {data, month, project} = this.state;
 
         if(!data){
-            return (<><ProjectSelection  onChange={project => this.switchProject(project)} accessToken={sessionState.accessToken} /></>)
+            return (<><ProjectSelection  onChange={project => this.switchProject(project)} accessToken={sessionState.accessToken} /></>);
         }
 
         return (
@@ -158,7 +158,7 @@ class ProjectCalendar extends React.Component {
                     </tbody>
                 </table>
             </>
-        )
+        );
     }
 }
 

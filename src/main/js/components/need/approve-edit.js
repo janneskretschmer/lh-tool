@@ -47,7 +47,7 @@ const styles = theme => ({
 
 class NeedApproveEditComponent extends React.Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
             users: props.need.users,
             approved: props.need.approvedCount,
@@ -61,7 +61,7 @@ class NeedApproveEditComponent extends React.Component {
             this.setState(prevState => ({
                 users: props.need.users,
                 approved: props.need.approvedCount,
-            }), this.componentDidMount)
+            }), this.componentDidMount);
         }
     }
 
@@ -74,46 +74,46 @@ class NeedApproveEditComponent extends React.Component {
                     fetchUser({ accessToken: this.props.sessionState.accessToken, userId: user.userId }).then(result => {
                         self.setState({
                             users: self.state.users.map(user => {
-                                if (user.userId === result.id) {
-                                    user.firstName = result.firstName
-                                    user.lastName = result.lastName
+                                if(user.userId === result.id) {
+                                    user.firstName = result.firstName;
+                                    user.lastName = result.lastName;
                                 }
-                                return user
+                                return user;
                             })
-                        })
-                    })
+                        });
+                    });
                 }
             });
         }
     }
 
     handleToggle = (value, newState) => {
-        value.state = newState
+        value.state = newState;
         this.setState(prevState => {
-            let users = prevState.users.map(user => user.userId === value.userId ? value : user)
-            let approved = users.filter(user => user.state === 'APPROVED').length
+            let users = prevState.users.map(user => user.userId === value.userId ? value : user);
+            let approved = users.filter(user => user.state === 'APPROVED').length;
             let res = {
                 ...prevState,
                 users,
                 approved,
-            }
-            let needId = this.props.need.id
+            };
+            let needId = this.props.need.id;
             if (!res.changes.has(needId)) {
-                res.changes.set(needId, new Map())
+                res.changes.set(needId, new Map());
             }
-            res.changes.get(needId).set(value.userId, newState)
+            res.changes.get(needId).set(value.userId, newState);
 
-            this.props.onApprove(approved)
+            this.props.onApprove(approved);
 
-            return res
+            return res;
         });
     };
 
     save() {
-        let requests = []
+        let requests = [];
         this.setState({
             saving: true,
-        })
+        });
         for (let [userId, newState] of this.state.changes.get(this.props.need.id)) {
             requests.push(
                 changeApplicationStateForNeed({
@@ -123,18 +123,18 @@ class NeedApproveEditComponent extends React.Component {
                     state: newState,
                     handleFailure: err => { }
                 })
-            )
+            );
         };
         Promise.all(requests).then(() => this.setState({
             saving: false,
             changes: new Map(),
-        }))
+        }));
     }
 
     render() {
-        const { classes, label, need } = this.props
-        const { users, approved, changes, saving } = this.state
-        const thingsToSave = !!(changes.has(need.id) && changes.get(need.id).size > 0)
+        const { classes, label, need } = this.props;
+        const { users, approved, changes, saving } = this.state;
+        const thingsToSave = !!(changes.has(need.id) && changes.get(need.id).size > 0);
         return (
             <>
                 <Prompt when={thingsToSave} message="Es wurden nicht alle Änderungen gespeichert. Möchtest du diese Seite trotzdem verlassen?" />
@@ -184,7 +184,7 @@ class NeedApproveEditComponent extends React.Component {
                                                     </>
                                                 )}
                                         </ListItem>
-                                    )
+                                    );
                                 })}
                             </List>
                         </>
@@ -201,7 +201,7 @@ class NeedApproveEditComponent extends React.Component {
 
                 </div>
             </>
-        )
+        );
     }
 }
 

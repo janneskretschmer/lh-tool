@@ -1,16 +1,15 @@
-import React, { useState } from 'react';
-import Checkbox from '@material-ui/core/Checkbox';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Button from '@material-ui/core/Button';
-import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Icon from '@material-ui/core/Icon';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
 import Hidden from '@material-ui/core/Hidden';
-import { Link } from 'react-router-dom'
+import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
-import SimpleDialog from './simple-dialog.js'
+import { withStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
+import React, { useState } from 'react';
+import SimpleDialog from './simple-dialog.js';
 
 const styles = theme => ({
     input: {
@@ -44,7 +43,7 @@ const UserComponent = props => {
     const [showDetails, setShowDetails] = useState(false);
     const [dirty, setDirty] = useState(false);
     const newUser = !props.user;
-    const [user, setUser] = useState(newUser ? userOrDefault() : props.user)
+    const [user, setUser] = useState(newUser ? userOrDefault() : props.user);
 
     const disableSaveButton = !(onSave && newUser) && !(onUpdate && !newUser);
     const disableEditButton = !onUpdate;
@@ -65,7 +64,7 @@ const UserComponent = props => {
             setEdit(false);
         }
         
-    }
+    };
 
     // TODO Ugly fix to handle state managemant in stateless component 😜
     const handleDelete = () => {
@@ -77,10 +76,10 @@ const UserComponent = props => {
                 setDirty(true);
             }
         }
-    }
+    };
 
     if (dirty) {
-        setEdit(!props.user)
+        setEdit(!props.user);
         setUser(userOrDefault(props.user));
         setDirty(false);
     }
@@ -253,8 +252,8 @@ const UserComponent = props => {
                 </>)
             }
         </div>
-    )
-}
+    );
+};
 
 const EmailLink = ({email, asIcon}) =>{ 
     if(asIcon){
@@ -264,7 +263,7 @@ const EmailLink = ({email, asIcon}) =>{
     }else{
         return (<a href={'mailto:'+email}>{email}</a>);
     }
-}
+};
 
 const DeleteButton = ({shown, disabled, userName, onDelete}) => 
     (<SimpleDialog
@@ -275,17 +274,17 @@ const DeleteButton = ({shown, disabled, userName, onDelete}) =>
         onOK={onDelete}
     >
         <SimpleIconButton icon="delete" disabled={disabled} shown={shown}/>
-    </SimpleDialog>)
+    </SimpleDialog>);
 
 const SimpleIconButton = ({shown, icon, disabled, onClick}) => {
     if(shown){
         return (<IconButton color="secondary" disabled={disabled} onClick={onClick}>
             <Icon>{icon}</Icon>
-        </IconButton>) 
+        </IconButton>); 
     }else{
         return null;
     }
-}
+};
 
 
 
