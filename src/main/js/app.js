@@ -15,6 +15,9 @@ const theme = createMuiTheme({
 	status: {
 		danger: 'orange',
 	},
+	typography: {
+		useNextVariants: true,
+	},
 });
 
 const ThemedRoot = () => (
