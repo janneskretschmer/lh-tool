@@ -21,4 +21,6 @@ public interface ProjectService extends BasicEntityService<Project, Long> {
 	Collection<ProjectDto> getProjectDtos();
 
 	Collection<Project> getOwnProjects();
+
+	boolean isOwnProject(Long projectId) throws DefaultException;
 }

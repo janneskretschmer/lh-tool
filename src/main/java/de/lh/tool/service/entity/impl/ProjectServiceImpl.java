@@ -105,4 +105,10 @@ public class ProjectServiceImpl extends BasicMappableEntityServiceImpl<ProjectRe
 				&& project.getUsers().contains(userService.getCurrentUser());
 	}
 
+	@Override
+	@Transactional
+	public boolean isOwnProject(Long projectId) throws DefaultException {
+		return isOwnProject(findById(projectId).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID)));
+	}
+
 }

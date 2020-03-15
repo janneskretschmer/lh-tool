@@ -38,7 +38,7 @@ public class ProjectServiceTest {
 
 	@Test
 	public void testIsOwnProject() {
-		assertFalse(projectService.isOwnProject(null));
+		assertFalse(projectService.isOwnProject((Project) null));
 		assertFalse(projectService.isOwnProject(new Project()));
 		Mockito.when(userService.getCurrentUser()).thenReturn(User.builder().email("email").build());
 		assertFalse(projectService.isOwnProject(new Project()));

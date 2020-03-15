@@ -2,11 +2,12 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import ProjectSelection from './project-selection';
-import { requiresLogin, getProjectMonth, getMonthOffsetWithinRange, isMonthOffsetWithinRange, getMonthNameForOffset } from '../../util';
+import { requiresLogin, getProjectMonth, getMonthOffsetWithinRange, isMonthOffsetWithinRange, getMonthNameForOffset, withContext } from '../../util';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import IconButton from '@material-ui/core/IconButton';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { ProjectsContext } from '../../providers/projects-provider';
 
 const styles = theme => ({
     calendar: {
@@ -20,8 +21,7 @@ const styles = theme => ({
     },
     calendarCell: {
         width: '20%',
-        border: '1px solid '+theme.palette.primary.light,
-        textAlign: 'center',
+        border: '1px solid ' + theme.palette.primary.light,
         padding: theme.spacing.unit,
         verticalAlign: 'top',
     },
@@ -31,7 +31,7 @@ const styles = theme => ({
     dayName: {
         padding: theme.spacing.unit,
         color: theme.palette.secondary.dark,
-        border: '1px solid '+theme.palette.primary.light,
+        border: '1px solid ' + theme.palette.primary.light,
         fontWeight: 'normal',
         fontSize: 'large',
     },
@@ -65,101 +65,86 @@ const styles = theme => ({
 });
 
 @withStyles(styles)
-class ProjectCalendar extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            project: null,
-            data: null,
-            month:0,
-        };
-    }
-
-    switchProject(project) {
-        let month =  getMonthOffsetWithinRange(this.state.month, project.startDate, project.endDate);
-        this.setState({
-            project,
-            month,
-            data: getProjectMonth(month, project.startDate, project.endDate),
-        },this.loadDayContent);
-    }
+class StatefulProjectCalendar extends React.Component {
 
     setMonth(month) {
-        this.setState({
-            month,
-            data:  getProjectMonth(month, this.state.project.startDate, this.state.project.endDate),
-        },this.loadDayContent);
+        this.props.projectsState.setMonth(month);
     }
-
-    loadDayContent() {
-        if(this.props.loadDayContent) {
-            this.props.loadDayContent(this.state.data,this.state.project.id, this.setData.bind(this));
-        }
-    }
-
-    setData(data) {
-        this.setState({
-            data,
-        });
-    }
-
 
 
     render() {
-        const {classes, sessionState} = this.props;
-        const {data, month, project} = this.state;
-
-        if(!data){
-            return (<><ProjectSelection  onChange={project => this.switchProject(project)} accessToken={sessionState.accessToken} /></>);
-        }
+        const { classes, sessionState } = this.props;
+        const data = this.props.projectsState.selectedMonthCalendarData;
+        const project = this.props.projectsState.getSelectedProject();
 
         return (
             <>
                 <div className={classes.header}>
                     <div className={classes.projectWrapper}>
-                        <ProjectSelection  onChange={project => this.switchProject(project)} accessToken={sessionState.accessToken} />
+                        <ProjectSelection />
                     </div>
-                    <div className={classes.month}>
-                        <IconButton onClick={() => this.setMonth(month - 1)} disabled={!isMonthOffsetWithinRange(month-1, project.startDate, project.endDate)}>
-                            <NavigateBeforeIcon />
-                        </IconButton>
-                        {data.monthName}
-                        <IconButton onClick={() => this.setMonth(month + 1)} disabled={!isMonthOffsetWithinRange(month+1, project.startDate, project.endDate)}>
-                            <NavigateNextIcon />
-                        </IconButton>
-                    </div>
+                    {data ? (
+                        <div className={classes.month}>
+                            <IconButton onClick={() => this.setMonth(data.monthOffset - 1)} disabled={!isMonthOffsetWithinRange(data.monthOffset - 1, project.startDate, project.endDate)}>
+                                <NavigateBeforeIcon />
+                            </IconButton>
+                            {data.monthName}
+                            <IconButton onClick={() => this.setMonth(data.monthOffset + 1)} disabled={!isMonthOffsetWithinRange(data.monthOffset + 1, project.startDate, project.endDate)}>
+                                <NavigateNextIcon />
+                            </IconButton>
+                        </div>
+                    ) : (
+                            <CircularProgress size={15} />
+                        )}
 
                 </div>
-                <table className={classes.calendar}>
-                    <thead>
-                        <tr>
-                            <th className={classes.dayName}>Dienstag</th>
-                            <th className={classes.dayName}>Mittwoch</th>
-                            <th className={classes.dayName}>Donnerstag</th>
-                            <th className={classes.dayName}>Freitag</th>
-                            <th className={classes.dayName}>Samstag</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {Array.from(Array(data.days.length/5)).map((_,i) =>
-                                (<tr className={classes.calendarRow} key={i}>
-                                    {Array.from(Array(5)).map((_,j) => (
-                                        <td className={classNames({
+                {data && (
+                    <table className={classes.calendar}>
+                        <thead>
+                            <tr>
+                                <th className={classes.dayName}>Montag</th>
+                                <th className={classes.dayName}>Dienstag</th>
+                                <th className={classes.dayName}>Mittwoch</th>
+                                <th className={classes.dayName}>Donnerstag</th>
+                                <th className={classes.dayName}>Freitag</th>
+                                <th className={classes.dayName}>Samstag</th>
+                                <th className={classes.dayName}>Sonntag</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {Array.from(Array(data.days.length / 7)).map((_, i) => (
+                                <tr className={classes.calendarRow} key={i}>
+                                    {Array.from(Array(7)).map((_, j) => {
+                                        const day = data.days[i * 7 + j];
+                                        const contentWrapper = this.props.children && this.props.children.find(child => child.props.date.isSame(day.date, 'day'));
+                                        const content = contentWrapper && contentWrapper.props.children;
+                                        return (
+                                            <td className={classNames({
                                                 [classes.calendarCell]: true,
-                                                [classes.disabled]: data.days[i*5+j].disabled,
+                                                [classes.disabled]: day.disabled,
                                             })} key={j}>
-                                            <div className={classes.day}>{data.days[i*5+j].date.date()}</div>
-                                            {data.days[i*5+j].content ? data.days[i*5+j].content : !data.days[i*5+j].disabled ? (<CircularProgress size={15}/>) : null}
-                                        </td>
-                                    ))}
+                                                <div className={classes.day}>{day.date.date()}</div>
+                                                {content ? content : !day.disabled ? (<CircularProgress size={15} />) : null}
+                                            </td>
+                                        );
+                                    })}
                                 </tr>
                             ))}
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                )}
             </>
         );
     }
 }
 
+const ProjectCalendar = props => (
+    <>
+        <ProjectsContext.Consumer>
+            {projectsState => (
+                (<StatefulProjectCalendar {...props} projectsState={projectsState} />)
+            )}
+        </ProjectsContext.Consumer>
+    </>
+);
 export default requiresLogin(ProjectCalendar);

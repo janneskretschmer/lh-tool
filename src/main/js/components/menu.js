@@ -114,36 +114,36 @@ const ItemsItem = () => (
 );
 
 const ChangePwItem = () => (
-    <Link to={fullPathOfChangePw()} style={linkStyle}>
-        <ListItem button>
-            <ListItemIcon>
-                <SecurityIcon />
-            </ListItemIcon>
-            <ListItemText primary="Passwort ändern" />
-        </ListItem>
-    </Link>
+  <Link to={fullPathOfChangePw()} style={linkStyle}>
+    <ListItem button>
+      <ListItemIcon>
+        <SecurityIcon />
+      </ListItemIcon>
+      <ListItemText primary="Passwort ändern" />
+    </ListItem>
+  </Link>
 );
 
 const LoginItem = () => (
-    <Link to={fullPathOfLogin()} style={linkStyle}>
-        <ListItem button>
-            <ListItemIcon>
-                <VpnKeyIcon />
-            </ListItemIcon>
-            <ListItemText primary="Anmelden" />
-        </ListItem>
-    </Link>
+  <Link to={fullPathOfLogin()} style={linkStyle}>
+    <ListItem button>
+      <ListItemIcon>
+        <VpnKeyIcon />
+      </ListItemIcon>
+      <ListItemText primary="Anmelden" />
+    </ListItem>
+  </Link>
 );
 
 const LogoutItem = props => (
-    <ListItem button onClick={() => {
-        logout({ loginState: props.loginState });
-    }}>
-        <ListItemIcon>
-            <ExitToAppIcon />
-        </ListItemIcon>
-        <ListItemText primary="Abmelden" />
-    </ListItem>
+  <ListItem button onClick={() => {
+    logout({ loginState: props.loginState });
+  }}>
+    <ListItemIcon>
+      <ExitToAppIcon />
+    </ListItemIcon>
+    <ListItemText primary="Abmelden" />
+  </ListItem>
 );
 
 const ImprintItem = () => (
@@ -170,14 +170,14 @@ const DataProtectionItem = () => (
 
 // TODO Settings not implemented
 const SettingsItem = () => (
-    <a href="javascript:alert('TODO: Einstellungen implementieren u.a. zum Pflegen von Gewerken')" style={linkStyle}>
-        <ListItem button>
-            <ListItemIcon>
-                <SettingsIcon />
-            </ListItemIcon>
-            <ListItemText primary="Einstellungen" />
-        </ListItem>
-    </a>
+  <a href="javascript:alert('TODO: Einstellungen implementieren u.a. zum Pflegen von Gewerken')" style={linkStyle}>
+    <ListItem button>
+      <ListItemIcon>
+        <SettingsIcon />
+      </ListItemIcon>
+      <ListItemText primary="Einstellungen" />
+    </ListItem>
+  </a>
 );
 
 export default function AppMenu() {
@@ -192,8 +192,8 @@ export default function AppMenu() {
           <List>
             <ProjectsItem />
             <NeedQuantitiesItem />
-            <NeedApplyItem />
-            <NeedApproveItem />
+            {/* <NeedApplyItem />
+            <NeedApproveItem /> */}
             <StoresItem />
             <ItemsItem />
           </List>

@@ -3,6 +3,7 @@ package de.lh.tool.service.entity.impl;
 import static com.google.common.collect.Lists.newArrayList;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -17,6 +18,8 @@ import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.Need;
 import de.lh.tool.domain.model.NeedUser;
 import de.lh.tool.domain.model.NeedUserState;
+import de.lh.tool.domain.model.Project;
+import de.lh.tool.domain.model.ProjectHelperType;
 import de.lh.tool.domain.model.User;
 import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.repository.NeedUserRepository;
@@ -26,6 +29,7 @@ import de.lh.tool.service.entity.interfaces.NeedUserService;
 import de.lh.tool.service.entity.interfaces.ProjectService;
 import de.lh.tool.service.entity.interfaces.UserRoleService;
 import de.lh.tool.service.entity.interfaces.UserService;
+import lombok.NonNull;
 
 @Service
 public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUserRepository, NeedUser, NeedUserDto, Long>
@@ -66,7 +70,7 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 			if (NeedUserState.APPROVED.equals(needUser.getState())) {
 				needUser.setState(NeedUserState.NONE);
 				userService
-						.findByProjectIdAndRoleIgnoreCase(needUser.getNeed().getProject().getId(),
+						.findByProjectIdAndRoleIgnoreCase(getProjectWithIdByNeedUser(needUser).getId(),
 								UserRole.ROLE_LOCAL_COORDINATOR)
 						.stream().forEach(u -> mailService.sendNeedUserStateChangedMailToCoordinator(needUser, u));
 			}
@@ -112,8 +116,14 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 
 	}
 
+	private @NonNull Project getProjectWithIdByNeedUser(NeedUser needUser) throws DefaultException {
+		Optional<@NonNull Project> project = Optional.ofNullable(needUser).map(NeedUser::getNeed)
+				.map(Need::getProjectHelperType).map(ProjectHelperType::getProject).filter(p -> p.getId() != null);
+		return project.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_WRONG_ID_PROVIDED));
+	}
+
 	private NeedUserDto saveNeedUser(NeedUser needUser) throws DefaultException {
-		if ((!projectService.isOwnProject(needUser.getNeed().getProject())
+		if ((!projectService.isOwnProject(getProjectWithIdByNeedUser(needUser))
 				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT))
 				|| (needUser.getUser() != userService.getCurrentUser()
 						&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_USER))) {
@@ -126,7 +136,7 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 	@Transactional
 	public NeedUserDto findDtoByNeedIdAndUserId(Long needId, Long userId) throws DefaultException {
 		NeedUser needUser = findByNeedIdAndUserId(needId, userId);
-		if (!projectService.isOwnProject(needUser.getNeed().getProject())
+		if (!projectService.isOwnProject(getProjectWithIdByNeedUser(needUser))
 				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT)) {
 			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
 		}
@@ -147,7 +157,7 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 		Need need = needService.findById(needId).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
 		List<NeedUser> needUserList = newArrayList(
 				getRepository().findByNeedOrderByUser_LastNameAscUser_FirstNameAsc(need));
-		if (!(needUserList.size() > 0 && projectService.isOwnProject(needUserList.get(0).getNeed().getProject()))
+		if (!(needUserList.size() > 0 && projectService.isOwnProject(getProjectWithIdByNeedUser(needUserList.get(0))))
 				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT)) {
 			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
 		}

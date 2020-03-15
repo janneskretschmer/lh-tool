@@ -2,7 +2,7 @@ import React from 'react';
 import { resolve } from 'react-resolver';
 import { SessionContext } from './session-provider';
 import { fetchOwnProjects } from '../actions/project';
-import { withContext } from '../util';
+import { withContext, getMonthOffsetWithinRange, getProjectMonth, isMonthOffsetWithinRange } from '../util';
 
 export const ProjectsContext = React.createContext();
 
@@ -11,10 +11,20 @@ export const ProjectsContext = React.createContext();
     return fetchOwnProjects({ accessToken: props.sessionState.accessToken });
 })
 export default class ProjectsProvider extends React.Component {
+    constructor(props) {
+        super(props);
+        const projects = props.initialProjectData;
+        const selectedProjectIndex = 0;
+        const selectedMonthCalendarData = getProjectMonth(
+            getMonthOffsetWithinRange(0, projects[selectedProjectIndex].startDate, projects[selectedProjectIndex].endDate),
+            projects[selectedProjectIndex].startDate, projects[selectedProjectIndex].endDate);
 
-    state = {
-        projects: this.props.initialProjectData,
-    };
+        this.state = {
+            projects,
+            selectedProjectIndex,
+            selectedMonthCalendarData,
+        };
+    }
 
     projectAdded = project => {
         this.setState(prevState => ({
@@ -61,13 +71,13 @@ export default class ProjectsProvider extends React.Component {
         }));
     };
 
-    userUpdated  = (user) => {
+    userUpdated = (user) => {
         this.setState(prevState => ({
             projects: prevState.projects.map(project => {
-                if(project.localCoordinators){
+                if (project.localCoordinators) {
                     project.localCoordinators = project.localCoordinators.map(tmpUser => tmpUser.id === user.id ? user : tmpUser);
                 }
-                if(project.publishers){
+                if (project.publishers) {
                     project.publishers = project.publishers.map(tmpUser => tmpUser.id === user.id ? user : tmpUser);
                 }
                 return project;
@@ -81,13 +91,42 @@ export default class ProjectsProvider extends React.Component {
                 if (project.localCoordinators) {
                     project.localCoordinators = project.localCoordinators.filter(user => user.id !== userId);
                 }
-                if(project.publishers){
+                if (project.publishers) {
                     project.publishers = project.publishers.filter(user => user.id !== userId);
                 }
                 return project;
             })
         }));
-    } 
+    }
+
+    selectProject(index) {
+        const selectedProjectIndex = Math.min(Math.max(index, 0), this.state.projects.length);
+        const project = this.state.projects[selectedProjectIndex];
+        const selectedMonthCalendarData = getProjectMonth(
+            getMonthOffsetWithinRange(0, project.startDate, project.endDate),
+            project.startDate, project.endDate);
+
+        this.setState(prevState => ({
+            selectedProjectIndex,
+            selectedMonthCalendarData,
+        }));
+    }
+
+    getSelectedProject() {
+        return this.state.projects[this.state.selectedProjectIndex];
+    }
+
+    setMonth(monthOffset) {
+        const project = this.getSelectedProject();
+        if (isMonthOffsetWithinRange(monthOffset, project.startDate, project.endDate)) {
+            const selectedMonthCalendarData = getProjectMonth(monthOffset, project.startDate, project.endDate);
+            this.setState({
+                selectedMonthCalendarData,
+            });
+        }
+    }
+
+
 
     render() {
         return (
@@ -99,6 +138,9 @@ export default class ProjectsProvider extends React.Component {
                     userAdded: this.userAdded,
                     userRemoved: this.userRemoved,
                     userUpdated: this.userUpdated,
+                    selectProject: this.selectProject.bind(this),
+                    getSelectedProject: this.getSelectedProject.bind(this),
+                    setMonth: this.setMonth.bind(this),
                 }}
             >
                 {this.props.children}

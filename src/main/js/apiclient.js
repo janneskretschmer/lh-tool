@@ -29,6 +29,12 @@ import {
     ITEM_TAGS,
     ITEM_HISTORY,
     TECHNICAL_CREW_PREFIX,
+    PROJECT_HELPER_TYPE_ID_VARIABLE,
+    DATE_VARIABLE,
+    PROJECT_HELPER_TYPES,
+    HELPER_TYPE_ID_VARIABLE,
+    WEEKDAY_VARIABLE,
+    HELPER_TYPE_PREFIX,
 
 } from './urlmappings';
 
@@ -63,8 +69,8 @@ function buildRequest({ method, path, authToken, queries, data }) {
     if (authToken) {
         pendingReq = pendingReq.set('Authorization', `Bearer ${authToken}`);
     }
-    pendingReq.set('Pragma','no-cache');
-    pendingReq.set('Cache-Control','no-cache');
+    pendingReq.set('Pragma', 'no-cache');
+    pendingReq.set('Cache-Control', 'no-cache');
     Object.keys(queries).forEach(queryKey => {
         pendingReq = pendingReq.query({
             // eslint-disable-next-line security/detect-object-injection
@@ -176,6 +182,12 @@ export const apiEndpoints = {
             method: 'POST',
             path: PROJECT_PREFIX + ID_USER_ID_EXTENSION,
             parameters: [ID_VARIABLE, USER_ID_VARIABLE],
+        },
+        getHelperTypes: {
+            method: 'GET',
+            path: PROJECT_PREFIX + PROJECT_HELPER_TYPES,
+            parameters: [ID_VARIABLE, HELPER_TYPE_ID_VARIABLE],
+            queries: [WEEKDAY_VARIABLE]
         }
     },
     user: {
@@ -213,12 +225,24 @@ export const apiEndpoints = {
             parameters: [ID_VARIABLE],
         },
     },
+    helperType: {
+        get: {
+            method: 'GET',
+            path: HELPER_TYPE_PREFIX + '/',
+            queries: [PROJECT_ID_VARIABLE, WEEKDAY_VARIABLE]
+        },
+        getById: {
+            method: 'GET',
+            path: HELPER_TYPE_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
+    },
     need: {
-        getOwn: {
+        getByProjectHelperTypeAndDate: {
             method: 'GET',
             // TODO Trailing '/' also necessary?
             path: NEED_PREFIX + '/',
-            queries: [PROJECT_ID_VARIABLE, NEED_START_DIFF_VARIABLE, NEED_END_DIFF_VARIABLE],
+            queries: [PROJECT_HELPER_TYPE_ID_VARIABLE, DATE_VARIABLE],
         },
         get: {
             method: 'GET',

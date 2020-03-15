@@ -3,17 +3,19 @@ import { withSnackbar } from 'notistack';
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { fetchOwnNeeds } from '../../actions/need';
-import { requiresLogin, setWaitingState } from '../../util';
+import { requiresLogin, setWaitingState, convertToReadableFormatWithoutYear } from '../../util';
 import ProjectCalendar from '../util/project-calendar';
 import NeedQuantityEditComponent from './quantity-edit';
+import NeedsProvider, { NeedsContext } from '../../providers/needs-provider';
+import ProjectsProvider, { ProjectsContext } from '../../providers/projects-provider';
+import { CircularProgress } from '@material-ui/core';
 
 const styles = theme => ({
-    quantityInput: {
-        minWidth: '105px',
-        width: '48%',
-        margin: '3px',
+    helperTypeName: {
+        marginTop: '15px',
+        marginBottom: '5px',
     },
-    quantityWrapper: {
+    inputWrapper: {
         width: '100%',
         display: 'flex',
         alignItems: 'center',
@@ -23,64 +25,85 @@ const styles = theme => ({
 
 @withStyles(styles)
 @withSnackbar
-class NeedQuantityComponent extends React.Component {
+class StatefulNeedQuantityComponent extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            project: null,
-            months: null,
-            month: 0,
-            day: null,
-        };
+            selectedMonth: null,
+            selectedProject: null,
+        }
     }
 
-    getQuantities(monthData, projectId, callback) {
-        const {classes, sessionState} = this.props;
-        fetchOwnNeeds({accessToken:sessionState.accessToken, userId:sessionState.currentUser.id, projectId, startDiff: monthData.startDiff, endDiff: monthData.endDiff}).then(result => {
-            callback(
-                {
-                    ...monthData,
-                    days: monthData.days.map(day => {
-                        let needs = result.get(day.date.valueOf());
-                        if(needs){
-                            day.content = (
-                                <>
-                                    <div className={classes.quantityWrapper}>
-                                        <NeedQuantityEditComponent need={needs.get('CONSTRUCTION_WORKER')} label="Bauhelfer"/>
-                                        <NeedQuantityEditComponent need={needs.get('KITCHEN_HELPER')} label="Küche"/>
-                                    </div>
-                                    <div className={classes.quantityWrapper}>
-                                        <NeedQuantityEditComponent need={needs.get('STORE_KEEPER')} label="Magaziner"/>
-                                        <NeedQuantityEditComponent need={needs.get('DRIVER')} label="Stadtfahrer"/>
-                                    </div>
-                                    <div className={classes.quantityWrapper}>
-                                        <NeedQuantityEditComponent need={needs.get('GATEKEEPER_MORNING')} label="Pforte Vormittag"/>
-                                        <NeedQuantityEditComponent need={needs.get('GATEKEEPER_AFTERNOON')} label="Pforte Nachmittag"/>
-                                    </div>
-                                    <div className={classes.quantityWrapper}>
-                                        <NeedQuantityEditComponent need={needs.get('CLEANER')} label="Putzen"/>
-                                    </div>
-                                </>
-                            );
-                        }
-                        return day;
-                    })
-                }
-            );
-        });
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (nextProps.projectsState.selectedMonthCalendarData.monthOffset !== prevState.selectedMonth
+            || nextProps.projectsState.selectedProjectIndex !== prevState.selectedProject) {
+            const projectId = nextProps.projectsState.getSelectedProject().id;
+            nextProps.projectsState.selectedMonthCalendarData.days.filter(day => !day.disabled)
+                .forEach(
+                    day => nextProps.needsState.loadHelperTypesWithNeedsByProjectIdAndDate(projectId, day.date, err => console.log(err))
+                );
+            return {
+                selectedMonth: nextProps.projectsState.selectedMonthCalendarData.monthOffset,
+                selectedProject: nextProps.projectsState.selectedProjectIndex,
+            }
+        }
+        return null;
     }
 
     render() {
-        const { classes, sessionState } = this.props;
+        const { classes, needsState } = this.props;
+        const projectId = this.props.projectsState.getSelectedProject().id;
+        const dayMap = needsState.projects && needsState.projects.has(projectId) && needsState.projects.get(projectId).days;
         setWaitingState(false);
         return (
             <>
                 <Helmet titleTemplate="%s › Bedarf" />
-                <ProjectCalendar loadDayContent={this.getQuantities.bind(this)}/>
+                <ProjectCalendar>
+                    {dayMap && Array.from(dayMap.keys()).map(dateString => (
+                        <div key={dateString} date={dayMap.get(dateString).date}>
+                            {dayMap.get(dateString).helperTypes && dayMap.get(dateString).helperTypes
+                                .map(
+                                    helperType => (
+                                        <div key={helperType.id}>
+                                            <div className={classes.helperTypeName}>
+                                                {helperType.name}
+                                            </div>
+                                            {helperType.shifts && helperType.shifts[0] && helperType.shifts[0].need ? helperType.shifts.map(shift => (
+                                                <div key={shift.id} className={classes.inputWrapper}>
+                                                    {shift.need ? (
+                                                        <NeedQuantityEditComponent
+                                                            projectHelperType={shift}
+                                                            label={shift.startTime + ' - ' + shift.endTime} />
+                                                    ) : (<CircularProgress size={15} />)}
+                                                </div>
+                                            )) : (<CircularProgress size={15} />)}
+                                        </div>
+                                    )
+                                )}
+                        </div>
+                    ))}
+                </ProjectCalendar>
             </>
         );
     }
 }
 
+const NeedQuantityComponent = props => (
+    <>
+        <ProjectsProvider>
+            <NeedsProvider>
+                <ProjectsContext.Consumer>
+                    {projectsState => (
+                        <NeedsContext.Consumer>
+                            {needsState =>
+                                (<StatefulNeedQuantityComponent {...props} needsState={needsState} projectsState={projectsState} />)
+                            }
+                        </NeedsContext.Consumer>
+                    )}
+                </ProjectsContext.Consumer>
+            </NeedsProvider>
+        </ProjectsProvider>
+    </>
+);
 export default requiresLogin(NeedQuantityComponent);

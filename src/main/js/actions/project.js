@@ -1,7 +1,7 @@
-import { apiRequest, apiEndpoints } from '../apiclient';
-import { ID_VARIABLE, USER_ID_VARIABLE, STORE_ID_VARIABLE } from '../urlmappings';
-import { fetchUsersByProjectIdAndRole } from './user';
 import moment from 'moment';
+import { apiEndpoints, apiRequest } from '../apiclient';
+import { HELPER_TYPE_ID_VARIABLE, ID_VARIABLE, USER_ID_VARIABLE, WEEKDAY_VARIABLE } from '../urlmappings';
+import { fetchUsersByProjectIdAndRole } from './user';
 
 function fetchAllUsersForProject({ projectId, accessToken }) {
     const localCoordinatorsPromise = fetchUsersByProjectIdAndRole({
@@ -116,4 +116,24 @@ export function addUserToProject({ accessToken, projectId, user, role, projectsS
         })
         // TODO Error message
         .catch(e => console.log(e));
+}
+
+export function fetchProjectHelperTypes(accessToken, projectId, helperTypeId, weekday, handleFailure) {
+    if (accessToken) {
+        return apiRequest({
+            apiEndpoint: apiEndpoints.project.getHelperTypes,
+            authToken: accessToken,
+            parameters: {
+                [ID_VARIABLE]: projectId,
+                [HELPER_TYPE_ID_VARIABLE]: helperTypeId,
+            },
+            queries: {
+                [WEEKDAY_VARIABLE]: weekday,
+            }
+        })
+            .then(result => result.response.content)
+            .catch(handleFailure);
+    } else {
+        return Promise.resolve([]);
+    }
 }

@@ -3,11 +3,11 @@ package de.lh.tool.service.rest;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-import java.util.Collection;
+import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,16 +41,16 @@ public class NeedRestService {
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of own needs")
 	@Secured(UserRole.RIGHT_NEEDS_GET)
-	public Resources<NeedDto> getOwn(
-			@RequestParam(required = false, name = UrlMappings.PROJECT_ID_VARIABLE) Long projectId,
-			@RequestParam(required = false, name = UrlMappings.NEED_START_DIFF_VARIABLE) Integer startDiff,
-			@RequestParam(required = false, name = UrlMappings.NEED_END_DIFF_VARIABLE) Integer endDiff)
+	public Resource<NeedDto> getOwnByProjectHelperTypeIdAndDate(
+			@RequestParam(required = true, name = UrlMappings.PROJECT_HELPER_TYPE_ID_VARIABLE) Long projectHelperTypeId,
+			@RequestParam(required = true, name = UrlMappings.DATE_VARIABLE) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date)
 			throws DefaultException {
 
-		Collection<NeedDto> dtoList = needService.getNeedDtos(projectId, startDiff, endDiff);
+		NeedDto dto = needService.getNeedDtoByProjectHelperTypeIdAndDate(projectHelperTypeId, date);
 
-		return new Resources<>(dtoList,
-				linkTo(methodOn(NeedRestService.class).getOwn(projectId, startDiff, endDiff)).withSelfRel());
+		return new Resource<>(dto,
+				linkTo(methodOn(NeedRestService.class).getOwnByProjectHelperTypeIdAndDate(projectHelperTypeId, date))
+						.withSelfRel());
 	}
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)

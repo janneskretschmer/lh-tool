@@ -7,11 +7,13 @@ import java.util.stream.StreamSupport;
 
 import org.modelmapper.ModelMapper;
 
+import de.lh.tool.domain.exception.DefaultException;
+
 /**
  * @param <E> Entity class
  * @param <D> Dto class
  */
-public interface MappableEntityService<E, D> {
+public interface MappableEntityService<E, D, I> extends BasicEntityService<E, I> {
 
 	default E convertToEntity(D dto) {
 		ModelMapper modelMapper = new ModelMapper();
@@ -42,5 +44,9 @@ public interface MappableEntityService<E, D> {
 	Class<D> getDtoClass();
 
 	Class<E> getEntityClass();
+
+	List<D> findAllDtos() throws DefaultException;
+
+	D findDtoById(I id) throws DefaultException;
 
 }

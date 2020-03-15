@@ -5,9 +5,10 @@ import { withSnackbar } from 'notistack';
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { fetchOwnNeeds } from '../../actions/need';
-import { requiresLogin, setWaitingState } from '../../util';
+import { requiresLogin, setWaitingState, withContext } from '../../util';
 import ProjectCalendar from '../util/project-calendar';
 import NeedApplyEditComponent from './apply-edit';
+import NeedsProvider, { NeedsContext } from '../../providers/needs-provider';
 
 const styles = theme => ({
     applyInput: {
@@ -42,7 +43,8 @@ const styles = theme => ({
 
 @withStyles(styles)
 @withSnackbar
-class NeedApplyComponent extends React.Component {
+@withContext('needsState', NeedsContext)
+class StatefulNeedApplyComponent extends React.Component {
 
     constructor(props) {
         super(props);
@@ -90,7 +92,12 @@ class NeedApplyComponent extends React.Component {
         });
     }
 
+    loadNeeds(monthData, projectId, callback) {
+        monthData.days.forEach(day => this.props.needsState.loadHelperTypesWithNeedsByProjectIdAndDate(projectId, day.date, err => console.log(err)));
+    }
+
     render() {
+        console.log(this.props.needsState);
         const { classes, sessionState } = this.props;
         setWaitingState(false);
         return (
@@ -113,10 +120,19 @@ class NeedApplyComponent extends React.Component {
                     <Button variant="contained" className={classes.rejected}>Aufgabe Bewerberanzahl/Bedarf</Button> &nbsp;Nicht zugeteilt, bitte bewerbe dich für ein anderes Datum.
                 </div>
                 <br />
-                <ProjectCalendar loadDayContent={this.getQuantities.bind(this)} />
+                <ProjectCalendar loadDayContent={(monthData, projectId, callback) => this.loadNeeds(monthData, projectId, callback)} />
             </>
         );
     }
 }
 
+const NeedApplyComponent = props => (
+    <>
+        <NeedsProvider>
+            <StatefulNeedApplyComponent {...props} />
+        </NeedsProvider>
+    </>
+);
 export default requiresLogin(NeedApplyComponent);
+
+

@@ -1,7 +1,5 @@
 package de.lh.tool.domain.dto;
 
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
@@ -14,14 +12,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class NeedDto {
+public class ProjectHelperTypeDto {
 
 	private Long id;
 
-	private Long projectHelperTypeId;
+	private Long projectId;
 
-	private Date date;
+	private Long helperTypeId;
 
-	private Integer quantity;
+	private Integer weekday;
+
+	private String startTime;
+
+	private String endTime;
 
 }

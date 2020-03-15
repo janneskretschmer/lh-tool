@@ -9,7 +9,13 @@ public abstract class UrlMappings {
 	public static final String ID_VARIABLE = "id";
 	public static final String USER_ID_VARIABLE = "user_id";
 	public static final String PROJECT_ID_VARIABLE = "project_id";
+	public static final String HELPER_TYPE_ID_VARIABLE = "helper_type_id";
+	public static final String PROJECT_HELPER_TYPE_ID_VARIABLE = "project_helper_type_id";
+
+	public static final String DATE_VARIABLE = "date";
 	public static final String ROLE_VARIABLE = "role";
+	public static final String STORE_VARIABLE = "store";
+	public static final String WEEKDAY_VARIABLE = "weekday";
 
 	public static final String NO_EXTENSION = "/";
 	public static final String ID_EXTENSION = "/{" + ID_VARIABLE + "}";
@@ -28,16 +34,17 @@ public abstract class UrlMappings {
 
 	public static final String PROJECT_PREFIX = REST_PREFIX + "/projects";
 	public static final String PROJECT_DELETE = PROJECT_PREFIX + ID_EXTENSION;
+	public static final String PROJECT_HELPER_TYPES = PROJECT_PREFIX + ID_EXTENSION + "/helper_types/{"
+			+ HELPER_TYPE_ID_VARIABLE + "}";
+
+	public static final String HELPER_TYPE_PREFIX = REST_PREFIX + "/helper_types";
 
 	public static final String NEED_PREFIX = REST_PREFIX + "/needs";
-	public static final String NEED_START_DIFF_VARIABLE = "start_diff";
-	public static final String NEED_END_DIFF_VARIABLE = "end_diff";
 
 	public static final String STORE_PREFIX = REST_PREFIX + "/stores";
 	public static final String STORE_PROJECTS = ID_EXTENSION + "/projects";
 
 	public static final String SLOT_PREFIX = REST_PREFIX + "/slots";
-	public static final String SLOT_STORE_VARIABLE = "store";
 
 	public static final String ITEM_PREFIX = REST_PREFIX + "/items";
 	public static final String ITEM_NOTES = ID_EXTENSION + "/notes";
