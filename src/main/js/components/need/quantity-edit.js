@@ -8,11 +8,11 @@ import { requiresLogin } from '../../util';
 
 const styles = theme => ({
     quantityInput: {
-        minWidth: '105px',
+        minWidth: '115px',
         width: '100%',
     },
     quantityUpdating: {
-        minWidth: '75px',
+        minWidth: '85px',
         width: 'calc(100% - 36px)',
     },
 });

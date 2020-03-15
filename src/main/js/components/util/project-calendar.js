@@ -14,7 +14,7 @@ const styles = theme => ({
         tableLayout: 'fixed',
         width: '100%',
         borderCollapse: 'collapse',
-        minWidth: '640px',
+        minWidth: '920px',
     },
     calendarRow: {
 
