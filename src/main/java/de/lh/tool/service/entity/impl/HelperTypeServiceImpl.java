@@ -12,9 +12,11 @@ import de.lh.tool.domain.dto.HelperTypeDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.HelperType;
+import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.repository.HelperTypeRepository;
 import de.lh.tool.service.entity.interfaces.HelperTypeService;
 import de.lh.tool.service.entity.interfaces.ProjectService;
+import de.lh.tool.service.entity.interfaces.UserRoleService;
 
 @Service
 public class HelperTypeServiceImpl
@@ -23,6 +25,9 @@ public class HelperTypeServiceImpl
 
 	@Autowired
 	ProjectService projectService;
+
+	@Autowired
+	UserRoleService userRoleService;
 
 	@Override
 	@Transactional
@@ -48,7 +53,8 @@ public class HelperTypeServiceImpl
 	@Override
 	@Transactional
 	public List<HelperTypeDto> findDtosByProjectIdAndWeekday(Long projectId, Integer weekday) throws DefaultException {
-		if (!projectService.isOwnProject(projectId)) {
+		if (!projectService.isOwnProject(projectId)
+				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_CHANGE_FOREIGN)) {
 			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
 		}
 		return convertToDtoList(getRepository().findByProjectIdAndWeekday(projectId, weekday));
