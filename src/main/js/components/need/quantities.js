@@ -36,6 +36,7 @@ class StatefulNeedQuantityComponent extends React.Component {
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
+        //new data needs to be loaded on every change of project or month
         if (nextProps.projectsState.selectedMonthCalendarData.monthOffset !== prevState.selectedMonth
             || nextProps.projectsState.selectedProjectIndex !== prevState.selectedProject) {
             const projectId = nextProps.projectsState.getSelectedProject().id;
@@ -74,7 +75,7 @@ class StatefulNeedQuantityComponent extends React.Component {
                                                     {shift.need ? (
                                                         <NeedQuantityEditComponent
                                                             projectHelperType={shift}
-                                                            label={shift.startTime + ' - ' + shift.endTime} />
+                                                            label={shift.endTime ? shift.startTime + ' - ' + shift.endTime : 'ab ' + shift.startTime} />
                                                     ) : (<CircularProgress size={15} />)}
                                                 </div>
                                             )) : (<CircularProgress size={15} />)}
@@ -91,19 +92,15 @@ class StatefulNeedQuantityComponent extends React.Component {
 
 const NeedQuantityComponent = props => (
     <>
-        <ProjectsProvider>
-            <NeedsProvider>
-                <ProjectsContext.Consumer>
-                    {projectsState => (
-                        <NeedsContext.Consumer>
-                            {needsState =>
-                                (<StatefulNeedQuantityComponent {...props} needsState={needsState} projectsState={projectsState} />)
-                            }
-                        </NeedsContext.Consumer>
-                    )}
-                </ProjectsContext.Consumer>
-            </NeedsProvider>
-        </ProjectsProvider>
+        <ProjectsContext.Consumer>
+            {projectsState => (
+                <NeedsContext.Consumer>
+                    {needsState =>
+                        (<StatefulNeedQuantityComponent {...props} needsState={needsState} projectsState={projectsState} />)
+                    }
+                </NeedsContext.Consumer>
+            )}
+        </ProjectsContext.Consumer>
     </>
 );
 export default requiresLogin(NeedQuantityComponent);

@@ -1,6 +1,6 @@
 import React from 'react';
 import { fetchHelperTypes } from '../actions/helper-type';
-import { createOrUpdateNeed, fetchNeedByProjectHelperTypeIdAndDate } from '../actions/need';
+import { createOrUpdateNeed, fetchNeedByProjectHelperTypeIdAndDate, fetchOwnNeedUser, fetchNeedUsers, changeApplicationStateForNeed } from '../actions/need';
 import { fetchProjectHelperTypes } from '../actions/project';
 import { convertToMUIFormat, withContext } from '../util';
 import { SessionContext } from './session-provider';
@@ -16,47 +16,24 @@ export default class NeedsProvider extends React.Component {
             projects: new Map(),
             openQuantityUpdates: [],
         };
-        // necessary to stop sending redundant http requests e.g. in quantities component
-        // otherwise loadHelperTypesWithNeedsByProjectIdAndDate bc state changes and it changes the state itself => infinite loop
-        // cleaner solutions welcome ;)
-        this.openLoadRequests = [];
     }
 
-    getOpenRequest(projectId, date) {
-        return this.openLoadRequests.find(request => request.projectId === projectId && request.date.isSame(date, 'day'));
-    }
-
-    startLoadRequest(projectId, date) {
-        if (!this.getOpenRequest(projectId, date)) {
-            this.openLoadRequests.push({ projectId, date });
-        }
-    }
-
-    stopLoadRequest(projectId, date) {
-        this.openLoadRequests = this.openLoadRequests.filter(request => request.projectId !== projectId || !request.date.isSame(date, 'day'));
-    }
-
-    loadHelperTypesWithNeedsByProjectIdAndDate(projectId, date, handleFailure) {
+    loadHelperTypesWithNeedsByProjectIdAndDate(projectId, date, handleFailure, callback) {
         if (!this.state.projects.has(projectId)) {
             this.setState(
                 prevState => ({
                     projects: prevState.projects.set(projectId, { id: projectId, days: new Map() })
                 }), () => {
-                    this.loadHelperTypesWithNeeds(projectId, date, handleFailure);
+                    this.loadHelperTypesWithNeeds(projectId, date, handleFailure, callback);
                 }
             )
         } else {
-            this.loadHelperTypesWithNeeds(projectId, date, handleFailure);
+            this.loadHelperTypesWithNeeds(projectId, date, handleFailure, callback);
         }
     }
 
-    loadHelperTypesWithNeeds(projectId, date, handleFailure) {
-        if (this.getOpenRequest(projectId, date)) {
-            return;
-        }
-
+    loadHelperTypesWithNeeds(projectId, date, handleFailure, callback) {
         if (!this.state.projects.get(projectId).days.has(convertToMUIFormat(date))) {
-            this.startLoadRequest(projectId, date);
             fetchHelperTypes(this.props.sessionState.accessToken, projectId, date.isoWeekday(), handleFailure).then(
                 helperTypes => Promise.all(helperTypes.map(
                     helperType =>
@@ -87,10 +64,75 @@ export default class NeedsProvider extends React.Component {
                         return {
                             projects,
                         };
-                    }, () => this.stopLoadRequest(projectId, date)
-                )
+                    }, () => {
+                        if (callback) {
+                            callback();
+                        }
+                    })
             );
         }
+    }
+
+    loadHelperTypesWithNeedsAndCurrentUserByProjectIdAndDate(projectId, date, handleFailure) {
+        if (!this.state.projects.has(projectId) || !this.state.projects.get(projectId).days.has(convertToMUIFormat(date))) {
+            this.loadHelperTypesWithNeedsByProjectIdAndDate(projectId, date, handleFailure,
+                () => this.loadHelperTypesWithNeedsAndCurrentUser(projectId, date, handleFailure));
+        } else {
+            this.loadHelperTypesWithNeedsAndCurrentUser(projectId, date, handleFailure)
+        }
+    }
+
+    loadHelperTypesWithNeedsAndCurrentUser(projectId, date, handleFailure) {
+        Promise.all(
+            this.state.projects.get(projectId).days.get(convertToMUIFormat(date)).helperTypes.map(
+                helperType => {
+                    return Promise.all(helperType.shifts.map(
+                        projectHelperType => {
+                            if (projectHelperType.need.id) {
+                                //two requests necessary, bc it returns a new needUser object with state NONE if userId is set as default
+                                //in the second request it wouldn't be in the list
+                                return fetchOwnNeedUser(this.props.sessionState.accessToken, projectHelperType.need.id, this.props.sessionState.currentUser.id).then(
+                                    needUsers => ({
+                                        ...projectHelperType,
+                                        need: {
+                                            ...projectHelperType.need,
+                                            state: needUsers.state,
+                                        }
+                                    })
+                                ).then(
+                                    //nesting necessary to keep own state
+                                    pht => fetchNeedUsers(this.props.sessionState.accessToken, pht.need.id).then(
+                                        needUsers => ({
+                                            ...pht,
+                                            need: {
+                                                ...pht.need,
+                                                users: needUsers
+                                            },
+                                        })
+                                    )
+                                ).catch(handleFailure);
+                            }
+                            return Promise.resolve(projectHelperType);
+                        }
+                    )).then(
+                        shifts => ({
+                            ...helperType,
+                            shifts,
+                        })
+                    )
+                }
+            )
+        ).then(
+            helperTypes => this.setState(
+                prevState => {
+                    let projects = new Map(prevState.projects);
+                    projects.get(projectId).days.set(convertToMUIFormat(date), { date, helperTypes });
+                    return {
+                        projects,
+                    };
+                }
+            )
+        );
     }
 
     getQuantityUpdate({ projectHelperTypeId, date }) {
@@ -142,19 +184,57 @@ export default class NeedsProvider extends React.Component {
         )
     }
 
-    setTest(test) {
-        this.setState({
-            test
-        })
+    updateOwnNeedState(projectHelperType, needId, state, handleFailure) {
+        this.updateNeedUserState(projectHelperType, { needId, state, userId: this.props.sessionState.currentUser.id }, handleFailure);
+
     }
+    updateNeedUserState(projectHelperType, needUser, handleFailure) {
+        changeApplicationStateForNeed(this.props.sessionState.accessToken, needUser, handleFailure).then(
+            needUser => this.setState(
+                prevState => {
+                    let projects = new Map(prevState.projects);
+                    projects.get(projectHelperType.projectId).days.get(convertToMUIFormat(projectHelperType.need.date)).helperTypes
+                        .find(helperType => helperType.id === projectHelperType.helperTypeId).shifts
+                        .find(pht => pht.id === projectHelperType.id)
+                        .need = {
+                        ...projectHelperType.need,
+                        state: needUser.state,
+                        users: needUser.state === 'NONE'
+                            ? projectHelperType.need.users.filter(nu => !nu.needId === needUser.needId || !nu.userId === needUser.userId)
+                            : projectHelperType.need.users.find(nu => nu.needId === needUser.needId && nu.userId === needUser.userId)
+                                ? projectHelperType.need.users.map(nu => nu.needId === needUser.needId && nu.userId === needUser.userId ? needUser : nu)
+                                : [...projectHelperType.need.users, needUser],
+                    }
+                    return {
+                        projects,
+                        openQuantityUpdates: prevState.openQuantityUpdates.filter(update => update.projectHelperTypeId !== need.projectHelperTypeId || !update.date.isSame(need.date, 'day')),
+                    };
+                }
+            )
+        );
+    }
+
+    getApprovedCount(need) {
+        return need && need.users ? need.users.filter(user => user.state === 'APPROVED').length : 0;
+    }
+
+    getAppliedCount(need) {
+        return need && need.users ? need.users.filter(user => user.state === 'APPLIED').length : 0;
+    }
+
     render() {
         return (
             <NeedsContext.Provider
                 value={{
                     ...this.state,
                     loadHelperTypesWithNeedsByProjectIdAndDate: this.loadHelperTypesWithNeedsByProjectIdAndDate.bind(this),
+                    loadHelperTypesWithNeedsAndCurrentUserByProjectIdAndDate: this.loadHelperTypesWithNeedsAndCurrentUserByProjectIdAndDate.bind(this),
                     updateNeedQuantity: this.updateNeedQuantity.bind(this),
                     getQuantityUpdate: this.getQuantityUpdate.bind(this),
+                    getAppliedCount: this.getAppliedCount.bind(this),
+                    getApprovedCount: this.getApprovedCount.bind(this),
+                    updateNeedUserState: this.updateNeedUserState.bind(this),
+                    updateOwnNeedState: this.updateOwnNeedState.bind(this),
                 }}
             >
                 {this.props.children}
@@ -162,3 +242,4 @@ export default class NeedsProvider extends React.Component {
         );
     }
 }
+

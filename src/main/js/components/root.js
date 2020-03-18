@@ -8,15 +8,13 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import classNames from 'classnames';
 import { Helmet } from 'react-helmet';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItem, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfSlot, fullPathOfStore, fullPathOfStores } from '../paths';
+import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItem, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfSlot, fullPathOfStore, fullPathOfStores, partialPathOfNeed } from '../paths';
 import SessionProvider from '../providers/session-provider';
 import ChangePasswordComponent from './changepw';
 import AppHeader from './header';
 import LoginComponent from './login';
 import AppMenu from './menu';
-import NeedApplyComponent from './need/apply';
-import NeedApproveComponent from './need/approve';
-import NeedQuantityComponent from './need/quantities';
+import NeedWrapperComponent from './need/need-wrapper';
 import ItemListComponent from './item/item-list';
 import ItemDetailComponent from './item/item-detail';
 import NotFoundComponent from './notfound';
@@ -128,9 +126,7 @@ export default class LHToolRoot extends React.Component {
                                 <Switch>
                                     <Route path={fullPathOfLogin()} component={LoginComponent} />
                                     <Route path={fullPathOfProjects()} component={ProjectsComponent} />
-                                    <Route path={fullPathOfNeedQuantities()} component={NeedQuantityComponent} />
-                                    <Route path={fullPathOfNeedApply()} component={NeedApplyComponent} />
-                                    <Route path={fullPathOfNeedApprove()} component={NeedApproveComponent} />
+                                    <Route path={partialPathOfNeed()} component={NeedWrapperComponent} exact={false} />
                                     <Route path={fullPathOfStore()} component={StoreDetailComponent} />
                                     <Route path={fullPathOfStores()} component={StoreListComponent} />
                                     <Route path={fullPathOfSlot()} component={SlotDetailComponent} />

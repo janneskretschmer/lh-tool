@@ -15,7 +15,8 @@ export const WEEKDAY_VARIABLE = 'weekday';
 
 export const NO_EXTENSION = '/';
 export const ID_EXTENSION = '/{' + ID_VARIABLE + '}';
-export const ID_USER_ID_EXTENSION = '/{' + ID_VARIABLE + '}/{' + USER_ID_VARIABLE + '}';
+export const ID_USER_EXTENSION = ID_EXTENSION + '/users';
+export const ID_USER_ID_EXTENSION = ID_USER_EXTENSION + '/{' + USER_ID_VARIABLE + '}';
 
 export const INFO_PREFIX = REST_PREFIX + '/info';
 export const INFO_HEARTBEAT = '/heartbeat';

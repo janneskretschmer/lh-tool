@@ -4,10 +4,12 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.Resources;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -112,7 +114,7 @@ public class NeedRestService {
 	}
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_USER_ID_EXTENSION)
-	@ApiOperation(value = "Get state between a relationship between a need and a user")
+	@ApiOperation(value = "Get state for a relationship between a need and a user")
 	@Secured(UserRole.RIGHT_NEEDS_USERS_GET)
 	public Resource<NeedUserDto> getNeedUserState(
 			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
@@ -121,5 +123,16 @@ public class NeedRestService {
 		NeedUserDto dto = needUserService.findDtoByNeedIdAndUserId(id, userId);
 
 		return new Resource<>(dto, linkTo(methodOn(NeedRestService.class).getNeedUserState(id, userId)).withSelfRel());
+	}
+
+	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_USER_EXTENSION)
+	@ApiOperation(value = "Get list of all users for need")
+	@Secured(UserRole.RIGHT_NEEDS_USERS_GET)
+	public Resources<NeedUserDto> getNeedUsers(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
+			throws DefaultException {
+
+		List<NeedUserDto> dtoList = needUserService.findDtosByNeedId(id);
+
+		return new Resources<>(dtoList, linkTo(methodOn(NeedRestService.class).getNeedUsers(id)).withSelfRel());
 	}
 }

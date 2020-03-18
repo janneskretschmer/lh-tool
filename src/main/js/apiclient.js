@@ -35,6 +35,7 @@ import {
     HELPER_TYPE_ID_VARIABLE,
     WEEKDAY_VARIABLE,
     HELPER_TYPE_PREFIX,
+    ID_USER_EXTENSION,
 
 } from './urlmappings';
 
@@ -267,6 +268,12 @@ export const apiEndpoints = {
         getStatus: {
             method: 'GET',
             path: NEED_PREFIX + ID_USER_ID_EXTENSION,
+            parameters: [ID_VARIABLE, USER_ID_VARIABLE],
+        },
+        getUsers: {
+            method: 'GET',
+            path: NEED_PREFIX + ID_USER_EXTENSION,
+            parameters: [ID_VARIABLE],
         }
     },
     store: {

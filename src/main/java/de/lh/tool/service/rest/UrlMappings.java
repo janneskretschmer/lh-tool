@@ -19,7 +19,8 @@ public abstract class UrlMappings {
 
 	public static final String NO_EXTENSION = "/";
 	public static final String ID_EXTENSION = "/{" + ID_VARIABLE + "}";
-	public static final String ID_USER_ID_EXTENSION = "/{" + ID_VARIABLE + "}/{" + USER_ID_VARIABLE + "}";
+	public static final String ID_USER_EXTENSION = ID_EXTENSION + "/users";
+	public static final String ID_USER_ID_EXTENSION = ID_USER_EXTENSION + "/{" + USER_ID_VARIABLE + "}";
 
 	public static final String INFO_PREFIX = REST_PREFIX + "/info";
 	public static final String INFO_HEARTBEAT = "/heartbeat";

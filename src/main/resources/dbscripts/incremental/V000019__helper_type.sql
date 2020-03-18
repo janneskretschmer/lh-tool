@@ -9,7 +9,7 @@ INSERT INTO helper_type(id,name) VALUES
 (7, 'Tagwächter'),
 (8, 'Nachtwächter');
 
-CREATE TABLE `project_helper_type` ( `id` INT NOT NULL AUTO_INCREMENT , `project_id` INT NOT NULL , `helper_type_id` INT NOT NULL , `weekday` INT NOT NULL , `start_time` TIME NOT NULL , `end_time` TIME NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+CREATE TABLE `project_helper_type` ( `id` INT NOT NULL AUTO_INCREMENT , `project_id` INT NOT NULL , `helper_type_id` INT NOT NULL , `weekday` INT NOT NULL , `start_time` TIME NOT NULL , `end_time` TIME, PRIMARY KEY (`id`)) ENGINE = InnoDB;
 ALTER TABLE `project_helper_type` ADD FOREIGN KEY (`project_id`) REFERENCES `project`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `project_helper_type` ADD FOREIGN KEY (`helper_type_id`) REFERENCES `helper_type`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `project_helper_type` ADD UNIQUE( `project_id`, `helper_type_id`, `weekday`, `start_time`);
@@ -60,41 +60,41 @@ INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time
 	SELECT id,4,6,'07:00:00','17:00:00' FROM project;
 -- Gate keepers
 INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time, end_time) 
-	SELECT id,5,2,'07:00:00','12:00:00' FROM project;
+	SELECT id,5,2,'07:00:00','12:30:00' FROM project;
 INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time, end_time) 
-	SELECT id,5,3,'07:00:00','12:00:00' FROM project;
+	SELECT id,5,3,'07:00:00','12:30:00' FROM project;
 INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time, end_time) 
-	SELECT id,5,4,'07:00:00','12:00:00' FROM project;
+	SELECT id,5,4,'07:00:00','12:30:00' FROM project;
 INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time, end_time) 
-	SELECT id,5,5,'07:00:00','12:00:00' FROM project;
+	SELECT id,5,5,'07:00:00','12:30:00' FROM project;
 INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time, end_time) 
-	SELECT id,5,6,'07:00:00','12:00:00' FROM project;
+	SELECT id,5,6,'07:00:00','12:30:00' FROM project;
 INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time, end_time) 
-	SELECT id,5,2,'12:00:00','17:00:00' FROM project;
+	SELECT id,5,2,'12:30:00','17:00:00' FROM project;
 INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time, end_time) 
-	SELECT id,5,3,'12:00:00','17:00:00' FROM project;
+	SELECT id,5,3,'12:30:00','17:00:00' FROM project;
 INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time, end_time) 
-	SELECT id,5,4,'12:00:00','17:00:00' FROM project;
+	SELECT id,5,4,'12:30:00','17:00:00' FROM project;
 INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time, end_time) 
-	SELECT id,5,5,'12:00:00','17:00:00' FROM project;
+	SELECT id,5,5,'12:30:00','17:00:00' FROM project;
 INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time, end_time) 
-	SELECT id,5,6,'12:00:00','17:00:00' FROM project;
+	SELECT id,5,6,'12:30:00','17:00:00' FROM project;
 -- Cleaners
+INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time) 
+	SELECT id,6,2,'17:05:00' FROM project;
+INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time) 
+	SELECT id,6,3,'17:05:00' FROM project;
 INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time, end_time) 
-	SELECT id,6,2,'07:00:00','17:00:00' FROM project;
+	SELECT id,6,4,'17:05:00' FROM project;
 INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time, end_time) 
-	SELECT id,6,3,'07:00:00','17:00:00' FROM project;
+	SELECT id,6,5,'17:05:00' FROM project;
 INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time, end_time) 
-	SELECT id,6,4,'07:00:00','17:00:00' FROM project;
-INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time, end_time) 
-	SELECT id,6,5,'07:00:00','17:00:00' FROM project;
-INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time, end_time) 
-	SELECT id,6,6,'07:00:00','17:00:00' FROM project;
+	SELECT id,6,6,'17:05:00' FROM project;
 
 ALTER TABLE `need` ADD `project_helper_type_id` INT NOT NULL AFTER `helper_type`;
 UPDATE need n SET project_helper_type_id = (SELECT id FROM project_helper_type p WHERE p.project_id=n.project_id AND p.weekday=WEEKDAY(n.date)+1 
 	AND IF(n.helper_type='GATEKEEPER_AFTERNOON',
-		p.helper_type_id=5 AND p.start_time='12:00:00',
+		p.helper_type_id=5 AND p.start_time='12:30:00',
 		n.helper_type= ELT(p.helper_type_id,'CONSTRUCTION_WORKER','KITCHEN_HELPER','STORE_KEEPER','DRIVER','GATEKEEPER_MORNING','CLEANER') AND p.start_time='07:00:00'
 	));
 	
