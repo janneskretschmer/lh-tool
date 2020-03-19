@@ -52,7 +52,7 @@ class StatefulNeedApproveEditComponent extends React.Component {
         super(props);
         this.state = {
             updating: false,
-        }
+        };
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {

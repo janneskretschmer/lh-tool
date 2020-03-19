@@ -37,8 +37,8 @@ class StatefulNeedQuantityEditComponent extends React.Component {
         const need = {
             ...this.props.projectHelperType.need,
             quantity,
-        }
-        this.props.needsState.updateNeedQuantity(projectId, helperTypeId, need, err => this.handleFailure())
+        };
+        this.props.needsState.updateNeedQuantity(projectId, helperTypeId, need, err => this.handleFailure());
     }
 
     render() {

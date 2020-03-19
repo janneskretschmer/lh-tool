@@ -27,26 +27,6 @@ export function fetchNeedUsers(accessToken, needId) {
     );
 }
 
-export function fetchOwnNeeds({ accessToken, userId, projectId, startDiff, endDiff }) {
-    if (accessToken) {
-        return apiRequest({
-            apiEndpoint: apiEndpoints.need.getOwn,
-            authToken: accessToken,
-            queries: {
-                [NEED_START_DIFF_VARIABLE]: startDiff,
-                [NEED_END_DIFF_VARIABLE]: endDiff,
-                [PROJECT_ID_VARIABLE]: projectId,
-            }
-        })
-            .then(result => attachOwnStateToNeeds({ needs: result.response.content, accessToken, userId }))
-            .then(needs => mapNeedArray(accessToken, needs))
-            // TODO Proper error message
-            .catch(e => console.log(e));
-    } else {
-        return Promise.resolve([]);
-    }
-}
-
 export function fetchNeedByProjectHelperTypeIdAndDate(accessToken, projectHelperTypeId, date, handleFailure) {
     if (accessToken) {
         return apiRequest({

@@ -32,7 +32,7 @@ class StatefulNeedQuantityComponent extends React.Component {
         this.state = {
             selectedMonth: null,
             selectedProject: null,
-        }
+        };
     }
 
     handleFailure() {

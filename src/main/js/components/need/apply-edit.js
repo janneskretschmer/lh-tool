@@ -48,15 +48,15 @@ class StatefulNeedApplyEditComponent extends React.Component {
         super(props);
         this.state = {
             updating: false,
-        }
+        };
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
         if (prevState.updating) {
             return {
                 updating: false,
-            }
-        };
+            };
+        }
         return null;
     }
 

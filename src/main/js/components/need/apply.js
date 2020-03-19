@@ -52,7 +52,7 @@ class StatefulNeedApplyComponent extends React.Component {
         this.state = {
             selectedMonth: null,
             selectedProject: null,
-        }
+        };
     }
 
     handleFailure() {
@@ -69,7 +69,7 @@ class StatefulNeedApplyComponent extends React.Component {
             const userId = nextProps.sessionState.currentUser.id;
             nextProps.projectsState.selectedMonthCalendarData.days.filter(day => !day.disabled)
                 .forEach(
-                    day => nextProps.needsState.loadHelperTypesWithNeedsAndCurrentUserByProjectIdAndDate(projectId, day.date, err => handleFailure())
+                    day => nextProps.needsState.loadHelperTypesWithNeedsAndCurrentUserByProjectIdAndDate(projectId, day.date, err => this.handleFailure())
                 );
             return {
                 selectedMonth: nextProps.projectsState.selectedMonthCalendarData.monthOffset,
