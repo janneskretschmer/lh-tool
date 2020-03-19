@@ -18,7 +18,7 @@ const styles = theme => ({
         marginBottom: '3px',
     },
     buttonText: {
-        color: grey[700],
+        color: grey[800],
     },
     applied: {
         minWidth: '105px',

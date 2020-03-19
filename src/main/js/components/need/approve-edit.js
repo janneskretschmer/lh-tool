@@ -16,6 +16,7 @@ import { changeApplicationStateForNeed } from '../../actions/need';
 import { fetchUser } from '../../actions/user';
 import { requiresLogin } from '../../util';
 import WithPermission from '../with-permission';
+import { NeedsContext } from '../../providers/needs-provider';
 
 
 const styles = theme => ({
@@ -45,96 +46,46 @@ const styles = theme => ({
     }
 });
 
-class NeedApproveEditComponent extends React.Component {
+class StatefulNeedApproveEditComponent extends React.Component {
+
     constructor(props) {
         super(props);
         this.state = {
-            users: props.need.users,
-            approved: props.need.approvedCount,
-            changes: new Map(),
-            saving: false,
-        };
-    }
-
-    componentWillReceiveProps(props) {
-        if (this.props.need.id !== props.need.id) {
-            this.setState(prevState => ({
-                users: props.need.users,
-                approved: props.need.approvedCount,
-            }), this.componentDidMount);
+            updating: false,
         }
     }
 
-
-    componentDidMount() {
-        if (this.state.users) {
-            let self = this;
-            this.state.users.forEach(user => {
-                if (!user.lastName) {
-                    fetchUser({ accessToken: this.props.sessionState.accessToken, userId: user.userId }).then(result => {
-                        self.setState({
-                            users: self.state.users.map(user => {
-                                if(user.userId === result.id) {
-                                    user.firstName = result.firstName;
-                                    user.lastName = result.lastName;
-                                }
-                                return user;
-                            })
-                        });
-                    });
-                }
-            });
-        }
-    }
-
-    handleToggle = (value, newState) => {
-        value.state = newState;
-        this.setState(prevState => {
-            let users = prevState.users.map(user => user.userId === value.userId ? value : user);
-            let approved = users.filter(user => user.state === 'APPROVED').length;
-            let res = {
-                ...prevState,
-                users,
-                approved,
-            };
-            let needId = this.props.need.id;
-            if (!res.changes.has(needId)) {
-                res.changes.set(needId, new Map());
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (prevState.updating) {
+            return {
+                updating: false,
             }
-            res.changes.get(needId).set(value.userId, newState);
+        }
+        return null;
+    }
 
-            this.props.onApprove(approved);
+    handleFailure(error) {
+        console.log(error);
+    }
 
-            return res;
+    handleToggle(needUser, state) {
+        this.props.needsState.editNeedUser({
+            ...needUser,
+            state,
         });
-    };
+    }
 
-    save() {
-        let requests = [];
-        this.setState({
-            saving: true,
-        });
-        for (let [userId, newState] of this.state.changes.get(this.props.need.id)) {
-            requests.push(
-                changeApplicationStateForNeed({
-                    accessToken: this.props.sessionState.accessToken,
-                    userId,
-                    needId: this.props.need.id,
-                    state: newState,
-                    handleFailure: err => { }
-                })
-            );
-        };
-        Promise.all(requests).then(() => this.setState({
-            saving: false,
-            changes: new Map(),
-        }));
+    saveNeedUsers() {
+        this.props.needsState.saveEditedNeedUsers(this.props.projectHelperType, this.handleFailure.bind(this));
     }
 
     render() {
-        const { classes, label, need } = this.props;
-        const { users, approved, changes, saving } = this.state;
-        const thingsToSave = !!(changes.has(need.id) && changes.get(need.id).size > 0);
+        const { classes, label, projectHelperType, needsState } = this.props;
+        const { need } = projectHelperType;
+        const { updating } = this.state;
+        const thingsToSave = needsState.hasNeedEditedUsers(need.id)
+        const users = need.users;
+        const approved = needsState.getApprovedCount(need);
         return (
             <>
                 <Prompt when={thingsToSave} message="Es wurden nicht alle Änderungen gespeichert. Möchtest du diese Seite trotzdem verlassen?" />
@@ -145,37 +96,35 @@ class NeedApproveEditComponent extends React.Component {
                     {users ? (
                         <>
                             <List className={classes.root}>
-                                {users.map(user => {
+                                {users.map(nu => {
+                                    const needUser = needsState.editedNeedUsers.has(nu.id) ? needsState.editedNeedUsers.get(nu.id) : nu;
+                                    const user = needUser.user;
                                     return (
-                                        <ListItem key={user.id} role={null} dense>
-                                            {user.lastName ? (
+                                        <ListItem key={needUser.id} role={null} dense>
+                                            {user && user.lastName ? (
                                                 <>
                                                     <ListItemText primary={`${user.lastName}, ${user.firstName}`} />
-                                                    {user.updating ? (
-                                                        <CircularProgress size={16} className={classes.updating} />
-                                                    ) : (
-                                                            <WithPermission permission="ROLE_RIGHT_NEEDS_APPROVE">
-                                                                <IconButton
-                                                                    disabled={user.state !== 'APPROVED' && approved >= need.quantity}
-                                                                    onClick={() => this.handleToggle(user, user.state !== 'APPROVED' ? 'APPROVED' : 'APPLIED')}
-                                                                >
-                                                                    {user.state === 'APPROVED' ? (
-                                                                        <EventAvailableIcon />
-                                                                    ) : (
-                                                                            <CheckIcon />
-                                                                        )}
-                                                                </IconButton>
-                                                                <IconButton
-                                                                    onClick={() => this.handleToggle(user, user.state !== 'REJECTED' ? 'REJECTED' : 'APPLIED')}
-                                                                >
-                                                                    {user.state === 'REJECTED' ? (
-                                                                        <EventBusyIcon />
-                                                                    ) : (
-                                                                            <CloseIcon />
-                                                                        )}
-                                                                </IconButton>
-                                                            </WithPermission>
-                                                        )}
+                                                    <WithPermission permission="ROLE_RIGHT_NEEDS_APPROVE">
+                                                        <IconButton
+                                                            disabled={user.state !== 'APPROVED' && approved >= need.quantity}
+                                                            onClick={() => this.handleToggle(needUser, needUser.state !== 'APPROVED' ? 'APPROVED' : 'APPLIED')}
+                                                        >
+                                                            {needUser.state === 'APPROVED' ? (
+                                                                <EventAvailableIcon />
+                                                            ) : (
+                                                                    <CheckIcon />
+                                                                )}
+                                                        </IconButton>
+                                                        <IconButton
+                                                            onClick={() => this.handleToggle(needUser, needUser.state !== 'REJECTED' ? 'REJECTED' : 'APPLIED')}
+                                                        >
+                                                            {needUser.state === 'REJECTED' ? (
+                                                                <EventBusyIcon />
+                                                            ) : (
+                                                                    <CloseIcon />
+                                                                )}
+                                                        </IconButton>
+                                                    </WithPermission>
                                                 </>
                                             ) : (
                                                     <>
@@ -191,10 +140,10 @@ class NeedApproveEditComponent extends React.Component {
                     ) : (<br />)}
                     {thingsToSave && (
                         <div className={classes.save}>
-                            {saving ? (
+                            {updating ? (
                                 <CircularProgress />
                             ) : (
-                                    <Button variant="contained" onClick={this.save.bind(this)}>Speichern</Button>
+                                    <Button variant="contained" onClick={() => this.saveNeedUsers()}>Speichern</Button>
                                 )}
                         </div>
                     )}
@@ -204,5 +153,13 @@ class NeedApproveEditComponent extends React.Component {
         );
     }
 }
-
+const NeedApproveEditComponent = props => (
+    <>
+        <NeedsContext.Consumer>
+            {needsState =>
+                (<StatefulNeedApproveEditComponent {...props} needsState={needsState} />)
+            }
+        </NeedsContext.Consumer>
+    </>
+);
 export default requiresLogin(withStyles(styles)(NeedApproveEditComponent));

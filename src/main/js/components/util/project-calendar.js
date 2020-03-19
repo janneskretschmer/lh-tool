@@ -8,6 +8,7 @@ import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import IconButton from '@material-ui/core/IconButton';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { ProjectsContext } from '../../providers/projects-provider';
+import MonthSelection from './month-selection';
 
 const styles = theme => ({
     calendar: {
@@ -84,15 +85,7 @@ class StatefulProjectCalendar extends React.Component {
                         <ProjectSelection />
                     </div>
                     {data ? (
-                        <div className={classes.month}>
-                            <IconButton onClick={() => this.setMonth(data.monthOffset - 1)} disabled={!isMonthOffsetWithinRange(data.monthOffset - 1, project.startDate, project.endDate)}>
-                                <NavigateBeforeIcon />
-                            </IconButton>
-                            {data.monthName}
-                            <IconButton onClick={() => this.setMonth(data.monthOffset + 1)} disabled={!isMonthOffsetWithinRange(data.monthOffset + 1, project.startDate, project.endDate)}>
-                                <NavigateNextIcon />
-                            </IconButton>
-                        </div>
+                        <MonthSelection className={classes.month} />
                     ) : (
                             <CircularProgress size={15} />
                         )}

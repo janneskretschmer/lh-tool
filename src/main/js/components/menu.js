@@ -193,7 +193,7 @@ export default function AppMenu() {
             <ProjectsItem />
             <NeedQuantitiesItem />
             <NeedApplyItem />
-            {/* <NeedApproveItem /> */}
+            <NeedApproveItem />
             <StoresItem />
             <ItemsItem />
           </List>

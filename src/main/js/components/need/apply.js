@@ -115,7 +115,11 @@ class StatefulNeedApplyComponent extends React.Component {
                                             {helperType.shifts && helperType.shifts[0] && helperType.shifts[0].need ? helperType.shifts.map(shift => (
                                                 <div key={shift.id} className={classes.inputWrapper}>
                                                     {shift.need && (shift.need.state || !shift.need.id) ? (
-                                                        <NeedApplyEditComponent need={shift.need} helperTypeName={helperType.name} projectHelperType={shift} label={shift.endTime ? shift.startTime + ' - ' + shift.endTime : 'ab ' + shift.startTime}></NeedApplyEditComponent>
+                                                        <NeedApplyEditComponent
+                                                            need={shift.need}
+                                                            helperTypeName={helperType.name}
+                                                            projectHelperType={shift}
+                                                            label={shift.endTime ? shift.startTime + ' - ' + shift.endTime : 'ab ' + shift.startTime}></NeedApplyEditComponent>
                                                     ) : (<CircularProgress size={15} />)}
                                                 </div>
                                             )) : (<CircularProgress size={15} />)}
