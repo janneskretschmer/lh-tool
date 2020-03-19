@@ -55,6 +55,12 @@ class StatefulNeedApplyComponent extends React.Component {
         }
     }
 
+    handleFailure() {
+        this.props.enqueueSnackbar('Fehler beim Laden des Bedarfs', {
+            variant: 'error',
+        });
+    }
+
     static getDerivedStateFromProps(nextProps, prevState) {
         //new data needs to be loaded on every change of project or month
         if (nextProps.projectsState.selectedMonthCalendarData.monthOffset !== prevState.selectedMonth
@@ -63,12 +69,12 @@ class StatefulNeedApplyComponent extends React.Component {
             const userId = nextProps.sessionState.currentUser.id;
             nextProps.projectsState.selectedMonthCalendarData.days.filter(day => !day.disabled)
                 .forEach(
-                    day => nextProps.needsState.loadHelperTypesWithNeedsAndCurrentUserByProjectIdAndDate(projectId, day.date, err => console.log(err))
+                    day => nextProps.needsState.loadHelperTypesWithNeedsAndCurrentUserByProjectIdAndDate(projectId, day.date, err => handleFailure())
                 );
             return {
                 selectedMonth: nextProps.projectsState.selectedMonthCalendarData.monthOffset,
                 selectedProject: nextProps.projectsState.selectedProjectIndex,
-            }
+            };
         }
         return null;
     }

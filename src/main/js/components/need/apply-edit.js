@@ -56,7 +56,7 @@ class StatefulNeedApplyEditComponent extends React.Component {
             return {
                 updating: false,
             }
-        }
+        };
         return null;
     }
 
@@ -70,7 +70,7 @@ class StatefulNeedApplyEditComponent extends React.Component {
         this.setState({
             updating: true,
         });
-        this.props.needsState.updateOwnNeedState(this.props.projectHelperType, this.props.need.id, this.props.need.state === 'NONE' ? 'APPLIED' : 'NONE', this.handleFailure.bind(this));
+        this.props.needsState.updateOwnNeedState(this.props.projectHelperType, this.props.need.id, this.props.need.state === 'NONE' ? 'APPLIED' : 'NONE', err => this.handleFailure());
     }
 
     getClassName(need) {
@@ -115,7 +115,7 @@ class StatefulNeedApplyEditComponent extends React.Component {
                         disabled={disabled}
                         className={this.getClassName(need)}
                         color="inherit">
-                        <span className={!disabled ? classes.buttonText : undefined}>{label}</span>&nbsp;&nbsp;{appliedCount + approvedCount}/{need.quantity}
+                        <span className={!disabled ? classes.buttonText : null}>{label}</span>&nbsp;&nbsp;{appliedCount + approvedCount}/{need.quantity}
                     </Button>
                 </SimpleDialog>
             </>

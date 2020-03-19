@@ -24,10 +24,10 @@ public class HelperTypeServiceImpl
 		implements HelperTypeService {
 
 	@Autowired
-	ProjectService projectService;
+	private ProjectService projectService;
 
 	@Autowired
-	UserRoleService userRoleService;
+	private UserRoleService userRoleService;
 
 	@Override
 	@Transactional

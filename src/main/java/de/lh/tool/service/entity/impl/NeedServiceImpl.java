@@ -22,7 +22,6 @@ import de.lh.tool.domain.model.ProjectHelperType;
 import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.repository.NeedRepository;
 import de.lh.tool.service.entity.interfaces.NeedService;
-import de.lh.tool.service.entity.interfaces.NeedUserService;
 import de.lh.tool.service.entity.interfaces.ProjectHelperTypeService;
 import de.lh.tool.service.entity.interfaces.ProjectService;
 import de.lh.tool.service.entity.interfaces.UserRoleService;
@@ -30,8 +29,6 @@ import de.lh.tool.service.entity.interfaces.UserRoleService;
 @Service
 public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedRepository, Need, NeedDto, Long>
 		implements NeedService {
-	private static final int DEFAULT_START_DIFF = 0;
-	private static final int DEFAULT_END_DIFF = 14;
 
 	@Autowired
 	private UserRoleService userRoleService;
@@ -41,9 +38,6 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 
 	@Autowired
 	private ProjectHelperTypeService projectHelperTypeService;
-
-	@Autowired
-	private NeedUserService needUserService;
 
 	/**
 	 * get all possible needs of the current user's projects

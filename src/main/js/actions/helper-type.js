@@ -1,5 +1,5 @@
-import { apiEndpoints, apiRequest } from "../apiclient";
-import { WEEKDAY_VARIABLE, PROJECT_ID_VARIABLE } from "../urlmappings";
+import { apiEndpoints, apiRequest } from '../apiclient';
+import { WEEKDAY_VARIABLE, PROJECT_ID_VARIABLE } from '../urlmappings';
 
 export function fetchHelperTypes(accessToken, projectId, weekday, handleFailure) {
     if (accessToken) {
