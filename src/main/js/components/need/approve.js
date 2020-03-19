@@ -107,6 +107,12 @@ class StatefulNeedApproveComponent extends React.Component {
         };
     }
 
+    handleFailure() {
+        this.props.enqueueSnackbar('Fehler beim Laden der Zuteilungen', {
+            variant: 'error',
+        });
+    }
+
     static getDerivedStateFromProps(nextProps, prevState) {
         //new data needs to be loaded on every change of project or month
         if (nextProps.projectsState.selectedMonthCalendarData
@@ -118,7 +124,7 @@ class StatefulNeedApproveComponent extends React.Component {
             Array.from(Array(selectedEnd)).map((_, index) => {
                 const day = nextProps.projectsState.selectedMonthCalendarData.days[index];
                 if (!day.disabled) {
-                    nextProps.needsState.loadHelperTypesWithNeedsAndUsersByProjectIdAndDate(nextProps.projectsState.getSelectedProject().id, day.date);
+                    nextProps.needsState.loadHelperTypesWithNeedsAndUsersByProjectIdAndDate(nextProps.projectsState.getSelectedProject().id, day.date, err => this.handleFailure());
                 }
             });
             return {
@@ -126,7 +132,7 @@ class StatefulNeedApproveComponent extends React.Component {
                 selectedProject: nextProps.projectsState.selectedProjectIndex,
                 selectedStart,
                 selectedEnd,
-            }
+            };
         }
         return null;
     }

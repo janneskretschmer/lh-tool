@@ -1,7 +1,7 @@
 import React from 'react';
-import { Route, Switch } from "react-router";
-import NeedsProvider from "../../providers/needs-provider";
-import ProjectsProvider from "../../providers/projects-provider";
+import { Route, Switch } from 'react-router';
+import NeedsProvider from '../../providers/needs-provider';
+import ProjectsProvider from '../../providers/projects-provider';
 import { requiresLogin } from '../../util';
 import NeedApplyComponent from './apply';
 import NeedApproveComponent from './approve';

@@ -59,13 +59,15 @@ class StatefulNeedApproveEditComponent extends React.Component {
         if (prevState.updating) {
             return {
                 updating: false,
-            }
+            };
         }
         return null;
     }
 
-    handleFailure(error) {
-        console.log(error);
+    handleFailure() {
+        this.props.enqueueSnackbar('Fehler beim Speichern der Zuteilungen', {
+            variant: 'error',
+        });
     }
 
     handleToggle(needUser, state) {
@@ -76,14 +78,14 @@ class StatefulNeedApproveEditComponent extends React.Component {
     }
 
     saveNeedUsers() {
-        this.props.needsState.saveEditedNeedUsers(this.props.projectHelperType, this.handleFailure.bind(this));
+        this.props.needsState.saveEditedNeedUsers(this.props.projectHelperType, err => this.handleFailure());
     }
 
     render() {
         const { classes, label, projectHelperType, needsState } = this.props;
         const { need } = projectHelperType;
         const { updating } = this.state;
-        const thingsToSave = needsState.hasNeedEditedUsers(need.id)
+        const thingsToSave = needsState.hasNeedEditedUsers(need.id);
         const users = need.users;
         const approved = needsState.getApprovedCount(need);
         return (

@@ -84,11 +84,11 @@ INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time
 	SELECT id,6,2,'17:05:00' FROM project;
 INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time) 
 	SELECT id,6,3,'17:05:00' FROM project;
-INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time, end_time) 
+INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time) 
 	SELECT id,6,4,'17:05:00' FROM project;
-INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time, end_time) 
+INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time) 
 	SELECT id,6,5,'17:05:00' FROM project;
-INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time, end_time) 
+INSERT INTO project_helper_type (project_id, helper_type_id, weekday, start_time) 
 	SELECT id,6,6,'17:05:00' FROM project;
 
 ALTER TABLE `need` ADD `project_helper_type_id` INT NOT NULL AFTER `helper_type`;
