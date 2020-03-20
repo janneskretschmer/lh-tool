@@ -16,6 +16,8 @@ public abstract class UrlMappings {
 	public static final String ROLE_VARIABLE = "role";
 	public static final String STORE_VARIABLE = "store";
 	public static final String WEEKDAY_VARIABLE = "weekday";
+	public static final String START_DATE_VARIABLE = "start_date";
+	public static final String END_DATE_VARIABLE = "end_date";
 
 	public static final String NO_EXTENSION = "/";
 	public static final String ID_EXTENSION = "/{" + ID_VARIABLE + "}";
@@ -55,6 +57,11 @@ public abstract class UrlMappings {
 	public static final String TECHNICAL_CREW_PREFIX = REST_PREFIX + "/technical_crews";
 
 	public static final String MEDIA_TYPE_JSON = "application/json";
+
+	// for the frontend optimized endpoints that would result in performance issues
+	// not strictly compliant to the REST philosophy -.-
+	public static final String ASSEMBLED_PREFIX = REST_PREFIX + "/assembled";
+	public static final String ASSEMBLED_NEED_FOR_CALENDAR = "/needs_calendar";
 
 	private UrlMappings() {
 		throw new IllegalStateException("class for constants");

@@ -46,10 +46,17 @@ class StatefulNeedQuantityComponent extends React.Component {
         if (nextProps.projectsState.selectedMonthCalendarData.monthOffset !== prevState.selectedMonth
             || nextProps.projectsState.selectedProjectIndex !== prevState.selectedProject) {
             const projectId = nextProps.projectsState.getSelectedProject().id;
-            nextProps.projectsState.selectedMonthCalendarData.days.filter(day => !day.disabled)
-                .forEach(
-                    day => nextProps.needsState.loadHelperTypesWithNeedsByProjectIdAndDate(projectId, day.date, err => this.handleFailure())
-                );
+            const days = nextProps.projectsState.selectedMonthCalendarData.days.filter(day => !day.disabled);
+            nextProps.needsState.loadNeedsForCalendarBetweenDates(projectId,
+                days[0].date,
+                days[days.length - 1].date,
+                () => nextProps.enqueueSnackbar('Fehler beim Laden der Bedarfe', {
+                    variant: 'error',
+                }));
+            // nextProps.projectsState.selectedMonthCalendarData.days.filter(day => !day.disabled)
+            //     .forEach(
+            //         day => nextProps.needsState.loadHelperTypesWithNeedsByProjectIdAndDate(projectId, day.date, err => this.handleFailure())
+            //     );
             return {
                 selectedMonth: nextProps.projectsState.selectedMonthCalendarData.monthOffset,
                 selectedProject: nextProps.projectsState.selectedProjectIndex,

@@ -12,6 +12,8 @@ export const DATE_VARIABLE = 'date';
 export const ROLE_VARIABLE = 'role';
 export const STORE_VARIABLE = 'store';
 export const WEEKDAY_VARIABLE = 'weekday';
+export const START_DATE_VARIABLE = 'start_date';
+export const END_DATE_VARIABLE = 'end_date';
 
 export const NO_EXTENSION = '/';
 export const ID_EXTENSION = '/{' + ID_VARIABLE + '}';
@@ -52,3 +54,5 @@ export const TECHNICAL_CREW_PREFIX = REST_PREFIX + '/technical_crews';
 
 export const MEDIA_TYPE_JSON = 'application/json';
 
+export const ASSEMBLED_PREFIX = REST_PREFIX + '/assembled';
+export const ASSEMBLED_NEED_FOR_CALENDAR = '/needs_calendar';

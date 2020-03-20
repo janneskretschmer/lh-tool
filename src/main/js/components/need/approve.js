@@ -121,12 +121,20 @@ class StatefulNeedApproveComponent extends React.Component {
                 || nextProps.projectsState.selectedProjectIndex !== prevState.selectedProject)) {
             const selectedStart = 0;
             const selectedEnd = nextProps.projectsState.selectedMonthCalendarData.days.length - 1;
-            Array.from(Array(selectedEnd)).map((_, index) => {
-                const day = nextProps.projectsState.selectedMonthCalendarData.days[index];
-                if (!day.disabled) {
-                    nextProps.needsState.loadHelperTypesWithNeedsAndUsersByProjectIdAndDate(nextProps.projectsState.getSelectedProject().id, day.date, err => this.handleFailure());
-                }
-            });
+            const projectId = nextProps.projectsState.getSelectedProject().id;
+            const days = nextProps.projectsState.selectedMonthCalendarData.days.filter(day => !day.disabled);
+            nextProps.needsState.loadNeedsForCalendarBetweenDates(projectId,
+                days[0].date,
+                days[days.length - 1].date,
+                () => nextProps.enqueueSnackbar('Fehler beim Laden der Zuteilungen', {
+                    variant: 'error',
+                }));
+            // Array.from(Array(selectedEnd)).map((_, index) => {
+            //     const day = nextProps.projectsState.selectedMonthCalendarData.days[index];
+            //     if (!day.disabled) {
+            //         nextProps.needsState.loadHelperTypesWithNeedsAndUsersByProjectIdAndDate(nextProps.projectsState.getSelectedProject().id, day.date, err => this.handleFailure());
+            //     }
+            // });
             return {
                 selectedMonth: nextProps.projectsState.selectedMonthCalendarData.monthOffset,
                 selectedProject: nextProps.projectsState.selectedProjectIndex,

@@ -2,9 +2,10 @@ import React from 'react';
 import { fetchHelperTypes } from '../actions/helper-type';
 import { createOrUpdateNeed, fetchNeedByProjectHelperTypeIdAndDate, fetchOwnNeedUser, fetchNeedUsers, changeApplicationStateForNeed } from '../actions/need';
 import { fetchProjectHelperTypes } from '../actions/project';
-import { convertToMUIFormat, withContext } from '../util';
+import { convertToMUIFormat, withContext, convertFromMUIFormat } from '../util';
 import { SessionContext } from './session-provider';
 import { fetchUser } from '../actions/user';
+import { fetchNeedsForCalendar } from '../actions/assembled';
 
 export const NeedsContext = React.createContext();
 
@@ -20,6 +21,25 @@ export default class NeedsProvider extends React.Component {
         };
         this.loadedOwnStates = [];
         this.loadedUsers = [];
+    }
+
+    loadNeedsForCalendarBetweenDates(projectId, startDate, endDate, handleFailure) {
+        fetchNeedsForCalendar(this.props.sessionState.accessToken, projectId, convertToMUIFormat(startDate), convertToMUIFormat(endDate), handleFailure).then(
+            dateMap => this.setState(
+                prevState => {
+                    let projects = new Map(prevState.projects);
+                    if (!projects.has(projectId)) {
+                        projects.set(projectId, { id: projectId, days: new Map() });
+                    }
+                    Object.keys(dateMap).forEach(
+                        dateString => projects.get(projectId).days.set(dateString, { date: convertFromMUIFormat(dateString), helperTypes: dateMap[dateString].helperTypes })
+                    );
+                    return {
+                        projects,
+                    };
+                }
+            )
+        )
     }
 
     loadHelperTypesWithNeedsByProjectIdAndDate(projectId, date, handleFailure, callback) {
@@ -365,6 +385,7 @@ export default class NeedsProvider extends React.Component {
                     editNeedUser: this.editNeedUser.bind(this),
                     saveEditedNeedUsers: this.saveEditedNeedUsers.bind(this),
                     hasNeedEditedUsers: this.hasNeedEditedUsers.bind(this),
+                    loadNeedsForCalendarBetweenDates: this.loadNeedsForCalendarBetweenDates.bind(this),
                 }}
             >
                 {this.props.children}

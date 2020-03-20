@@ -36,6 +36,10 @@ import {
     WEEKDAY_VARIABLE,
     HELPER_TYPE_PREFIX,
     ID_USER_EXTENSION,
+    ASSEMBLED_PREFIX,
+    ASSEMBLED_NEED_FOR_CALENDAR,
+    START_DATE_VARIABLE,
+    END_DATE_VARIABLE,
 
 } from './urlmappings';
 
@@ -381,5 +385,12 @@ export const apiEndpoints = {
             path: TECHNICAL_CREW_PREFIX + ID_EXTENSION,
             parameters: [ID_VARIABLE],
         },
+    },
+    assembled: {
+        getNeedsForCalendar: {
+            method: 'GET',
+            path: ASSEMBLED_PREFIX + ASSEMBLED_NEED_FOR_CALENDAR,
+            queries: [PROJECT_ID_VARIABLE, START_DATE_VARIABLE, END_DATE_VARIABLE],
+        }
     },
 };
