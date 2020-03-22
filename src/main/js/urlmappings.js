@@ -56,3 +56,5 @@ export const MEDIA_TYPE_JSON = 'application/json';
 
 export const ASSEMBLED_PREFIX = REST_PREFIX + '/assembled';
 export const ASSEMBLED_NEED_FOR_CALENDAR = '/needs_calendar';
+
+
