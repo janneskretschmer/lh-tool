@@ -31,9 +31,7 @@ export default class NeedsProvider extends React.Component {
                     if (!projects.has(projectId)) {
                         projects.set(projectId, { id: projectId, days: new Map() });
                     }
-                    Object.keys(dateMap).forEach(
-                        dateString => projects.get(projectId).days.set(dateString, { date: convertFromMUIFormat(dateString), helperTypes: dateMap[dateString].helperTypes })
-                    );
+                    projects.get(projectId).days = new Map([...dateMap, ...projects.get(projectId).days]);
                     return {
                         projects,
                     };

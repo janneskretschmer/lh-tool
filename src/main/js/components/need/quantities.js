@@ -50,7 +50,7 @@ class StatefulNeedQuantityComponent extends React.Component {
             nextProps.needsState.loadNeedsForCalendarBetweenDates(projectId,
                 days[0].date,
                 days[days.length - 1].date,
-                () => nextProps.enqueueSnackbar('Fehler beim Laden der Bedarfe', {
+                error => nextProps.enqueueSnackbar('Fehler beim Laden der Bedarfe', {
                     variant: 'error',
                 }));
             // nextProps.projectsState.selectedMonthCalendarData.days.filter(day => !day.disabled)
