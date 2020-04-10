@@ -34,7 +34,7 @@ export function fetchNeedsForCalendar(accessToken, projectId, startDate, endDate
                             })
                         )
                     })
-                )
+                );
                 return dateMap;
             })
             .catch(handleFailure);

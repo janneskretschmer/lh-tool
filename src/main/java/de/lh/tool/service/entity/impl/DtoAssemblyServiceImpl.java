@@ -22,6 +22,7 @@ import de.lh.tool.domain.dto.assembled.AssembledNeedDto;
 import de.lh.tool.domain.dto.assembled.AssembledNeedUserDto;
 import de.lh.tool.domain.dto.assembled.AssembledProjectHelperTypeDto;
 import de.lh.tool.domain.exception.DefaultException;
+import de.lh.tool.domain.exception.DefaultRuntimeException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.service.entity.interfaces.DtoAssemblyService;
 import de.lh.tool.service.entity.interfaces.HelperTypeService;
@@ -33,15 +34,15 @@ import de.lh.tool.service.entity.interfaces.UserService;
 @Service
 public class DtoAssemblyServiceImpl implements DtoAssemblyService {
 	@Autowired
-	HelperTypeService helperTypeService;
+	private HelperTypeService helperTypeService;
 	@Autowired
-	ProjectHelperTypeService projectHelperTypeService;
+	private ProjectHelperTypeService projectHelperTypeService;
 	@Autowired
-	NeedService needService;
+	private NeedService needService;
 	@Autowired
-	NeedUserService needUserService;
+	private NeedUserService needUserService;
 	@Autowired
-	UserService userService;
+	private UserService userService;
 
 	private ModelMapper modelMapper = new ModelMapper();
 
@@ -72,7 +73,7 @@ public class DtoAssemblyServiceImpl implements DtoAssemblyService {
 							date.getDayOfWeek().getValue())
 					.stream().map(pht -> assembleProjectHelperType(pht, date)).collect(Collectors.toList()));
 		} catch (DefaultException e) {
-			throw new RuntimeException(e);
+			throw new DefaultRuntimeException(e);
 		}
 		return assembled;
 	}
@@ -85,7 +86,7 @@ public class DtoAssemblyServiceImpl implements DtoAssemblyService {
 			assembled.setNeed(
 					assembleNeed(needService.getNeedDtoByProjectHelperTypeIdAndDate(projectHelperType.getId(), date)));
 		} catch (DefaultException e) {
-			throw new RuntimeException(e);
+			throw new DefaultRuntimeException(e);
 		}
 		return assembled;
 	}
@@ -100,17 +101,15 @@ public class DtoAssemblyServiceImpl implements DtoAssemblyService {
 						.collect(Collectors.toList()));
 			}
 		} catch (DefaultException e) {
-			throw new RuntimeException(e);
+			throw new DefaultRuntimeException(e);
 		}
 		return assembled;
 	}
 
 	private AssembledNeedUserDto assembleNeedUser(NeedUserDto needUser) {
 		AssembledNeedUserDto assembled = modelMapper.map(needUser, AssembledNeedUserDto.class);
-		assembled.setUser(modelMapper.map(
-				userService.findById(needUser.getUserId())
-						.orElseThrow(() -> (new RuntimeException(new DefaultException(ExceptionEnum.EX_INVALID_ID)))),
-				UserDto.class));
+		assembled.setUser(modelMapper.map(userService.findById(needUser.getUserId())
+				.orElseThrow(() -> (new DefaultRuntimeException(ExceptionEnum.EX_INVALID_ID))), UserDto.class));
 		return assembled;
 	}
 }

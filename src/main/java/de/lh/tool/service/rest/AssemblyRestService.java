@@ -26,7 +26,7 @@ import io.swagger.annotations.ApiOperation;
 public class AssemblyRestService {
 
 	@Autowired
-	DtoAssemblyService dtoAssemblyService;
+	private DtoAssemblyService dtoAssemblyService;
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ASSEMBLED_NEED_FOR_CALENDAR)
 	@ApiOperation(value = "Get data for needs with users of several dates")
