@@ -17,7 +17,6 @@ export function fetchNeedsForCalendar(accessToken, projectId, startDate, endDate
             .then(result => result.response.content)
             .then(dateObject => {
                 let dateMap = new Map();
-                console.log(Object.keys(dateObject));
                 Object.keys(dateObject).forEach(
                     dateString => dateMap.set(dateString, {
                         date: convertFromMUIFormat(dateString), helperTypes: dateObject[dateString].helperTypes.map(
