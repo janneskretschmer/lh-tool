@@ -1,8 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
 import LHToolApp from './app';
 
-ReactDOM.render(
-	<LHToolApp />,
+ReactDOM.hydrate(
+	<BrowserRouter>
+		<LHToolApp />
+	</BrowserRouter>,
 	document.getElementById('main-app-container')
 );

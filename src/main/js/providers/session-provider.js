@@ -22,7 +22,9 @@ function getCurrentUserState(accessToken) {
 @resolve('initialUserData', () => {
     // For the time being, a naive sessionStorage implementation is sufficient
     // FUTURE: needs to change as soon as isomorphic rendering is employed
-    const accessToken = sessionStorage.getItem(ACCTOKEN_KEY);
+    //const accessToken = sessionStorage.getItem(ACCTOKEN_KEY);
+    // FIXME State mit Cookies managen
+    const accessToken = null;
     return getCurrentUserState(accessToken);
 })
 export default class SessionProvider extends React.Component {

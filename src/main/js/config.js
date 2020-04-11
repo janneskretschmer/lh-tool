@@ -1,7 +1,7 @@
 export function getBasePath() {
-    return window.__GLOBAL_CONFIG__.basePath;
+    return __GLOBAL_CONFIG__.basePath;
 };
 
 export function getContextPath() {
-    return window.__GLOBAL_CONFIG__.contextPath;
+    return __GLOBAL_CONFIG__.contextPath;
 };
