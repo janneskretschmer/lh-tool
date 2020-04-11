@@ -17,7 +17,17 @@ export function login({ loginState, email, password, handleLoginFailure }) {
 }
 
 export function logout({ loginState }) {
-    loginState.accessTokenChanged(null);
+    apiRequest({
+        apiEndpoint: apiEndpoints.login.clear,
+        authToken: loginState.accessToken,
+    })
+        .then(result => {
+            loginState.accessTokenChanged(null);
+        })
+        .catch(err => {
+            console.error(err);
+            loginState.accessTokenChanged(null);
+        });
 }
 
 export function requestPasswordReset({ email }) {

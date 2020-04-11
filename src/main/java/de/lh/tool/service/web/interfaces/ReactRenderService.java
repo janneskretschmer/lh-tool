@@ -12,6 +12,8 @@ public interface ReactRenderService {
 		private String contextPath;
 		@Getter
 		private String fullPath;
+		@Getter
+		private String apiPathPrefix;
 	}
 	
 	@Builder
@@ -24,6 +26,6 @@ public interface ReactRenderService {
 		private String resolverPayload;
 	}
 
-	RenderResult render(RenderPath renderPath);
+	RenderResult render(RenderPath renderPath, String accessToken);
 
 }

@@ -1,13 +1,14 @@
 import superagent from 'superagent';
 import URI from 'urijs';
 import URITemplate from 'urijs/src/URITemplate';
-import { getContextPath } from './config';
+import { getContextPath, getApiPathPrefix } from './config';
 import {
     ID_VARIABLE,
     USER_ID_VARIABLE,
     ID_EXTENSION,
     ID_USER_ID_EXTENSION,
     LOGIN_PREFIX,
+    LOGIN_CLEAR,
     LOGIN_PASSWORD_RESET,
     INFO_PREFIX,
     INFO_HEARTBEAT,
@@ -70,7 +71,7 @@ function renderPath({ apiEndpoint, parameters }) {
 
 function buildRequest({ method, path, authToken, queries, data }) {
     const apiHostUrlTemplate = new URI('/');
-    let pendingReq = superagent(method, apiHostUrlTemplate.path(path).toString()).type('json');
+    let pendingReq = superagent(method, getApiPathPrefix() + apiHostUrlTemplate.path(path).toString()).type('json');
     if (authToken) {
         pendingReq = pendingReq.set('Authorization', `Bearer ${authToken}`);
     }
@@ -165,6 +166,10 @@ export const apiEndpoints = {
         pwreset: {
             method: 'POST',
             path: LOGIN_PREFIX + LOGIN_PASSWORD_RESET,
+        },
+        clear: {
+            method: 'POST',
+            path: LOGIN_PREFIX + LOGIN_CLEAR,
         },
     },
     project: {

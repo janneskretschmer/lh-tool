@@ -47,12 +47,14 @@ public class ReactRenderServiceImpl implements ReactRenderService {
 		return renderResult::get;
 	}
 	
-	private V8Object attachGlobalConfig(V8 runtime, RenderPath renderPath) {
+	private V8Object attachGlobalConfig(V8 runtime, RenderPath renderPath, String accessToken) {
 		V8Object globalConfigV8 = new V8Object(runtime);
 		runtime.add("__GLOBAL_CONFIG__", globalConfigV8);
 		globalConfigV8.add("basePath", renderPath.getBasePath());
 		globalConfigV8.add("contextPath", renderPath.getContextPath());
 		globalConfigV8.add("fullPath", renderPath.getFullPath());
+		globalConfigV8.add("apiPathPrefix", renderPath.getApiPathPrefix());
+		globalConfigV8.add("accessToken", accessToken);
 		return globalConfigV8;
 	}
 	
@@ -63,13 +65,11 @@ public class ReactRenderServiceImpl implements ReactRenderService {
 	}
 
 	@Override
-	public RenderResult render(RenderPath renderPath) {
+	public RenderResult render(RenderPath renderPath, String accessToken) {
 		Supplier<RenderResult>  resultSupplier = null;
 
 		NodeJS nodeJS = null;
 		V8Object globalConfigV8 = null;
-		// FIXME Replace stub by proper session handling:
-		V8Object sessionStorageV8 = null;
 
 		try {
 
@@ -79,14 +79,12 @@ public class ReactRenderServiceImpl implements ReactRenderService {
 			resultSupplier = attachCompletionCallback(runtime);
 			executeServerFile(nodeJS);
 
-			runtime.add("sessionStorage", sessionStorageV8);
-			globalConfigV8 = attachGlobalConfig(runtime, renderPath);
+			globalConfigV8 = attachGlobalConfig(runtime, renderPath, accessToken);
 
 			waitForCompletion(nodeJS);
 
 		} finally {
 			ofNullable(globalConfigV8).ifPresent(V8Value::release);
-			ofNullable(sessionStorageV8).ifPresent(V8Value::release);
 			ofNullable(nodeJS).ifPresent(NodeJS::release);
 		}
 		

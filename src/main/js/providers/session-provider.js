@@ -3,8 +3,6 @@ import { resolve } from 'react-resolver';
 import jsonwebtoken from 'jsonwebtoken';
 import { fetchCurrentUser } from '../actions/user';
 
-const ACCTOKEN_KEY = 'acctoken';
-
 export const SessionContext = React.createContext();
 
 function getCurrentUserState(accessToken) {
@@ -20,11 +18,7 @@ function getCurrentUserState(accessToken) {
 }
 
 @resolve('initialUserData', () => {
-    // For the time being, a naive sessionStorage implementation is sufficient
-    // FUTURE: needs to change as soon as isomorphic rendering is employed
-    //const accessToken = sessionStorage.getItem(ACCTOKEN_KEY);
-    // FIXME State mit Cookies managen
-    const accessToken = null;
+    const accessToken = __GLOBAL_CONFIG__.accessToken;
     return getCurrentUserState(accessToken);
 })
 export default class SessionProvider extends React.Component {
@@ -36,11 +30,6 @@ export default class SessionProvider extends React.Component {
     };
 
     accessTokenChanged = accessToken => {
-        if (accessToken) {
-            sessionStorage.setItem(ACCTOKEN_KEY, accessToken);
-        } else {
-            sessionStorage.removeItem(ACCTOKEN_KEY);
-        }
         getCurrentUserState(accessToken)
             .then(newState => this.setState({
                 accessToken: newState.accessToken ? newState.accessToken : null,
