@@ -1,13 +1,17 @@
 package de.lh.tool.rest;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeAll;
 
 import de.lh.tool.domain.dto.JwtAuthenticationDto;
@@ -20,14 +24,27 @@ import de.lh.tool.domain.dto.UserRolesDto;
 import de.lh.tool.domain.model.User;
 import de.lh.tool.domain.model.User.Gender;
 import de.lh.tool.domain.model.UserRole;
+import de.lh.tool.rest.bean.EndpointTest;
+import de.lh.tool.rest.bean.UserTest;
+import de.lh.tool.service.rest.testonly.IntegrationTestRestService;
+import de.lh.tool.service.rest.testonly.dto.DatabaseValidationResult;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.parsing.Parser;
+import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
 public abstract class BasicRestIntegrationTest {
 	private static final String PASSWORD = "testing";
 
 	protected static final String ADMIN_EMAIL = "test-admin@lh-tool.de";
+	protected static final String CONSTRUCTION_SERVANT_EMAIL = "test-construction_servant@lh-tool.de";
+	protected static final String LOCAL_COORDINATOR_EMAIL = "test-local_coordinator@lh-tool.de";
+	protected static final String ATTENDANCE_EMAIL = "test-attendance@lh-tool.de";
+	protected static final String PUBLISHER_EMAIL = "test-publisher@lh-tool.de";
+	protected static final String STORE_KEEPER_EMAIL = "test-store_keeper@lh-tool.de";
+	protected static final String INVENTORY_MANAGER_EMAIL = "test-inventory_manager@lh-tool.de";
+
 	protected static final String CONSTRUCTION_SERVANT_1_EMAIL = "test-construction-servant1@lh-tool.de";
 	protected static final String CONSTRUCTION_SERVANT_2_EMAIL = "test-construction-servant2@lh-tool.de";
 	protected static final String LOCAL_COORDINATOR_1_EMAIL = "test-local-coordinator1@lh-tool.de";
@@ -115,15 +132,9 @@ public abstract class BasicRestIntegrationTest {
 		String passwordUrl = REST_URL + "/users/password";
 		for (User user : TEST_USERS) {
 			Long userId = getRequestSpecWithJwt(jwt)
-					.body(UserCreationDto.builder()
-							.firstName(user.getFirstName())
-							.lastName(user.getLastName())
-							.email(user.getEmail())
-							.gender(Gender.MALE.name())
-							.telephoneNumber("+49 123456789")
-							.mobileNumber("+49 87654321")
-							.businessNumber("+49 123454321")
-							.build())
+					.body(UserCreationDto.builder().firstName(user.getFirstName()).lastName(user.getLastName())
+							.email(user.getEmail()).gender(Gender.MALE.name()).telephoneNumber("+49 123456789")
+							.mobileNumber("+49 87654321").businessNumber("+49 123454321").build())
 					.contentType(ContentType.JSON).post(registrationUrl).as(UserDto.class).getId();
 			getRequestSpecWithJwt(jwt).body(
 					PasswordChangeDto.builder().userId(userId).newPassword(PASSWORD).confirmPassword(PASSWORD).build())
@@ -163,6 +174,69 @@ public abstract class BasicRestIntegrationTest {
 		for (String email : emails) {
 			consumer.accept(getRequestSpecWithJwtByEmail(email));
 		}
+	}
+
+	protected void testEndpoint(EndpointTest endpointTest) throws IOException {
+		RestAssured.defaultParser = Parser.JSON;
+
+		List<String> defaultEmails = IntegrationTestRestService.getDefaultEmails();
+
+		endpointTest.getUserTests().forEach(userTest -> {
+			userTest.getEmails().forEach(email -> {
+				defaultEmails.remove(email);
+				testEndpointForUser(endpointTest, userTest, email);
+			});
+		});
+
+		defaultEmails.forEach(email -> testEndpointForUser(endpointTest,
+				UserTest.builder().expectedHttpCode(endpointTest.getHttpCodeForOthers())
+						.expectedResponse(endpointTest.getResponseForOthers())
+						.validationQueries(endpointTest.getValidationQueriesForOthers()).build(),
+				email));
+
+	}
+
+	private void testEndpointForUser(EndpointTest endpointTest, UserTest userTest, String email) {
+		resetDatabase();
+		initializeDatabase(endpointTest);
+
+		RequestSpecification requestSepcification = getRequestSpecWithJwtByEmail(email).contentType(ContentType.JSON);
+		if (endpointTest.getBody() != null) {
+			requestSepcification = requestSepcification.body(endpointTest.getBody());
+		}
+
+		Response response = requestSepcification.request(endpointTest.getMethod(), endpointTest.getUrl());
+
+		String message = getAsssertFailedMessage(endpointTest, email);
+
+		validateResponse(userTest, email, response, message);
+	}
+
+	private void initializeDatabase(EndpointTest endpointTest) {
+		Optional.ofNullable(endpointTest.getInitializationQueries())
+				.ifPresent(queries -> assertEquals(200, RestAssured.given().body(queries).contentType(ContentType.JSON)
+						.post(REST_URL + "/testonly/integration/database/initialize").getStatusCode()));
+	}
+
+	private void resetDatabase() {
+		RestAssured.get(REST_URL + "/testonly/integration/database/reset");
+	}
+
+	private void validateResponse(UserTest userTest, String email, Response response, String message) {
+		assertEquals(userTest.getExpectedHttpCode().value(), response.getStatusCode(), message);
+		Optional.ofNullable(userTest.getExpectedResponse())
+				.ifPresent(expected -> assertEquals(expected, response.asString(), message));
+		assertEquals(List.of(),
+				RestAssured.given()
+						.body(userTest.getValidationQueries().stream()
+								.map(query -> query.replace(":email", "'" + email + "'")).collect(Collectors.toList()))
+						.contentType(ContentType.JSON).post(REST_URL + "/testonly/integration/database/validate")
+						.as(DatabaseValidationResult.class).getFailingQueries(),
+				message);
+	}
+
+	private String getAsssertFailedMessage(EndpointTest endpointTest, String email) {
+		return StringUtils.join(endpointTest.getMethod(), " ", endpointTest.getUrl(), " as ", email);
 	}
 
 }

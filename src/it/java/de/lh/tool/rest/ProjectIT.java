@@ -1,126 +1,360 @@
 package de.lh.tool.rest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import java.util.Date;
+import java.util.List;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 import de.lh.tool.domain.dto.ProjectDto;
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
+import de.lh.tool.rest.bean.EndpointTest;
+import de.lh.tool.rest.bean.UserTest;
+import de.lh.tool.service.rest.testonly.IntegrationTestRestService;
+import io.restassured.http.Method;
 
 public class ProjectIT extends BasicRestIntegrationTest {
 
+//  ██████╗__██████╗_███████╗████████╗
+//  ██╔══██╗██╔═══██╗██╔════╝╚══██╔══╝
+//  ██████╔╝██║___██║███████╗___██║___
+//  ██╔═══╝_██║___██║╚════██║___██║___
+//  ██║_____╚██████╔╝███████║___██║___
+//  ╚═╝______╚═════╝_╚══════╝___╚═╝___
+
 	@Test
 	public void testProjectCreation() throws Exception {
-		createTestUsers();
-		String url = REST_URL + "/projects/";
-
-		String jwt = getJwtByEmail(ADMIN_EMAIL);
-		ProjectDto testDto = ProjectDto.builder().name("Test1").startDate(new Date(1548971153l))
-				.endDate(new Date(1551571200l)).build();
-		ProjectDto dto = getRequestSpecWithJwt(jwt).body(testDto).contentType(ContentType.JSON).post(url)
-				.as(ProjectDto.class);
-		assertNotNull(dto.getId());
-		assertEquals("Test1", dto.getName());
-		assertEquals(1548971153l, dto.getStartDate().getTime());
-		assertEquals(1551571200l, dto.getEndDate().getTime());
-		getRequestSpecWithJwt(jwt).delete(url + dto.getId()).then().statusCode(204);
-
-		String constructionServantJwt = getJwtByEmail(CONSTRUCTION_SERVANT_1_EMAIL);
-		dto = getRequestSpecWithJwt(constructionServantJwt).body(testDto).contentType(ContentType.JSON).post(url)
-				.as(ProjectDto.class);
-		assertNotNull(dto.getId());
-		assertEquals("Test1", dto.getName());
-		assertEquals(1548971153l, dto.getStartDate().getTime());
-		assertEquals(1551571200l, dto.getEndDate().getTime());
-		getRequestSpecWithJwt(constructionServantJwt).delete(url + dto.getId()).then().statusCode(403);
-		getRequestSpecWithJwt(jwt).delete(url + dto.getId()).then().statusCode(204);
-
-		RestAssured.given().body(testDto).contentType(ContentType.JSON).post(url).then().statusCode(401);
-		getRequestSpecWithJwtByEmail(LOCAL_COORDINATOR_1_EMAIL).body(testDto).contentType(ContentType.JSON).post(url)
-				.then().statusCode(403);
-		getRequestSpecWithJwtByEmail(PUBLISHER_1_EMAIL).body(testDto).contentType(ContentType.JSON).post(url).then()
-				.statusCode(403);
-		getRequestSpecWithJwtByEmail(INVENTORY_MANAGER_1_EMAIL).body(testDto).contentType(ContentType.JSON).post(url)
-				.then().statusCode(403);
-		getRequestSpecWithJwtByEmail(STORE_KEEPER_1_EMAIL).body(testDto).contentType(ContentType.JSON).post(url).then()
-				.statusCode(403);
-		deleteTestUsers();
+		testEndpoint(EndpointTest.builder()//
+				.url(REST_URL + "/projects/").method(Method.POST)
+				.body(ProjectDto.builder().name("Test").startDate(new Date(1548971153l)).endDate(new Date(1551571200l))
+						.build())
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL))
+						.expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"id\":1,\"name\":\"Test\",\"startDate\":1548971153,\"endDate\":1551571200,\"links\":[{\"rel\":\"/{id}\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.validationQueries(List.of("SELECT * FROM project WHERE name='Test'",
+								"SELECT * FROM project_user WHERE project_id=(SELECT id FROM project WHERE name='Test') AND user_id=(SELECT id FROM user WHERE email=:email)"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(
+						List.of("SELECT 1 WHERE NOT EXISTS(SELECT * FROM project WHERE name='Test')"))
+				.build());
 	}
 
 	@Test
-	public void testProjectUserCreation() throws Exception {
-		createTestUsers();
-		String url = REST_URL + "/projects/";
-
-		String jwt = getJwtByEmail(CONSTRUCTION_SERVANT_1_EMAIL);
-		ProjectDto dto = getRequestSpecWithJwt(jwt).body(ProjectDto.builder().name("Test1")
-				.startDate(new Date(1548971153l)).endDate(new Date(1551571200l)).build()).contentType(ContentType.JSON)
-				.post(url).as(ProjectDto.class);
-
-		String adminJwt = getJwtByEmail(ADMIN_EMAIL);
-		Long adminId = getUserIdByEmail(ADMIN_EMAIL);
-		String jwt2 = getJwtByEmail(CONSTRUCTION_SERVANT_2_EMAIL);
-		getRequestSpecWithJwt(jwt2).post(url + dto.getId() + "/users/" + adminId).then().statusCode(403);
-		Long constructionServant2Id = getUserIdByEmail(CONSTRUCTION_SERVANT_2_EMAIL);
-		getRequestSpecWithJwt(jwt2).when().get(url).then().body("content", Matchers.iterableWithSize(0));
-		getRequestSpecWithJwt(adminJwt).when().get(url).then().body("content", Matchers.iterableWithSize(1));
-		getRequestSpecWithJwt(adminJwt).post(url + dto.getId() + "/users/" + constructionServant2Id).then()
-				.statusCode(200);
-		getRequestSpecWithJwt(jwt2).when().get(url).then().body("content", Matchers.iterableWithSize(1));
-		getRequestSpecWithJwtByEmail(LOCAL_COORDINATOR_1_EMAIL).post(url + dto.getId() + "/users/" + adminId).then()
-				.statusCode(403);
-		getRequestSpecWithJwt(getJwtByEmail(PUBLISHER_1_EMAIL)).post(url + dto.getId() + "/users/" + adminId).then()
-				.statusCode(403);
-		getRequestSpecWithJwt(getJwtByEmail(INVENTORY_MANAGER_1_EMAIL)).post(url + dto.getId() + "/users/" + adminId)
-				.then().statusCode(403);
-		getRequestSpecWithJwt(getJwtByEmail(STORE_KEEPER_1_EMAIL)).post(url + dto.getId() + "/users/" + adminId).then()
-				.statusCode(403);
-		RestAssured.given().post(url + dto.getId() + "/users/" + adminId).then().statusCode(401);
-		getRequestSpecWithJwt(jwt2).post(url + dto.getId() + "/users/" + adminId).then().statusCode(200);
-
-		Long project2Id = getRequestSpecWithJwt(jwt).body(ProjectDto.builder().name("Test2")
-				.startDate(new Date(1548971153l)).endDate(new Date(1551571200l)).build()).contentType(ContentType.JSON)
-				.post(url).as(ProjectDto.class).getId();
-		getRequestSpecWithJwt(jwt2).when().get(url).then().body("content", Matchers.iterableWithSize(1));
-		getRequestSpecWithJwt(adminJwt).when().get(url).then().body("content", Matchers.iterableWithSize(2));
-		Long project3Id = getRequestSpecWithJwt(jwt2).body(ProjectDto.builder().name("Test3")
-				.startDate(new Date(1548971153l)).endDate(new Date(1551571200l)).build()).contentType(ContentType.JSON)
-				.post(url).as(ProjectDto.class).getId();
-		getRequestSpecWithJwt(jwt2).when().get(url).then().body("content", Matchers.iterableWithSize(2));
-		getRequestSpecWithJwt(adminJwt).when().get(url).then().body("content", Matchers.iterableWithSize(3));
-
-		ProjectDto projectDto = getRequestSpecWithJwt(adminJwt).when().get(url + project3Id).as(ProjectDto.class);
-		assertNotNull(projectDto.getId());
-		assertEquals("Test3", projectDto.getName());
-		getRequestSpecWithJwt(jwt2).when().get(url + project3Id).then().statusCode(200);
-		getRequestSpecWithJwt(adminJwt).when().get(url + project2Id).then().statusCode(200);
-		getRequestSpecWithJwt(jwt2).when().get(url + project2Id).then().statusCode(403);
-		RestAssured.when().get(url + project2Id).then().statusCode(401);
-
-		getRequestSpecWithJwtByEmail(LOCAL_COORDINATOR_1_EMAIL).delete(url + dto.getId() + "/users/" + adminId).then()
-				.statusCode(403);
-		getRequestSpecWithJwt(getJwtByEmail(PUBLISHER_1_EMAIL)).delete(url + dto.getId() + "/users/" + adminId).then()
-				.statusCode(403);
-		getRequestSpecWithJwt(getJwtByEmail(INVENTORY_MANAGER_1_EMAIL)).delete(url + dto.getId() + "/users/" + adminId)
-				.then().statusCode(403);
-		getRequestSpecWithJwt(getJwtByEmail(STORE_KEEPER_1_EMAIL)).delete(url + dto.getId() + "/users/" + adminId)
-				.then().statusCode(403);
-		RestAssured.given().delete(url + dto.getId() + "/users/" + adminId).then().statusCode(401);
-		getRequestSpecWithJwt(jwt2).delete(url + dto.getId() + "/users/" + adminId).then().statusCode(204);
-
-		// own project
-		getRequestSpecWithJwt(jwt).delete(url + dto.getId()).then().statusCode(403);
-		// foreign project
-		getRequestSpecWithJwt(jwt2).delete(url + project2Id).then().statusCode(403);
-		getRequestSpecWithJwt(adminJwt).delete(url + dto.getId()).then().statusCode(204);
-		getRequestSpecWithJwt(adminJwt).delete(url + project2Id).then().statusCode(204);
-		getRequestSpecWithJwt(adminJwt).delete(url + project3Id).then().statusCode(204);
-
-		deleteTestUsers();
+	public void testProjectCreationDuplicate() throws Exception {
+		testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (NULL, 'Test', '2020-04-09', '2020-04-24')"))
+				.url(REST_URL + "/projects/").method(Method.POST)
+				.body(ProjectDto.builder().name("Test").startDate(new Date(1548971153l)).endDate(new Date(1551571200l))
+						.build())
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL))
+						.expectedHttpCode(HttpStatus.CONFLICT)
+						.expectedResponse(
+								"{\"key\":\"EX_PROJECT_NAME_ALREADY_EXISTS\",\"message\":\"A project with the provided name already exists.\",\"httpCode\":409}")
+						.validationQueries(List.of("SELECT 1 WHERE (SELECT COUNT(*) FROM project WHERE name='Test')=1"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(
+						List.of("SELECT 1 WHERE (SELECT COUNT(*) FROM project WHERE name='Test')=1"))
+				.build());
 	}
+
+	// TODO test missing values
+
+	@Test
+	public void testProjectUserCreationForeign() throws Exception {
+		testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `email`) VALUES ('1000', 'Tes', 'Ter', 'MALE','tester@lh-tool.de');"))
+				.url(REST_URL + "/projects/1/1000").method(Method.POST)
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"id\":1,\"projectId\":1,\"userId\":1000,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.validationQueries(List.of("SELECT * FROM project_user WHERE project_id=1 AND user_id=1000"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of(
+						"SELECT 1 WHERE NOT EXISTS(SELECT * FROM project_user WHERE project_id=1 AND user_id=1000)"))
+				.build());
+	}
+
+	@Test
+	public void testProjectUserCreationOwn() throws Exception {
+		testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `email`) VALUES ('1000', 'Tes', 'Ter', 'MALE','tester@lh-tool.de');"))
+				.url(REST_URL + "/projects/1/1000").method(Method.POST)
+				.userTests(List.of(UserTest.builder()
+						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL))
+						.expectedHttpCode(HttpStatus.OK)
+						.expectedResponse("{\"id\":" + (IntegrationTestRestService.getDefaultEmails().size() + 1)
+								+ ",\"projectId\":1,\"userId\":1000,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.validationQueries(List.of("SELECT * FROM project_user WHERE project_id=1 AND user_id=1000"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of(
+						"SELECT 1 WHERE NOT EXISTS(SELECT * FROM project_user WHERE project_id=1 AND user_id=1000)"))
+				.build());
+	}
+
+	// TODO test non existing project and user ids
+
+//  ██████╗_██╗___██╗████████╗
+//  ██╔══██╗██║___██║╚══██╔══╝
+//  ██████╔╝██║___██║___██║___
+//  ██╔═══╝_██║___██║___██║___
+//  ██║_____╚██████╔╝___██║___
+//  ╚═╝______╚═════╝____╚═╝___
+
+	@Test
+	public void testProjectModificationForeign() throws Exception {
+		testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test123', '2020-04-09', '2020-04-24')"))
+				.url(REST_URL + "/projects/1").method(Method.PUT)
+				.body(ProjectDto.builder().name("Test").startDate(new Date(1548971153000l))
+						.endDate(new Date(1551571200000l)).build())
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"id\":1,\"name\":\"Test\",\"startDate\":1548971153000,\"endDate\":1551571200000,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.validationQueries(List.of(
+								"SELECT * FROM project WHERE name='Test' AND start_date='2019-01-31' AND end_date='2019-03-03'"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of(
+						"SELECT * FROM project WHERE name='Test123' AND start_date='2020-04-09' AND end_date='2020-04-24'"))
+				.build());
+	}
+
+	@Test
+	public void testProjectModificationOwn() throws Exception {
+		testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test123', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user"))
+				.url(REST_URL + "/projects/1").method(Method.PUT)
+				.body(ProjectDto.builder().name("Test").startDate(new Date(1548971153000l))
+						.endDate(new Date(1551571200000l)).build())
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL))
+						.expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"id\":1,\"name\":\"Test\",\"startDate\":1548971153000,\"endDate\":1551571200000,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.validationQueries(List.of(
+								"SELECT * FROM project WHERE name='Test' AND start_date='2019-01-31' AND end_date='2019-03-03'"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of(
+						"SELECT * FROM project WHERE name='Test123' AND start_date='2020-04-09' AND end_date='2020-04-24'"))
+				.build());
+	}
+
+	@Test
+	public void testProjectModificationNotExisting() throws Exception {
+		testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test123', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user"))
+				.url(REST_URL + "/projects/2").method(Method.PUT)
+				.body(ProjectDto.builder().name("Test").startDate(new Date(1548971153000l))
+						.endDate(new Date(1551571200000l)).build())
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL))
+						.expectedHttpCode(HttpStatus.BAD_REQUEST)
+						.expectedResponse(
+								"{\"key\":\"EX_INVALID_ID\",\"message\":\"The provided id is invalid.\",\"httpCode\":400}")
+						.validationQueries(List.of("SELECT 1 WHERE NOT EXISTS(SELECT * FROM project WHERE name='Test')",
+								"SELECT * FROM project WHERE name='Test123' AND start_date='2020-04-09' AND end_date='2020-04-24'"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of(
+						"SELECT 1 WHERE NOT EXISTS(SELECT * FROM project WHERE name='Test')",
+						"SELECT * FROM project WHERE name='Test123' AND start_date='2020-04-09' AND end_date='2020-04-24'"))
+				.build());
+	}
+
+	@Test
+	public void testProjectModificationDuplicate() throws Exception {
+		testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test123', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (2, 'Test', '2020-04-09', '2020-04-24')"))
+				.url(REST_URL + "/projects/1").method(Method.PUT)
+				.body(ProjectDto.builder().name("Test").startDate(new Date(1548971153000l))
+						.endDate(new Date(1551571200000l)).build())
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.CONFLICT)
+						.expectedResponse(
+								"{\"key\":\"EX_PROJECT_NAME_ALREADY_EXISTS\",\"message\":\"A project with the provided name already exists.\",\"httpCode\":409}")
+						.validationQueries(List.of("SELECT 1 WHERE (SELECT COUNT(*) FROM project WHERE name='Test')=1"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(
+						List.of("SELECT 1 WHERE (SELECT COUNT(*) FROM project WHERE name='Test')=1"))
+				.build());
+	}
+
+//  ██████╗_███████╗██╗_____███████╗████████╗███████╗
+//  ██╔══██╗██╔════╝██║_____██╔════╝╚══██╔══╝██╔════╝
+//  ██║__██║█████╗__██║_____█████╗_____██║___█████╗__
+//  ██║__██║██╔══╝__██║_____██╔══╝_____██║___██╔══╝__
+//  ██████╔╝███████╗███████╗███████╗___██║___███████╗
+//  ╚═════╝_╚══════╝╚══════╝╚══════╝___╚═╝___╚══════╝
+
+	@Test
+	public void testProjectDeletionForeign() throws Exception {
+		testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')"))
+				.url(REST_URL + "/projects/1").method(Method.DELETE)
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL))
+						.expectedHttpCode(HttpStatus.NO_CONTENT).expectedResponse("")
+						.validationQueries(
+								List.of("SELECT 1 WHERE NOT EXISTS(SELECT * FROM project WHERE name='Test')"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of("SELECT * FROM project WHERE name='Test'")).build());
+	}
+
+	@Test
+	public void testProjectDeletionOwn() throws Exception {
+		testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user"))
+				.url(REST_URL + "/projects/1").method(Method.DELETE)
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL))
+						.expectedHttpCode(HttpStatus.NO_CONTENT).expectedResponse("")
+						.validationQueries(
+								List.of("SELECT 1 WHERE NOT EXISTS(SELECT * FROM project WHERE name='Test')"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of("SELECT * FROM project WHERE name='Test'")).build());
+	}
+
+	@Test
+	public void testProjectDeletionNotExisting() throws Exception {
+		testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')"))
+				.url(REST_URL + "/projects/2").method(Method.DELETE)
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL))
+						.expectedHttpCode(HttpStatus.BAD_REQUEST)
+						.expectedResponse(
+								"{\"key\":\"EX_INVALID_ID\",\"message\":\"The provided id is invalid.\",\"httpCode\":400}")
+						.validationQueries(List.of()).build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build());
+	}
+
+	@Test
+	public void testProjectUserDeletionForeign() throws Exception {
+		testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `email`) VALUES ('1000', 'Tes', 'Ter', 'MALE','tester@lh-tool.de')",
+						"INSERT INTO project_user(id,project_id,user_id) VALUES (1,1,1000)"))
+				.url(REST_URL + "/projects/1/1000").method(Method.DELETE)
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL))
+						.expectedHttpCode(HttpStatus.NO_CONTENT).expectedResponse("")
+						.validationQueries(List.of(
+								"SELECT 1 WHERE NOT EXISTS(SELECT * FROM project_user WHERE project_id=1 AND user_id=1000)"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of("SELECT * FROM project_user WHERE project_id=1 AND user_id=1000"))
+				.build());
+	}
+
+	@Test
+	public void testProjectUserDeletionOwn() throws Exception {
+		testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `email`) VALUES ('1000', 'Tes', 'Ter', 'MALE','tester@lh-tool.de');",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user"))
+				.url(REST_URL + "/projects/1/1000").method(Method.DELETE)
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL))
+						.expectedHttpCode(HttpStatus.NO_CONTENT).expectedResponse("")
+						.validationQueries(List.of(
+								"SELECT 1 WHERE NOT EXISTS(SELECT * FROM project_user WHERE project_id=1 AND user_id=1000)"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of("SELECT * FROM project_user WHERE project_id=1 AND user_id=1000"))
+				.build());
+	}
+
+	// TODO test deleting not existing project_user references
+
+//  _██████╗_███████╗████████╗
+//  ██╔════╝_██╔════╝╚══██╔══╝
+//  ██║__███╗█████╗_____██║___
+//  ██║___██║██╔══╝_____██║___
+//  ╚██████╔╝███████╗___██║___
+//  _╚═════╝_╚══════╝___╚═╝___
+
+	@Test
+	public void testProjectGet() throws Exception {
+		testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test123', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (2, 'Test', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user"))
+				.url(REST_URL + "/projects/").method(Method.GET)
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"name\":\"Test123\",\"startDate\":1586390400000,\"endDate\":1587686400000},{\"id\":2,\"name\":\"Test\",\"startDate\":1586390400000,\"endDate\":1587686400000}]}")
+						.validationQueries(List.of()).build(),
+						UserTest.builder()
+								.emails(List.of(CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL, ATTENDANCE_EMAIL,
+										PUBLISHER_EMAIL))
+								.expectedHttpCode(HttpStatus.OK)
+								.expectedResponse(
+										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"name\":\"Test123\",\"startDate\":1586390400000,\"endDate\":1587686400000}]}")
+								.validationQueries(List.of()).build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build());
+	}
+
+	@Test
+	public void testProjectGetByIdForeign() throws Exception {
+		testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')"))
+				.url(REST_URL + "/projects/1").method(Method.GET)
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"id\":1,\"name\":\"Test\",\"startDate\":1586390400000,\"endDate\":1587686400000,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.validationQueries(List.of()).build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build());
+	}
+
+	@Test
+	public void testProjectGetByIdOwn() throws Exception {
+		testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user"))
+				.url(REST_URL + "/projects/1").method(Method.GET)
+				.userTests(List.of(UserTest.builder()
+						.emails(List
+								.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL, ATTENDANCE_EMAIL))
+						.expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"id\":1,\"name\":\"Test\",\"startDate\":1586390400000,\"endDate\":1587686400000,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.validationQueries(List.of()).build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build());
+	}
+
+	@Test
+	public void testProjectGetByIdNotExisting() throws Exception {
+		testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')"))
+				.url(REST_URL + "/projects/2").method(Method.GET)
+				.userTests(List.of(UserTest.builder()
+						.emails(List
+								.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL, ATTENDANCE_EMAIL))
+						.expectedHttpCode(HttpStatus.BAD_REQUEST)
+						.expectedResponse(
+								"{\"key\":\"EX_INVALID_ID\",\"message\":\"The provided id is invalid.\",\"httpCode\":400}")
+						.validationQueries(List.of()).build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build());
+	}
+
 }

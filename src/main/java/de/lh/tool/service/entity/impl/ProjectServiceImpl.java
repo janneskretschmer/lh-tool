@@ -65,10 +65,16 @@ public class ProjectServiceImpl extends BasicMappableEntityServiceImpl<ProjectRe
 	@Transactional
 	public ProjectDto saveProjectDto(ProjectDto projectDto) throws DefaultException {
 		if (projectDto.getId() != null) {
-			throw new DefaultException(ExceptionEnum.EX_ID_PROVIDED);
+			throw ExceptionEnum.EX_ID_PROVIDED.createDefaultException();
 		}
+
+		if (getRepository().findByName(projectDto.getName()).isPresent()) {
+			throw ExceptionEnum.EX_PROJECT_NAME_ALREADY_EXISTS.createDefaultException();
+		}
+
 		Project project = convertToEntity(projectDto);
 		project = save(project);
+
 		User user = userService.getCurrentUser();
 		projectUserService.save(new ProjectUser(project, user));
 		return convertToDto(project);
@@ -81,10 +87,18 @@ public class ProjectServiceImpl extends BasicMappableEntityServiceImpl<ProjectRe
 		if (projectDto.getId() == null) {
 			throw new DefaultException(ExceptionEnum.EX_NO_ID_PROVIDED);
 		}
+
 		Project project = convertToEntity(projectDto);
-		if (!isOwnProject(project) && !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_CHANGE_FOREIGN)) {
+		boolean ownProject = isOwnProject(getRepository().findById(project.getId())
+				.orElseThrow(() -> ExceptionEnum.EX_INVALID_ID.createDefaultException()));
+		if (!ownProject && !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_CHANGE_FOREIGN)) {
 			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
 		}
+
+		if (getRepository().findByName(projectDto.getName()).isPresent()) {
+			throw ExceptionEnum.EX_PROJECT_NAME_ALREADY_EXISTS.createDefaultException();
+		}
+
 		project = save(project);
 		return convertToDto(project);
 	}

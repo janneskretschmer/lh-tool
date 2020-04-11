@@ -34,6 +34,7 @@ public enum ExceptionEnum {
 			HttpStatus.BAD_REQUEST),
 
 	EX_PROJECT_NOT_FOUND("The project couldn't be found.", HttpStatus.NOT_FOUND),
+	EX_PROJECT_NAME_ALREADY_EXISTS("A project with the provided name already exists.", HttpStatus.CONFLICT),
 
 	EX_NEED_NOT_FOUND("The need couldn't be found.", HttpStatus.NOT_FOUND),
 	EX_NEED_USER_NOT_FOUND("The need-user-connection couldn't be found.", HttpStatus.NOT_FOUND),
@@ -43,4 +44,12 @@ public enum ExceptionEnum {
 	private String message;
 	@Getter
 	private HttpStatus httpStatus;
+
+	public DefaultException createDefaultException() {
+		return new DefaultException(this);
+	}
+
+	public DefaultException createDefaultException(Throwable cause) {
+		return new DefaultException(this, cause);
+	}
 }
