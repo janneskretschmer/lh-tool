@@ -2,6 +2,7 @@ package de.lh.tool.service.entity.impl;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -31,6 +32,7 @@ import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.repository.UserRepository;
 import de.lh.tool.service.entity.interfaces.MailService;
 import de.lh.tool.service.entity.interfaces.PasswordChangeTokenService;
+import de.lh.tool.service.entity.interfaces.ProjectService;
 import de.lh.tool.service.entity.interfaces.UserRoleService;
 import de.lh.tool.service.entity.interfaces.UserService;
 import de.lh.tool.util.StringUtil;
@@ -46,6 +48,9 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 
 	@Autowired
 	private UserRoleService userRoleService;
+
+	@Autowired
+	private ProjectService projectService;
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -120,12 +125,19 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 			throw new DefaultException(ExceptionEnum.EX_NO_ID_PROVIDED);
 		}
 		User old = findById(user.getId()).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_USER_ID));
-		if (getCurrentUser().getId() != user.getId()
-				&& !((userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_CHANGE_FOREIGN))
-						&& old.getRoles().stream()
-								.anyMatch(r -> userRoleService.hasCurrentUserRightToGrantRole(r.getRole())))) {
+
+		boolean self = getCurrentUser().getId() != user.getId();
+		boolean allowedToChangeForeign = userRoleService
+				.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_CHANGE_FOREIGN);
+		boolean allowedToGrantRole = old.getRoles().stream()
+				.anyMatch(r -> userRoleService.hasCurrentUserRightToGrantRole(r.getRole()));
+		boolean sameProject = projectService.getOwnProjects().stream().anyMatch(ownProject -> Optional
+				.ofNullable(old.getProjects()).map(projects -> projects.contains(ownProject)).orElse(false));
+		if (self && !(allowedToChangeForeign && (old.getRoles().size() == 0 || allowedToGrantRole))
+				&& !(sameProject && allowedToGrantRole)) {
 			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
 		}
+
 		ModelMapper mapper = new ModelMapper();
 		mapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
 		mapper.map(user, old);

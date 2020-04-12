@@ -68,15 +68,15 @@ public class UserRestService {
 		}
 		throw new DefaultException(ExceptionEnum.EX_USERS_NOT_FOUND);
 	}
-  
-  @GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
+
+	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
 	@ApiOperation(value = "Get a single user by id")
 	@Secured(UserRole.RIGHT_USERS_GET_BY_ID)
 	public Resource<UserDto> getById(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 
-		UserDto dto = convertToDto(userService.findById(id)
-				.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_WRONG_ID_PROVIDED)));
+		UserDto dto = convertToDto(
+				userService.findById(id).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_WRONG_ID_PROVIDED)));
 
 		return new Resource<>(dto, linkTo(methodOn(UserRestService.class).getById(id)).withSelfRel());
 	}
@@ -105,6 +105,7 @@ public class UserRestService {
 	@Secured(UserRole.RIGHT_USERS_PUT)
 	public Resource<UserDto> update(@PathVariable(name = UrlMappings.ID_VARIABLE, required = false) Long id,
 			@RequestBody UserDto userDto) throws DefaultException {
+		userDto.setId(id);
 		return new Resource<>(convertToDto(userService.updateUser(new ModelMapper().map(userDto, User.class))),
 				linkTo(methodOn(UserRestService.class).update(id, userDto)).withSelfRel());
 	}
