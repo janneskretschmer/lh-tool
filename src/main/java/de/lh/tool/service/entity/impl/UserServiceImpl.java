@@ -129,12 +129,12 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 		boolean self = getCurrentUser().getId() != user.getId();
 		boolean allowedToChangeForeign = userRoleService
 				.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_CHANGE_FOREIGN);
-		boolean allowedToGrantRole = old.getRoles().stream()
-				.anyMatch(r -> userRoleService.hasCurrentUserRightToGrantRole(r.getRole()));
+		boolean allowedToGrantRoles = old.getRoles().stream().map(UserRole::getRole)
+				.allMatch(r -> userRoleService.hasCurrentUserRightToGrantRole(r));
 		boolean sameProject = projectService.getOwnProjects().stream().anyMatch(ownProject -> Optional
 				.ofNullable(old.getProjects()).map(projects -> projects.contains(ownProject)).orElse(false));
-		if (self && !(allowedToChangeForeign && (old.getRoles().size() == 0 || allowedToGrantRole))
-				&& !(sameProject && allowedToGrantRole)) {
+		if (self && !(allowedToChangeForeign && (old.getRoles().size() == 0 || allowedToGrantRoles))
+				&& !(sameProject && allowedToGrantRoles)) {
 			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
 		}
 
@@ -161,6 +161,11 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 		User user = findById(userId).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_USER_ID));
 
 		if (!userRoleService.hasCurrentUserRight(UserRole.RIGHT_USERS_CHANGE_FOREIGN_PASSWORD)) {
+			// check might be senseless, because sb. who knows somebody's password could
+			// just sign in and change the password...
+			if (!Optional.ofNullable(user.getId()).map(id -> id.equals(getCurrentUser().getId())).orElse(false)) {
+				throw new DefaultException(ExceptionEnum.EX_INVALID_USER_ID);
+			}
 			if (oldPassword == null) {
 				validateToken(token, user);
 			} else {
