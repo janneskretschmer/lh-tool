@@ -91,4 +91,9 @@ public class IntegrationTestRestService {
 	public static List<String> getDefaultEmails() {
 		return getRoleStream().map(role -> StringUtils.join("test-", role, "@lh-tool.de")).collect(Collectors.toList());
 	}
+
+	@GetMapping("/shutdown")
+	public void goodBye() {
+		System.exit(0);
+	}
 }

@@ -13,11 +13,14 @@ services:
             - ./init:/docker-entrypoint-initdb.d
     tomcat:
         container_name: tomcat
+        volumes: 
+            - ../../../../target:/target
         depends_on:
             - db
         image: "lhtool:0.0.1-SNAPSHOT"
         restart: always
         ports:
             - 8080:8080
+            - 6300:6300
         environment:
             WAIT_HOSTS: db:3306
