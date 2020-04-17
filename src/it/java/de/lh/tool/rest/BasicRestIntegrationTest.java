@@ -226,13 +226,15 @@ public abstract class BasicRestIntegrationTest {
 		assertEquals(userTest.getExpectedHttpCode().value(), response.getStatusCode(), message);
 		Optional.ofNullable(userTest.getExpectedResponse())
 				.ifPresent(expected -> assertEquals(expected, response.asString(), message));
-		assertEquals(List.of(),
-				RestAssured.given()
-						.body(userTest.getValidationQueries().stream()
-								.map(query -> query.replace(":email", "'" + email + "'")).collect(Collectors.toList()))
-						.contentType(ContentType.JSON).post(REST_URL + "/testonly/integration/database/validate")
-						.as(DatabaseValidationResult.class).getFailingQueries(),
-				message);
+		Optional.ofNullable(userTest.getValidationQueries())
+				.ifPresent(queries -> assertEquals(List.of(),
+						RestAssured.given()
+								.body(queries.stream().map(query -> query.replace(":email", "'" + email + "'"))
+										.collect(Collectors.toList()))
+								.contentType(ContentType.JSON)
+								.post(REST_URL + "/testonly/integration/database/validate")
+								.as(DatabaseValidationResult.class).getFailingQueries(),
+						message));
 	}
 
 	private String getAsssertFailedMessage(EndpointTest endpointTest, String email) {

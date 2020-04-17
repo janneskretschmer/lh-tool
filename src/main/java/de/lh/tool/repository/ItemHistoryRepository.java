@@ -1,8 +1,8 @@
 package de.lh.tool.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import de.lh.tool.domain.model.ItemHistory;
 
-public interface ItemHistoryRepository extends CrudRepository<ItemHistory, Long> {
+public interface ItemHistoryRepository extends JpaRepository<ItemHistory, Long> {
 }

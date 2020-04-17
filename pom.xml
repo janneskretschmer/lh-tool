@@ -126,7 +126,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.3</version>
+				<version>0.8.5</version>
 				<executions>
 					<execution>
 						<id>pre-unit-test</id>
@@ -253,9 +253,9 @@
 			<version>0.25.0.RELEASE</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.springframework.data</groupId>
-		    <artifactId>spring-data-jpa</artifactId>
-		    <version>2.2.5.RELEASE</version>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+			<version>2.2.5.RELEASE</version>
 		</dependency>
 
 		<dependency>
@@ -330,6 +330,11 @@
 			<artifactId>mockito-junit-jupiter</artifactId>
 			<version>2.23.4</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jacoco</groupId>
+			<artifactId>org.jacoco.agent</artifactId>
+			<version>0.8.5</version>
 		</dependency>
 		<dependency>
 			<groupId>io.rest-assured</groupId>

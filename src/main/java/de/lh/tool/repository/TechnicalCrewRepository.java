@@ -1,9 +1,9 @@
 package de.lh.tool.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import de.lh.tool.domain.model.TechnicalCrew;
 
-public interface TechnicalCrewRepository extends CrudRepository<TechnicalCrew, Long> {
+public interface TechnicalCrewRepository extends JpaRepository<TechnicalCrew, Long> {
 
 }

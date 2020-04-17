@@ -5,14 +5,14 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.service.entity.interfaces.MappableEntityService;
 
-public abstract class BasicMappableEntityServiceImpl<R extends CrudRepository<E, I>, E, D, I>
-		extends BasicEntityServiceImpl<R, E, I> implements MappableEntityService<E, D, I> {
+public abstract class BasicMappableEntityServiceImpl<R extends JpaRepository<E, I>, E, D, I>
+		extends BasicEntityServiceImpl<R, E, I> implements MappableEntityService<E, D> {
 
 	@Override
 	public Class<E> getEntityClass() {

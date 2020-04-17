@@ -3,11 +3,14 @@ package de.lh.tool.service.entity.impl;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,6 +27,7 @@ import org.springframework.stereotype.Service;
 import de.lh.tool.config.security.JwtTokenProvider;
 import de.lh.tool.domain.dto.JwtAuthenticationDto;
 import de.lh.tool.domain.dto.LoginDto;
+import de.lh.tool.domain.dto.UserDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.PasswordChangeToken;
@@ -36,11 +40,12 @@ import de.lh.tool.service.entity.interfaces.ProjectService;
 import de.lh.tool.service.entity.interfaces.UserRoleService;
 import de.lh.tool.service.entity.interfaces.UserService;
 import de.lh.tool.util.StringUtil;
+import lombok.Data;
 import lombok.extern.apachecommons.CommonsLog;
 
 @Service
 @CommonsLog
-public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User, Long>
+public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserRepository, User, UserDto, Long>
 		implements UserService, UserDetailsService {
 
 	@Autowired
@@ -126,22 +131,56 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 		}
 		User old = findById(user.getId()).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_USER_ID));
 
-		boolean self = getCurrentUser().getId() != user.getId();
-		boolean allowedToChangeForeign = userRoleService
-				.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_CHANGE_FOREIGN);
-		boolean allowedToGrantRoles = old.getRoles().stream().map(UserRole::getRole)
-				.allMatch(r -> userRoleService.hasCurrentUserRightToGrantRole(r));
-		boolean sameProject = projectService.getOwnProjects().stream().anyMatch(ownProject -> Optional
-				.ofNullable(old.getProjects()).map(projects -> projects.contains(ownProject)).orElse(false));
-		if (self && !(allowedToChangeForeign && (old.getRoles().size() == 0 || allowedToGrantRoles))
-				&& !(sameProject && allowedToGrantRoles)) {
-			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
-		}
+		checkIfEditIsAllowed(old, true);
 
 		ModelMapper mapper = new ModelMapper();
 		mapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
 		mapper.map(user, old);
 		return save(old);
+	}
+
+	private void checkIfEditIsAllowed(User user, boolean allowedToEditSelf) throws DefaultException {
+		UserPermissionCriteria criteria = Optional.ofNullable(user).map(u -> evaluatePermissionsOnOtherUser(u))
+				.orElse(new UserPermissionCriteria());
+		if (true //
+				&& !(allowedToEditSelf && criteria.isSelf())
+				&& !(criteria.isAllowedToChangeFromForeignProjects()
+						&& (user.getRoles().size() == 0 || criteria.isAllowedToGrantRoles()))
+				&& !(criteria.isSameProject() && criteria.isAllowedToGrantRoles())) {
+			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
+		}
+	}
+
+	private boolean isViewAllowed(User user) {
+		UserPermissionCriteria criteria = Optional.ofNullable(user).map(u -> evaluatePermissionsOnOtherUser(u))
+				.orElse(new UserPermissionCriteria());
+		boolean otherAllowedUser = criteria.isSameProject() || criteria.isAllowedToGetFromForeignProjects();
+		return criteria.isSelf() || (criteria.isAllowedToGetOtherUsers() && otherAllowedUser);
+	}
+
+	private UserPermissionCriteria evaluatePermissionsOnOtherUser(User user) {
+		UserPermissionCriteria criteria = new UserPermissionCriteria();
+		criteria.setSelf(getCurrentUser().getId().equals(user.getId()));
+		criteria.setAllowedToChangeFromForeignProjects(
+				userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_CHANGE_FOREIGN));
+		criteria.setAllowedToGetFromForeignProjects(
+				userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_GET_FOREIGN));
+		criteria.setAllowedToGetOtherUsers(userRoleService.hasCurrentUserRight(UserRole.RIGHT_USERS_GET_FOREIGN));
+		criteria.setAllowedToGrantRoles(user.getRoles().stream().map(UserRole::getRole)
+				.allMatch(r -> userRoleService.hasCurrentUserRightToGrantRole(r)));
+		criteria.setSameProject(projectService.getOwnProjects().stream().anyMatch(ownProject -> Optional
+				.ofNullable(user.getProjects()).map(projects -> projects.contains(ownProject)).orElse(false)));
+		return criteria;
+	}
+
+	@Data
+	private class UserPermissionCriteria {
+		private boolean self;
+		private boolean allowedToChangeFromForeignProjects;
+		private boolean allowedToGetFromForeignProjects;
+		private boolean allowedToGetOtherUsers;
+		private boolean allowedToGrantRoles;
+		private boolean sameProject;
 	}
 
 	@Override
@@ -214,18 +253,46 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 	}
 
 	@Override
-	public Iterable<User> findByProjectId(Long projectId) {
-		return getRepository().findByProjects_IdOrderByLastNameAscFirstNameAsc(projectId);
-	}
-
-	@Override
-	public Iterable<User> findByRoleIgnoreCase(String role) {
-		return getRepository().findByRoles_RoleIgnoreCaseOrderByLastNameAscFirstNameAsc(role);
-	}
-
-	@Override
 	public List<User> findByProjectIdAndRoleIgnoreCase(Long projectId, String role) {
 		return getRepository().findByProjects_IdAndRoles_RoleIgnoreCaseOrderByLastNameAscFirstNameAsc(projectId, role);
+	}
+
+	@Override
+	@Transactional
+	public List<UserDto> findDtosByProjectIdAndRoleIgnoreCase(Long projectId, String role) throws DefaultException {
+		if (projectId != null && !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_GET_FOREIGN)
+				&& !getCurrentUser().getProjects().stream().anyMatch(project -> projectId.equals(project.getId()))) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+
+		List<User> users = null;
+		if (projectId != null && StringUtils.isNotBlank(role)) {
+			users = getRepository().findByProjects_IdAndRoles_RoleIgnoreCaseOrderByLastNameAscFirstNameAsc(projectId,
+					role);
+		} else if (projectId != null) {
+			users = getRepository().findByProjects_IdOrderByLastNameAscFirstNameAsc(projectId);
+		} else if (StringUtils.isNotBlank(role)) {
+			users = getRepository().findByRoles_RoleIgnoreCaseOrderByLastNameAscFirstNameAsc(role);
+		} else {
+			users = findAll();
+		}
+		if (users != null) {
+			return convertToDtoList(users.stream().filter(this::isViewAllowed).collect(Collectors.toList()));
+		}
+		throw ExceptionEnum.EX_USERS_NOT_FOUND.createDefaultException();
+	}
+
+	@Override
+	@Transactional
+	public UserDto findDtoById(Long id) throws DefaultException {
+		User user = findById(id).orElseThrow(
+				() -> new DefaultException(userRoleService.hasCurrentUserRight(UserRole.RIGHT_USERS_GET_FOREIGN)
+						? ExceptionEnum.EX_WRONG_ID_PROVIDED
+						: ExceptionEnum.EX_FORBIDDEN));
+		if (!isViewAllowed(user)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+		return convertToDto(user);
 	}
 
 	@Override
@@ -264,4 +331,25 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 		return new JwtAuthenticationDto(jwt);
 	}
 
+	@Override
+	@Transactional
+	public void deleteUserById(Long id) throws DefaultException {
+		User user = findById(id).orElseThrow(() -> ExceptionEnum.EX_INVALID_USER_ID.createDefaultException());
+		checkIfEditIsAllowed(user, false);
+		getRepository().delete(user);
+	}
+
+	public UserDto convertToDto(User user) {
+		if (user == null) {
+			return null;
+		}
+		ModelMapper modelMapper = new ModelMapper();
+		modelMapper.addMappings(new PropertyMap<User, UserDto>() {
+			@Override
+			protected void configure() {
+				using(ctx -> ctx.getSource() != null).map(user.getPasswordHash()).setActive(null);
+			}
+		});
+		return modelMapper.map(user, UserDto.class);
+	}
 }
