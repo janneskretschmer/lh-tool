@@ -13,6 +13,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	Optional<User> findByEmail(String email);
 
+	List<User> findByOrderByLastNameAscFirstNameAsc();
+
 	List<User> findByProjects_IdOrderByLastNameAscFirstNameAsc(Long projectId);
 
 	List<User> findByRoles_RoleIgnoreCaseOrderByLastNameAscFirstNameAsc(String role);

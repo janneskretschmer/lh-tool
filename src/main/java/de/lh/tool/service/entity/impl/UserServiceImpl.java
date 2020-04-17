@@ -274,7 +274,7 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 		} else if (StringUtils.isNotBlank(role)) {
 			users = getRepository().findByRoles_RoleIgnoreCaseOrderByLastNameAscFirstNameAsc(role);
 		} else {
-			users = findAll();
+			users = getRepository().findByOrderByLastNameAscFirstNameAsc();
 		}
 		if (users != null) {
 			return convertToDtoList(users.stream().filter(this::isViewAllowed).collect(Collectors.toList()));
