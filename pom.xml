@@ -80,33 +80,6 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<!-- Used to spin up an integration testing environment -->
-				<groupId>com.dkanejs.maven.plugins</groupId>
-				<artifactId>docker-compose-maven-plugin</artifactId>
-				<version>2.3.0</version>
-				<configuration>
-					<composeFile>${project.basedir}/src/main/resources/docker/composition.yml</composeFile>
-					<detachedMode>true</detachedMode>
-					<removeImages>true</removeImages>
-				</configuration>
-				<executions>
-					<execution>
-						<id>docker-compose-up</id>
-						<phase>pre-integration-test</phase>
-						<goals>
-							<goal>up</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>docker-compose-down</id>
-						<phase>post-integration-test</phase>
-						<goals>
-							<goal>down</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<version>3.0.0</version>
@@ -187,6 +160,33 @@
 							<dataFile>${project.build.directory}/jacoco-tomcat.exec</dataFile>
 							<outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
 						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<!-- Used to spin up an integration testing environment -->
+				<groupId>com.dkanejs.maven.plugins</groupId>
+				<artifactId>docker-compose-maven-plugin</artifactId>
+				<version>2.3.0</version>
+				<configuration>
+					<composeFile>${project.basedir}/src/main/resources/docker/composition.yml</composeFile>
+					<detachedMode>true</detachedMode>
+					<removeImages>true</removeImages>
+				</configuration>
+				<executions>
+					<execution>
+						<id>docker-compose-up</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>up</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>docker-compose-down</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>down</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>
