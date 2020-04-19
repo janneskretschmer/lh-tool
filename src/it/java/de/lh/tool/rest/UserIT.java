@@ -740,6 +740,21 @@ public class UserIT extends BasicRestIntegrationTest {
 	}
 
 	@Test
+	public void testUserGetByIdForeignProject() throws Exception {
+		testEndpoint(EndpointTest.builder()//
+				.url(REST_URL + "/users/1000").method(Method.GET)
+				.initializationQueries(List.of(
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'FEMALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
+						"INSERT INTO user_role(user_id,role) VALUES(1000,'ROLE_PUBLISHER')"))
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL, "test@lh-tool.de"))
+						.expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"id\":1000,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":\"FEMALE\",\"email\":\"test@lh-tool.de\",\"telephoneNumber\":\"123\",\"mobileNumber\":\"456\",\"businessNumber\":null,\"profession\":\"Hartzer\",\"skills\":null,\"active\":false,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).build());
+	}
+
+	@Test
 	public void testUserGetByIdNonExisting() throws Exception {
 		testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/users/1000").method(Method.GET).initializationQueries(List.of())
