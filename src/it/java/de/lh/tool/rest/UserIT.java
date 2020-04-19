@@ -767,6 +767,5 @@ public class UserIT extends BasicRestIntegrationTest {
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build());
 	}
-	// TODO test get by id
 
 }
