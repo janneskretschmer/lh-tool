@@ -108,19 +108,19 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 		if (emailAlreadyInUse) {
 			throw new DefaultException(ExceptionEnum.EX_USER_EMAIL_ALREADY_IN_USE);
 		}
-		user = save(user);
+		User saved = save(user);
 		if (userRoleService.hasCurrentUserRightToGrantRole(role)) {
-			userRoleService.save(new UserRole(null, user, role));
+			userRoleService.save(new UserRole(null, saved, role));
 		}
-		PasswordChangeToken token = passwordChangeTokenService.saveRandomToken(user);
+		PasswordChangeToken token = passwordChangeTokenService.saveRandomToken(saved);
 
 		if (UserRole.ROLE_LOCAL_COORDINATOR.equals(role)) {
-			mailService.sendNewLocalCoordinatorMail(user, token);
+			mailService.sendNewLocalCoordinatorMail(saved, token);
 		} else if (UserRole.ROLE_PUBLISHER.equals(role)) {
-			mailService.sendNewPublisherMail(user, token);
+			mailService.sendNewPublisherMail(saved, token);
 		}
 
-		return user;
+		return saved;
 	}
 
 	@Override
@@ -151,7 +151,7 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 	}
 
 	private boolean isViewAllowed(User user) {
-		UserPermissionCriteria criteria = Optional.ofNullable(user).map(u -> evaluatePermissionsOnOtherUser(u))
+		UserPermissionCriteria criteria = Optional.ofNullable(user).map(this::evaluatePermissionsOnOtherUser)
 				.orElse(new UserPermissionCriteria());
 		boolean otherAllowedUser = criteria.isSameProject() || criteria.isAllowedToGetFromForeignProjects();
 		return criteria.isSelf() || (criteria.isAllowedToGetOtherUsers() && otherAllowedUser);
@@ -166,7 +166,7 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 				userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_GET_FOREIGN));
 		criteria.setAllowedToGetOtherUsers(userRoleService.hasCurrentUserRight(UserRole.RIGHT_USERS_GET_FOREIGN));
 		criteria.setAllowedToGrantRoles(user.getRoles().stream().map(UserRole::getRole)
-				.allMatch(r -> userRoleService.hasCurrentUserRightToGrantRole(r)));
+				.allMatch(userRoleService::hasCurrentUserRightToGrantRole));
 		criteria.setSameProject(projectService.getOwnProjects().stream().anyMatch(ownProject -> Optional
 				.ofNullable(user.getProjects()).map(projects -> projects.contains(ownProject)).orElse(false)));
 		return criteria;
@@ -260,7 +260,7 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 	@Transactional
 	public List<UserDto> findDtosByProjectIdAndRoleIgnoreCase(Long projectId, String role) throws DefaultException {
 		if (projectId != null && !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_GET_FOREIGN)
-				&& !getCurrentUser().getProjects().stream().anyMatch(project -> projectId.equals(project.getId()))) {
+				&& getCurrentUser().getProjects().stream().noneMatch(project -> projectId.equals(project.getId()))) {
 			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
 		}
 
@@ -333,11 +333,12 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 	@Override
 	@Transactional
 	public void deleteUserById(Long id) throws DefaultException {
-		User user = findById(id).orElseThrow(() -> ExceptionEnum.EX_INVALID_USER_ID.createDefaultException());
+		User user = findById(id).orElseThrow(ExceptionEnum.EX_INVALID_USER_ID::createDefaultException);
 		checkIfEditIsAllowed(user, false);
 		getRepository().delete(user);
 	}
 
+	@Override
 	public UserDto convertToDto(User user) {
 		if (user == null) {
 			return null;

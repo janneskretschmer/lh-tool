@@ -1,5 +1,6 @@
 package de.lh.tool.service.rest.testonly;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -74,7 +75,7 @@ public class IntegrationTestRestService {
 	}
 
 	private static Stream<String> getRoleStream() {
-		return Arrays.stream(UserRole.class.getFields()).map(field -> field.getName())
+		return Arrays.stream(UserRole.class.getFields()).map(Field::getName)
 				.filter(fieldName -> fieldName.startsWith("ROLE_")).map(role -> role.substring(5).toLowerCase());
 	}
 
