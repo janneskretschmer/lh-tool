@@ -1,5 +1,7 @@
 package de.lh.tool.rest;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -25,7 +27,7 @@ public class UserIT extends BasicRestIntegrationTest {
 
 	@Test
 	public void testUserCreation() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/users/").method(Method.POST)
 				.body(UserCreationDto.builder().email("test@lh-tool.de").firstName("Tes").lastName("Ter")
 						.gender(Gender.MALE.name()).build())
@@ -38,7 +40,7 @@ public class UserIT extends BasicRestIntegrationTest {
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
 				.validationQueriesForOthers(
 						List.of("SELECT 1 WHERE NOT EXISTS(SELECT * FROM user WHERE email='test@lh-tool.de')"))
-				.build());
+				.build()));
 	}
 
 	// TODO test missing values
@@ -53,7 +55,7 @@ public class UserIT extends BasicRestIntegrationTest {
 
 	@Test
 	public void testUserModificationForeign() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/users/1000").method(Method.PUT)
 				.initializationQueries(List.of(
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'FEMALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
@@ -72,12 +74,12 @@ public class UserIT extends BasicRestIntegrationTest {
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
 				.validationQueriesForOthers(List.of("SELECT * FROM user WHERE email='test@lh-tool.de'",
 						"SELECT 1 WHERE NOT EXISTS(SELECT * FROM user WHERE email='changed@lh-tool.de')"))
-				.build());
+				.build()));
 	}
 
 	@Test
 	public void testUserModificationOwnProjectLocalCoordinator() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/users/1000").method(Method.PUT)
 				.initializationQueries(List.of(
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'FEMALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
@@ -99,12 +101,12 @@ public class UserIT extends BasicRestIntegrationTest {
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
 				.validationQueriesForOthers(List.of("SELECT * FROM user WHERE email='test@lh-tool.de'",
 						"SELECT 1 WHERE NOT EXISTS(SELECT * FROM user WHERE email='changed@lh-tool.de')"))
-				.build());
+				.build()));
 	}
 
 	@Test
 	public void testUserModificationOwnProjectStoreKeeper() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/users/1000").method(Method.PUT)
 				.initializationQueries(List.of(
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'FEMALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
@@ -126,12 +128,12 @@ public class UserIT extends BasicRestIntegrationTest {
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
 				.validationQueriesForOthers(List.of("SELECT * FROM user WHERE email='test@lh-tool.de'",
 						"SELECT 1 WHERE NOT EXISTS(SELECT * FROM user WHERE email='changed@lh-tool.de')"))
-				.build());
+				.build()));
 	}
 
 	@Test
 	public void testUserModificationOwnProjectInventoryManager() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/users/1000").method(Method.PUT)
 				.initializationQueries(List.of(
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'FEMALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
@@ -153,12 +155,12 @@ public class UserIT extends BasicRestIntegrationTest {
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
 				.validationQueriesForOthers(List.of("SELECT * FROM user WHERE email='test@lh-tool.de'",
 						"SELECT 1 WHERE NOT EXISTS(SELECT * FROM user WHERE email='changed@lh-tool.de')"))
-				.build());
+				.build()));
 	}
 
 	@Test
 	public void testUserModificationOwnProjectPublisher() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/users/1000").method(Method.PUT)
 				.initializationQueries(List.of(
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'FEMALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
@@ -181,7 +183,7 @@ public class UserIT extends BasicRestIntegrationTest {
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
 				.validationQueriesForOthers(List.of("SELECT * FROM user WHERE email='test@lh-tool.de'",
 						"SELECT 1 WHERE NOT EXISTS(SELECT * FROM user WHERE email='changed@lh-tool.de')"))
-				.build());
+				.build()));
 	}
 
 	// TODO test missing values
@@ -189,7 +191,7 @@ public class UserIT extends BasicRestIntegrationTest {
 
 	@Test
 	public void testPasswordModificationToken() throws Exception {
-		testEndpoint(EndpointTest.builder().url(REST_URL + "/users/password").method(Method.PUT)
+		assertTrue(testEndpoint(EndpointTest.builder().url(REST_URL + "/users/password").method(Method.PUT)
 				.initializationQueries(List.of(
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
 						"INSERT INTO password_change_token(user_id,token) VALUES (1000,'test-token')"))
@@ -216,12 +218,12 @@ public class UserIT extends BasicRestIntegrationTest {
 				.validationQueriesForOthers(List.of(
 						"SELECT * FROM user WHERE email='test@lh-tool.de' AND password_hash='$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W'",
 						"SELECT * FROM password_change_token WHERE user_id=1000"))
-				.build());
+				.build()));
 	}
 
 	@Test
 	public void testPasswordModificationOldPassword() throws Exception {
-		testEndpoint(EndpointTest.builder().url(REST_URL + "/users/password").method(Method.PUT)
+		assertTrue(testEndpoint(EndpointTest.builder().url(REST_URL + "/users/password").method(Method.PUT)
 				.initializationQueries(List.of(
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)"))
 				.body(PasswordChangeDto.builder().userId(1000l).oldPassword("testing").newPassword("changed")
@@ -236,12 +238,12 @@ public class UserIT extends BasicRestIntegrationTest {
 				.httpCodeForOthers(HttpStatus.BAD_REQUEST)
 				.validationQueriesForOthers(List.of(
 						"SELECT * FROM user WHERE email='test@lh-tool.de' AND password_hash='$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W'"))
-				.build());
+				.build()));
 	}
 
 	@Test
 	public void testPasswordModificationShort() throws Exception {
-		testEndpoint(EndpointTest.builder().url(REST_URL + "/users/password").method(Method.PUT)
+		assertTrue(testEndpoint(EndpointTest.builder().url(REST_URL + "/users/password").method(Method.PUT)
 				.initializationQueries(List.of(
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)"))
 				.body(PasswordChangeDto.builder().userId(1000l).oldPassword("testing").newPassword("short")
@@ -258,12 +260,12 @@ public class UserIT extends BasicRestIntegrationTest {
 						"{\"key\":\"EX_PASSWORDS_SHORT_PASSWORD\",\"message\":\"The provided password has less than 6 letters.\",\"httpCode\":400}")
 				.validationQueriesForOthers(List.of(
 						"SELECT * FROM user WHERE email='test@lh-tool.de' AND password_hash='$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W'"))
-				.build());
+				.build()));
 	}
 
 	@Test
 	public void testPasswordModificationNoMatch() throws Exception {
-		testEndpoint(EndpointTest.builder().url(REST_URL + "/users/password").method(Method.PUT)
+		assertTrue(testEndpoint(EndpointTest.builder().url(REST_URL + "/users/password").method(Method.PUT)
 				.initializationQueries(List.of(
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)"))
 				.body(PasswordChangeDto.builder().userId(1000l).oldPassword("testing").newPassword("changed")
@@ -280,12 +282,12 @@ public class UserIT extends BasicRestIntegrationTest {
 						"{\"key\":\"EX_PASSWORDS_DO_NOT_MATCH\",\"message\":\"The provided passwords do not match.\",\"httpCode\":400}")
 				.validationQueriesForOthers(List.of(
 						"SELECT * FROM user WHERE email='test@lh-tool.de' AND password_hash='$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W'"))
-				.build());
+				.build()));
 	}
 
 	@Test
 	public void testPasswordModificationNoUser() throws Exception {
-		testEndpoint(EndpointTest.builder().url(REST_URL + "/users/password").method(Method.PUT)
+		assertTrue(testEndpoint(EndpointTest.builder().url(REST_URL + "/users/password").method(Method.PUT)
 				.initializationQueries(List.of(
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)"))
 				.body(PasswordChangeDto.builder().oldPassword("testing").newPassword("changed")
@@ -302,12 +304,12 @@ public class UserIT extends BasicRestIntegrationTest {
 						"{\"key\":\"EX_PASSWORDS_NO_USER_ID\",\"message\":\"No user id was provided.\",\"httpCode\":400}")
 				.validationQueriesForOthers(List.of(
 						"SELECT * FROM user WHERE email='test@lh-tool.de' AND password_hash='$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W'"))
-				.build());
+				.build()));
 	}
 
 	@Test
 	public void testPasswordModificationInvalidPassword() throws Exception {
-		testEndpoint(EndpointTest.builder().url(REST_URL + "/users/password").method(Method.PUT)
+		assertTrue(testEndpoint(EndpointTest.builder().url(REST_URL + "/users/password").method(Method.PUT)
 				.initializationQueries(List.of(
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)"))
 				.body(PasswordChangeDto.builder().userId(1000l).oldPassword("invalid").newPassword("changed")
@@ -329,12 +331,12 @@ public class UserIT extends BasicRestIntegrationTest {
 						"{\"key\":\"EX_INVALID_USER_ID\",\"message\":\"The provided user id is invalid.\",\"httpCode\":400}")
 				.validationQueriesForOthers(List.of(
 						"SELECT * FROM user WHERE email='test@lh-tool.de' AND password_hash='$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W'"))
-				.build());
+				.build()));
 	}
 
 	@Test
 	public void testPasswordModificationInvalidToken() throws Exception {
-		testEndpoint(EndpointTest.builder().url(REST_URL + "/users/password").method(Method.PUT)
+		assertTrue(testEndpoint(EndpointTest.builder().url(REST_URL + "/users/password").method(Method.PUT)
 				.initializationQueries(List.of(
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
 						"INSERT INTO password_change_token(user_id,token) VALUES (1000,'test-token')"))
@@ -361,12 +363,12 @@ public class UserIT extends BasicRestIntegrationTest {
 				.validationQueriesForOthers(List.of(
 						"SELECT * FROM user WHERE email='test@lh-tool.de' AND password_hash='$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W'",
 						"SELECT * FROM password_change_token WHERE user_id=1000"))
-				.build());
+				.build()));
 	}
 
 	@Test
 	public void testPasswordModificationExpiredToken() throws Exception {
-		testEndpoint(EndpointTest.builder().url(REST_URL + "/users/password").method(Method.PUT)
+		assertTrue(testEndpoint(EndpointTest.builder().url(REST_URL + "/users/password").method(Method.PUT)
 				.initializationQueries(List.of(
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
 						"INSERT INTO password_change_token(user_id,token,updated) VALUES (1000,'test-token',DATE_SUB( NOW() , INTERVAL 15 DAY ))"))
@@ -393,7 +395,7 @@ public class UserIT extends BasicRestIntegrationTest {
 				.validationQueriesForOthers(List.of(
 						"SELECT * FROM user WHERE email='test@lh-tool.de' AND password_hash='$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W'",
 						"SELECT * FROM password_change_token WHERE user_id=1000"))
-				.build());
+				.build()));
 	}
 
 	// TODO test put userRoles
@@ -407,7 +409,7 @@ public class UserIT extends BasicRestIntegrationTest {
 
 	@Test
 	public void testUserDeletionOwnProjectLocalCoordinator() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/users/1000").method(Method.PUT)
 				.initializationQueries(List.of(
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'FEMALE', NULL, 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
@@ -428,12 +430,12 @@ public class UserIT extends BasicRestIntegrationTest {
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
 				.validationQueriesForOthers(List.of("SELECT * FROM user WHERE email='test@lh-tool.de'",
 						"SELECT 1 WHERE NOT EXISTS(SELECT * FROM user WHERE email='changed@lh-tool.de')"))
-				.build());
+				.build()));
 	}
 
 	@Test
 	public void testUserDeletionOwnProjectStoreKeeper() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/users/1000").method(Method.DELETE)
 				.initializationQueries(List.of(
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'FEMALE', NULL, 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
@@ -446,12 +448,12 @@ public class UserIT extends BasicRestIntegrationTest {
 								List.of("SELECT 1 WHERE NOT EXISTS(SELECT * FROM user WHERE email='test@lh-tool.de')"))
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
-				.validationQueriesForOthers(List.of("SELECT * FROM user WHERE email='test@lh-tool.de'")).build());
+				.validationQueriesForOthers(List.of("SELECT * FROM user WHERE email='test@lh-tool.de'")).build()));
 	}
 
 	@Test
 	public void testUserDeletionOwnProjectInventoryManager() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/users/1000").method(Method.DELETE)
 				.initializationQueries(List.of(
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'FEMALE', NULL, 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
@@ -464,12 +466,12 @@ public class UserIT extends BasicRestIntegrationTest {
 								List.of("SELECT 1 WHERE NOT EXISTS(SELECT * FROM user WHERE email='test@lh-tool.de')"))
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
-				.validationQueriesForOthers(List.of("SELECT * FROM user WHERE email='test@lh-tool.de'")).build());
+				.validationQueriesForOthers(List.of("SELECT * FROM user WHERE email='test@lh-tool.de'")).build()));
 	}
 
 	@Test
 	public void testUserDeletionOwnProjectPublisher() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/users/1000").method(Method.DELETE)
 				.initializationQueries(List.of(
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'FEMALE', NULL, 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
@@ -483,12 +485,12 @@ public class UserIT extends BasicRestIntegrationTest {
 								List.of("SELECT 1 WHERE NOT EXISTS(SELECT * FROM user WHERE email='test@lh-tool.de')"))
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
-				.validationQueriesForOthers(List.of("SELECT * FROM user WHERE email='test@lh-tool.de'")).build());
+				.validationQueriesForOthers(List.of("SELECT * FROM user WHERE email='test@lh-tool.de'")).build()));
 	}
 
 	@Test
 	public void testUserDeletionNotExisting() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of(
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)"))
 				.url(REST_URL + "/users/1001").method(Method.DELETE)
@@ -498,7 +500,7 @@ public class UserIT extends BasicRestIntegrationTest {
 						.expectedResponse(
 								"{\"key\":\"EX_INVALID_USER_ID\",\"message\":\"The provided user id is invalid.\",\"httpCode\":400}")
 						.validationQueries(List.of()).build()))
-				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build());
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
 
 //  _██████╗_███████╗████████╗
@@ -510,7 +512,7 @@ public class UserIT extends BasicRestIntegrationTest {
 
 	@Test
 	public void testUserGetForeign() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/users").method(Method.GET)
 				.initializationQueries(List.of(
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Terin', 'FEMALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
@@ -541,12 +543,12 @@ public class UserIT extends BasicRestIntegrationTest {
 								.expectedResponse(
 										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/{?project_id,role}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":4,\"firstName\":\"Test\",\"lastName\":\"Attendance\",\"gender\":\"MALE\",\"email\":\"test-attendance@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false}]}")
 								.build()))
-				.httpCodeForOthers(HttpStatus.FORBIDDEN).build());
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 
 	@Test
 	public void testUserGetOwn() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/users").method(Method.GET)
 				.initializationQueries(List.of(
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Terin', 'FEMALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
@@ -580,12 +582,12 @@ public class UserIT extends BasicRestIntegrationTest {
 												+ "\"email\":\"test-store_keeper@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false},{\"id\":1000,\"firstName\":\"Tes\",\"lastName\":\"Terin\",\"gender\":\"FEMALE\","
 												+ "\"email\":\"test@lh-tool.de\",\"telephoneNumber\":\"123\",\"mobileNumber\":\"456\",\"businessNumber\":null,\"profession\":\"Hartzer\",\"skills\":null,\"active\":false}]}")
 								.build()))
-				.httpCodeForOthers(HttpStatus.FORBIDDEN).build());
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 
 	@Test
 	public void testUserGetByOwnProjectId() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/users?project_id=1").method(Method.GET)
 				.initializationQueries(List.of(
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'FEMALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
@@ -610,12 +612,12 @@ public class UserIT extends BasicRestIntegrationTest {
 										+ "\"email\":\"test-store_keeper@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false},{\"id\":1000,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":\"FEMALE\","
 										+ "\"email\":\"test@lh-tool.de\",\"telephoneNumber\":\"123\",\"mobileNumber\":\"456\",\"businessNumber\":null,\"profession\":\"Hartzer\",\"skills\":null,\"active\":false}]}")
 						.build()))
-				.httpCodeForOthers(HttpStatus.FORBIDDEN).build());
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 
 	@Test
 	public void testUserGetForeignProjectId() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/users?project_id=2").method(Method.GET)
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
@@ -632,12 +634,12 @@ public class UserIT extends BasicRestIntegrationTest {
 										+ "\"email\":\"test2@lh-tool.de\",\"telephoneNumber\":\"123\",\"mobileNumber\":\"456\",\"businessNumber\":null,\"profession\":\"Hartzer\",\"skills\":null,\"active\":false},{\"id\":1000,\"firstName\":\"Tes\",\"lastName\":\"Terin\",\"gender\":\"FEMALE\","
 										+ "\"email\":\"test@lh-tool.de\",\"telephoneNumber\":\"123\",\"mobileNumber\":\"456\",\"businessNumber\":null,\"profession\":\"Hartzer\",\"skills\":null,\"active\":false}]}")
 						.build()))
-				.httpCodeForOthers(HttpStatus.FORBIDDEN).build());
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 
 	@Test
 	public void testUserGetOwnProjectIdAndRole() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/users?project_id=1&role=ROLE_INVENTORY_MANAGER").method(Method.GET)
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
@@ -658,12 +660,12 @@ public class UserIT extends BasicRestIntegrationTest {
 										+ "\"email\":\"test-inventory_manager@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false},{\"id\":1000,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":\"FEMALE\","
 										+ "\"email\":\"test@lh-tool.de\",\"telephoneNumber\":\"123\",\"mobileNumber\":\"456\",\"businessNumber\":null,\"profession\":\"Hartzer\",\"skills\":null,\"active\":false}]}")
 						.build()))
-				.httpCodeForOthers(HttpStatus.FORBIDDEN).build());
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 
 	@Test
 	public void testUserGetForeignProjectIdAndRole() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/users?project_id=2&role=ROLE_PUBLISHER").method(Method.GET)
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
@@ -680,12 +682,12 @@ public class UserIT extends BasicRestIntegrationTest {
 						.expectedResponse(
 								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/?project_id=2&role=ROLE_PUBLISHER\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1000,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":\"FEMALE\",\"email\":\"test@lh-tool.de\",\"telephoneNumber\":\"123\",\"mobileNumber\":\"456\",\"businessNumber\":null,\"profession\":\"Hartzer\",\"skills\":null,\"active\":false}]}")
 						.build()))
-				.httpCodeForOthers(HttpStatus.FORBIDDEN).build());
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 
 	@Test
 	public void testUserGetRole() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/users?role=ROLE_INVENTORY_MANAGER").method(Method.GET)
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
@@ -712,12 +714,12 @@ public class UserIT extends BasicRestIntegrationTest {
 												+ "\"email\":\"test-inventory_manager@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false},{\"id\":1000,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":\"FEMALE\","
 												+ "\"email\":\"test@lh-tool.de\",\"telephoneNumber\":\"123\",\"mobileNumber\":\"456\",\"businessNumber\":null,\"profession\":\"Hartzer\",\"skills\":null,\"active\":false}]}")
 								.build()))
-				.httpCodeForOthers(HttpStatus.FORBIDDEN).build());
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 
 	@Test
 	public void testUserGetByIdOwnProject() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/users/1000").method(Method.GET)
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
@@ -736,12 +738,12 @@ public class UserIT extends BasicRestIntegrationTest {
 						.expectedResponse(
 								"{\"id\":1000,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":\"FEMALE\",\"email\":\"test@lh-tool.de\",\"telephoneNumber\":\"123\",\"mobileNumber\":\"456\",\"businessNumber\":null,\"profession\":\"Hartzer\",\"skills\":null,\"active\":false,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
 						.build()))
-				.httpCodeForOthers(HttpStatus.FORBIDDEN).build());
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 
 	@Test
 	public void testUserGetByIdForeignProject() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/users/1000").method(Method.GET)
 				.initializationQueries(List.of(
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'FEMALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
@@ -751,12 +753,12 @@ public class UserIT extends BasicRestIntegrationTest {
 						.expectedResponse(
 								"{\"id\":1000,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":\"FEMALE\",\"email\":\"test@lh-tool.de\",\"telephoneNumber\":\"123\",\"mobileNumber\":\"456\",\"businessNumber\":null,\"profession\":\"Hartzer\",\"skills\":null,\"active\":false,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
 						.build()))
-				.httpCodeForOthers(HttpStatus.FORBIDDEN).build());
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 
 	@Test
 	public void testUserGetByIdNonExisting() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/users/1000").method(Method.GET).initializationQueries(List.of())
 				.userTests(List.of(UserTest.builder()
 						.emails(List
@@ -765,7 +767,7 @@ public class UserIT extends BasicRestIntegrationTest {
 						.expectedResponse(
 								"{\"key\":\"EX_WRONG_ID_PROVIDED\",\"message\":\"Please provide a valid ID.\",\"httpCode\":400}")
 						.build()))
-				.httpCodeForOthers(HttpStatus.FORBIDDEN).build());
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 
 }

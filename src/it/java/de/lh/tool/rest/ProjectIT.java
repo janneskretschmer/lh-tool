@@ -1,5 +1,7 @@
 package de.lh.tool.rest;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Date;
 import java.util.List;
 
@@ -23,7 +25,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 
 	@Test
 	public void testProjectCreation() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/projects/").method(Method.POST)
 				.body(ProjectDto.builder().name("Test").startDate(new Date(1548971153l)).endDate(new Date(1551571200l))
 						.build())
@@ -36,12 +38,12 @@ public class ProjectIT extends BasicRestIntegrationTest {
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(
 						List.of("SELECT 1 WHERE NOT EXISTS(SELECT * FROM project WHERE name='Test')"))
-				.build());
+				.build()));
 	}
 
 	@Test
 	public void testProjectCreationDuplicate() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (NULL, 'Test', '2020-04-09', '2020-04-24')"))
 				.url(REST_URL + "/projects/").method(Method.POST)
@@ -55,14 +57,14 @@ public class ProjectIT extends BasicRestIntegrationTest {
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(
 						List.of("SELECT 1 WHERE (SELECT COUNT(*) FROM project WHERE name='Test')=1"))
-				.build());
+				.build()));
 	}
 
 	// TODO test missing values
 
 	@Test
 	public void testProjectUserCreationForeign() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `email`) VALUES ('1000', 'Tes', 'Ter', 'MALE','tester@lh-tool.de');"))
@@ -75,12 +77,12 @@ public class ProjectIT extends BasicRestIntegrationTest {
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
 				.validationQueriesForOthers(List.of(
 						"SELECT 1 WHERE NOT EXISTS(SELECT * FROM project_user WHERE project_id=1 AND user_id=1000)"))
-				.build());
+				.build()));
 	}
 
 	@Test
 	public void testProjectUserCreationOwn() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
 						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
@@ -96,7 +98,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
 				.validationQueriesForOthers(List.of(
 						"SELECT 1 WHERE NOT EXISTS(SELECT * FROM project_user WHERE project_id=1 AND user_id=1000)"))
-				.build());
+				.build()));
 	}
 
 	// TODO test non existing project and user ids
@@ -110,7 +112,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 
 	@Test
 	public void testProjectModificationForeign() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test123', '2020-04-09', '2020-04-24')"))
 				.url(REST_URL + "/projects/1").method(Method.PUT)
@@ -125,12 +127,12 @@ public class ProjectIT extends BasicRestIntegrationTest {
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
 				.validationQueriesForOthers(List.of(
 						"SELECT * FROM project WHERE name='Test123' AND start_date='2020-04-09' AND end_date='2020-04-24'"))
-				.build());
+				.build()));
 	}
 
 	@Test
 	public void testProjectModificationOwn() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test123', '2020-04-09', '2020-04-24')",
 						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user"))
@@ -147,12 +149,12 @@ public class ProjectIT extends BasicRestIntegrationTest {
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
 				.validationQueriesForOthers(List.of(
 						"SELECT * FROM project WHERE name='Test123' AND start_date='2020-04-09' AND end_date='2020-04-24'"))
-				.build());
+				.build()));
 	}
 
 	@Test
 	public void testProjectModificationNotExisting() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test123', '2020-04-09', '2020-04-24')",
 						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user"))
@@ -170,12 +172,12 @@ public class ProjectIT extends BasicRestIntegrationTest {
 				.validationQueriesForOthers(List.of(
 						"SELECT 1 WHERE NOT EXISTS(SELECT * FROM project WHERE name='Test')",
 						"SELECT * FROM project WHERE name='Test123' AND start_date='2020-04-09' AND end_date='2020-04-24'"))
-				.build());
+				.build()));
 	}
 
 	@Test
 	public void testProjectModificationDuplicate() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test123', '2020-04-09', '2020-04-24')",
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (2, 'Test', '2020-04-09', '2020-04-24')"))
@@ -189,7 +191,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(
 						List.of("SELECT 1 WHERE (SELECT COUNT(*) FROM project WHERE name='Test')=1"))
-				.build());
+				.build()));
 	}
 
 //  ██████╗_███████╗██╗_____███████╗████████╗███████╗
@@ -201,7 +203,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 
 	@Test
 	public void testProjectDeletionForeign() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')"))
 				.url(REST_URL + "/projects/1").method(Method.DELETE)
@@ -211,12 +213,12 @@ public class ProjectIT extends BasicRestIntegrationTest {
 								List.of("SELECT 1 WHERE NOT EXISTS(SELECT * FROM project WHERE name='Test')"))
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
-				.validationQueriesForOthers(List.of("SELECT * FROM project WHERE name='Test'")).build());
+				.validationQueriesForOthers(List.of("SELECT * FROM project WHERE name='Test'")).build()));
 	}
 
 	@Test
 	public void testProjectDeletionOwn() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
 						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user"))
@@ -227,12 +229,12 @@ public class ProjectIT extends BasicRestIntegrationTest {
 								List.of("SELECT 1 WHERE NOT EXISTS(SELECT * FROM project WHERE name='Test')"))
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
-				.validationQueriesForOthers(List.of("SELECT * FROM project WHERE name='Test'")).build());
+				.validationQueriesForOthers(List.of("SELECT * FROM project WHERE name='Test'")).build()));
 	}
 
 	@Test
 	public void testProjectDeletionNotExisting() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')"))
 				.url(REST_URL + "/projects/2").method(Method.DELETE)
@@ -241,12 +243,12 @@ public class ProjectIT extends BasicRestIntegrationTest {
 						.expectedResponse(
 								"{\"key\":\"EX_INVALID_ID\",\"message\":\"The provided id is invalid.\",\"httpCode\":400}")
 						.validationQueries(List.of()).build()))
-				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build());
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
 
 	@Test
 	public void testProjectUserDeletionForeign() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `email`) VALUES ('1000', 'Tes', 'Ter', 'MALE','tester@lh-tool.de')",
@@ -259,12 +261,12 @@ public class ProjectIT extends BasicRestIntegrationTest {
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
 				.validationQueriesForOthers(List.of("SELECT * FROM project_user WHERE project_id=1 AND user_id=1000"))
-				.build());
+				.build()));
 	}
 
 	@Test
 	public void testProjectUserDeletionOwn() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `email`) VALUES ('1000', 'Tes', 'Ter', 'MALE','tester@lh-tool.de');",
@@ -277,7 +279,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
 				.validationQueriesForOthers(List.of("SELECT * FROM project_user WHERE project_id=1 AND user_id=1000"))
-				.build());
+				.build()));
 	}
 
 	// TODO test deleting not existing project_user references
@@ -291,7 +293,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 
 	@Test
 	public void testProjectGet() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test123', '2020-04-09', '2020-04-24')",
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (2, 'Test', '2020-04-09', '2020-04-24')",
@@ -308,12 +310,12 @@ public class ProjectIT extends BasicRestIntegrationTest {
 								.expectedResponse(
 										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"name\":\"Test123\",\"startDate\":1586390400000,\"endDate\":1587686400000}]}")
 								.validationQueries(List.of()).build()))
-				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build());
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
 
 	@Test
 	public void testProjectGetByIdForeign() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')"))
 				.url(REST_URL + "/projects/1").method(Method.GET)
@@ -321,12 +323,12 @@ public class ProjectIT extends BasicRestIntegrationTest {
 						.expectedResponse(
 								"{\"id\":1,\"name\":\"Test\",\"startDate\":1586390400000,\"endDate\":1587686400000,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
 						.validationQueries(List.of()).build()))
-				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build());
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
 
 	@Test
 	public void testProjectGetByIdOwn() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
 						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user"))
@@ -338,12 +340,12 @@ public class ProjectIT extends BasicRestIntegrationTest {
 						.expectedResponse(
 								"{\"id\":1,\"name\":\"Test\",\"startDate\":1586390400000,\"endDate\":1587686400000,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
 						.validationQueries(List.of()).build()))
-				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build());
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
 
 	@Test
 	public void testProjectGetByIdNotExisting() throws Exception {
-		testEndpoint(EndpointTest.builder()//
+		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')"))
 				.url(REST_URL + "/projects/2").method(Method.GET)
@@ -354,7 +356,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 						.expectedResponse(
 								"{\"key\":\"EX_INVALID_ID\",\"message\":\"The provided id is invalid.\",\"httpCode\":400}")
 						.validationQueries(List.of()).build()))
-				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build());
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
 
 }

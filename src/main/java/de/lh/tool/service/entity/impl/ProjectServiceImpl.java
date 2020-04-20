@@ -44,8 +44,7 @@ public class ProjectServiceImpl extends BasicMappableEntityServiceImpl<ProjectRe
 	public Collection<Project> getOwnProjects() {
 		User currentUser = userService.getCurrentUser();
 		if (currentUser != null) {
-			return userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_GET_FOREIGN)
-					? (Collection<Project>) findAll()
+			return userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_GET_FOREIGN) ? findAll()
 					: currentUser.getProjects();
 		}
 		return Collections.emptyList();
@@ -90,7 +89,7 @@ public class ProjectServiceImpl extends BasicMappableEntityServiceImpl<ProjectRe
 
 		Project project = convertToEntity(projectDto);
 		boolean ownProject = isOwnProject(getRepository().findById(project.getId())
-				.orElseThrow(() -> ExceptionEnum.EX_INVALID_ID.createDefaultException()));
+				.orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException));
 		if (!ownProject && !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_CHANGE_FOREIGN)) {
 			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
 		}

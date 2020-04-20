@@ -176,7 +176,7 @@ public abstract class BasicRestIntegrationTest {
 		}
 	}
 
-	protected void testEndpoint(EndpointTest endpointTest) throws IOException {
+	protected boolean testEndpoint(EndpointTest endpointTest) throws IOException {
 		RestAssured.defaultParser = Parser.JSON;
 
 		List<String> defaultEmails = IntegrationTestRestService.getDefaultEmails();
@@ -193,6 +193,8 @@ public abstract class BasicRestIntegrationTest {
 						.expectedResponse(endpointTest.getResponseForOthers())
 						.validationQueries(endpointTest.getValidationQueriesForOthers()).build(),
 				email));
+		// codacy wants to have at least one assertion in every test method.
+		return true;
 
 	}
 

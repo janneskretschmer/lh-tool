@@ -129,7 +129,7 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 		if (user.getId() == null) {
 			throw new DefaultException(ExceptionEnum.EX_NO_ID_PROVIDED);
 		}
-		User old = findById(user.getId()).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_USER_ID));
+		User old = findById(user.getId()).orElseThrow(ExceptionEnum.EX_INVALID_USER_ID::createDefaultException);
 
 		checkIfEditIsAllowed(old, true);
 
@@ -140,10 +140,9 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 	}
 
 	private void checkIfEditIsAllowed(User user, boolean allowedToEditSelf) throws DefaultException {
-		UserPermissionCriteria criteria = Optional.ofNullable(user).map(u -> evaluatePermissionsOnOtherUser(u))
+		UserPermissionCriteria criteria = Optional.ofNullable(user).map(this::evaluatePermissionsOnOtherUser)
 				.orElse(new UserPermissionCriteria());
-		if (true //
-				&& !(allowedToEditSelf && criteria.isSelf())
+		if (!(allowedToEditSelf && criteria.isSelf())
 				&& !(criteria.isAllowedToChangeFromForeignProjects()
 						&& (user.getRoles().size() == 0 || criteria.isAllowedToGrantRoles()))
 				&& !(criteria.isSameProject() && criteria.isAllowedToGrantRoles())) {
