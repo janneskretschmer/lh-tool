@@ -31,7 +31,7 @@ fi
 #   __ /____  >\___  >\___  >____/ |__|  |__||__|  / ____|            \___  >__|  |__||__| |__|\___  >____  /____/  __
 #   \/      \/     \/     \/                       \/                     \/                       \/     \/        \/
 # NEVER DEPLOY THOSE REST-CONTROLLERS!
-#rm -Rf src/main/java/de/lh/tool/service/rest/testonly/*
+rm -Rf src/main/java/de/lh/tool/service/rest/testonly/*
 
 echo "jdbc.url=$db_url" > src/main/resources/credentials.properties
 echo "jdbc.username=$CREDENTIALS_DB_USERNAME" >> src/main/resources/credentials.properties
