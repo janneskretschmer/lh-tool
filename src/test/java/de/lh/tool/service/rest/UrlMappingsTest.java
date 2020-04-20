@@ -21,12 +21,20 @@ public class UrlMappingsTest {
 	public void testIfInSync() throws FileNotFoundException, IllegalArgumentException, IllegalAccessException {
 		Map<String, String> jsConsts = new HashMap<>();
 		try (Scanner scanner = new Scanner(new File(URL_MAPPINGS_JS_PATH));) {
-			Pattern pattern = Pattern.compile("^export const (\\S+) = (.*);$");
+			Pattern pattern = Pattern.compile("^export const (\\S+) = (.*?);*$");
+			String line = scanner.nextLine().trim();
 			while (scanner.hasNextLine()) {
-				String line = scanner.nextLine().trim();
 				Matcher matcher = pattern.matcher(line);
 				if (matcher.find()) {
-					jsConsts.put(matcher.group(1), matcher.group(2));
+					String key = matcher.group(1);
+					jsConsts.put(key, matcher.group(2));
+					line = scanner.nextLine().trim();
+					while (line.startsWith("+")) {
+						jsConsts.put(key, jsConsts.get(key) + line.replace(";", ""));
+						line = scanner.nextLine().trim();
+					}
+				} else {
+					line = scanner.nextLine().trim();
 				}
 			}
 		}

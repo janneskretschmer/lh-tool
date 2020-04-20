@@ -4,6 +4,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -19,12 +20,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.lh.tool.domain.dto.ProjectDto;
+import de.lh.tool.domain.dto.ProjectHelperTypeDto;
 import de.lh.tool.domain.dto.ProjectUserDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.model.UserRole;
+import de.lh.tool.service.entity.interfaces.ProjectHelperTypeService;
 import de.lh.tool.service.entity.interfaces.ProjectService;
 import de.lh.tool.service.entity.interfaces.ProjectUserService;
 import io.swagger.annotations.ApiOperation;
@@ -37,6 +41,8 @@ public class ProjectRestService {
 	private ProjectService projectService;
 	@Autowired
 	private ProjectUserService projectUserService;
+	@Autowired
+	private ProjectHelperTypeService projectHelperTypeService;
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of own projects")
@@ -116,5 +122,22 @@ public class ProjectRestService {
 		projectUserService.deleteByProjectAndUser(id, userId);
 
 		return ResponseEntity.noContent().build();
+	}
+
+	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.PROJECT_HELPER_TYPES)
+	@ApiOperation(value = "Get a list of relationships between project and helpertypes")
+	@Secured(UserRole.RIGHT_PROJECTS_GET)
+	public Resources<ProjectHelperTypeDto> getProjectHelperTypes(
+			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long projectId,
+			@PathVariable(name = UrlMappings.HELPER_TYPE_ID_VARIABLE) Long helperTypeId,
+			@RequestParam(required = true, name = UrlMappings.WEEKDAY_VARIABLE) Integer weekday)
+			throws DefaultException {
+
+		List<ProjectHelperTypeDto> dtoList = projectHelperTypeService
+				.findDtosByProjectIdAndHelperTypeIdAndWeekday(projectId, helperTypeId, weekday);
+
+		return new Resources<>(dtoList,
+				linkTo(methodOn(ProjectRestService.class).getProjectHelperTypes(projectId, helperTypeId, weekday))
+						.withSelfRel());
 	}
 }

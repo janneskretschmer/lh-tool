@@ -1,6 +1,6 @@
 package de.lh.tool.service.entity.interfaces;
 
-import java.util.List;
+import java.time.LocalDate;
 
 import de.lh.tool.domain.dto.NeedDto;
 import de.lh.tool.domain.exception.DefaultException;
@@ -16,6 +16,6 @@ public interface NeedService extends BasicEntityService<Need, Long> {
 
 	NeedDto updateNeedDto(NeedDto needDto, Long id) throws DefaultException;
 
-	List<NeedDto> getNeedDtos(Long projectId, Integer startDiff, Integer endDiff) throws DefaultException;
+	NeedDto getNeedDtoByProjectHelperTypeIdAndDate(Long projectHelperTypeId, LocalDate date) throws DefaultException;
 
 }

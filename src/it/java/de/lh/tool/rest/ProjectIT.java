@@ -65,22 +65,23 @@ public class ProjectIT extends BasicRestIntegrationTest {
 		String adminJwt = getJwtByEmail(ADMIN_EMAIL);
 		Long adminId = getUserIdByEmail(ADMIN_EMAIL);
 		String jwt2 = getJwtByEmail(CONSTRUCTION_SERVANT_2_EMAIL);
-		getRequestSpecWithJwt(jwt2).post(url + dto.getId() + "/" + adminId).then().statusCode(403);
+		getRequestSpecWithJwt(jwt2).post(url + dto.getId() + "/users/" + adminId).then().statusCode(403);
 		Long constructionServant2Id = getUserIdByEmail(CONSTRUCTION_SERVANT_2_EMAIL);
 		getRequestSpecWithJwt(jwt2).when().get(url).then().body("content", Matchers.iterableWithSize(0));
 		getRequestSpecWithJwt(adminJwt).when().get(url).then().body("content", Matchers.iterableWithSize(1));
-		getRequestSpecWithJwt(adminJwt).post(url + dto.getId() + "/" + constructionServant2Id).then().statusCode(200);
+		getRequestSpecWithJwt(adminJwt).post(url + dto.getId() + "/users/" + constructionServant2Id).then()
+				.statusCode(200);
 		getRequestSpecWithJwt(jwt2).when().get(url).then().body("content", Matchers.iterableWithSize(1));
-		getRequestSpecWithJwtByEmail(LOCAL_COORDINATOR_1_EMAIL).post(url + dto.getId() + "/" + adminId).then()
+		getRequestSpecWithJwtByEmail(LOCAL_COORDINATOR_1_EMAIL).post(url + dto.getId() + "/users/" + adminId).then()
 				.statusCode(403);
-		getRequestSpecWithJwt(getJwtByEmail(PUBLISHER_1_EMAIL)).post(url + dto.getId() + "/" + adminId).then()
+		getRequestSpecWithJwt(getJwtByEmail(PUBLISHER_1_EMAIL)).post(url + dto.getId() + "/users/" + adminId).then()
 				.statusCode(403);
-		getRequestSpecWithJwt(getJwtByEmail(INVENTORY_MANAGER_1_EMAIL)).post(url + dto.getId() + "/" + adminId).then()
+		getRequestSpecWithJwt(getJwtByEmail(INVENTORY_MANAGER_1_EMAIL)).post(url + dto.getId() + "/users/" + adminId)
+				.then().statusCode(403);
+		getRequestSpecWithJwt(getJwtByEmail(STORE_KEEPER_1_EMAIL)).post(url + dto.getId() + "/users/" + adminId).then()
 				.statusCode(403);
-		getRequestSpecWithJwt(getJwtByEmail(STORE_KEEPER_1_EMAIL)).post(url + dto.getId() + "/" + adminId).then()
-				.statusCode(403);
-		RestAssured.given().post(url + dto.getId() + "/" + adminId).then().statusCode(401);
-		getRequestSpecWithJwt(jwt2).post(url + dto.getId() + "/" + adminId).then().statusCode(200);
+		RestAssured.given().post(url + dto.getId() + "/users/" + adminId).then().statusCode(401);
+		getRequestSpecWithJwt(jwt2).post(url + dto.getId() + "/users/" + adminId).then().statusCode(200);
 
 		Long project2Id = getRequestSpecWithJwt(jwt).body(ProjectDto.builder().name("Test2")
 				.startDate(new Date(1548971153l)).endDate(new Date(1551571200l)).build()).contentType(ContentType.JSON)
@@ -101,16 +102,16 @@ public class ProjectIT extends BasicRestIntegrationTest {
 		getRequestSpecWithJwt(jwt2).when().get(url + project2Id).then().statusCode(403);
 		RestAssured.when().get(url + project2Id).then().statusCode(401);
 
-		getRequestSpecWithJwtByEmail(LOCAL_COORDINATOR_1_EMAIL).delete(url + dto.getId() + "/" + adminId).then()
+		getRequestSpecWithJwtByEmail(LOCAL_COORDINATOR_1_EMAIL).delete(url + dto.getId() + "/users/" + adminId).then()
 				.statusCode(403);
-		getRequestSpecWithJwt(getJwtByEmail(PUBLISHER_1_EMAIL)).delete(url + dto.getId() + "/" + adminId).then()
+		getRequestSpecWithJwt(getJwtByEmail(PUBLISHER_1_EMAIL)).delete(url + dto.getId() + "/users/" + adminId).then()
 				.statusCode(403);
-		getRequestSpecWithJwt(getJwtByEmail(INVENTORY_MANAGER_1_EMAIL)).delete(url + dto.getId() + "/" + adminId).then()
-				.statusCode(403);
-		getRequestSpecWithJwt(getJwtByEmail(STORE_KEEPER_1_EMAIL)).delete(url + dto.getId() + "/" + adminId).then()
-				.statusCode(403);
-		RestAssured.given().delete(url + dto.getId() + "/" + adminId).then().statusCode(401);
-		getRequestSpecWithJwt(jwt2).delete(url + dto.getId() + "/" + adminId).then().statusCode(204);
+		getRequestSpecWithJwt(getJwtByEmail(INVENTORY_MANAGER_1_EMAIL)).delete(url + dto.getId() + "/users/" + adminId)
+				.then().statusCode(403);
+		getRequestSpecWithJwt(getJwtByEmail(STORE_KEEPER_1_EMAIL)).delete(url + dto.getId() + "/users/" + adminId)
+				.then().statusCode(403);
+		RestAssured.given().delete(url + dto.getId() + "/users/" + adminId).then().statusCode(401);
+		getRequestSpecWithJwt(jwt2).delete(url + dto.getId() + "/users/" + adminId).then().statusCode(204);
 
 		// own project
 		getRequestSpecWithJwt(jwt).delete(url + dto.getId()).then().statusCode(403);

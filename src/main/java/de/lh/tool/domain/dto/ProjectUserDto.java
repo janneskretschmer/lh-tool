@@ -7,4 +7,6 @@ public class ProjectUserDto {
 
 	private Long id;
 
+	// TODO where is the rest?
+
 }

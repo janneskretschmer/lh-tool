@@ -36,17 +36,16 @@ export function fetchUsersByProjectIdAndRole({ accessToken, projectId, role }) {
         .catch(err => null);
 }
 
-export function fetchUser({ accessToken, userId }) {
+export function fetchUser({ accessToken, userId }, handleFailure) {
     return apiRequest({
         apiEndpoint: apiEndpoints.user.getById,
         authToken: accessToken,
-        parameters:{
+        parameters: {
             [ID_VARIABLE]: userId,
         }
     })
-    .then(result => result.response)
-  // TODO Error message
-        .catch(e => console.log(e));
+        .then(result => result.response)
+        .catch(handleFailure);
 }
 
 export function createNewUser({ accessToken, email, firstName, lastName, gender, telephoneNumber, mobileNumber, businessNumber, skills, profession, role, projectId, projectsState, handleFailure }) {
@@ -82,7 +81,7 @@ export function deleteUser({ accessToken, userId, projectsState }) {
     return apiRequest({
         apiEndpoint: apiEndpoints.user.delete,
         authToken: accessToken,
-        parameters:{
+        parameters: {
             [ID_VARIABLE]: userId,
         }
     })
@@ -97,10 +96,10 @@ export function updateUser({ accessToken, user, projectsState }) {
     return apiRequest({
         apiEndpoint: apiEndpoints.user.put,
         authToken: accessToken,
-        parameters:{
+        parameters: {
             [ID_VARIABLE]: user.id,
         },
-        data:user,
+        data: user,
     })
         .then(() => {
             return projectsState.userUpdated(user);

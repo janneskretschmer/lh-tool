@@ -246,4 +246,5 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 		String jwt = tokenProvider.generateToken((User) authentication.getPrincipal());
 		return new JwtAuthenticationDto(jwt);
 	}
+
 }

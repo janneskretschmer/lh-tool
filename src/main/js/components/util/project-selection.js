@@ -3,62 +3,44 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { fetchOwnProjects } from '../../actions/project';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import { withContext } from '../../util';
+import { ProjectsContext } from '../../providers/projects-provider';
 
-class ProjectSelection extends React.Component {
-
-  constructor(props) {
-        super(props);
-        this.state = {
-            projects: [],
-            selected: 0,
-        };
-    }
-
-  setProjects(projects) {
-    this.setState({
-      ...this.state,
-      projects,
-    });
-    if (this.props.onChange) {
-      this.props.onChange(projects[this.state.selected]);
-    }
-  }
+class StatefulProjectSelection extends React.Component {
 
   handleChange(event) {
-    if (this.props.onChange) {
-      this.props.onChange(this.state.projects[event.target.value]);
-    }
-    this.setState({
-      ...this.state,
-      selected: event.target.value,
-    });
-  }
-
-  componentDidMount() {
-    const self = this;
-    fetchOwnProjects({ accessToken:this.props.accessToken }).then(result => self.setProjects(result));
+    this.props.projectsState.selectProject(event.target.value);
   }
 
   render() {
     return (
       <>
         Projekt: {
-          this.state.projects.length > 0 ? (
-                <Select
-                    value={this.state.selected}
-                    onChange={this.handleChange.bind(this)}
-                 >
-              {this.state.projects.map((project,i) => (
-                      <MenuItem key={project.id} value={i}>{project.name}</MenuItem>
+          this.props.projectsState.projects.length > 0 ? (
+            <Select
+              value={this.props.projectsState.selectedProjectIndex}
+              onChange={event => this.handleChange(event)}
+            >
+              {this.props.projectsState.projects.map((project, i) => (
+                <MenuItem key={project.id} value={i}>{project.name}</MenuItem>
               ))}
             </Select>
-          ):(
-            <CircularProgress size={15}/>
-          )
+          ) : (
+              <CircularProgress size={15} />
+            )
         }
       </>
     );
   }
 }
 
+const ProjectSelection = props => (
+  <>
+    <ProjectsContext.Consumer>
+      {projectsState => (
+        (<StatefulProjectSelection {...props} projectsState={projectsState} />)
+      )}
+    </ProjectsContext.Consumer>
+  </>
+);
 export default ProjectSelection;
