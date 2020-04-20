@@ -7,6 +7,11 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>LH-Tool</name>
 	<packaging>war</packaging>
+	
+	<properties>
+		<war-exclude></war-exclude>
+	</properties>
+	
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<resources>
@@ -39,6 +44,7 @@
 				<version>3.2.2</version>
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<packagingExcludes>${war-exclude}</packagingExcludes>
 				</configuration>
 			</plugin>
 			<plugin>
