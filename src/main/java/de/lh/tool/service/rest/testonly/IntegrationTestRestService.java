@@ -13,12 +13,17 @@ import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import de.lh.tool.domain.exception.DefaultException;
+import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.service.rest.testonly.dto.DatabaseValidationResult;
 
@@ -28,26 +33,43 @@ import de.lh.tool.service.rest.testonly.dto.DatabaseValidationResult;
  */
 @RestController()
 @RequestMapping("/rest/testonly/integration")
+@PropertySource(value = { "classpath:credentials.properties" })
 public class IntegrationTestRestService {
+
+	@Autowired
+	private Environment environment;
 
 	@PersistenceContext
 	private EntityManager entityManager;
 
+	private void checkEnvironment() throws DefaultException {
+		String env = environment.getProperty("app.environment");
+		if (!"test".equals(env)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+	}
+
 	/**
 	 * should only be used for test purposes
+	 * 
+	 * @throws DefaultException
 	 */
 	@Transactional
 	@PostMapping("/database/initialize")
-	public int initializeDatabase(@RequestBody List<String> queries) {
+	public int initializeDatabase(@RequestBody List<String> queries) throws DefaultException {
+		checkEnvironment();
 		return queries.stream().mapToInt(query -> entityManager.createNativeQuery(query).executeUpdate()).sum();
 	}
 
 	/**
 	 * should only be used for test purposes
+	 * 
+	 * @throws DefaultException
 	 */
 	@Transactional
 	@PostMapping("/database/validate")
-	public DatabaseValidationResult validateDatabase(@RequestBody List<String> queries) {
+	public DatabaseValidationResult validateDatabase(@RequestBody List<String> queries) throws DefaultException {
+		checkEnvironment();
 		List<String> failingQueries = queries.stream()
 				.filter(query -> entityManager.createNativeQuery(query).getResultList().isEmpty())
 				.collect(Collectors.toList());
@@ -56,10 +78,13 @@ public class IntegrationTestRestService {
 
 	/**
 	 * should only be used for test purposes
+	 * 
+	 * @throws DefaultException
 	 */
 	@Transactional
 	@GetMapping("/database/reset")
-	public int resetDatabase() {
+	public int resetDatabase() throws DefaultException {
+		checkEnvironment();
 		entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS=0").executeUpdate();
 		int result = entityManager.createNativeQuery("SHOW TABLES").getResultStream()
 				.filter(tableName -> !"schema_version".equalsIgnoreCase(tableName.toString()))
@@ -94,7 +119,8 @@ public class IntegrationTestRestService {
 	}
 
 	@GetMapping("/shutdown")
-	public void goodBye() {
+	public void goodBye() throws DefaultException {
+		checkEnvironment();
 		System.exit(0);
 	}
 }
