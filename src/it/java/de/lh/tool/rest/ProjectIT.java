@@ -68,10 +68,10 @@ public class ProjectIT extends BasicRestIntegrationTest {
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `email`) VALUES ('1000', 'Tes', 'Ter', 'MALE','tester@lh-tool.de');"))
-				.url(REST_URL + "/projects/1/1000").method(Method.POST)
+				.url(REST_URL + "/projects/1/users/1000").method(Method.POST)
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"projectId\":1,\"userId\":1000,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"projectId\":1,\"userId\":1000,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
 						.validationQueries(List.of("SELECT * FROM project_user WHERE project_id=1 AND user_id=1000"))
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
@@ -87,12 +87,12 @@ public class ProjectIT extends BasicRestIntegrationTest {
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
 						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `email`) VALUES ('1000', 'Tes', 'Ter', 'MALE','tester@lh-tool.de');"))
-				.url(REST_URL + "/projects/1/1000").method(Method.POST)
+				.url(REST_URL + "/projects/1/users/1000").method(Method.POST)
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse("{\"id\":" + (IntegrationTestRestService.getDefaultEmails().size() + 1)
-								+ ",\"projectId\":1,\"userId\":1000,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								+ ",\"projectId\":1,\"userId\":1000,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
 						.validationQueries(List.of("SELECT * FROM project_user WHERE project_id=1 AND user_id=1000"))
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
@@ -253,7 +253,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `email`) VALUES ('1000', 'Tes', 'Ter', 'MALE','tester@lh-tool.de')",
 						"INSERT INTO project_user(id,project_id,user_id) VALUES (1,1,1000)"))
-				.url(REST_URL + "/projects/1/1000").method(Method.DELETE)
+				.url(REST_URL + "/projects/1/users/1000").method(Method.DELETE)
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL))
 						.expectedHttpCode(HttpStatus.NO_CONTENT).expectedResponse("")
 						.validationQueries(List.of(
@@ -271,7 +271,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `email`) VALUES ('1000', 'Tes', 'Ter', 'MALE','tester@lh-tool.de');",
 						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user"))
-				.url(REST_URL + "/projects/1/1000").method(Method.DELETE)
+				.url(REST_URL + "/projects/1/users/1000").method(Method.DELETE)
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL))
 						.expectedHttpCode(HttpStatus.NO_CONTENT).expectedResponse("")
 						.validationQueries(List.of(

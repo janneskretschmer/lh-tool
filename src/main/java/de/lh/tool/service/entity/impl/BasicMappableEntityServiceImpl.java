@@ -12,7 +12,7 @@ import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.service.entity.interfaces.MappableEntityService;
 
 public abstract class BasicMappableEntityServiceImpl<R extends JpaRepository<E, I>, E, D, I>
-		extends BasicEntityServiceImpl<R, E, I> implements MappableEntityService<E, D> {
+		extends BasicEntityServiceImpl<R, E, I> implements MappableEntityService<E, D, I> {
 
 	@Override
 	public Class<E> getEntityClass() {
