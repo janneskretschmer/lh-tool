@@ -144,7 +144,7 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 				.orElse(new UserPermissionCriteria());
 		if (!(allowedToEditSelf && criteria.isSelf())
 				&& !(criteria.isAllowedToChangeFromForeignProjects()
-						&& (user.getRoles().size() == 0 || criteria.isAllowedToGrantRoles()))
+						&& (user.getRoles().isEmpty() || criteria.isAllowedToGrantRoles()))
 				&& !(criteria.isSameProject() && criteria.isAllowedToGrantRoles())) {
 			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
 		}

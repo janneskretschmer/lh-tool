@@ -38,7 +38,14 @@ echo "mail.smtp.password=$CREDENTIALS_SMTP_PW" >> src/main/resources/credentials
 echo "mail.smtp.username=$CREDENTIALS_SMTP_USER" >> src/main/resources/credentials.properties
 echo "mail.smtp.tlsEnabled=true" >> src/main/resources/credentials.properties
 
-rm src/main/java/de/lh/tool/service/rest/testonly/*
+#  ._.                                   .__  __                                  .__  __  .__              .__    ._.
+#  | |   ______ ____   ____  __ _________|__|/  |_ ___.__.             ___________|__|/  |_|__| ____ _____  |  |   | |
+#  | |  /  ___// __ \_/ ___\|  |  \_  __ \  \   __<   |  |   ______  _/ ___\_  __ \  \   __\  |/ ___\\__  \ |  |   | |
+#   \|  \___ \\  ___/\  \___|  |  /|  | \/  ||  |  \___  |  /_____/  \  \___|  | \/  ||  | |  \  \___ / __ \|  |__  \|
+#   __ /____  >\___  >\___  >____/ |__|  |__||__|  / ____|            \___  >__|  |__||__| |__|\___  >____  /____/  __
+#   \/      \/     \/     \/                       \/                     \/                       \/     \/        \/
+# NEVER DEPLOY THOSE REST-CONTROLLERS!
+rm -Rf src/main/java/de/lh/tool/service/rest/testonly/*
 
 mvn compile war:war
 war_file="$(ls -t target/*.war | head -1)"
