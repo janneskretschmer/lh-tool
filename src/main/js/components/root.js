@@ -7,13 +7,8 @@ import { withStyles } from '@material-ui/core/styles';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import classNames from 'classnames';
 import { Helmet } from 'react-helmet';
-<<<<<<< HEAD
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItem, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfSlot, fullPathOfStore, fullPathOfStores, partialPathOfNeed } from '../paths';
-=======
 import { Route, Switch } from 'react-router-dom';
-import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItem, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfSlot, fullPathOfStore, fullPathOfStores } from '../paths';
->>>>>>> 246eebb... Implemented basic SSR with J2V8
+import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItem, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfSlot, fullPathOfStore, fullPathOfStores, partialPathOfNeed } from '../paths';
 import SessionProvider from '../providers/session-provider';
 import ChangePasswordComponent from './changepw';
 import AppHeader from './header';
@@ -120,34 +115,6 @@ export default class LHToolRoot extends React.Component {
                             <Divider />
                             <AppMenu />
                         </Drawer>
-
-<<<<<<< HEAD
-                            <main
-                                className={classNames(classes.content, {
-                                    [classes.contentShift]: drawerOpen,
-                                })}
-                            >
-                                <div className={classes.drawerHeader} />
-                                <Switch>
-                                    <Route path={fullPathOfLogin()} component={LoginComponent} />
-                                    <Route path={fullPathOfProjects()} component={ProjectsComponent} />
-                                    <Route path={partialPathOfNeed()} component={NeedWrapperComponent} exact={false} />
-                                    <Route path={fullPathOfStore()} component={StoreDetailComponent} />
-                                    <Route path={fullPathOfStores()} component={StoreListComponent} />
-                                    <Route path={fullPathOfSlot()} component={SlotDetailComponent} />
-                                    <Route path={fullPathOfItem()} component={ItemDetailComponent} />
-                                    <Route path={fullPathOfItems()} component={ItemListComponent} />
-                                    <Route path={fullPathOfChangePw()} component={ChangePasswordComponent} />
-                                    <Route path={fullPathOfImprint()} component={Imprint} />
-                                    <Route path={fullPathOfDataProtection()} component={DataProtection} />
-                                    <Route component={NotFoundComponent} />
-                                </Switch>
-                            </main>
-
-                        </SessionProvider>
-                    </>
-                </Router>
-=======
                         <main
                             className={classNames(classes.content, {
                                 [classes.contentShift]: drawerOpen,
@@ -157,9 +124,7 @@ export default class LHToolRoot extends React.Component {
                             <Switch>
                                 <Route path={fullPathOfLogin()} component={LoginComponent} />
                                 <Route path={fullPathOfProjects()} component={ProjectsComponent} />
-                                <Route path={fullPathOfNeedQuantities()} component={NeedQuantityComponent} />
-                                <Route path={fullPathOfNeedApply()} component={NeedApplyComponent} />
-                                <Route path={fullPathOfNeedApprove()} component={NeedApproveComponent} />
+                                <Route path={partialPathOfNeed()} component={NeedWrapperComponent} exact={false} />
                                 <Route path={fullPathOfStore()} component={StoreDetailComponent} />
                                 <Route path={fullPathOfStores()} component={StoreListComponent} />
                                 <Route path={fullPathOfSlot()} component={SlotDetailComponent} />
@@ -173,7 +138,6 @@ export default class LHToolRoot extends React.Component {
                         </main>
                     </SessionProvider>
                 </>
->>>>>>> 246eebb... Implemented basic SSR with J2V8
             </div>
         );
     }
