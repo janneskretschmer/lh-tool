@@ -14,4 +14,6 @@ public interface HelperTypeService extends MappableEntityService<HelperType, Hel
 
 	List<HelperTypeDto> findDtosByProjectIdAndWeekday(Long projectId, Integer weekday) throws DefaultException;
 
+	void deleteHelperTypeById(Long id) throws DefaultException;
+
 }

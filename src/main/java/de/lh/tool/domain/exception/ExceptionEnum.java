@@ -42,6 +42,8 @@ public enum ExceptionEnum {
 	EX_NEED_USER_INVALID_STATE("The provided state is invalid.", HttpStatus.BAD_REQUEST),
 
 	EX_HELPER_TYPE_ALREADY_EXISTS("A helper type with the provided name already exists.", HttpStatus.CONFLICT),
+	EX_HELPER_TYPE_WEEKDAY_WITHOUT_PROJECT("Please provide a valid project id with the weekday query.",
+			HttpStatus.BAD_REQUEST),
 	//
 	;
 

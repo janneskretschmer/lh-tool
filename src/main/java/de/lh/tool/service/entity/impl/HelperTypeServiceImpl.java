@@ -1,6 +1,7 @@
 package de.lh.tool.service.entity.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -62,11 +63,26 @@ public class HelperTypeServiceImpl
 	@Override
 	@Transactional
 	public List<HelperTypeDto> findDtosByProjectIdAndWeekday(Long projectId, Integer weekday) throws DefaultException {
-		if (!projectService.isOwnProject(projectId)
-				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_CHANGE_FOREIGN)) {
-			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
+		if (!ObjectUtils.anyNotNull(projectId, weekday)) {
+			return findAllDtos();
+		}
+
+		boolean ownProject = projectService
+				.isOwnProject(Optional.ofNullable(projectId).flatMap(projectService::findById)
+						.orElseThrow(ExceptionEnum.EX_HELPER_TYPE_WEEKDAY_WITHOUT_PROJECT::createDefaultException));
+		if (!ownProject && !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_CHANGE_FOREIGN)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
 		}
 		return convertToDtoList(getRepository().findByProjectIdAndWeekday(projectId, weekday));
+	}
+
+	@Override
+	@Transactional
+	public void deleteHelperTypeById(Long id) throws DefaultException {
+		if (!existsById(id)) {
+			throw ExceptionEnum.EX_INVALID_ID.createDefaultException();
+		}
+		super.deleteById(id);
 	}
 
 }
