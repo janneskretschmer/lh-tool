@@ -359,4 +359,52 @@ public class ProjectIT extends BasicRestIntegrationTest {
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
 
+	@Test
+	public void testProjectHelperTypesByWeekendForeign() throws Exception {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of("INSERT INTO `helper_type` (`id`, `name`) VALUES (1, 'Test1')",
+						"INSERT INTO `helper_type` (`id`, `name`) VALUES (2, 'Test2')",
+						"INSERT INTO `helper_type` (`id`, `name`) VALUES (3, 'Test3')",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (2, 'Test2', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (1, 1, 1, 1, '07:00:00', '12:00:00')",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (2, 1, 1, 1, '12:00:00', '17:00:00')",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (3, 2, 1, 1, '07:00:00', '17:00:00')",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (4, 1, 3, 2, '07:00:00', '17:00:00')"))
+				.url(REST_URL + "/projects/1/helper_types/1?weekday=1").method(Method.GET)
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1/helper_types/1?weekday=1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],"
+										+ "\"content\":[{\"id\":1,\"projectId\":1,\"helperTypeId\":1,\"weekday\":1,\"startTime\":\"07:00\",\"endTime\":\"12:00\"},"
+										+ "{\"id\":2,\"projectId\":1,\"helperTypeId\":1,\"weekday\":1,\"startTime\":\"12:00\",\"endTime\":\"17:00\"}]}")
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
+	}
+
+	@Test
+	public void testProjectHelperTypesByWeekendOwn() throws Exception {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of("INSERT INTO `helper_type` (`id`, `name`) VALUES (1, 'Test1')",
+						"INSERT INTO `helper_type` (`id`, `name`) VALUES (2, 'Test2')",
+						"INSERT INTO `helper_type` (`id`, `name`) VALUES (3, 'Test3')",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (2, 'Test2', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (1, 1, 1, 1, '07:00:00', '12:00:00')",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (2, 1, 1, 1, '12:00:00', '17:00:00')",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (3, 2, 1, 1, '07:00:00', '17:00:00')",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (4, 1, 3, 2, '07:00:00', '17:00:00')"))
+				.url(REST_URL + "/projects/1/helper_types/1?weekday=1").method(Method.GET)
+				.userTests(List.of(UserTest.builder()
+						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL,
+								ATTENDANCE_EMAIL, PUBLISHER_EMAIL))
+						.expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1/helper_types/1?weekday=1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],"
+										+ "\"content\":[{\"id\":1,\"projectId\":1,\"helperTypeId\":1,\"weekday\":1,\"startTime\":\"07:00\",\"endTime\":\"12:00\"},"
+										+ "{\"id\":2,\"projectId\":1,\"helperTypeId\":1,\"weekday\":1,\"startTime\":\"12:00\",\"endTime\":\"17:00\"}]}")
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
+	}
+
 }
