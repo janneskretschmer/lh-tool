@@ -33,7 +33,10 @@ public class HelperTypeServiceImpl
 	@Transactional
 	public HelperTypeDto createDto(HelperTypeDto dto) throws DefaultException {
 		if (dto.getId() != null) {
-			throw new DefaultException(ExceptionEnum.EX_ID_PROVIDED);
+			throw ExceptionEnum.EX_ID_PROVIDED.createDefaultException();
+		}
+		if (getRepository().existsByName(dto.getName())) {
+			throw ExceptionEnum.EX_HELPER_TYPE_ALREADY_EXISTS.createDefaultException();
 		}
 		HelperType HelperType = save(convertToEntity(dto));
 		return convertToDto(HelperType);
@@ -44,7 +47,13 @@ public class HelperTypeServiceImpl
 	public HelperTypeDto updateDto(HelperTypeDto dto, Long id) throws DefaultException {
 		dto.setId(ObjectUtils.defaultIfNull(id, dto.getId()));
 		if (dto.getId() == null) {
-			throw new DefaultException(ExceptionEnum.EX_NO_ID_PROVIDED);
+			throw ExceptionEnum.EX_NO_ID_PROVIDED.createDefaultException();
+		}
+		if (!existsById(dto.getId())) {
+			throw ExceptionEnum.EX_INVALID_ID.createDefaultException();
+		}
+		if (getRepository().existsByName(dto.getName())) {
+			throw ExceptionEnum.EX_HELPER_TYPE_ALREADY_EXISTS.createDefaultException();
 		}
 		HelperType HelperType = save(convertToEntity(dto));
 		return convertToDto(HelperType);

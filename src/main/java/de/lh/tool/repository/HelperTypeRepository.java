@@ -11,4 +11,6 @@ import de.lh.tool.domain.model.HelperType;
 public interface HelperTypeRepository extends JpaRepository<HelperType, Long> {
 	@Query("SELECT DISTINCT ph.helperType FROM ProjectHelperType ph WHERE ph.project.id=:projectId AND ph.weekday=:weekday")
 	List<HelperType> findByProjectIdAndWeekday(@Param("projectId") Long projectId, @Param("weekday") Integer weekday);
+
+	Boolean existsByName(String name);
 }

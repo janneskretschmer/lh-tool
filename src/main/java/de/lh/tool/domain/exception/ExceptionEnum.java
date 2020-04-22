@@ -39,7 +39,11 @@ public enum ExceptionEnum {
 
 	EX_NEED_NOT_FOUND("The need couldn't be found.", HttpStatus.NOT_FOUND),
 	EX_NEED_USER_NOT_FOUND("The need-user-connection couldn't be found.", HttpStatus.NOT_FOUND),
-	EX_NEED_USER_INVALID_STATE("The provided state is invalid.", HttpStatus.BAD_REQUEST),;
+	EX_NEED_USER_INVALID_STATE("The provided state is invalid.", HttpStatus.BAD_REQUEST),
+
+	EX_HELPER_TYPE_ALREADY_EXISTS("A helper type with the provided name already exists.", HttpStatus.CONFLICT),
+	//
+	;
 
 	@Getter
 	private String message;
