@@ -1,2 +1,4 @@
-bundle.js
-bundle.js.map
+browser.js
+browser.js.map
+server.js
+server.js.map

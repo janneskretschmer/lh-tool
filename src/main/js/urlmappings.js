@@ -30,6 +30,7 @@ export const USER_ROLES = '/{' + ID_VARIABLE + '}/roles';
 
 export const LOGIN_PREFIX = REST_PREFIX + '/login';
 export const LOGIN_PASSWORD_RESET = '/pwreset';
+export const LOGIN_CLEAR = '/clear';
 
 export const PROJECT_PREFIX = REST_PREFIX + '/projects';
 export const PROJECT_DELETE = PROJECT_PREFIX + ID_EXTENSION;

@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no">
-<title>LH-Tool</title>
+${pageTitle}
 <!-- Roboto fonts -->
 <style>
 /* roboto-300 - cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext */
@@ -153,10 +153,11 @@
 </style>
 </head>
 <body>
-	<div id="main-app-container"></div>
+	<div id="main-app-container">${renderedContent}</div>
 	<script>
 		window.__GLOBAL_CONFIG__ = ${globalConfig};
+		window.__REACT_RESOLVER_PAYLOAD__ = ${resolverPayload};
 	</script>
-	<script src="${contextPath}/static/built/bundle.js"></script>
+	<script src="${contextPath}/static/built/browser.js"></script>
 </body>
 </html>

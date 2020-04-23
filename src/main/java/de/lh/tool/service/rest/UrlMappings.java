@@ -34,6 +34,7 @@ public abstract class UrlMappings {
 
 	public static final String LOGIN_PREFIX = REST_PREFIX + "/login";
 	public static final String LOGIN_PASSWORD_RESET = "/pwreset";
+	public static final String LOGIN_CLEAR = "/clear";
 
 	public static final String PROJECT_PREFIX = REST_PREFIX + "/projects";
 	public static final String PROJECT_DELETE = PROJECT_PREFIX + ID_EXTENSION;

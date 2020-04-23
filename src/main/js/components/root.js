@@ -7,7 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import classNames from 'classnames';
 import { Helmet } from 'react-helmet';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItem, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfSlot, fullPathOfStore, fullPathOfStores, partialPathOfNeed } from '../paths';
 import SessionProvider from '../providers/session-provider';
 import ChangePasswordComponent from './changepw';
@@ -87,61 +87,57 @@ export default class LHToolRoot extends React.Component {
 
         return (
             <div className={classes.root}>
-                <Router>
-                    <>
-                        <CssBaseline />
-                        <Helmet>
-                            <title>{TITLE}</title>
-                        </Helmet>
-                        <SessionProvider>
-                            <AppHeader
-                                drawerOpen={drawerOpen}
-                                defaultTitle={TITLE}
-                                onOpenRequest={this.handleDrawerOpen.bind(this)} />
+                <>
+                    <CssBaseline />
+                    <Helmet>
+                        <title>{TITLE}</title>
+                    </Helmet>
+                    <SessionProvider>
+                        <AppHeader
+                            drawerOpen={drawerOpen}
+                            defaultTitle={TITLE}
+                            onOpenRequest={this.handleDrawerOpen.bind(this)} />
 
-                            <Drawer
-                                className={classes.drawer}
-                                variant="persistent"
-                                anchor="left"
-                                open={drawerOpen}
-                                classes={{
-                                    paper: classes.drawerPaper,
-                                }}
-                            >
-                                <div className={classes.drawerHeader}>
-                                    <IconButton onClick={this.handleDrawerClose.bind(this)}>
-                                        {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-                                    </IconButton>
-                                </div>
-                                <Divider />
-                                <AppMenu />
-                            </Drawer>
-
-                            <main
-                                className={classNames(classes.content, {
-                                    [classes.contentShift]: drawerOpen,
-                                })}
-                            >
-                                <div className={classes.drawerHeader} />
-                                <Switch>
-                                    <Route path={fullPathOfLogin()} component={LoginComponent} />
-                                    <Route path={fullPathOfProjects()} component={ProjectsComponent} />
-                                    <Route path={partialPathOfNeed()} component={NeedWrapperComponent} exact={false} />
-                                    <Route path={fullPathOfStore()} component={StoreDetailComponent} />
-                                    <Route path={fullPathOfStores()} component={StoreListComponent} />
-                                    <Route path={fullPathOfSlot()} component={SlotDetailComponent} />
-                                    <Route path={fullPathOfItem()} component={ItemDetailComponent} />
-                                    <Route path={fullPathOfItems()} component={ItemListComponent} />
-                                    <Route path={fullPathOfChangePw()} component={ChangePasswordComponent} />
-                                    <Route path={fullPathOfImprint()} component={Imprint} />
-                                    <Route path={fullPathOfDataProtection()} component={DataProtection} />
-                                    <Route component={NotFoundComponent} />
-                                </Switch>
-                            </main>
-
-                        </SessionProvider>
-                    </>
-                </Router>
+                        <Drawer
+                            className={classes.drawer}
+                            variant="persistent"
+                            anchor="left"
+                            open={drawerOpen}
+                            classes={{
+                                paper: classes.drawerPaper,
+                            }}
+                        >
+                            <div className={classes.drawerHeader}>
+                                <IconButton onClick={this.handleDrawerClose.bind(this)}>
+                                    {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                                </IconButton>
+                            </div>
+                            <Divider />
+                            <AppMenu />
+                        </Drawer>
+                        <main
+                            className={classNames(classes.content, {
+                                [classes.contentShift]: drawerOpen,
+                            })}
+                        >
+                            <div className={classes.drawerHeader} />
+                            <Switch>
+                                <Route path={fullPathOfLogin()} component={LoginComponent} />
+                                <Route path={fullPathOfProjects()} component={ProjectsComponent} />
+                                <Route path={partialPathOfNeed()} component={NeedWrapperComponent} exact={false} />
+                                <Route path={fullPathOfStore()} component={StoreDetailComponent} />
+                                <Route path={fullPathOfStores()} component={StoreListComponent} />
+                                <Route path={fullPathOfSlot()} component={SlotDetailComponent} />
+                                <Route path={fullPathOfItem()} component={ItemDetailComponent} />
+                                <Route path={fullPathOfItems()} component={ItemListComponent} />
+                                <Route path={fullPathOfChangePw()} component={ChangePasswordComponent} />
+                                <Route path={fullPathOfImprint()} component={Imprint} />
+                                <Route path={fullPathOfDataProtection()} component={DataProtection} />
+                                <Route component={NotFoundComponent} />
+                            </Switch>
+                        </main>
+                    </SessionProvider>
+                </>
             </div>
         );
     }
