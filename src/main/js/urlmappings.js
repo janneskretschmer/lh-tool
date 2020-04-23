@@ -22,6 +22,7 @@ export const ID_USER_ID_EXTENSION = ID_USER_EXTENSION + '/{' + USER_ID_VARIABLE 
 
 export const INFO_PREFIX = REST_PREFIX + '/info';
 export const INFO_HEARTBEAT = '/heartbeat';
+export const INFO_TIMEZONE = '/timezone';
 
 export const USER_PREFIX = REST_PREFIX + '/users';
 export const USER_PASSWORD = '/password';

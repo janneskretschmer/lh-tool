@@ -94,12 +94,19 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 	public NeedDto updateNeedDto(NeedDto needDto, Long id) throws DefaultException {
 		needDto.setId(ObjectUtils.defaultIfNull(id, needDto.getId()));
 		if (needDto.getId() == null) {
-			throw new DefaultException(ExceptionEnum.EX_NO_ID_PROVIDED);
+			throw ExceptionEnum.EX_NO_ID_PROVIDED.createDefaultException();
+		}
+		if (!existsById(needDto.getId())) {
+			throw ExceptionEnum.EX_INVALID_ID.createDefaultException();
 		}
 		Need need = convertToEntity(needDto);
 		if (!projectService.isOwnProject(need.getProjectHelperType().getProject())
 				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT)) {
-			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+		if (getRepository().findByProjectHelperType_IdAndDate(needDto.getProjectHelperTypeId(), need.getDate())
+				.isPresent()) {
+			throw ExceptionEnum.EX_NEED_ALREADY_EXISTS.createDefaultException();
 		}
 		need = save(need);
 		return convertToDto(need);
@@ -108,10 +115,10 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 	@Override
 	@Transactional
 	public void deleteOwn(Long id) throws DefaultException {
-		Need need = findById(id).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
+		Need need = findById(id).orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException);
 		if (!projectService.isOwnProject(need.getProjectHelperType().getProject())
 				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT)) {
-			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
 		}
 		delete(need);
 	}
