@@ -39,8 +39,8 @@ public class HelperTypeServiceImpl
 		if (getRepository().existsByName(dto.getName())) {
 			throw ExceptionEnum.EX_HELPER_TYPE_ALREADY_EXISTS.createDefaultException();
 		}
-		HelperType HelperType = save(convertToEntity(dto));
-		return convertToDto(HelperType);
+		HelperType helperType = save(convertToEntity(dto));
+		return convertToDto(helperType);
 	}
 
 	@Override
@@ -56,8 +56,8 @@ public class HelperTypeServiceImpl
 		if (getRepository().existsByName(dto.getName())) {
 			throw ExceptionEnum.EX_HELPER_TYPE_ALREADY_EXISTS.createDefaultException();
 		}
-		HelperType HelperType = save(convertToEntity(dto));
-		return convertToDto(HelperType);
+		HelperType helperType = save(convertToEntity(dto));
+		return convertToDto(helperType);
 	}
 
 	@Override

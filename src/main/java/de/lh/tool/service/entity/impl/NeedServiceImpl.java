@@ -112,6 +112,7 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 		delete(need);
 	}
 
+	@Override
 	public NeedDto convertToDto(Need need) {
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addMappings(new PropertyMap<Need, NeedDto>() {

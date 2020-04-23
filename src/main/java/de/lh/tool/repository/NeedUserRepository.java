@@ -1,5 +1,6 @@
 package de.lh.tool.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,5 +14,5 @@ import de.lh.tool.domain.model.User;
 public interface NeedUserRepository extends JpaRepository<NeedUser, Long> {
 	Optional<NeedUser> findByNeedAndUser(Need need, User user);
 
-	Iterable<NeedUser> findByNeedOrderByUser_LastNameAscUser_FirstNameAsc(Need need);
+	List<NeedUser> findByNeedOrderByUser_LastNameAscUser_FirstNameAsc(Need need);
 }

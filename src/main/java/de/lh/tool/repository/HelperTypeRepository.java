@@ -12,5 +12,5 @@ public interface HelperTypeRepository extends JpaRepository<HelperType, Long> {
 	@Query("SELECT DISTINCT ph.helperType FROM ProjectHelperType ph WHERE ph.project.id=:projectId AND (:weekday IS NULL OR ph.weekday=:weekday)")
 	List<HelperType> findByProjectIdAndWeekday(@Param("projectId") Long projectId, @Param("weekday") Integer weekday);
 
-	Boolean existsByName(String name);
+	boolean existsByName(String name);
 }

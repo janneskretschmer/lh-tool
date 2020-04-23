@@ -1,7 +1,5 @@
 package de.lh.tool.service.entity.impl;
 
-import static com.google.common.collect.Lists.newArrayList;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import de.lh.tool.domain.dto.NeedUserDto;
 import de.lh.tool.domain.exception.DefaultException;
+import de.lh.tool.domain.exception.DefaultRuntimeException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.Need;
 import de.lh.tool.domain.model.NeedUser;
@@ -116,10 +115,10 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 
 	}
 
-	private @NonNull Project getProjectWithIdByNeedUser(NeedUser needUser) throws DefaultException {
+	private @NonNull Project getProjectWithIdByNeedUser(NeedUser needUser) {
 		Optional<@NonNull Project> project = Optional.ofNullable(needUser).map(NeedUser::getNeed)
 				.map(Need::getProjectHelperType).map(ProjectHelperType::getProject).filter(p -> p.getId() != null);
-		return project.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_WRONG_ID_PROVIDED));
+		return project.orElseThrow(() -> new DefaultRuntimeException(ExceptionEnum.EX_WRONG_ID_PROVIDED));
 	}
 
 	private NeedUserDto saveNeedUser(NeedUser needUser) throws DefaultException {
@@ -144,9 +143,8 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 	}
 
 	private NeedUser findByNeedIdAndUserId(Long needId, Long userId) throws DefaultException {
-		Need need = needService.findById(needId).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
-		User user = userService.findById(userId)
-				.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_USER_ID));
+		Need need = needService.findById(needId).orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException);
+		User user = userService.findById(userId).orElseThrow(ExceptionEnum.EX_INVALID_USER_ID::createDefaultException);
 		return getRepository().findByNeedAndUser(need, user)
 				.orElse(NeedUser.builder().need(need).user(user).state(NeedUserState.NONE).build());
 	}
@@ -155,10 +153,10 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 	@Transactional
 	public List<NeedUserDto> findDtosByNeedId(Long needId) throws DefaultException {
 		Need need = needService.findById(needId).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
-		List<NeedUser> needUserList = newArrayList(
-				getRepository().findByNeedOrderByUser_LastNameAscUser_FirstNameAsc(need));
-		if (!(needUserList.size() > 0 && projectService.isOwnProject(getProjectWithIdByNeedUser(needUserList.get(0))))
-				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT)) {
+		List<NeedUser> needUserList = getRepository().findByNeedOrderByUser_LastNameAscUser_FirstNameAsc(need);
+		boolean ownProject = needUserList.stream().findFirst().map(this::getProjectWithIdByNeedUser)
+				.map(projectService::isOwnProject).orElse(false);
+		if (!ownProject && !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT)) {
 			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
 		}
 		return convertToDtoList(needUserList);
