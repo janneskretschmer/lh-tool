@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TimeZone;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -84,6 +85,8 @@ public abstract class BasicRestIntegrationTest {
 
 	@BeforeAll
 	protected static void waitForLocalTomcat() {
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+
 		long timeout = System.currentTimeMillis() + TIMEOUT;
 		while (System.currentTimeMillis() < timeout) {
 			try {

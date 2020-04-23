@@ -26,6 +26,7 @@ public abstract class UrlMappings {
 
 	public static final String INFO_PREFIX = REST_PREFIX + "/info";
 	public static final String INFO_HEARTBEAT = "/heartbeat";
+	public static final String INFO_TIMEZONE = "/timezone";
 
 	public static final String USER_PREFIX = REST_PREFIX + "/users";
 	public static final String USER_PASSWORD = "/password";

@@ -35,6 +35,7 @@
 	8. Click Finish
 	9. Double click the server
 	10. Disable Server Options > "Modules auto reload by default"
+	11. Make sure that timezone is UTC (e.g. add "-Duser.timezone=UTC" in General Information > Open Launch Configuration > Arguments > VM-Arguments)
 	11. Save
 	12. Right click on server > Add and Remove...
 	13. add LH-Tool
@@ -69,18 +70,14 @@
 
 ## MySQL
 	1. Install and configure mysql-server
-	2. Adapt and execute the following statements:<br>
+	2. Make sure, timezone is UTC (e.g. add "[server-client]\ntimezone='+00:00'" to /etc/mysql/my.cnf)
+	3. Adapt and execute the following statements:<br>
 	  CREATE DATABASE IF NOT EXISTS lhtool;<br>
 	  CREATE USER IF NOT EXISTS '<name>'@'localhost' IDENTIFIED BY '<password>';<br>
 	  GRANT ALL ON lhtool.* TO '<name>'@'localhost';
 	3. Make a copy of /src/main/resources/hibernate.properties.example in the same directory, called "hibernate.properties"
-	3. Update the credentials in hibernate.properties (Make sure that you never commit them!)
-	4. Open the Git-Staging-view in Eclipse
-	5. Right click on hibernate.properties > Assume unchanged
-	6. It should disappear from the view
-	7. Never commit your credentials from hibernate.properties!
-
-# Technologies
-## Browserstack
-We use Browserstack to test the website in more browsers than you can think of.
-[![Browserstack](http://jk-dev.de/Browserstack-logo.svg)](https://www.browserstack.com/)
+	4. Update the credentials in hibernate.properties (Make sure that you never commit them!)
+	5. Open the Git-Staging-view in Eclipse
+	6. Right click on hibernate.properties > Assume unchanged
+	7. It should disappear from the view
+	8. Never commit your credentials from hibernate.properties!

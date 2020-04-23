@@ -74,12 +74,16 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 	@Transactional
 	public NeedDto createNeedDto(NeedDto needDto) throws DefaultException {
 		if (needDto.getId() != null) {
-			throw new DefaultException(ExceptionEnum.EX_ID_PROVIDED);
+			throw ExceptionEnum.EX_ID_PROVIDED.createDefaultException();
 		}
 		Need need = convertToEntity(needDto);
 		if (!projectService.isOwnProject(need.getProjectHelperType().getProject())
 				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT)) {
-			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+		if (getRepository().findByProjectHelperType_IdAndDate(needDto.getProjectHelperTypeId(), need.getDate())
+				.isPresent()) {
+			throw ExceptionEnum.EX_NEED_ALREADY_EXISTS.createDefaultException();
 		}
 		need = save(need);
 		return convertToDto(need);

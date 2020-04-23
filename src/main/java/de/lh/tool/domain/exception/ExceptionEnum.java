@@ -38,6 +38,8 @@ public enum ExceptionEnum {
 	EX_PROJECT_NAME_ALREADY_EXISTS("A project with the provided name already exists.", HttpStatus.CONFLICT),
 
 	EX_NEED_NOT_FOUND("The need couldn't be found.", HttpStatus.NOT_FOUND),
+	EX_NEED_ALREADY_EXISTS("A need with the provided date and project helper type already exists.",
+			HttpStatus.CONFLICT),
 	EX_NEED_USER_NOT_FOUND("The need-user-connection couldn't be found.", HttpStatus.NOT_FOUND),
 	EX_NEED_USER_INVALID_STATE("The provided state is invalid.", HttpStatus.BAD_REQUEST),
 

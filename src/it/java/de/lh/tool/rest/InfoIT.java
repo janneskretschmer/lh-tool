@@ -1,5 +1,6 @@
 package de.lh.tool.rest;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -14,5 +15,11 @@ public class InfoIT extends BasicRestIntegrationTest {
 	public void testHeartbeat() throws IOException {
 		String url = REST_URL + "/info/heartbeat";
 		assertTrue(Boolean.parseBoolean(RestAssured.get(url).asString()));
+	}
+
+	@Test
+	public void testTimezone() throws IOException {
+		String url = REST_URL + "/info/timezone";
+		assertEquals(0, Integer.parseInt(RestAssured.get(url).asString()));
 	}
 }
