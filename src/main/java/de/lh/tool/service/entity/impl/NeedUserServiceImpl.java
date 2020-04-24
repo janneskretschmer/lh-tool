@@ -50,68 +50,68 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 	private MailService mailService;
 
 	// necessary rights:
-	// +-apply-+ . +-approve-+-approve-+
+	// 1-apply-2 . 3-approve4+5approve-6
 	// v . . . v . v . . . . v . . . . v
 	// NONE . APPLIED . APPROVED . REJECTED
-	// ^ | . . . . . . . . ^ |
-	// | +------approve----+ |
-	// +--------apply--------+
+	// ^ . . . . . . . . . . |
+	// +---7----apply--------+
 	// setting to NONE = delete
 	@Override
 	@Transactional
 	public NeedUserDto saveOrUpdateDto(Long needId, Long userId, NeedUserDto dto) throws DefaultException {
 		NeedUser needUser = findByNeedIdAndUserId(needId, userId);
-		switch (dto.getState()) {
-		case NONE:
-			if (!userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPLY)) {
-				throw new DefaultException(ExceptionEnum.EX_NEED_USER_INVALID_STATE);
-			}
-			if (NeedUserState.APPROVED.equals(needUser.getState())) {
-				needUser.setState(NeedUserState.NONE);
-				userService
-						.findByProjectIdAndRoleIgnoreCase(getProjectWithIdByNeedUser(needUser).getId(),
-								UserRole.ROLE_LOCAL_COORDINATOR)
-						.stream().forEach(u -> mailService.sendNeedUserStateChangedMailToCoordinator(needUser, u));
-			}
+
+		boolean noPermissionOnProject = !projectService.isOwnProject(getProjectWithIdByNeedUser(needUser))
+				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT);
+		boolean noPermissionOnUser = needUser.getUser() != userService.getCurrentUser()
+				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_USER);
+		if (noPermissionOnProject || noPermissionOnUser) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+
+		@NonNull
+		NeedUserState oldState = needUser.getState();
+		NeedUserState newState = Optional.ofNullable(dto).map(NeedUserDto::getState)
+				.orElseThrow(ExceptionEnum.EX_NEED_USER_INVALID_STATE::createDefaultException);
+
+		if (NeedUserState.APPLIED.equals(oldState) && NeedUserState.NONE.equals(newState)) {
+			// 1: APPLIED -> NONE
+			userRoleService.checkCurrentUserRight(UserRole.RIGHT_NEEDS_APPLY);
 			delete(needUser);
 			dto.setId(null);
 			return dto;
-		case APPLIED:
-			if ((NeedUserState.NONE.equals(needUser.getState())
-					&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPLY))
-					|| (NeedUserState.APPROVED.equals(needUser.getState())
-							&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPROVE))) {
-				throw new DefaultException(ExceptionEnum.EX_NEED_USER_INVALID_STATE);
-			}
-			if (NeedUserState.APPROVED.equals(needUser.getState())) {
-				needUser.setState(NeedUserState.APPLIED);
-				mailService.sendNeedUserStateChangedMailToUser(needUser);
-			}
-			break;
-		case APPROVED:
-			if (!userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPROVE)) {
-				throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
-			}
-			if (NeedUserState.APPLIED.equals(needUser.getState())
-					|| NeedUserState.REJECTED.equals(needUser.getState())) {
-				needUser.setState(NeedUserState.APPROVED);
-				mailService.sendNeedUserStateChangedMailToUser(needUser);
-			}
-			break;
-		case REJECTED:
-			if (!userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_APPROVE)) {
-				throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
-			}
-			if (NeedUserState.APPLIED.equals(needUser.getState())
-					|| NeedUserState.APPROVED.equals(needUser.getState())) {
-				needUser.setState(NeedUserState.REJECTED);
-				mailService.sendNeedUserStateChangedMailToUser(needUser);
-			}
-			break;
+
+		} else if (NeedUserState.NONE.equals(oldState) && NeedUserState.APPLIED.equals(newState)) {
+			// 2: NONE -> APPLIED
+			userRoleService.checkCurrentUserRight(UserRole.RIGHT_NEEDS_APPLY);
+
+		} else if ((NeedUserState.APPROVED.equals(oldState) && NeedUserState.APPLIED.equals(newState))
+				// 3: APPROVED -> APPLIED
+				|| (NeedUserState.APPLIED.equals(oldState) && NeedUserState.APPROVED.equals(newState))
+				// 4: APPLIED -> APPROVED
+				|| (NeedUserState.REJECTED.equals(oldState) && NeedUserState.APPROVED.equals(newState))
+				// 5: REJECTED -> APPROVED
+				|| (NeedUserState.APPROVED.equals(oldState) && NeedUserState.REJECTED.equals(newState)
+				// 6: APPROVED -> REJECTED
+				)) {
+
+			userRoleService.checkCurrentUserRight(UserRole.RIGHT_NEEDS_APPROVE);
+			needUser.setState(newState);
+			mailService.sendNeedUserStateChangedMailToUser(needUser);
+
+		} else if (NeedUserState.APPROVED.equals(oldState) && NeedUserState.NONE.equals(newState)) {
+			// 7: APPROVED -> NONE
+			userRoleService.checkCurrentUserRight(UserRole.RIGHT_NEEDS_APPLY);
+			needUser.setState(NeedUserState.NONE);
+			userService
+					.findByProjectIdAndRoleIgnoreCase(getProjectWithIdByNeedUser(needUser).getId(),
+							UserRole.ROLE_LOCAL_COORDINATOR)
+					.stream().forEach(u -> mailService.sendNeedUserStateChangedMailToCoordinator(needUser, u));
 		}
-		// new state is already set above in some cases
-		needUser.setState(dto.getState());
-		return saveNeedUser(needUser);
+
+		// if mail has to be sent, new state is already set above
+		needUser.setState(newState);
+		return convertToDto(save(needUser));
 
 	}
 
@@ -119,16 +119,6 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 		Optional<@NonNull Project> project = Optional.ofNullable(needUser).map(NeedUser::getNeed)
 				.map(Need::getProjectHelperType).map(ProjectHelperType::getProject).filter(p -> p.getId() != null);
 		return project.orElseThrow(() -> new DefaultRuntimeException(ExceptionEnum.EX_WRONG_ID_PROVIDED));
-	}
-
-	private NeedUserDto saveNeedUser(NeedUser needUser) throws DefaultException {
-		if ((!projectService.isOwnProject(getProjectWithIdByNeedUser(needUser))
-				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT))
-				|| (needUser.getUser() != userService.getCurrentUser()
-						&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_USER))) {
-			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
-		}
-		return convertToDto(save(needUser));
 	}
 
 	@Override

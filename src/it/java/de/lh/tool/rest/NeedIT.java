@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import de.lh.tool.domain.dto.NeedDto;
+import de.lh.tool.domain.dto.NeedUserDto;
+import de.lh.tool.domain.model.NeedUserState;
 import de.lh.tool.rest.bean.EndpointTest;
 import de.lh.tool.rest.bean.UserTest;
 import io.restassured.http.Method;
@@ -192,6 +194,32 @@ public class NeedIT extends BasicRestIntegrationTest {
 				.build()));
 	}
 
+	@Test
+	public void testNeedUserModificationApplyNewOwn() throws Exception {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of("INSERT INTO `helper_type` (`id`, `name`) VALUES (1, 'Test1')",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'FEMALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
+						"INSERT INTO user_role(user_id,role) VALUES(1000,'ROLE_PUBLISHER')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (1, 1, 1, 1, '07:00:00', '17:00:00')",
+						"INSERT INTO need (id, project_helper_type_id, quantity, date) VALUES (1, 1, 42, '2020-04-23')"))
+				.url(REST_URL + "/needs/1/users/1000").method(Method.PUT)
+				.body(NeedUserDto.builder().needId(1l).userId(1000l).state(NeedUserState.APPLIED).build())
+				.userTests(List.of(UserTest.builder()
+						.emails(List.of(ADMIN_EMAIL, LOCAL_COORDINATOR_EMAIL, "test@lh-tool.de"))
+						.expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPLIED\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null},{\"rel\":\"getState\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.validationQueries(
+								List.of("SELECT * FROM need_user WHERE need_id=1 AND user_id=1000 AND state='APPLIED'"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(
+						List.of("SELECT 1 WHERE NOT EXISTS (SELECT * FROM need_user WHERE need_id=1 AND user_id=1000)"))
+				.build()));
+	}
+
 	// TODO test missing values
 
 //  ██████╗_███████╗██╗_____███████╗████████╗███████╗
@@ -264,6 +292,81 @@ public class NeedIT extends BasicRestIntegrationTest {
 						"SELECT * FROM need WHERE project_helper_type_id=1 AND quantity=42 AND date='2020-04-23'",
 						"SELECT 1 WHERE (SELECT COUNT(*) FROM need)=1"))
 				.build()));
+	}
+
+//  _██████╗_███████╗████████╗
+//  ██╔════╝_██╔════╝╚══██╔══╝
+//  ██║__███╗█████╗_____██║___
+//  ██║___██║██╔══╝_____██║___
+//  ╚██████╔╝███████╗___██║___
+//  _╚═════╝_╚══════╝___╚═╝___
+
+	@Test
+	public void testNeedGetOwn() throws Exception {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of("INSERT INTO `helper_type` (`id`, `name`) VALUES (1, 'Test1')",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (1, 1, 1, 1, '07:00:00', '17:00:00')",
+						"INSERT INTO need (id, project_helper_type_id, quantity, date) VALUES (1, 1, 42, '2020-04-23')"))
+				.url(REST_URL + "/needs?project_helper_type_id=1&date=2020-04-23").method(Method.GET)
+				.userTests(List.of(UserTest.builder()
+						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL,
+								ATTENDANCE_EMAIL, PUBLISHER_EMAIL))
+						.expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":42,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/?project_helper_type_id=1&date=2020-04-23\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
+	}
+
+	@Test
+	public void testNeedGetForeign() throws Exception {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of("INSERT INTO `helper_type` (`id`, `name`) VALUES (1, 'Test1')",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (1, 1, 1, 1, '07:00:00', '17:00:00')",
+						"INSERT INTO need (id, project_helper_type_id, quantity, date) VALUES (1, 1, 42, '2020-04-23')"))
+				.url(REST_URL + "/needs?project_helper_type_id=1&date=2020-04-23").method(Method.GET)
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":42,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/?project_helper_type_id=1&date=2020-04-23\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
+	}
+
+	@Test
+	public void testNeedGetByIdOwn() throws Exception {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of("INSERT INTO `helper_type` (`id`, `name`) VALUES (1, 'Test1')",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (1, 1, 1, 1, '07:00:00', '17:00:00')",
+						"INSERT INTO need (id, project_helper_type_id, quantity, date) VALUES (1, 1, 42, '2020-04-23')"))
+				.url(REST_URL + "/needs/1").method(Method.GET)
+				.userTests(List.of(UserTest.builder()
+						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL,
+								ATTENDANCE_EMAIL, PUBLISHER_EMAIL))
+						.expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":42,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
+	}
+
+	@Test
+	public void testNeedGetByIdForeign() throws Exception {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of("INSERT INTO `helper_type` (`id`, `name`) VALUES (1, 'Test1')",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (1, 1, 1, 1, '07:00:00', '17:00:00')",
+						"INSERT INTO need (id, project_helper_type_id, quantity, date) VALUES (1, 1, 42, '2020-04-23')"))
+				.url(REST_URL + "/needs/1").method(Method.GET)
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":42,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 
 }

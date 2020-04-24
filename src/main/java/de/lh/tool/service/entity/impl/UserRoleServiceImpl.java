@@ -3,6 +3,8 @@ package de.lh.tool.service.entity.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import de.lh.tool.domain.exception.DefaultException;
+import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.User;
 import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.repository.UserRoleRepository;
@@ -22,6 +24,13 @@ public class UserRoleServiceImpl extends BasicEntityServiceImpl<UserRoleReposito
 	public boolean hasCurrentUserRight(String right) {
 		User user = userService.getCurrentUser();
 		return hasUserRight(user, right);
+	}
+
+	@Override
+	public void checkCurrentUserRight(String right) throws DefaultException {
+		if (!hasCurrentUserRight(right)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
 	}
 
 	@Override
