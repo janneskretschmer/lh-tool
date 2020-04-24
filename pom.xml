@@ -7,11 +7,11 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>LH-Tool</name>
 	<packaging>war</packaging>
-	
+
 	<properties>
 		<war-exclude></war-exclude>
 	</properties>
-	
+
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<resources>
@@ -365,6 +365,12 @@
 			<groupId>io.rest-assured</groupId>
 			<artifactId>rest-assured</artifactId>
 			<version>3.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.icegreen</groupId>
+			<artifactId>greenmail</artifactId>
+			<version>1.5.13</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

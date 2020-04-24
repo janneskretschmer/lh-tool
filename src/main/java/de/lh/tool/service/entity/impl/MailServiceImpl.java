@@ -12,6 +12,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -47,19 +48,22 @@ public class MailServiceImpl implements MailService {
 	@Value("${mail.smtp.tlsEnabled}")
 	private boolean tlsEnabled;
 
+	@Value("${mail.smtp.port}")
+	private String port;
+
 	@Autowired
 	private UrlService urlService;
 
 	@PostConstruct
 	public void init() {
 		properties = new Properties();
-		properties.put("mail.smtp.socketFactory.port", "465");
+		properties.put("mail.smtp.socketFactory.port", StringUtils.defaultIfEmpty(port, "465"));
 		if (tlsEnabled) {
 			properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 			properties.put("mail.smtp.ssl.checkserveridentity", true);
 		}
 		properties.put("mail.smtp.auth", "true");
-		properties.put("mail.smtp.port", "465");
+		properties.put("mail.smtp.port", StringUtils.defaultIfEmpty(port, "465"));
 	}
 
 	@Override
@@ -131,7 +135,10 @@ public class MailServiceImpl implements MailService {
 			User user = needUser.getUser();
 			if (user.getEmail() != null) {
 				StringBuilder text = getGreeting(user).append("deine Schicht am ")
-						.append(DateUtil.getReadableFormat(needUser.getNeed().getDate())).append(" wurde ")
+						.append(DateUtil.getReadableFormat(needUser.getNeed().getDate())).append(" von ")
+						.append(needUser.getNeed().getProjectHelperType().getStartTime().toString()).append(" Uhr bis ")
+						.append(needUser.getNeed().getProjectHelperType().getEndTime().toString()).append(" Uhr als ")
+						.append(needUser.getNeed().getProjectHelperType().getHelperType().getName()).append(" wurde ")
 						.append(getNeedUserStateDescription(needUser.getState())).append(".\n\nViele Grüße\n")
 						.append(SENDER_NAME).append("\n\n").append(FOOTER);
 				sendMail(user.getEmail(), "Schicht am  " + DateUtil.getReadableFormat(needUser.getNeed().getDate())

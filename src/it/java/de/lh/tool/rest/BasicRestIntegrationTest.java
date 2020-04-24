@@ -1,6 +1,8 @@
 package de.lh.tool.rest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -10,8 +12,18 @@ import java.util.Optional;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
+
+import com.icegreen.greenmail.store.FolderException;
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.ServerSetup;
 
 import de.lh.tool.domain.dto.JwtAuthenticationDto;
 import de.lh.tool.domain.dto.LoginDto;
@@ -26,6 +38,7 @@ import io.restassured.parsing.Parser;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
+@TestInstance(Lifecycle.PER_CLASS)
 public abstract class BasicRestIntegrationTest {
 	private static final String PASSWORD = "testing";
 
@@ -41,11 +54,19 @@ public abstract class BasicRestIntegrationTest {
 
 	private static final int TIMEOUT = 30000;
 	protected static final String REST_URL = "http://localhost:8080/lh-tool/rest";
+	private GreenMail fakeSmtpServer;
 
 	@BeforeAll
-	protected static void waitForLocalTomcat() {
+	protected void setup() {
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 
+		// start fake smtp server
+		// values have to be same as in credentials.properties
+		fakeSmtpServer = new GreenMail(new ServerSetup(2465, "localhost", "smtp"));
+		fakeSmtpServer.setUser("ldc@lh-tool.de", "testing");
+		fakeSmtpServer.start();
+
+		// wait for local tomcat
 		long timeout = System.currentTimeMillis() + TIMEOUT;
 		while (System.currentTimeMillis() < timeout) {
 			try {
@@ -60,6 +81,11 @@ public abstract class BasicRestIntegrationTest {
 				}
 			}
 		}
+	}
+
+	@AfterAll
+	protected void cleanUp() {
+		fakeSmtpServer.stop();
 	}
 
 	protected String getJwtByEmail(String email) {
@@ -107,6 +133,11 @@ public abstract class BasicRestIntegrationTest {
 	}
 
 	private void testEndpointForUser(EndpointTest endpointTest, UserTest userTest, String email) {
+		try {
+			fakeSmtpServer.purgeEmailFromAllMailboxes();
+		} catch (FolderException e) {
+			fail(e);
+		}
 		resetDatabase();
 		initializeDatabase(endpointTest);
 
@@ -145,6 +176,33 @@ public abstract class BasicRestIntegrationTest {
 								.post(REST_URL + "/testonly/integration/database/validate")
 								.as(DatabaseValidationResult.class).getFailingQueries(),
 						message));
+		MimeMessage[] receivedMessages = fakeSmtpServer.getReceivedMessages();
+		if (userTest.getExpectedEmails() != null) {
+			assertEquals(userTest.getExpectedEmails().size(), receivedMessages.length, message);
+			for (MimeMessage receivedMessage : receivedMessages) {
+				try {
+					assertEquals(1, receivedMessage.getAllRecipients().length, message);
+					assertTrue(userTest.getExpectedEmails().stream().anyMatch(expectedEmail -> {
+						try {
+							return expectedEmail.getRecipient().equals(receivedMessage.getAllRecipients()[0].toString())
+									&& expectedEmail.getSubject().equals(receivedMessage.getSubject())
+									&& expectedEmail.getContent()
+											.equals(receivedMessage.getContent().toString().replace("\r", ""));
+						} catch (MessagingException | IOException e) {
+							fail(e);
+						}
+						return false;
+					}), message + "\n Unexpected Mail to " + receivedMessage.getAllRecipients()[0].toString()
+							+ " with subject \"" + receivedMessage.getSubject() + "\":\n"
+							+ receivedMessage.getContent());
+				} catch (MessagingException | IOException e1) {
+					fail(e1);
+				}
+			}
+		} else {
+			assertEquals(0, receivedMessages.length, message);
+		}
+
 	}
 
 	private String getAsssertFailedMessage(EndpointTest endpointTest, String email) {

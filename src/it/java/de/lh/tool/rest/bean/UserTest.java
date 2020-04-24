@@ -18,4 +18,5 @@ public class UserTest {
 	private HttpStatus expectedHttpCode;
 	private String expectedResponse;
 	private List<String> validationQueries;
+	private List<EmailTest> expectedEmails;
 }
