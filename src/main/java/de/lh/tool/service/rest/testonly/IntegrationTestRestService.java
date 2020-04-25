@@ -1,5 +1,6 @@
 package de.lh.tool.service.rest.testonly;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
@@ -22,10 +24,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.icegreen.greenmail.store.FolderException;
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.ServerSetup;
+
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.UserRole;
-import de.lh.tool.service.rest.testonly.dto.DatabaseValidationResult;
+import de.lh.tool.service.rest.testonly.dto.DatabaseValidationResultDto;
+import de.lh.tool.service.rest.testonly.dto.EmailDto;
+import de.lh.tool.service.rest.testonly.dto.EmailWrapperDto;
 
 /**
  * !!! Must never get deployed !!! It gets deleted in deploy.sh => should only
@@ -41,6 +49,8 @@ public class IntegrationTestRestService {
 
 	@PersistenceContext
 	private EntityManager entityManager;
+
+	private GreenMail fakeSmtpServer;
 
 	private void checkEnvironment() throws DefaultException {
 		String env = environment.getProperty("app.environment");
@@ -68,12 +78,12 @@ public class IntegrationTestRestService {
 	 */
 	@Transactional
 	@PostMapping("/database/validate")
-	public DatabaseValidationResult validateDatabase(@RequestBody List<String> queries) throws DefaultException {
+	public DatabaseValidationResultDto validateDatabase(@RequestBody List<String> queries) throws DefaultException {
 		checkEnvironment();
 		List<String> failingQueries = queries.stream()
 				.filter(query -> entityManager.createNativeQuery(query).getResultList().isEmpty())
 				.collect(Collectors.toList());
-		return new DatabaseValidationResult(failingQueries);
+		return new DatabaseValidationResultDto(failingQueries);
 	}
 
 	/**
@@ -122,5 +132,32 @@ public class IntegrationTestRestService {
 	public void goodBye() throws DefaultException {
 		checkEnvironment();
 		System.exit(0);
+	}
+
+	@GetMapping("/mailbox/initialize")
+	public void initializeFakeSmtpServer() throws FolderException, DefaultException {
+		checkEnvironment();
+		if (fakeSmtpServer == null) {
+			fakeSmtpServer = new GreenMail(new ServerSetup(environment.getProperty("mail.smtp.port", Integer.class),
+					environment.getProperty("mail.smtp.host"), "smtp"));
+			fakeSmtpServer.setUser(environment.getProperty("mail.smtp.username"),
+					environment.getProperty("mail.smtp.password"));
+			fakeSmtpServer.start();
+		} else {
+			fakeSmtpServer.purgeEmailFromAllMailboxes();
+		}
+	}
+
+	@GetMapping("/mailbox")
+	public EmailWrapperDto getEmails() throws DefaultException {
+		checkEnvironment();
+		return new EmailWrapperDto(Arrays.stream(fakeSmtpServer.getReceivedMessages()).map(message -> {
+			try {
+				return new EmailDto(message.getAllRecipients()[0].toString(), message.getSubject().replace("\r", ""),
+						message.getContent().toString().replace("\r", ""));
+			} catch (MessagingException | IOException e) {
+				throw new RuntimeException(e);
+			}
+		}).collect(Collectors.toList()));
 	}
 }

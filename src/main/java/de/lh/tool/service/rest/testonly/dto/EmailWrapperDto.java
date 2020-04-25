@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DatabaseValidationResult {
-	private List<String> failingQueries;
+public class EmailWrapperDto {
+	private List<EmailDto> emails;
 }
