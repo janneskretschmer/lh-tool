@@ -107,6 +107,9 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 					.findByProjectIdAndRoleIgnoreCase(getProjectWithIdByNeedUser(needUser).getId(),
 							UserRole.ROLE_LOCAL_COORDINATOR)
 					.stream().forEach(u -> mailService.sendNeedUserStateChangedMailToCoordinator(needUser, u));
+			delete(needUser);
+			dto.setId(null);
+			return dto;
 		}
 
 		// if mail has to be sent, new state is already set above

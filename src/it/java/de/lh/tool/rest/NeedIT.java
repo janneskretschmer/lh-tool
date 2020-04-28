@@ -196,6 +196,33 @@ public class NeedIT extends BasicRestIntegrationTest {
 	}
 
 	@Test
+	public void testNeedUserModificationCancelAppliedOwn() throws Exception {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of("INSERT INTO `helper_type` (`id`, `name`) VALUES (1, 'Test1')",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'FEMALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
+						"INSERT INTO user_role(user_id,role) VALUES(1000,'ROLE_PUBLISHER')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (1, 1, 1, 1, '07:00:00', '17:00:00')",
+						"INSERT INTO need (id, project_helper_type_id, quantity, date) VALUES (1, 1, 42, '2020-04-23')",
+						"INSERT INTO need_user (id, need_id, user_id, state) VALUES (1, 1, 1000, 'APPLIED')"))
+				.url(REST_URL + "/needs/1/users/1000").method(Method.PUT)
+				.body(NeedUserDto.builder().needId(1l).userId(1000l).state(NeedUserState.NONE).build())
+				.userTests(List.of(UserTest.builder()
+						.emails(List.of(ADMIN_EMAIL, LOCAL_COORDINATOR_EMAIL, "test@lh-tool.de"))
+						.expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"id\":null,\"needId\":1,\"userId\":1000,\"state\":\"NONE\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null},{\"rel\":\"getState\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.validationQueries(List.of(
+								"SELECT 1 WHERE NOT EXISTS (SELECT * FROM need_user WHERE need_id=1 AND user_id=1000)"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(
+						List.of("SELECT * FROM need_user WHERE need_id=1 AND user_id=1000 AND state='APPLIED'"))
+				.build()));
+	}
+
+	@Test
 	public void testNeedUserModificationApplyNewOwn() throws Exception {
 		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of("INSERT INTO `helper_type` (`id`, `name`) VALUES (1, 'Test1')",
@@ -222,8 +249,42 @@ public class NeedIT extends BasicRestIntegrationTest {
 	}
 
 	@Test
-	public void testNeedUserModificationApproveAppliedOwn() throws Exception {
+	public void testNeedUserModificationApplyApprovedOwn() throws Exception {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of("INSERT INTO `helper_type` (`id`, `name`) VALUES (1, 'Test1')",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'FEMALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
+						"INSERT INTO user_role(user_id,role) VALUES(1000,'ROLE_PUBLISHER')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (1, 1, 1, 1, '07:00:00', '17:00:00')",
+						"INSERT INTO need (id, project_helper_type_id, quantity, date) VALUES (1, 1, 42, '2020-04-23')",
+						"INSERT INTO need_user (id, need_id, user_id, state) VALUES (1, 1, 1000, 'APPROVED')"))
+				.url(REST_URL + "/needs/1/users/1000").method(Method.PUT)
+				.body(NeedUserDto.builder().needId(1l).userId(1000l).state(NeedUserState.APPLIED).build())
+				.userTests(List.of(UserTest.builder()
+						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL))
+						.expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPLIED\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null},{\"rel\":\"getState\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.validationQueries(
+								List.of("SELECT * FROM need_user WHERE need_id=1 AND user_id=1000 AND state='APPLIED'"))
+						.expectedEmails(List.of(EmailTest.builder().recipient("test@lh-tool.de")
+								.subject("Schicht am 23.04.2020 nicht genehmigt")
+								.content("Liebe Schwester Ter,\n" + "\n"
+										+ "deine Schicht am 23.04.2020 von 07:00 Uhr bis 17:00 Uhr als Test1 wurde nicht genehmigt.\n"
+										+ "\n" + "Viele Grüße\n" + "LDC Baugruppe\n" + "\n"
+										+ "p.s. Das ist eine automatisch generierte Mail, bitte antworte nicht darauf. Bei Fragen wende dich bitte an den zuständigen Helferkoordinator.\n"
+										+ "")
+								.build()))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(
+						List.of("SELECT * FROM need_user WHERE need_id=1 AND user_id=1000 AND state='APPROVED'"))
+				.build()));
+	}
 
+	@Test
+	public void testNeedUserModificationApproveAppliedOwn() throws Exception {
 		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of("INSERT INTO `helper_type` (`id`, `name`) VALUES (1, 'Test1')",
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
@@ -243,7 +304,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 						.validationQueries(List
 								.of("SELECT * FROM need_user WHERE need_id=1 AND user_id=1000 AND state='APPROVED'"))
 						.expectedEmails(List.of(EmailTest.builder().recipient("test@lh-tool.de")
-								.subject("Schicht am  23.04.2020 genehmigt")
+								.subject("Schicht am 23.04.2020 genehmigt")
 								.content("Liebe Schwester Ter,\n" + "\n"
 										+ "deine Schicht am 23.04.2020 von 07:00 Uhr bis 17:00 Uhr als Test1 wurde genehmigt.\n"
 										+ "\n" + "Viele Grüße\n" + "LDC Baugruppe\n" + "\n"
@@ -259,7 +320,6 @@ public class NeedIT extends BasicRestIntegrationTest {
 
 	@Test
 	public void testNeedUserModificationApproveRejectedOwn() throws Exception {
-
 		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of("INSERT INTO `helper_type` (`id`, `name`) VALUES (1, 'Test1')",
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
@@ -279,7 +339,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 						.validationQueries(List
 								.of("SELECT * FROM need_user WHERE need_id=1 AND user_id=1000 AND state='APPROVED'"))
 						.expectedEmails(List.of(EmailTest.builder().recipient("test@lh-tool.de")
-								.subject("Schicht am  23.04.2020 genehmigt")
+								.subject("Schicht am 23.04.2020 genehmigt")
 								.content("Liebe Schwester Ter,\n" + "\n"
 										+ "deine Schicht am 23.04.2020 von 07:00 Uhr bis 17:00 Uhr als Test1 wurde genehmigt.\n"
 										+ "\n" + "Viele Grüße\n" + "LDC Baugruppe\n" + "\n"
@@ -290,6 +350,76 @@ public class NeedIT extends BasicRestIntegrationTest {
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
 				.validationQueriesForOthers(
 						List.of("SELECT * FROM need_user WHERE need_id=1 AND user_id=1000 AND state='REJECTED'"))
+				.build()));
+	}
+
+	@Test
+	public void testNeedUserModificationRejectApprovedOwn() throws Exception {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of("INSERT INTO `helper_type` (`id`, `name`) VALUES (1, 'Test1')",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'FEMALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
+						"INSERT INTO user_role(user_id,role) VALUES(1000,'ROLE_PUBLISHER')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (1, 1, 1, 1, '07:00:00', '17:00:00')",
+						"INSERT INTO need (id, project_helper_type_id, quantity, date) VALUES (1, 1, 42, '2020-04-23')",
+						"INSERT INTO need_user (id, need_id, user_id, state) VALUES (1, 1, 1000, 'APPROVED')"))
+				.url(REST_URL + "/needs/1/users/1000").method(Method.PUT)
+				.body(NeedUserDto.builder().needId(1l).userId(1000l).state(NeedUserState.REJECTED).build())
+				.userTests(List.of(UserTest.builder()
+						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL))
+						.expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"REJECTED\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null},{\"rel\":\"getState\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.validationQueries(List
+								.of("SELECT * FROM need_user WHERE need_id=1 AND user_id=1000 AND state='REJECTED'"))
+						.expectedEmails(List.of(EmailTest.builder().recipient("test@lh-tool.de")
+								.subject("Schicht am 23.04.2020 abgelehnt")
+								.content("Liebe Schwester Ter,\n" + "\n"
+										+ "deine Schicht am 23.04.2020 von 07:00 Uhr bis 17:00 Uhr als Test1 wurde abgelehnt.\n"
+										+ "\n" + "Viele Grüße\n" + "LDC Baugruppe\n" + "\n"
+										+ "p.s. Das ist eine automatisch generierte Mail, bitte antworte nicht darauf. Bei Fragen wende dich bitte an den zuständigen Helferkoordinator.\n"
+										+ "")
+								.build()))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(
+						List.of("SELECT * FROM need_user WHERE need_id=1 AND user_id=1000 AND state='APPROVED'"))
+				.build()));
+	}
+
+	@Test
+	public void testNeedUserModificationCancelApprovedOwn() throws Exception {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of("INSERT INTO `helper_type` (`id`, `name`) VALUES (1, 'Test1')",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'FEMALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
+						"INSERT INTO user_role(user_id,role) VALUES(1000,'ROLE_PUBLISHER')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (1, 1, 1, 1, '07:00:00', '17:00:00')",
+						"INSERT INTO need (id, project_helper_type_id, quantity, date) VALUES (1, 1, 42, '2020-04-23')",
+						"INSERT INTO need_user (id, need_id, user_id, state) VALUES (1, 1, 1000, 'APPROVED')"))
+				.url(REST_URL + "/needs/1/users/1000").method(Method.PUT)
+				.body(NeedUserDto.builder().needId(1l).userId(1000l).state(NeedUserState.NONE).build())
+				.userTests(List.of(UserTest.builder()
+						.emails(List.of(ADMIN_EMAIL, LOCAL_COORDINATOR_EMAIL, "test@lh-tool.de"))
+						.expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"id\":null,\"needId\":1,\"userId\":1000,\"state\":\"NONE\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null},{\"rel\":\"getState\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.validationQueries(List.of(
+								"SELECT 1 WHERE NOT EXISTS (SELECT * FROM need_user WHERE need_id=1 AND user_id=1000)"))
+						.expectedEmails(List.of(EmailTest.builder().recipient("test-local_coordinator@lh-tool.de")
+								.subject("Schicht am 23.04.2020 zurückgezogen")
+								.content("Lieber Bruder Local_coordinator,\n" + "\n"
+										+ "die Bewerbung von Tes Ter für den 23.04.2020 wurde zurückgezogen.\n" + "\n"
+										+ "Bitte prüfe, ob an diesem Tag genügend Helfer zur Verfügung stehen.\n" + "\n"
+										+ "Viele Grüße\n" + "LDC Baugruppe\n" + "\n"
+										+ "p.s. Das ist eine automatisch generierte Mail, bitte antworte nicht darauf. Bei Fragen wende dich bitte an den zuständigen Helferkoordinator.\n")
+								.build()))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(
+						List.of("SELECT * FROM need_user WHERE need_id=1 AND user_id=1000 AND state='APPROVED'"))
 				.build()));
 	}
 

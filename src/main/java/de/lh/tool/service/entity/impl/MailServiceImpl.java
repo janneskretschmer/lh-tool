@@ -141,8 +141,8 @@ public class MailServiceImpl implements MailService {
 						.append(needUser.getNeed().getProjectHelperType().getHelperType().getName()).append(" wurde ")
 						.append(getNeedUserStateDescription(needUser.getState())).append(".\n\nViele Grüße\n")
 						.append(SENDER_NAME).append("\n\n").append(FOOTER);
-				sendMail(user.getEmail(), "Schicht am  " + DateUtil.getReadableFormat(needUser.getNeed().getDate())
-						+ " " + getNeedUserStateDescription(needUser.getState()), text.toString());
+				sendMail(user.getEmail(), "Schicht am " + DateUtil.getReadableFormat(needUser.getNeed().getDate()) + " "
+						+ getNeedUserStateDescription(needUser.getState()), text.toString());
 				if (log.isInfoEnabled()) {
 					log.info("NeedUserState (" + needUser.getState() + ") mail for user " + user.getFirstName() + " "
 							+ user.getLastName() + " sent to " + user.getEmail());
