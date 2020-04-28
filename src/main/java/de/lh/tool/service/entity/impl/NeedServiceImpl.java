@@ -149,8 +149,9 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 				using(c -> ((NeedDto) c.getSource()).getProjectHelperTypeId() != null ? projectHelperTypeService
 						.findById(((NeedDto) c.getSource()).getProjectHelperTypeId()).orElse(null) : null).map(source)
 								.setProjectHelperType(null);
-				using(c -> Instant.ofEpochMilli(((NeedDto) c.getSource()).getDate().getTime())
-						.atZone(ZoneId.systemDefault()).toLocalDate()).map(source).setDate(null);
+				using(c -> Optional.ofNullable((NeedDto) c.getSource()).map(NeedDto::getDate).map(Date::getTime)
+						.map(Instant::ofEpochMilli).map(instant -> instant.atZone(ZoneId.systemDefault()).toLocalDate())
+						.orElse(null)).map(source).setDate(null);
 			}
 		});
 		return modelMapper.map(dto, Need.class);

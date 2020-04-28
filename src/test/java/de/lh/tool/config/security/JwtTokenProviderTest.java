@@ -77,7 +77,7 @@ public class JwtTokenProviderTest {
 				.build());
 	}
 
-	static void setFinalStatic(Field field, Object newValue) throws Exception {
+	private static void setFinalStatic(Field field, Object newValue) throws Exception {
 		field.setAccessible(true);
 		Field modifiersField = Field.class.getDeclaredField("modifiers");
 		modifiersField.setAccessible(true);
