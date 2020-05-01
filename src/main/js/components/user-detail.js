@@ -255,7 +255,7 @@ const UserComponent = props => {
     );
 };
 
-const EmailLink = ({email, asIcon}) =>{ 
+const EmailLink = ({email, asIcon}) => { 
     if(asIcon){
         return (<IconButton component="a" href={'mailto:'+email}>
             <Icon color="secondary">email</Icon>

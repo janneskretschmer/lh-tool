@@ -14,6 +14,7 @@ public enum ExceptionEnum {
 	EX_WRONG_ID_PROVIDED("Please provide a valid ID.", HttpStatus.BAD_REQUEST),
 	EX_INVALID_ID("The provided id is invalid.", HttpStatus.BAD_REQUEST),
 	EX_INVALID_USER_ID("The provided user id is invalid.", HttpStatus.BAD_REQUEST),
+	EX_INVALID_PROJECT_ID("The provided project id is invalid.", HttpStatus.BAD_REQUEST),
 	EX_FORBIDDEN("You don't have the sufficient rights for this action.", HttpStatus.FORBIDDEN),
 
 	EX_USERS_NOT_FOUND("The users couldn't be found.", HttpStatus.NOT_FOUND),
@@ -34,13 +35,30 @@ public enum ExceptionEnum {
 			HttpStatus.BAD_REQUEST),
 
 	EX_PROJECT_NOT_FOUND("The project couldn't be found.", HttpStatus.NOT_FOUND),
+	EX_PROJECT_NAME_ALREADY_EXISTS("A project with the provided name already exists.", HttpStatus.CONFLICT),
 
 	EX_NEED_NOT_FOUND("The need couldn't be found.", HttpStatus.NOT_FOUND),
+	EX_NEED_ALREADY_EXISTS("A need with the provided date and project helper type already exists.",
+			HttpStatus.CONFLICT),
 	EX_NEED_USER_NOT_FOUND("The need-user-connection couldn't be found.", HttpStatus.NOT_FOUND),
-	EX_NEED_USER_INVALID_STATE("The provided state is invalid.", HttpStatus.BAD_REQUEST),;
+	EX_NEED_USER_INVALID_STATE("The provided state is invalid.", HttpStatus.BAD_REQUEST),
+
+	EX_HELPER_TYPE_ALREADY_EXISTS("A helper type with the provided name already exists.", HttpStatus.CONFLICT),
+	EX_HELPER_TYPE_WEEKDAY_WITHOUT_PROJECT("Please provide a valid project id with the weekday query.",
+			HttpStatus.BAD_REQUEST),
+	//
+	;
 
 	@Getter
 	private String message;
 	@Getter
 	private HttpStatus httpStatus;
+
+	public DefaultException createDefaultException() {
+		return new DefaultException(this);
+	}
+
+	public DefaultException createDefaultException(Throwable cause) {
+		return new DefaultException(this, cause);
+	}
 }

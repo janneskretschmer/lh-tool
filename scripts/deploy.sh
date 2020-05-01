@@ -1,6 +1,7 @@
 #!/bin/bash
 if [ "${1,,}" = "stage" ]; then
     echo "Executing stage deployment..."
+   #env must never be "test" bc it gets checked in testonly controllers
     env="stage"
     path="stage"
     db_url=$CREDENTIALS_STAGE_DB_URL
@@ -11,6 +12,7 @@ if [ "${1,,}" = "stage" ]; then
 
 elif [ "${1,,}" = "prod" ]; then
     echo "Executing prod deployment..."
+   #env must never be "test" bc it gets checked in testonly controllers
     env="prod"
     path=""
     db_url=$CREDENTIALS_PROD_DB_URL
@@ -38,7 +40,14 @@ echo "mail.smtp.password=$CREDENTIALS_SMTP_PW" >> src/main/resources/credentials
 echo "mail.smtp.username=$CREDENTIALS_SMTP_USER" >> src/main/resources/credentials.properties
 echo "mail.smtp.tlsEnabled=true" >> src/main/resources/credentials.properties
 
-mvn compile war:war
+#  ._.                                   .__  __                                  .__  __  .__              .__    ._.
+#  | |   ______ ____   ____  __ _________|__|/  |_ ___.__.             ___________|__|/  |_|__| ____ _____  |  |   | |
+#  | |  /  ___// __ \_/ ___\|  |  \_  __ \  \   __<   |  |   ______  _/ ___\_  __ \  \   __\  |/ ___\\__  \ |  |   | |
+#   \|  \___ \\  ___/\  \___|  |  /|  | \/  ||  |  \___  |  /_____/  \  \___|  | \/  ||  | |  \  \___ / __ \|  |__  \|
+#   __ /____  >\___  >\___  >____/ |__|  |__||__|  / ____|            \___  >__|  |__||__| |__|\___  >____  /____/  __
+#   \/      \/     \/     \/                       \/                     \/                       \/     \/        \/
+# NEVER DEPLOY REST-CONTROLLERS IN THE TESTONLY-PACKAGE!
+mvn clean compile war:war "-Dwar-exclude=**/testonly/**"
 war_file="$(ls -t target/*.war | head -1)"
 
 ssh_key="$(mktemp)"

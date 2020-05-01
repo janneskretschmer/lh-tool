@@ -4,12 +4,11 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import javax.transaction.Transactional;
 
-import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,37 +45,21 @@ public class UserRestService {
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of all users")
-	@Secured(UserRole.RIGHT_USERS_GET_ALL)
-	public Resources<UserDto> getAll(
+	@Secured(UserRole.RIGHT_USERS_GET)
+	public Resources<UserDto> get(
 			@RequestParam(required = false, name = UrlMappings.PROJECT_ID_VARIABLE) Long projectId,
 			@RequestParam(required = false, name = UrlMappings.ROLE_VARIABLE) String role) throws DefaultException {
-		Iterable<User> users = null;
-		if (projectId != null && StringUtils.isNotBlank(role)) {
-			users = userService.findByProjectIdAndRoleIgnoreCase(projectId, role);
-		} else if (projectId != null) {
-			users = userService.findByProjectId(projectId);
-		} else if (StringUtils.isNotBlank(role)) {
-			users = userService.findByRoleIgnoreCase(role);
-		} else {
-			users = userService.findAll();
-		}
-		if (users != null) {
-			return new Resources<>(
-					StreamSupport.stream(users.spliterator(), true).map(this::convertToDto)
-							.collect(Collectors.toList()),
-					linkTo(methodOn(UserRestService.class).getAll(projectId, role)).withSelfRel());
-		}
-		throw new DefaultException(ExceptionEnum.EX_USERS_NOT_FOUND);
+		List<UserDto> dtos = userService.findDtosByProjectIdAndRoleIgnoreCase(projectId, role);
+		return new Resources<>(dtos, linkTo(methodOn(UserRestService.class).get(projectId, role)).withSelfRel());
 	}
-  
-  @GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
+
+	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
 	@ApiOperation(value = "Get a single user by id")
 	@Secured(UserRole.RIGHT_USERS_GET_BY_ID)
 	public Resource<UserDto> getById(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 
-		UserDto dto = convertToDto(userService.findById(id)
-				.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_WRONG_ID_PROVIDED)));
+		UserDto dto = userService.findDtoById(id);
 
 		return new Resource<>(dto, linkTo(methodOn(UserRestService.class).getById(id)).withSelfRel());
 	}
@@ -105,6 +88,7 @@ public class UserRestService {
 	@Secured(UserRole.RIGHT_USERS_PUT)
 	public Resource<UserDto> update(@PathVariable(name = UrlMappings.ID_VARIABLE, required = false) Long id,
 			@RequestBody UserDto userDto) throws DefaultException {
+		userDto.setId(id);
 		return new Resource<>(convertToDto(userService.updateUser(new ModelMapper().map(userDto, User.class))),
 				linkTo(methodOn(UserRestService.class).update(id, userDto)).withSelfRel());
 	}
@@ -142,7 +126,7 @@ public class UserRestService {
 	@Secured(UserRole.RIGHT_USERS_DELETE)
 	public ResponseEntity<Void> delete(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
-		userService.deleteById(id);
+		userService.deleteUserById(id);
 		return ResponseEntity.noContent().build();
 	}
 

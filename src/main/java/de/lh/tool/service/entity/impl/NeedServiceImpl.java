@@ -51,7 +51,11 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 			throws DefaultException {
 		ProjectHelperType projectHelperType = projectHelperTypeService.findById(projectHelperTypeId)
 				.filter(pht -> pht.getProject() != null)
-				.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
+				.orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException);
+		if (!projectService.isOwnProject(projectHelperType.getProject())
+				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_GET_FOREIGN)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
 
 		Optional<Need> need = getRepository().findByProjectHelperType_IdAndDate(projectHelperTypeId, date);
 
@@ -62,24 +66,28 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 	@Override
 	@Transactional
 	public NeedDto getNeedDtoById(Long id) throws DefaultException {
-		Need need = findById(id).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
+		Need need = findById(id).orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException);
 		if (projectService.isOwnProject(need.getProjectHelperType().getProject())
 				|| userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_GET_FOREIGN)) {
 			return convertToDto(need);
 		}
-		throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
+		throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
 	}
 
 	@Override
 	@Transactional
 	public NeedDto createNeedDto(NeedDto needDto) throws DefaultException {
 		if (needDto.getId() != null) {
-			throw new DefaultException(ExceptionEnum.EX_ID_PROVIDED);
+			throw ExceptionEnum.EX_ID_PROVIDED.createDefaultException();
 		}
 		Need need = convertToEntity(needDto);
 		if (!projectService.isOwnProject(need.getProjectHelperType().getProject())
 				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT)) {
-			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+		if (getRepository().findByProjectHelperType_IdAndDate(needDto.getProjectHelperTypeId(), need.getDate())
+				.isPresent()) {
+			throw ExceptionEnum.EX_NEED_ALREADY_EXISTS.createDefaultException();
 		}
 		need = save(need);
 		return convertToDto(need);
@@ -90,12 +98,19 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 	public NeedDto updateNeedDto(NeedDto needDto, Long id) throws DefaultException {
 		needDto.setId(ObjectUtils.defaultIfNull(id, needDto.getId()));
 		if (needDto.getId() == null) {
-			throw new DefaultException(ExceptionEnum.EX_NO_ID_PROVIDED);
+			throw ExceptionEnum.EX_NO_ID_PROVIDED.createDefaultException();
+		}
+		if (!existsById(needDto.getId())) {
+			throw ExceptionEnum.EX_INVALID_ID.createDefaultException();
 		}
 		Need need = convertToEntity(needDto);
 		if (!projectService.isOwnProject(need.getProjectHelperType().getProject())
 				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT)) {
-			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+		if (getRepository().findByProjectHelperType_IdAndDate(needDto.getProjectHelperTypeId(), need.getDate())
+				.isPresent()) {
+			throw ExceptionEnum.EX_NEED_ALREADY_EXISTS.createDefaultException();
 		}
 		need = save(need);
 		return convertToDto(need);
@@ -104,14 +119,15 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 	@Override
 	@Transactional
 	public void deleteOwn(Long id) throws DefaultException {
-		Need need = findById(id).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
+		Need need = findById(id).orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException);
 		if (!projectService.isOwnProject(need.getProjectHelperType().getProject())
 				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT)) {
-			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
 		}
 		delete(need);
 	}
 
+	@Override
 	public NeedDto convertToDto(Need need) {
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addMappings(new PropertyMap<Need, NeedDto>() {
@@ -133,8 +149,9 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 				using(c -> ((NeedDto) c.getSource()).getProjectHelperTypeId() != null ? projectHelperTypeService
 						.findById(((NeedDto) c.getSource()).getProjectHelperTypeId()).orElse(null) : null).map(source)
 								.setProjectHelperType(null);
-				using(c -> Instant.ofEpochMilli(((NeedDto) c.getSource()).getDate().getTime())
-						.atZone(ZoneId.systemDefault()).toLocalDate()).map(source).setDate(null);
+				using(c -> Optional.ofNullable((NeedDto) c.getSource()).map(NeedDto::getDate).map(Date::getTime)
+						.map(Instant::ofEpochMilli).map(instant -> instant.atZone(ZoneId.systemDefault()).toLocalDate())
+						.orElse(null)).map(source).setDate(null);
 			}
 		});
 		return modelMapper.map(dto, Need.class);

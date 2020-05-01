@@ -6,7 +6,6 @@ import lombok.Data;
 public class ProjectUserDto {
 
 	private Long id;
-
-	// TODO where is the rest?
-
+	private Long projectId;
+	private Long userId;
 }

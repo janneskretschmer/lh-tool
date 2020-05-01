@@ -37,8 +37,7 @@ public class AssemblyRestService {
 			@RequestParam(required = true, name = UrlMappings.END_DATE_VARIABLE) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end)
 			throws DefaultException {
 
-		return new Resource<Map<String, AssembledHelperTypeWrapperDto>>(
-				dtoAssemblyService.findHelperTypesWithNeedsAndUsersBetweenDates(projectId, start, end),
+		return new Resource<>(dtoAssemblyService.findHelperTypesWithNeedsAndUsersBetweenDates(projectId, start, end),
 				linkTo(methodOn(AssemblyRestService.class).getAssembledNeedsForCalendarBetweenDates(projectId, start,
 						end)).withSelfRel());
 	}

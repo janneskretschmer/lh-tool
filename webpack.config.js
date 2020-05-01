@@ -26,7 +26,7 @@ module.exports = {
 			new TerserPlugin({
 				cache: true,
 				parallel: true,
-				uglifyOptions: {
+				terserOptions: {
 					compress: true,
 					ecma: 6,
 					mangle: true

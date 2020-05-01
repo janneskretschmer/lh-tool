@@ -16,7 +16,10 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -184,8 +187,10 @@ public class UserServiceTest {
 
 	@Test
 	public void testChangePasswordNoToken() {
-		Mockito.when(userRepository.findById(Mockito.eq(1l))).thenReturn(Optional
-				.of(User.builder().email("test@te.st").firstName("Tes").lastName("Ter").gender(Gender.MALE).build()));
+		mockCurrentUser();
+
+		Mockito.when(userRepository.findById(Mockito.eq(1l))).thenReturn(Optional.of(User.builder().id(1l)
+				.email("test@te.st").firstName("Tes").lastName("Ter").gender(Gender.MALE).build()));
 		DefaultException exception = assertThrows(DefaultException.class,
 				() -> userService.changePassword(1l, null, null, "abcdef", "abcdef"));
 		assertEquals(ExceptionEnum.EX_PASSWORDS_NO_TOKEN_OR_OLD_PASSWORD, exception.getException());
@@ -193,8 +198,10 @@ public class UserServiceTest {
 
 	@Test
 	public void testChangePasswordUserHasNoToken() {
-		Mockito.when(userRepository.findById(Mockito.eq(1l))).thenReturn(Optional
-				.of(User.builder().email("test@te.st").firstName("Tes").lastName("Ter").gender(Gender.MALE).build()));
+		mockCurrentUser();
+
+		Mockito.when(userRepository.findById(Mockito.eq(1l))).thenReturn(Optional.of(User.builder().id(1l)
+				.email("test@te.st").firstName("Tes").lastName("Ter").gender(Gender.MALE).build()));
 		Mockito.when(userRoleService.hasCurrentUserRight(Mockito.eq(UserRole.RIGHT_USERS_CHANGE_FOREIGN_PASSWORD)))
 				.thenReturn(false);
 		DefaultException exception = assertThrows(DefaultException.class,
@@ -216,8 +223,10 @@ public class UserServiceTest {
 
 	@Test
 	public void testChangePasswordInvalidToken() {
+		mockCurrentUser();
+
 		Mockito.when(userRepository.findById(Mockito.eq(1l)))
-				.thenReturn(Optional.of(User.builder().email("test@te.st").firstName("Tes").lastName("Ter")
+				.thenReturn(Optional.of(User.builder().id(1l).email("test@te.st").firstName("Tes").lastName("Ter")
 						.gender(Gender.MALE)
 						.passwordChangeToken(
 								PasswordChangeToken.builder().token("abcdef").updated(Calendar.getInstance()).build())
@@ -229,10 +238,12 @@ public class UserServiceTest {
 
 	@Test
 	public void testChangePasswordExpiredToken() {
+		mockCurrentUser();
+
 		Calendar updated = Calendar.getInstance();
 		updated.add(Calendar.DAY_OF_YEAR, -PasswordChangeToken.TOKEN_VALIDITY_IN_DAYS - 1);
-		Mockito.when(userRepository.findById(Mockito.eq(1l))).thenReturn(Optional.of(User.builder().email("test@te.st")
-				.firstName("Tes").lastName("Ter").gender(Gender.MALE)
+		Mockito.when(userRepository.findById(Mockito.eq(1l))).thenReturn(Optional.of(User.builder().id(1l)
+				.email("test@te.st").firstName("Tes").lastName("Ter").gender(Gender.MALE)
 				.passwordChangeToken(PasswordChangeToken.builder().token("abcdef").updated(updated).build()).build()));
 		DefaultException exception = assertThrows(DefaultException.class,
 				() -> userService.changePassword(1l, "abcdef", null, "abcdef", "abcdef"));
@@ -241,10 +252,13 @@ public class UserServiceTest {
 
 	@Test
 	public void testChangePasswordValidToken() throws DefaultException {
+		mockCurrentUser();
+
 		PasswordChangeToken token = PasswordChangeToken.builder().token("abcdef").updated(Calendar.getInstance())
 				.build();
-		Mockito.when(userRepository.findById(Mockito.eq(1l))).thenReturn(Optional.of(User.builder().email("test@te.st")
-				.firstName("Tes").lastName("Ter").gender(Gender.MALE).passwordChangeToken(token).build()));
+		Mockito.when(userRepository.findById(Mockito.eq(1l)))
+				.thenReturn(Optional.of(User.builder().id(1l).email("test@te.st").firstName("Tes").lastName("Ter")
+						.gender(Gender.MALE).passwordChangeToken(token).build()));
 		Mockito.when(userRepository.save(Mockito.any())).thenAnswer(i -> i.getArgument(0));
 		Mockito.when(passwordEncoder.encode(Mockito.anyString())).then(i -> i.<String>getArgument(0).toUpperCase());
 		User user = userService.changePassword(1l, "abcdef", null, "abcdef", "abcdef");
@@ -255,8 +269,10 @@ public class UserServiceTest {
 
 	@Test
 	public void testChangePasswordFalsePassword() {
-		Mockito.when(userRepository.findById(Mockito.eq(1l))).thenReturn(Optional.of(User.builder().email("test@te.st")
-				.firstName("Tes").lastName("Ter").gender(Gender.MALE).passwordHash("abc").build()));
+		mockCurrentUser();
+
+		Mockito.when(userRepository.findById(Mockito.eq(1l))).thenReturn(Optional.of(User.builder().id(1l)
+				.email("test@te.st").firstName("Tes").lastName("Ter").gender(Gender.MALE).passwordHash("abc").build()));
 		Mockito.when(authenticationManager.authenticate(Mockito.any())).thenThrow(new AuthenticationException(null) {
 			private static final long serialVersionUID = -5217148258702539075L;
 		});
@@ -267,13 +283,25 @@ public class UserServiceTest {
 
 	@Test
 	public void testChangePasswordOldPassword() throws DefaultException {
-		Mockito.when(userRepository.findById(Mockito.eq(1l))).thenReturn(Optional.of(User.builder().email("test@te.st")
-				.firstName("Tes").lastName("Ter").gender(Gender.MALE).passwordHash("abc").build()));
+		mockCurrentUser();
+
+		Mockito.when(userRepository.findById(Mockito.eq(1l))).thenReturn(Optional.of(User.builder().id(1l)
+				.email("test@te.st").firstName("Tes").lastName("Ter").gender(Gender.MALE).passwordHash("abc").build()));
 		Mockito.when(userRepository.save(Mockito.any())).thenAnswer(i -> i.getArgument(0));
 		Mockito.when(passwordEncoder.encode(Mockito.anyString())).then(i -> i.<String>getArgument(0).toUpperCase());
 		Mockito.when(authenticationManager.authenticate(Mockito.any())).thenReturn(null);
 		User user = userService.changePassword(1l, null, "abc", "abcdef", "abcdef");
 		assertEquals("ABCDEF", user.getPassword());
+	}
+
+	private void mockCurrentUser() {
+		Authentication authentication = Mockito.mock(Authentication.class);
+		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		SecurityContextHolder.setContext(securityContext);
+		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getName()).thenReturn("test@te.st");
+		Mockito.when(userRepository.findByEmail(Mockito.eq("test@te.st")))
+				.thenReturn(Optional.of(User.builder().id(1l).build()));
 	}
 
 }

@@ -41,12 +41,7 @@ public class HelperTypeRestService {
 			@RequestParam(required = false, name = UrlMappings.WEEKDAY_VARIABLE) Integer weekday)
 			throws DefaultException {
 
-		List<HelperTypeDto> dtoList;
-		if (projectId == null && weekday == null) {
-			dtoList = helperTypeService.findAllDtos();
-		} else {
-			dtoList = helperTypeService.findDtosByProjectIdAndWeekday(projectId, weekday);
-		}
+		List<HelperTypeDto> dtoList = helperTypeService.findDtosByProjectIdAndWeekday(projectId, weekday);
 
 		return new Resources<>(dtoList,
 				linkTo(methodOn(HelperTypeRestService.class).getByProjectIdAndWeekday(projectId, weekday))
@@ -94,7 +89,7 @@ public class HelperTypeRestService {
 	public ResponseEntity<Void> delete(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 
-		helperTypeService.deleteById(id);
+		helperTypeService.deleteHelperTypeById(id);
 
 		return ResponseEntity.noContent().build();
 	}

@@ -34,11 +34,14 @@ RUN mkdir -p /WEB-INF/classes
 COPY src/main/resources/docker/credentials.properties /WEB-INF/classes/credentials.properties
 RUN zip -r /tomcat/webapps/lh-tool.war /WEB-INF/classes/credentials.properties
 
-
- 
+# configure jacoco agent for coverage 
+RUN unzip -j /tomcat/webapps/lh-tool.war "WEB-INF/lib/org.jacoco.agent*.jar" -d /tmp
+RUN mv /tmp/org.jacoco.agent*.jar /tmp/jacoco-agent.jar
+RUN mkdir /target
+ENV JAVA_OPTS="-javaagent:/tmp/jacoco-agent.jar=destfile=/target/jacoco-it.exec,append=true -Duser.timezone=UTC"
 
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.2.1/wait /wait
 RUN chmod +x /wait
 
 ## Launch the wait tool and then your application
-CMD /wait && /tomcat/bin/catalina.sh run
+CMD /wait && touch /target/jacoco-it.exec && chmod 666 /target/jacoco-it.exec && /tomcat/bin/catalina.sh run

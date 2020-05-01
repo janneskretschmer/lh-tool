@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import de.lh.tool.domain.dto.JwtAuthenticationDto;
 import de.lh.tool.domain.dto.LoginDto;
+import de.lh.tool.domain.dto.UserDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.model.User;
 
@@ -16,10 +17,6 @@ public interface UserService extends BasicEntityService<User, Long> {
 
 	User changePassword(Long userId, String token, String oldPassword, String newPassword, String confirmPassword)
 			throws DefaultException;
-
-	Iterable<User> findByProjectId(Long projectId);
-
-	Iterable<User> findByRoleIgnoreCase(String role);
 
 	List<User> findByProjectIdAndRoleIgnoreCase(Long projectId, String role);
 
@@ -34,5 +31,11 @@ public interface UserService extends BasicEntityService<User, Long> {
 	void requestPasswordReset(String email) throws DefaultException;
 
 	JwtAuthenticationDto login(LoginDto loginDto);
+
+	void deleteUserById(Long id) throws DefaultException;
+
+	List<UserDto> findDtosByProjectIdAndRoleIgnoreCase(Long projectId, String role) throws DefaultException;
+
+	UserDto findDtoById(Long id) throws DefaultException;
 
 }

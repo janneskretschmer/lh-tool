@@ -1,6 +1,7 @@
 package de.lh.tool.service.entity.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -33,10 +34,13 @@ public class HelperTypeServiceImpl
 	@Transactional
 	public HelperTypeDto createDto(HelperTypeDto dto) throws DefaultException {
 		if (dto.getId() != null) {
-			throw new DefaultException(ExceptionEnum.EX_ID_PROVIDED);
+			throw ExceptionEnum.EX_ID_PROVIDED.createDefaultException();
 		}
-		HelperType HelperType = save(convertToEntity(dto));
-		return convertToDto(HelperType);
+		if (getRepository().existsByName(dto.getName())) {
+			throw ExceptionEnum.EX_HELPER_TYPE_ALREADY_EXISTS.createDefaultException();
+		}
+		HelperType helperType = save(convertToEntity(dto));
+		return convertToDto(helperType);
 	}
 
 	@Override
@@ -44,20 +48,41 @@ public class HelperTypeServiceImpl
 	public HelperTypeDto updateDto(HelperTypeDto dto, Long id) throws DefaultException {
 		dto.setId(ObjectUtils.defaultIfNull(id, dto.getId()));
 		if (dto.getId() == null) {
-			throw new DefaultException(ExceptionEnum.EX_NO_ID_PROVIDED);
+			throw ExceptionEnum.EX_NO_ID_PROVIDED.createDefaultException();
 		}
-		HelperType HelperType = save(convertToEntity(dto));
-		return convertToDto(HelperType);
+		if (!existsById(dto.getId())) {
+			throw ExceptionEnum.EX_INVALID_ID.createDefaultException();
+		}
+		if (getRepository().existsByName(dto.getName())) {
+			throw ExceptionEnum.EX_HELPER_TYPE_ALREADY_EXISTS.createDefaultException();
+		}
+		HelperType helperType = save(convertToEntity(dto));
+		return convertToDto(helperType);
 	}
 
 	@Override
 	@Transactional
 	public List<HelperTypeDto> findDtosByProjectIdAndWeekday(Long projectId, Integer weekday) throws DefaultException {
-		if (!projectService.isOwnProject(projectId)
-				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_CHANGE_FOREIGN)) {
-			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
+		if (!ObjectUtils.anyNotNull(projectId, weekday)) {
+			return findAllDtos();
+		}
+
+		boolean ownProject = projectService
+				.isOwnProject(Optional.ofNullable(projectId).flatMap(projectService::findById)
+						.orElseThrow(ExceptionEnum.EX_HELPER_TYPE_WEEKDAY_WITHOUT_PROJECT::createDefaultException));
+		if (!ownProject && !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_CHANGE_FOREIGN)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
 		}
 		return convertToDtoList(getRepository().findByProjectIdAndWeekday(projectId, weekday));
+	}
+
+	@Override
+	@Transactional
+	public void deleteHelperTypeById(Long id) throws DefaultException {
+		if (!existsById(id)) {
+			throw ExceptionEnum.EX_INVALID_ID.createDefaultException();
+		}
+		super.deleteById(id);
 	}
 
 }

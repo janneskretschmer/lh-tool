@@ -6,7 +6,7 @@ import { fetchUsersByProjectIdAndRole } from './user';
 function fetchAllUsersForProject({ projectId, accessToken }) {
     const localCoordinatorsPromise = fetchUsersByProjectIdAndRole({
         accessToken,
-        projectId: projectId,
+        projectId,
         role: 'ROLE_LOCAL_COORDINATOR',
     })
         .then(users => users)

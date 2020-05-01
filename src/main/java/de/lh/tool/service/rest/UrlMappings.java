@@ -19,13 +19,14 @@ public abstract class UrlMappings {
 	public static final String START_DATE_VARIABLE = "start_date";
 	public static final String END_DATE_VARIABLE = "end_date";
 
-	public static final String NO_EXTENSION = "/";
+	public static final String NO_EXTENSION = "";
 	public static final String ID_EXTENSION = "/{" + ID_VARIABLE + "}";
 	public static final String ID_USER_EXTENSION = ID_EXTENSION + "/users";
 	public static final String ID_USER_ID_EXTENSION = ID_USER_EXTENSION + "/{" + USER_ID_VARIABLE + "}";
 
 	public static final String INFO_PREFIX = REST_PREFIX + "/info";
 	public static final String INFO_HEARTBEAT = "/heartbeat";
+	public static final String INFO_TIMEZONE = "/timezone";
 
 	public static final String USER_PREFIX = REST_PREFIX + "/users";
 	public static final String USER_PASSWORD = "/password";
@@ -37,8 +38,7 @@ public abstract class UrlMappings {
 
 	public static final String PROJECT_PREFIX = REST_PREFIX + "/projects";
 	public static final String PROJECT_DELETE = PROJECT_PREFIX + ID_EXTENSION;
-	public static final String PROJECT_HELPER_TYPES = PROJECT_PREFIX + ID_EXTENSION + "/helper_types/{"
-			+ HELPER_TYPE_ID_VARIABLE + "}";
+	public static final String PROJECT_HELPER_TYPES = ID_EXTENSION + "/helper_types/{" + HELPER_TYPE_ID_VARIABLE + "}";
 
 	public static final String HELPER_TYPE_PREFIX = REST_PREFIX + "/helper_types";
 

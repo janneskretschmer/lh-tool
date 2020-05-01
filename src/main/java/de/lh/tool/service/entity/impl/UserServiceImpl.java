@@ -2,11 +2,15 @@ package de.lh.tool.service.entity.impl;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,6 +27,7 @@ import org.springframework.stereotype.Service;
 import de.lh.tool.config.security.JwtTokenProvider;
 import de.lh.tool.domain.dto.JwtAuthenticationDto;
 import de.lh.tool.domain.dto.LoginDto;
+import de.lh.tool.domain.dto.UserDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.PasswordChangeToken;
@@ -31,14 +36,16 @@ import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.repository.UserRepository;
 import de.lh.tool.service.entity.interfaces.MailService;
 import de.lh.tool.service.entity.interfaces.PasswordChangeTokenService;
+import de.lh.tool.service.entity.interfaces.ProjectService;
 import de.lh.tool.service.entity.interfaces.UserRoleService;
 import de.lh.tool.service.entity.interfaces.UserService;
 import de.lh.tool.util.StringUtil;
+import lombok.Data;
 import lombok.extern.apachecommons.CommonsLog;
 
 @Service
 @CommonsLog
-public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User, Long>
+public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserRepository, User, UserDto, Long>
 		implements UserService, UserDetailsService {
 
 	@Autowired
@@ -46,6 +53,9 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 
 	@Autowired
 	private UserRoleService userRoleService;
+
+	@Autowired
+	private ProjectService projectService;
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -83,53 +93,107 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 	@Transactional
 	public User createUser(User user, String role) throws DefaultException {
 		if (user.getEmail() == null) {
-			throw new DefaultException(ExceptionEnum.EX_USER_NO_EMAIL);
+			throw ExceptionEnum.EX_USER_NO_EMAIL.createDefaultException();
 		}
 		if (user.getFirstName() == null) {
-			throw new DefaultException(ExceptionEnum.EX_USER_NO_FIRST_NAME);
+			throw ExceptionEnum.EX_USER_NO_FIRST_NAME.createDefaultException();
 		}
 		if (user.getLastName() == null) {
-			throw new DefaultException(ExceptionEnum.EX_USER_NO_LAST_NAME);
+			throw ExceptionEnum.EX_USER_NO_LAST_NAME.createDefaultException();
 		}
 		if (user.getGender() == null) {
-			throw new DefaultException(ExceptionEnum.EX_USER_NO_GENDER);
+			throw ExceptionEnum.EX_USER_NO_GENDER.createDefaultException();
 		}
 		final boolean emailAlreadyInUse = getRepository().findByEmail(user.getEmail()).isPresent();
 		if (emailAlreadyInUse) {
-			throw new DefaultException(ExceptionEnum.EX_USER_EMAIL_ALREADY_IN_USE);
+			throw ExceptionEnum.EX_USER_EMAIL_ALREADY_IN_USE.createDefaultException();
 		}
-		user = save(user);
+		User savedUser = save(user);
 		if (userRoleService.hasCurrentUserRightToGrantRole(role)) {
-			userRoleService.save(new UserRole(null, user, role));
+			userRoleService.save(new UserRole(null, savedUser, role));
 		}
-		PasswordChangeToken token = passwordChangeTokenService.saveRandomToken(user);
+		PasswordChangeToken token = passwordChangeTokenService.saveRandomToken(savedUser);
 
 		if (UserRole.ROLE_LOCAL_COORDINATOR.equals(role)) {
-			mailService.sendNewLocalCoordinatorMail(user, token);
+			mailService.sendNewLocalCoordinatorMail(savedUser, token);
 		} else if (UserRole.ROLE_PUBLISHER.equals(role)) {
-			mailService.sendNewPublisherMail(user, token);
+			mailService.sendNewPublisherMail(savedUser, token);
 		}
 
-		return user;
+		return savedUser;
 	}
 
 	@Override
 	@Transactional
 	public User updateUser(User user) throws DefaultException {
 		if (user.getId() == null) {
-			throw new DefaultException(ExceptionEnum.EX_NO_ID_PROVIDED);
+			throw ExceptionEnum.EX_NO_ID_PROVIDED.createDefaultException();
 		}
-		User old = findById(user.getId()).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_USER_ID));
-		if (getCurrentUser().getId() != user.getId()
-				&& !((userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_CHANGE_FOREIGN))
-						&& old.getRoles().stream()
-								.anyMatch(r -> userRoleService.hasCurrentUserRightToGrantRole(r.getRole())))) {
-			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
-		}
+		User old = findById(user.getId()).orElseThrow(ExceptionEnum.EX_INVALID_USER_ID::createDefaultException);
+
+		checkIfEditIsAllowed(old, true);
+
 		ModelMapper mapper = new ModelMapper();
 		mapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
 		mapper.map(user, old);
 		return save(old);
+	}
+
+	private void checkIfEditIsAllowed(User user, boolean allowedToEditSelf) throws DefaultException {
+		UserPermissionCriteria criteria = Optional.ofNullable(user).map(this::evaluatePermissionsOnOtherUser)
+				.orElse(new UserPermissionCriteria());
+
+		boolean allowedThroughIdentity = allowedToEditSelf && criteria.isSelf();
+
+		boolean allowedThroughRights = criteria.isAllowedToChangeFromForeignProjects()
+				&& (user.getRoles().isEmpty() || criteria.isAllowedToGrantRoles());
+
+		boolean allowedThroughProject = criteria.isSameProject() && criteria.isAllowedToGrantRoles();
+
+		if (!allowedThroughIdentity && !allowedThroughRights && !allowedThroughProject) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+	}
+
+	private boolean isViewAllowed(User user) {
+		UserPermissionCriteria criteria = Optional.ofNullable(user).map(this::evaluatePermissionsOnOtherUser)
+				.orElse(new UserPermissionCriteria());
+
+		boolean otherAllowedUser = criteria.isSameProject() || criteria.isAllowedToGetFromForeignProjects();
+
+		return criteria.isSelf() || (criteria.isAllowedToGetOtherUsers() && otherAllowedUser);
+	}
+
+	private UserPermissionCriteria evaluatePermissionsOnOtherUser(User user) {
+		UserPermissionCriteria criteria = new UserPermissionCriteria();
+
+		criteria.setSelf(getCurrentUser().getId().equals(user.getId()));
+
+		criteria.setAllowedToChangeFromForeignProjects(
+				userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_CHANGE_FOREIGN));
+
+		criteria.setAllowedToGetFromForeignProjects(
+				userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_GET_FOREIGN));
+
+		criteria.setAllowedToGetOtherUsers(userRoleService.hasCurrentUserRight(UserRole.RIGHT_USERS_GET_FOREIGN));
+
+		criteria.setAllowedToGrantRoles(user.getRoles().stream().map(UserRole::getRole)
+				.allMatch(userRoleService::hasCurrentUserRightToGrantRole));
+
+		criteria.setSameProject(projectService.getOwnProjects().stream().anyMatch(ownProject -> Optional
+				.ofNullable(user.getProjects()).map(projects -> projects.contains(ownProject)).orElse(false)));
+
+		return criteria;
+	}
+
+	@Data
+	private class UserPermissionCriteria {
+		private boolean self;
+		private boolean allowedToChangeFromForeignProjects;
+		private boolean allowedToGetFromForeignProjects;
+		private boolean allowedToGetOtherUsers;
+		private boolean allowedToGrantRoles;
+		private boolean sameProject;
 	}
 
 	@Override
@@ -137,18 +201,23 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 	public User changePassword(Long userId, String token, String oldPassword, String newPassword,
 			String confirmPassword) throws DefaultException {
 		if (newPassword == null || newPassword.length() < PasswordChangeToken.MIN_PASSWORD_LENGTH) {
-			throw new DefaultException(ExceptionEnum.EX_PASSWORDS_SHORT_PASSWORD);
+			throw ExceptionEnum.EX_PASSWORDS_SHORT_PASSWORD.createDefaultException();
 		}
 		if (!newPassword.equals(confirmPassword)) {
-			throw new DefaultException(ExceptionEnum.EX_PASSWORDS_DO_NOT_MATCH);
+			throw ExceptionEnum.EX_PASSWORDS_DO_NOT_MATCH.createDefaultException();
 		}
 		if (userId == null) {
-			throw new DefaultException(ExceptionEnum.EX_PASSWORDS_NO_USER_ID);
+			throw ExceptionEnum.EX_PASSWORDS_NO_USER_ID.createDefaultException();
 		}
 
-		User user = findById(userId).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_USER_ID));
+		User user = findById(userId).orElseThrow(ExceptionEnum.EX_INVALID_USER_ID::createDefaultException);
 
 		if (!userRoleService.hasCurrentUserRight(UserRole.RIGHT_USERS_CHANGE_FOREIGN_PASSWORD)) {
+			// check might be senseless, because sb. who knows somebody's password could
+			// just sign in and change the password...
+			if (!Optional.ofNullable(user.getId()).map(id -> id.equals(getCurrentUser().getId())).orElse(false)) {
+				throw ExceptionEnum.EX_INVALID_USER_ID.createDefaultException();
+			}
 			if (oldPassword == null) {
 				validateToken(token, user);
 			} else {
@@ -156,7 +225,7 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 					authenticationManager
 							.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), oldPassword));
 				} catch (AuthenticationException e) {
-					throw new DefaultException(ExceptionEnum.EX_PASSWORDS_INVALID_PASSWORD, e);
+					throw ExceptionEnum.EX_PASSWORDS_INVALID_PASSWORD.createDefaultException(e);
 				}
 			}
 		}
@@ -168,17 +237,17 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 
 	private void validateToken(String token, User user) throws DefaultException {
 		if (token == null) {
-			throw new DefaultException(ExceptionEnum.EX_PASSWORDS_NO_TOKEN_OR_OLD_PASSWORD);
+			throw ExceptionEnum.EX_PASSWORDS_NO_TOKEN_OR_OLD_PASSWORD.createDefaultException();
 		}
 		if (user.getPasswordChangeToken() == null
 				|| !StringUtil.constantTimeEquals(token, user.getPasswordChangeToken().getToken())) {
-			throw new DefaultException(ExceptionEnum.EX_PASSWORDS_INVALID_TOKEN);
+			throw ExceptionEnum.EX_PASSWORDS_INVALID_TOKEN.createDefaultException();
 		}
 		user.getPasswordChangeToken().getUpdated().setLenient(true);
 		user.getPasswordChangeToken().getUpdated().add(Calendar.DAY_OF_YEAR,
 				PasswordChangeToken.TOKEN_VALIDITY_IN_DAYS);
 		if (Calendar.getInstance().after(user.getPasswordChangeToken().getUpdated())) {
-			throw new DefaultException(ExceptionEnum.EX_PASSWORDS_EXPIRED_TOKEN);
+			throw ExceptionEnum.EX_PASSWORDS_EXPIRED_TOKEN.createDefaultException();
 		}
 		passwordChangeTokenService.delete(user.getPasswordChangeToken());
 		user.setPasswordChangeToken(null);
@@ -197,18 +266,46 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 	}
 
 	@Override
-	public Iterable<User> findByProjectId(Long projectId) {
-		return getRepository().findByProjects_IdOrderByLastNameAscFirstNameAsc(projectId);
-	}
-
-	@Override
-	public Iterable<User> findByRoleIgnoreCase(String role) {
-		return getRepository().findByRoles_RoleIgnoreCaseOrderByLastNameAscFirstNameAsc(role);
-	}
-
-	@Override
 	public List<User> findByProjectIdAndRoleIgnoreCase(Long projectId, String role) {
 		return getRepository().findByProjects_IdAndRoles_RoleIgnoreCaseOrderByLastNameAscFirstNameAsc(projectId, role);
+	}
+
+	@Override
+	@Transactional
+	public List<UserDto> findDtosByProjectIdAndRoleIgnoreCase(Long projectId, String role) throws DefaultException {
+		if (projectId != null && !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_GET_FOREIGN)
+				&& getCurrentUser().getProjects().stream().noneMatch(project -> projectId.equals(project.getId()))) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+
+		List<User> users = null;
+		if (projectId != null && StringUtils.isNotBlank(role)) {
+			users = getRepository().findByProjects_IdAndRoles_RoleIgnoreCaseOrderByLastNameAscFirstNameAsc(projectId,
+					role);
+		} else if (projectId != null) {
+			users = getRepository().findByProjects_IdOrderByLastNameAscFirstNameAsc(projectId);
+		} else if (StringUtils.isNotBlank(role)) {
+			users = getRepository().findByRoles_RoleIgnoreCaseOrderByLastNameAscFirstNameAsc(role);
+		} else {
+			users = getRepository().findByOrderByLastNameAscFirstNameAsc();
+		}
+		if (users != null) {
+			return convertToDtoList(users.stream().filter(this::isViewAllowed).collect(Collectors.toList()));
+		}
+		throw ExceptionEnum.EX_USERS_NOT_FOUND.createDefaultException();
+	}
+
+	@Override
+	@Transactional
+	public UserDto findDtoById(Long id) throws DefaultException {
+		User user = findById(id).orElseThrow(
+				() -> new DefaultException(userRoleService.hasCurrentUserRight(UserRole.RIGHT_USERS_GET_FOREIGN)
+						? ExceptionEnum.EX_WRONG_ID_PROVIDED
+						: ExceptionEnum.EX_FORBIDDEN));
+		if (!isViewAllowed(user)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+		return convertToDto(user);
 	}
 
 	@Override
@@ -247,4 +344,26 @@ public class UserServiceImpl extends BasicEntityServiceImpl<UserRepository, User
 		return new JwtAuthenticationDto(jwt);
 	}
 
+	@Override
+	@Transactional
+	public void deleteUserById(Long id) throws DefaultException {
+		User user = findById(id).orElseThrow(ExceptionEnum.EX_INVALID_USER_ID::createDefaultException);
+		checkIfEditIsAllowed(user, false);
+		getRepository().delete(user);
+	}
+
+	@Override
+	public UserDto convertToDto(User user) {
+		if (user == null) {
+			return null;
+		}
+		ModelMapper modelMapper = new ModelMapper();
+		modelMapper.addMappings(new PropertyMap<User, UserDto>() {
+			@Override
+			protected void configure() {
+				using(ctx -> ctx.getSource() != null).map(user.getPasswordHash()).setActive(null);
+			}
+		});
+		return modelMapper.map(user, UserDto.class);
+	}
 }

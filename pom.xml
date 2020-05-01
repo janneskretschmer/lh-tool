@@ -7,6 +7,11 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>LH-Tool</name>
 	<packaging>war</packaging>
+
+	<properties>
+		<war-exclude></war-exclude>
+	</properties>
+
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<resources>
@@ -39,6 +44,7 @@
 				<version>3.2.2</version>
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<packagingExcludes>${war-exclude}</packagingExcludes>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -63,31 +69,21 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<!-- Used to spin up an integration testing environment -->
-				<groupId>com.dkanejs.maven.plugins</groupId>
-				<artifactId>docker-compose-maven-plugin</artifactId>
-				<version>2.3.0</version>
-				<configuration>
-					<composeFile>${project.basedir}/src/main/resources/docker/composition.yml</composeFile>
-					<detachedMode>true</detachedMode>
-					<removeImages>true</removeImages>
-				</configuration>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.6.0</version>
 				<executions>
 					<execution>
-						<id>docker-compose-up</id>
-						<phase>pre-integration-test</phase>
-						<goals>
-							<goal>up</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>docker-compose-down</id>
+						<id>stop-jvm</id>
 						<phase>post-integration-test</phase>
 						<goals>
-							<goal>down</goal>
+							<goal>exec</goal>
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<executable>src/main/resources/docker/stop_tomcat.sh</executable>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -126,7 +122,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.3</version>
+				<version>0.8.5</version>
 				<executions>
 					<execution>
 						<id>pre-unit-test</id>
@@ -158,6 +154,7 @@
 						<configuration>
 							<destFile>${project.build.directory}/jacoco-it.exec</destFile>
 							<propertyName>failsafeArgLine</propertyName>
+							<append>true</append>
 						</configuration>
 					</execution>
 					<execution>
@@ -170,6 +167,33 @@
 							<dataFile>${project.build.directory}/jacoco-it.exec</dataFile>
 							<outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
 						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<!-- Used to spin up an integration testing environment -->
+				<groupId>com.dkanejs.maven.plugins</groupId>
+				<artifactId>docker-compose-maven-plugin</artifactId>
+				<version>2.3.0</version>
+				<configuration>
+					<composeFile>${project.basedir}/src/main/resources/docker/composition.yml</composeFile>
+					<detachedMode>true</detachedMode>
+					<removeImages>true</removeImages>
+				</configuration>
+				<executions>
+					<execution>
+						<id>docker-compose-up</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>up</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>docker-compose-down</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>down</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>
@@ -253,9 +277,9 @@
 			<version>0.25.0.RELEASE</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.springframework.data</groupId>
-		    <artifactId>spring-data-jpa</artifactId>
-		    <version>2.2.5.RELEASE</version>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+			<version>2.2.5.RELEASE</version>
 		</dependency>
 
 		<dependency>
@@ -311,12 +335,12 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
-			<version>5.3.2</version>
+			<version>5.6.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
-			<version>5.3.2</version>
+			<version>5.6.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -332,9 +356,20 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.jacoco</groupId>
+			<artifactId>org.jacoco.agent</artifactId>
+			<version>0.8.5</version>
+			<classifier>runtime</classifier>
+		</dependency>
+		<dependency>
 			<groupId>io.rest-assured</groupId>
 			<artifactId>rest-assured</artifactId>
 			<version>3.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.icegreen</groupId>
+			<artifactId>greenmail</artifactId>
+			<version>1.5.13</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

@@ -1,14 +1,16 @@
 package de.lh.tool.service.entity.impl;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
 
+import de.lh.tool.repository.BasicEntityRepository;
 import de.lh.tool.service.entity.interfaces.BasicEntityService;
 import lombok.Getter;
 
-public abstract class BasicEntityServiceImpl<R extends CrudRepository<E, I>, E, I> implements BasicEntityService<E, I> {
+public abstract class BasicEntityServiceImpl<R extends BasicEntityRepository<E, I>, E, I>
+		implements BasicEntityService<E, I> {
 	@Autowired
 	@Getter
 	private R repository;
@@ -44,12 +46,12 @@ public abstract class BasicEntityServiceImpl<R extends CrudRepository<E, I>, E, 
 	}
 
 	@Override
-	public Iterable<E> findAll() {
+	public List<E> findAll() {
 		return repository.findAll();
 	}
 
 	@Override
-	public Iterable<E> findAllById(Iterable<I> ids) {
+	public List<E> findAllById(Iterable<I> ids) {
 		return repository.findAllById(ids);
 	}
 
@@ -64,7 +66,7 @@ public abstract class BasicEntityServiceImpl<R extends CrudRepository<E, I>, E, 
 	}
 
 	@Override
-	public Iterable<E> saveAll(Iterable<E> entities) {
+	public List<E> saveAll(Iterable<E> entities) {
 		return repository.saveAll(entities);
 	}
 }
