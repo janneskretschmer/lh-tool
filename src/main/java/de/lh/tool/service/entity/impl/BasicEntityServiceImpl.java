@@ -4,12 +4,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
 
+import de.lh.tool.repository.BasicEntityRepository;
 import de.lh.tool.service.entity.interfaces.BasicEntityService;
 import lombok.Getter;
 
-public abstract class BasicEntityServiceImpl<R extends JpaRepository<E, I>, E, I> implements BasicEntityService<E, I> {
+public abstract class BasicEntityServiceImpl<R extends BasicEntityRepository<E, I>, E, I>
+		implements BasicEntityService<E, I> {
 	@Autowired
 	@Getter
 	private R repository;

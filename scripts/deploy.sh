@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ "${1,,}" = "stage" ]; then
     echo "Executing stage deployment..."
-   #env must never be "test"!
+   #env must never be "test" bc it gets checked in testonly controllers
     env="stage"
     path="stage"
     db_url=$CREDENTIALS_STAGE_DB_URL
@@ -12,7 +12,7 @@ if [ "${1,,}" = "stage" ]; then
 
 elif [ "${1,,}" = "prod" ]; then
     echo "Executing prod deployment..."
-   #env must never be "test"!
+   #env must never be "test" bc it gets checked in testonly controllers
     env="prod"
     path=""
     db_url=$CREDENTIALS_PROD_DB_URL

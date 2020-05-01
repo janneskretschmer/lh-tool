@@ -84,14 +84,14 @@ public class ProjectServiceImpl extends BasicMappableEntityServiceImpl<ProjectRe
 	public ProjectDto updateProjectDto(Long id, ProjectDto projectDto) throws DefaultException {
 		projectDto.setId(id);
 		if (projectDto.getId() == null) {
-			throw new DefaultException(ExceptionEnum.EX_NO_ID_PROVIDED);
+			throw ExceptionEnum.EX_NO_ID_PROVIDED.createDefaultException();
 		}
 
 		Project project = convertToEntity(projectDto);
 		boolean ownProject = isOwnProject(getRepository().findById(project.getId())
 				.orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException));
 		if (!ownProject && !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_CHANGE_FOREIGN)) {
-			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
 		}
 
 		if (getRepository().findByName(projectDto.getName()).isPresent()) {
@@ -107,7 +107,7 @@ public class ProjectServiceImpl extends BasicMappableEntityServiceImpl<ProjectRe
 	public void deleteOwn(Long id) throws DefaultException {
 		Project project = findById(id).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
 		if (!isOwnProject(project) && !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_CHANGE_FOREIGN)) {
-			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
 		}
 		delete(project);
 	}
@@ -121,7 +121,7 @@ public class ProjectServiceImpl extends BasicMappableEntityServiceImpl<ProjectRe
 	@Override
 	@Transactional
 	public boolean isOwnProject(Long projectId) throws DefaultException {
-		return isOwnProject(findById(projectId).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID)));
+		return isOwnProject(findById(projectId).orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException));
 	}
 
 }

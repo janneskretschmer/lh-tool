@@ -16,6 +16,7 @@ import javax.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +43,8 @@ import de.lh.tool.service.rest.testonly.dto.EmailWrapperDto;
 @RestController()
 @RequestMapping("/rest/testonly/integration")
 @PropertySource(value = { "classpath:credentials.properties" })
+//ConditionalOnProperty is in the spring boot package
+@Conditional(TestEnvironmentCondition.class)
 public class IntegrationTestRestService {
 
 	@Autowired
@@ -52,6 +55,9 @@ public class IntegrationTestRestService {
 
 	private GreenMail fakeSmtpServer;
 
+	/**
+	 * double check
+	 */
 	private void checkEnvironment() throws DefaultException {
 		String env = environment.getProperty("app.environment");
 		if (!"test".equals(env)) {
@@ -160,4 +166,5 @@ public class IntegrationTestRestService {
 			}
 		}).collect(Collectors.toList()));
 	}
+
 }

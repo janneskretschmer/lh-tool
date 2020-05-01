@@ -74,24 +74,24 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 		NeedUserState newState = Optional.ofNullable(dto).map(NeedUserDto::getState)
 				.orElseThrow(ExceptionEnum.EX_NEED_USER_INVALID_STATE::createDefaultException);
 
-		if (NeedUserState.APPLIED.equals(oldState) && NeedUserState.NONE.equals(newState)) {
+		if (oldState == NeedUserState.APPLIED && newState == NeedUserState.NONE) {
 			// 1: APPLIED -> NONE
 			userRoleService.checkCurrentUserRight(UserRole.RIGHT_NEEDS_APPLY);
 			delete(needUser);
 			dto.setId(null);
 			return dto;
 
-		} else if (NeedUserState.NONE.equals(oldState) && NeedUserState.APPLIED.equals(newState)) {
+		} else if (oldState == NeedUserState.NONE && newState == NeedUserState.APPLIED) {
 			// 2: NONE -> APPLIED
 			userRoleService.checkCurrentUserRight(UserRole.RIGHT_NEEDS_APPLY);
 
-		} else if ((NeedUserState.APPROVED.equals(oldState) && NeedUserState.APPLIED.equals(newState))
+		} else if ((oldState == NeedUserState.APPROVED && newState == NeedUserState.APPLIED)
 				// 3: APPROVED -> APPLIED
-				|| (NeedUserState.APPLIED.equals(oldState) && NeedUserState.APPROVED.equals(newState))
+				|| (oldState == NeedUserState.APPLIED && newState == NeedUserState.APPROVED)
 				// 4: APPLIED -> APPROVED
-				|| (NeedUserState.REJECTED.equals(oldState) && NeedUserState.APPROVED.equals(newState))
+				|| (oldState == NeedUserState.REJECTED && newState == NeedUserState.APPROVED)
 				// 5: REJECTED -> APPROVED
-				|| (NeedUserState.APPROVED.equals(oldState) && NeedUserState.REJECTED.equals(newState)
+				|| (oldState == NeedUserState.APPROVED && newState == NeedUserState.REJECTED
 				// 6: APPROVED -> REJECTED
 				)) {
 
@@ -99,7 +99,7 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 			needUser.setState(newState);
 			mailService.sendNeedUserStateChangedMailToUser(needUser);
 
-		} else if (NeedUserState.APPROVED.equals(oldState) && NeedUserState.NONE.equals(newState)) {
+		} else if (oldState == NeedUserState.APPROVED && newState == NeedUserState.NONE) {
 			// 7: APPROVED -> NONE
 			userRoleService.checkCurrentUserRight(UserRole.RIGHT_NEEDS_APPLY);
 			needUser.setState(NeedUserState.NONE);
@@ -110,6 +110,9 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 			delete(needUser);
 			dto.setId(null);
 			return dto;
+		} else {
+
+			throw ExceptionEnum.EX_NEED_USER_INVALID_STATE.createDefaultException();
 		}
 
 		// if mail has to be sent, new state is already set above

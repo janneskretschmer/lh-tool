@@ -93,41 +93,41 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 	@Transactional
 	public User createUser(User user, String role) throws DefaultException {
 		if (user.getEmail() == null) {
-			throw new DefaultException(ExceptionEnum.EX_USER_NO_EMAIL);
+			throw ExceptionEnum.EX_USER_NO_EMAIL.createDefaultException();
 		}
 		if (user.getFirstName() == null) {
-			throw new DefaultException(ExceptionEnum.EX_USER_NO_FIRST_NAME);
+			throw ExceptionEnum.EX_USER_NO_FIRST_NAME.createDefaultException();
 		}
 		if (user.getLastName() == null) {
-			throw new DefaultException(ExceptionEnum.EX_USER_NO_LAST_NAME);
+			throw ExceptionEnum.EX_USER_NO_LAST_NAME.createDefaultException();
 		}
 		if (user.getGender() == null) {
-			throw new DefaultException(ExceptionEnum.EX_USER_NO_GENDER);
+			throw ExceptionEnum.EX_USER_NO_GENDER.createDefaultException();
 		}
 		final boolean emailAlreadyInUse = getRepository().findByEmail(user.getEmail()).isPresent();
 		if (emailAlreadyInUse) {
-			throw new DefaultException(ExceptionEnum.EX_USER_EMAIL_ALREADY_IN_USE);
+			throw ExceptionEnum.EX_USER_EMAIL_ALREADY_IN_USE.createDefaultException();
 		}
-		User saved = save(user);
+		User savedUser = save(user);
 		if (userRoleService.hasCurrentUserRightToGrantRole(role)) {
-			userRoleService.save(new UserRole(null, saved, role));
+			userRoleService.save(new UserRole(null, savedUser, role));
 		}
-		PasswordChangeToken token = passwordChangeTokenService.saveRandomToken(saved);
+		PasswordChangeToken token = passwordChangeTokenService.saveRandomToken(savedUser);
 
 		if (UserRole.ROLE_LOCAL_COORDINATOR.equals(role)) {
-			mailService.sendNewLocalCoordinatorMail(saved, token);
+			mailService.sendNewLocalCoordinatorMail(savedUser, token);
 		} else if (UserRole.ROLE_PUBLISHER.equals(role)) {
-			mailService.sendNewPublisherMail(saved, token);
+			mailService.sendNewPublisherMail(savedUser, token);
 		}
 
-		return saved;
+		return savedUser;
 	}
 
 	@Override
 	@Transactional
 	public User updateUser(User user) throws DefaultException {
 		if (user.getId() == null) {
-			throw new DefaultException(ExceptionEnum.EX_NO_ID_PROVIDED);
+			throw ExceptionEnum.EX_NO_ID_PROVIDED.createDefaultException();
 		}
 		User old = findById(user.getId()).orElseThrow(ExceptionEnum.EX_INVALID_USER_ID::createDefaultException);
 
@@ -142,33 +142,47 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 	private void checkIfEditIsAllowed(User user, boolean allowedToEditSelf) throws DefaultException {
 		UserPermissionCriteria criteria = Optional.ofNullable(user).map(this::evaluatePermissionsOnOtherUser)
 				.orElse(new UserPermissionCriteria());
-		if (!(allowedToEditSelf && criteria.isSelf())
-				&& !(criteria.isAllowedToChangeFromForeignProjects()
-						&& (user.getRoles().isEmpty() || criteria.isAllowedToGrantRoles()))
-				&& !(criteria.isSameProject() && criteria.isAllowedToGrantRoles())) {
-			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
+
+		boolean allowedThroughIdentity = allowedToEditSelf && criteria.isSelf();
+
+		boolean allowedThroughRights = criteria.isAllowedToChangeFromForeignProjects()
+				&& (user.getRoles().isEmpty() || criteria.isAllowedToGrantRoles());
+
+		boolean allowedThroughProject = criteria.isSameProject() && criteria.isAllowedToGrantRoles();
+
+		if (!allowedThroughIdentity && !allowedThroughRights && !allowedThroughProject) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
 		}
 	}
 
 	private boolean isViewAllowed(User user) {
 		UserPermissionCriteria criteria = Optional.ofNullable(user).map(this::evaluatePermissionsOnOtherUser)
 				.orElse(new UserPermissionCriteria());
+
 		boolean otherAllowedUser = criteria.isSameProject() || criteria.isAllowedToGetFromForeignProjects();
+
 		return criteria.isSelf() || (criteria.isAllowedToGetOtherUsers() && otherAllowedUser);
 	}
 
 	private UserPermissionCriteria evaluatePermissionsOnOtherUser(User user) {
 		UserPermissionCriteria criteria = new UserPermissionCriteria();
+
 		criteria.setSelf(getCurrentUser().getId().equals(user.getId()));
+
 		criteria.setAllowedToChangeFromForeignProjects(
 				userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_CHANGE_FOREIGN));
+
 		criteria.setAllowedToGetFromForeignProjects(
 				userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_GET_FOREIGN));
+
 		criteria.setAllowedToGetOtherUsers(userRoleService.hasCurrentUserRight(UserRole.RIGHT_USERS_GET_FOREIGN));
+
 		criteria.setAllowedToGrantRoles(user.getRoles().stream().map(UserRole::getRole)
 				.allMatch(userRoleService::hasCurrentUserRightToGrantRole));
+
 		criteria.setSameProject(projectService.getOwnProjects().stream().anyMatch(ownProject -> Optional
 				.ofNullable(user.getProjects()).map(projects -> projects.contains(ownProject)).orElse(false)));
+
 		return criteria;
 	}
 
@@ -187,22 +201,22 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 	public User changePassword(Long userId, String token, String oldPassword, String newPassword,
 			String confirmPassword) throws DefaultException {
 		if (newPassword == null || newPassword.length() < PasswordChangeToken.MIN_PASSWORD_LENGTH) {
-			throw new DefaultException(ExceptionEnum.EX_PASSWORDS_SHORT_PASSWORD);
+			throw ExceptionEnum.EX_PASSWORDS_SHORT_PASSWORD.createDefaultException();
 		}
 		if (!newPassword.equals(confirmPassword)) {
-			throw new DefaultException(ExceptionEnum.EX_PASSWORDS_DO_NOT_MATCH);
+			throw ExceptionEnum.EX_PASSWORDS_DO_NOT_MATCH.createDefaultException();
 		}
 		if (userId == null) {
-			throw new DefaultException(ExceptionEnum.EX_PASSWORDS_NO_USER_ID);
+			throw ExceptionEnum.EX_PASSWORDS_NO_USER_ID.createDefaultException();
 		}
 
-		User user = findById(userId).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_USER_ID));
+		User user = findById(userId).orElseThrow(ExceptionEnum.EX_INVALID_USER_ID::createDefaultException);
 
 		if (!userRoleService.hasCurrentUserRight(UserRole.RIGHT_USERS_CHANGE_FOREIGN_PASSWORD)) {
 			// check might be senseless, because sb. who knows somebody's password could
 			// just sign in and change the password...
 			if (!Optional.ofNullable(user.getId()).map(id -> id.equals(getCurrentUser().getId())).orElse(false)) {
-				throw new DefaultException(ExceptionEnum.EX_INVALID_USER_ID);
+				throw ExceptionEnum.EX_INVALID_USER_ID.createDefaultException();
 			}
 			if (oldPassword == null) {
 				validateToken(token, user);
@@ -211,7 +225,7 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 					authenticationManager
 							.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), oldPassword));
 				} catch (AuthenticationException e) {
-					throw new DefaultException(ExceptionEnum.EX_PASSWORDS_INVALID_PASSWORD, e);
+					throw ExceptionEnum.EX_PASSWORDS_INVALID_PASSWORD.createDefaultException(e);
 				}
 			}
 		}
@@ -223,17 +237,17 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 
 	private void validateToken(String token, User user) throws DefaultException {
 		if (token == null) {
-			throw new DefaultException(ExceptionEnum.EX_PASSWORDS_NO_TOKEN_OR_OLD_PASSWORD);
+			throw ExceptionEnum.EX_PASSWORDS_NO_TOKEN_OR_OLD_PASSWORD.createDefaultException();
 		}
 		if (user.getPasswordChangeToken() == null
 				|| !StringUtil.constantTimeEquals(token, user.getPasswordChangeToken().getToken())) {
-			throw new DefaultException(ExceptionEnum.EX_PASSWORDS_INVALID_TOKEN);
+			throw ExceptionEnum.EX_PASSWORDS_INVALID_TOKEN.createDefaultException();
 		}
 		user.getPasswordChangeToken().getUpdated().setLenient(true);
 		user.getPasswordChangeToken().getUpdated().add(Calendar.DAY_OF_YEAR,
 				PasswordChangeToken.TOKEN_VALIDITY_IN_DAYS);
 		if (Calendar.getInstance().after(user.getPasswordChangeToken().getUpdated())) {
-			throw new DefaultException(ExceptionEnum.EX_PASSWORDS_EXPIRED_TOKEN);
+			throw ExceptionEnum.EX_PASSWORDS_EXPIRED_TOKEN.createDefaultException();
 		}
 		passwordChangeTokenService.delete(user.getPasswordChangeToken());
 		user.setPasswordChangeToken(null);

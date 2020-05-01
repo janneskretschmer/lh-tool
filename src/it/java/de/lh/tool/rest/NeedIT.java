@@ -423,6 +423,33 @@ public class NeedIT extends BasicRestIntegrationTest {
 				.build()));
 	}
 
+	@Test
+	public void testNeedUserModificationIllegal() throws Exception {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of("INSERT INTO `helper_type` (`id`, `name`) VALUES (1, 'Test1')",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'FEMALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
+						"INSERT INTO user_role(user_id,role) VALUES(1000,'ROLE_PUBLISHER')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (1, 1, 1, 1, '07:00:00', '17:00:00')",
+						"INSERT INTO need (id, project_helper_type_id, quantity, date) VALUES (1, 1, 42, '2020-04-23')"))
+				.url(REST_URL + "/needs/1/users/1000").method(Method.PUT)
+				.body(NeedUserDto.builder().needId(1l).userId(1000l).state(NeedUserState.REJECTED).build())
+				.userTests(List.of(UserTest.builder()
+						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL,
+								"test@lh-tool.de"))
+						.expectedHttpCode(HttpStatus.BAD_REQUEST)
+						.expectedResponse(
+								"{\"key\":\"EX_NEED_USER_INVALID_STATE\",\"message\":\"The provided state is invalid.\",\"httpCode\":400}")
+						.validationQueries(List.of(
+								"SELECT 1 WHERE NOT EXISTS (SELECT * FROM need_user WHERE need_id=1 AND user_id=1000)"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(
+						List.of("SELECT 1 WHERE NOT EXISTS (SELECT * FROM need_user WHERE need_id=1 AND user_id=1000)"))
+				.build()));
+	}
+
 	// TODO test missing values
 
 //  ██████╗_███████╗██╗_____███████╗████████╗███████╗
