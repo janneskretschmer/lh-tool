@@ -8,7 +8,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import classNames from 'classnames';
 import { Helmet } from 'react-helmet';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItem, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfSlot, fullPathOfStore, fullPathOfStores, partialPathOfNeed } from '../paths';
+import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItem, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfSlot, fullPathOfStore, fullPathOfStores, partialPathOfNeed, fullPathOfSettings } from '../paths';
 import SessionProvider from '../providers/session-provider';
 import ChangePasswordComponent from './changepw';
 import AppHeader from './header';
@@ -24,6 +24,7 @@ import StoreDetailComponent from './store/store-detail';
 import StoreListComponent from './store/store-list';
 import DataProtection from './util/data-protection';
 import Imprint from './util/imprint';
+import SettingsComponent from './settings';
 
 const drawerWidth = 240;
 
@@ -69,6 +70,7 @@ export default class LHToolRoot extends React.Component {
         super(props);
         this.state = {
             drawerOpen: window.innerWidth > 960,
+            contentMarginTop: 0,
         };
     }
 
@@ -80,9 +82,13 @@ export default class LHToolRoot extends React.Component {
         this.setState({ drawerOpen: false });
     }
 
+    setContentTopMargin(margin) {
+        this.setState({ contentMarginTop: margin });
+    }
+
     render() {
         const { classes, theme } = this.props;
-        const { drawerOpen } = this.state;
+        const { drawerOpen, contentMarginTop } = this.state;
         const TITLE = 'LH-Tool';
 
         return (
@@ -95,8 +101,9 @@ export default class LHToolRoot extends React.Component {
                         </Helmet>
                         <SessionProvider>
                             <AppHeader
+                                setContentTopMargin={margin => this.setContentTopMargin(margin)}
                                 drawerOpen={drawerOpen}
-                                defaultTitle={TITLE}
+                                //defaultTitle={TITLE}
                                 onOpenRequest={this.handleDrawerOpen.bind(this)} />
 
                             <Drawer
@@ -121,8 +128,8 @@ export default class LHToolRoot extends React.Component {
                                 className={classNames(classes.content, {
                                     [classes.contentShift]: drawerOpen,
                                 })}
+                                style={{ marginTop: `${contentMarginTop}px` }}
                             >
-                                <div className={classes.drawerHeader} />
                                 <Switch>
                                     <Route path={fullPathOfLogin()} component={LoginComponent} />
                                     <Route path={fullPathOfProjects()} component={ProjectsComponent} />
@@ -132,6 +139,7 @@ export default class LHToolRoot extends React.Component {
                                     <Route path={fullPathOfSlot()} component={SlotDetailComponent} />
                                     <Route path={fullPathOfItem()} component={ItemDetailComponent} />
                                     <Route path={fullPathOfItems()} component={ItemListComponent} />
+                                    <Route path={fullPathOfSettings()} component={SettingsComponent} exact={false} />
                                     <Route path={fullPathOfChangePw()} component={ChangePasswordComponent} />
                                     <Route path={fullPathOfImprint()} component={Imprint} />
                                     <Route path={fullPathOfDataProtection()} component={DataProtection} />

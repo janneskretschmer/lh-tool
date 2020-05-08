@@ -25,3 +25,7 @@ export const fullPathOfChangePw = () => fullPathOf('/changepw/');
 
 export const fullPathOfImprint = () => fullPathOf('/imprint/');
 export const fullPathOfDataProtection = () => fullPathOf('/data-protection/');
+
+export const fullPathOfSettings = () => fullPathOf('/settings');
+export const fullPathOfUsersSettings = () => fullPathOf('/settings/users');
+export const fullPathOfUserSettings = (id) => fullPathOf('/settings/users/' + (id ? id : ':userId'));

@@ -5,3 +5,5 @@ export function getBasePath() {
 export function getContextPath() {
     return window.__GLOBAL_CONFIG__.contextPath;
 };
+
+export const NEW_ENTITY_ID_PLACEHOLDER = 'new';

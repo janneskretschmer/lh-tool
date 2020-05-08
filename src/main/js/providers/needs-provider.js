@@ -1,11 +1,8 @@
 import React from 'react';
-import { fetchHelperTypes } from '../actions/helper-type';
-import { createOrUpdateNeed, fetchNeedByProjectHelperTypeIdAndDate, fetchOwnNeedUser, fetchNeedUsers, changeApplicationStateForNeed } from '../actions/need';
-import { fetchProjectHelperTypes } from '../actions/project';
-import { convertToMUIFormat, withContext, convertFromMUIFormat } from '../util';
-import { SessionContext } from './session-provider';
-import { fetchUser } from '../actions/user';
 import { fetchNeedsForCalendar } from '../actions/assembled';
+import { changeApplicationStateForNeed, createOrUpdateNeed } from '../actions/need';
+import { convertToMUIFormat, withContext } from '../util';
+import { SessionContext } from './session-provider';
 
 export const NeedsContext = React.createContext();
 

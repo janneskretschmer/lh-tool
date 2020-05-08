@@ -36,7 +36,7 @@ export function fetchUsersByProjectIdAndRole({ accessToken, projectId, role }) {
         .catch(err => null);
 }
 
-export function fetchUser({ accessToken, userId }, handleFailure) {
+export function fetchUser(accessToken, userId, handleFailure) {
     return apiRequest({
         apiEndpoint: apiEndpoints.user.getById,
         authToken: accessToken,
@@ -48,33 +48,14 @@ export function fetchUser({ accessToken, userId }, handleFailure) {
         .catch(handleFailure);
 }
 
-export function createNewUser({ accessToken, email, firstName, lastName, gender, telephoneNumber, mobileNumber, businessNumber, skills, profession, role, projectId, projectsState, handleFailure }) {
+export function createUser(accessToken, user, handleFailure) {
     return apiRequest({
         apiEndpoint: apiEndpoints.user.create,
         authToken: accessToken,
-        data: {
-            email,
-            firstName,
-            lastName,
-            gender,
-            telephoneNumber,
-            mobileNumber,
-            businessNumber,
-            skills,
-            profession,
-            role,
-        },
+        data: user,
     })
-        .then(result => {
-            if (projectId) {
-                return addUserToProject({ accessToken, projectId, user: result.response, role, projectsState });
-            }
-        })
-        .catch(e => {
-            if (typeof handleFailure === 'function') {
-                handleFailure('response' in e ? e.response.key : null);
-            }
-        });
+        .then(result => result.response)
+        .catch(handleFailure);
 }
 
 export function deleteUser({ accessToken, userId, projectsState }) {
@@ -92,7 +73,7 @@ export function deleteUser({ accessToken, userId, projectsState }) {
         .catch(e => console.log(e));
 }
 
-export function updateUser({ accessToken, user, projectsState }) {
+export function updateUser(accessToken, user, handleFailure) {
     return apiRequest({
         apiEndpoint: apiEndpoints.user.put,
         authToken: accessToken,
@@ -101,11 +82,8 @@ export function updateUser({ accessToken, user, projectsState }) {
         },
         data: user,
     })
-        .then(() => {
-            return projectsState.userUpdated(user);
-        })
-        // TODO Error message
-        .catch(e => console.log(e));
+        .then(result => result.response)
+        .catch(handleFailure);
 }
 
 
