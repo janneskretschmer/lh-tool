@@ -78,8 +78,7 @@ public class UserRestService {
 	@Secured(UserRole.RIGHT_USERS_CREATE)
 	public Resource<UserDto> add(@RequestBody UserCreationDto userCreationDto) throws DefaultException {
 		return new Resource<>(
-				convertToDto(userService.createUser(new ModelMapper().map(userCreationDto, User.class),
-						userCreationDto.getRole())),
+				convertToDto(userService.createUser(new ModelMapper().map(userCreationDto, User.class))),
 				linkTo(methodOn(UserRestService.class).add(userCreationDto)).withSelfRel(),
 				linkTo(methodOn(UserRestService.class).changePassword(null)).withRel(UrlMappings.USER_PASSWORD));
 	}

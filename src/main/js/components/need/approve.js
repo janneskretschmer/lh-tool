@@ -11,7 +11,6 @@ import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import classNames from 'classnames';
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { fetchOwnNeeds } from '../../actions/need';
 import { getMonthOffsetWithinRange, getProjectMonth, isMonthOffsetWithinRange, requiresLogin, convertToMUIFormat } from '../../util';
 import ProjectSelection from '../util/project-selection';
@@ -182,7 +181,6 @@ class StatefulNeedApproveComponent extends React.Component {
         const dayMap = needsState.projects && needsState.projects.has(projectId) && needsState.projects.get(projectId).days;
         return (
             <>
-                <Helmet titleTemplate="%s › Zuteilen" />
                 <div>
                     <ProjectSelection />
                 </div>

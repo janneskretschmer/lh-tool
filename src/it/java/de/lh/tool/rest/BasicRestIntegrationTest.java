@@ -157,17 +157,12 @@ public abstract class BasicRestIntegrationTest {
 				.as(EmailWrapperDto.class).getEmails();
 		if (userTest.getExpectedEmails() != null) {
 			assertEquals(userTest.getExpectedEmails().size(), receivedMessages.size(), message);
-			receivedMessages
-					.forEach(
-							receivedMessage -> assertTrue(
-									userTest.getExpectedEmails().stream()
-											.anyMatch(expectedEmail -> expectedEmail.getRecipient()
-													.equals(receivedMessage.getRecipient())
-													&& expectedEmail.getSubject().equals(receivedMessage.getSubject())
-													&& expectedEmail.getContent().equals(receivedMessage.getContent())),
-									message + "\n Unexpected Mail to " + receivedMessage.getRecipient()
-											+ " with subject \"" + receivedMessage.getSubject() + "\":\n"
-											+ receivedMessage.getContent()));
+			receivedMessages.forEach(receivedMessage -> assertTrue(userTest.getExpectedEmails().stream()
+					.anyMatch(expectedEmail -> expectedEmail.getRecipient().equals(receivedMessage.getRecipient())
+							&& receivedMessage.getSubject().matches(expectedEmail.getSubjectRegex())
+							&& receivedMessage.getContent().matches(expectedEmail.getContentRegex())),
+					message + "\n Unexpected Mail to " + receivedMessage.getRecipient() + " with subject \""
+							+ receivedMessage.getSubject() + "\":\n" + receivedMessage.getContent()));
 		} else {
 			assertEquals(0, receivedMessages.size(), message);
 		}

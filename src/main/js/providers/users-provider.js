@@ -49,18 +49,19 @@ export default class UsersProvider extends React.Component {
                 selectedUserId: null,
             }, resolve(this.createEmptyUser())));
         }
-        if (this.state.users.has(userId)) {
+        const parsedUserId = parseInt(userId);
+        if (this.state.users.has(parsedUserId)) {
             return new Promise((resolve, reject) => this.setState({
-                selectedUserId: userId,
+                selectedUserId: parsedUserId,
             }, resolve(this.getSelectedUser())));
         } else {
-            return new Promise((resolve, reject) => fetchUser(this.props.sessionState.accessToken, userId, handleFailure).then(user =>
+            return new Promise((resolve, reject) => fetchUser(this.props.sessionState.accessToken, parsedUserId, handleFailure).then(user =>
                 this.setState(prevState => {
                     const users = new Map(prevState.users);
                     users.set(user.id, user);
                     return {
                         users,
-                        selectedUserId: userId,
+                        selectedUserId: parsedUserId,
                     };
                 }, resolve(user))
             ).catch(reject));

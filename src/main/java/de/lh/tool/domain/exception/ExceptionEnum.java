@@ -18,7 +18,7 @@ public enum ExceptionEnum {
 	EX_FORBIDDEN("You don't have the sufficient rights for this action.", HttpStatus.FORBIDDEN),
 
 	EX_USERS_NOT_FOUND("The users couldn't be found.", HttpStatus.NOT_FOUND),
-	EX_USER_NO_EMAIL("The user has no email adress.", HttpStatus.BAD_REQUEST),
+	EX_USER_NO_EMAIL("The user has no email address.", HttpStatus.BAD_REQUEST),
 	EX_USER_NO_FIRST_NAME("The user has no first name.", HttpStatus.BAD_REQUEST),
 	EX_USER_NO_LAST_NAME("The user has no last name.", HttpStatus.BAD_REQUEST),
 	EX_USER_NO_GENDER("The user has no gender.", HttpStatus.BAD_REQUEST),

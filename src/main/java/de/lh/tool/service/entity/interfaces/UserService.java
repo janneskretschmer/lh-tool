@@ -20,7 +20,7 @@ public interface UserService extends BasicEntityService<User, Long> {
 
 	List<User> findByProjectIdAndRoleIgnoreCase(Long projectId, String role);
 
-	User createUser(User user, String role) throws DefaultException;
+	User createUser(User user) throws DefaultException;
 
 	User getCurrentUser();
 

@@ -1,7 +1,12 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
+import { Redirect } from 'react-router';
+import { fullPathOfProjects, fullPathOfNeedQuantities, fullPathOfNeedApply } from '../paths';
+import { withContext } from '../util';
+import { SessionContext } from '../providers/session-provider';
 
-export default class NotFoundComponent extends React.Component {
+@withContext('sessionState', SessionContext)
+export default class NotFoundHandlerComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
@@ -12,6 +17,16 @@ export default class NotFoundComponent extends React.Component {
     }
 
     render() {
+        const { sessionState } = this.props;
+        if (sessionState.hasPermission('ROLE_ADMIN') || sessionState.hasPermission('ROLE_CONSTRUCTION_SERVANT')) {
+            return (<Redirect to={fullPathOfProjects()} />);
+        }
+        if (sessionState.hasPermission('ROLE_LOCAL_COORDINATOR')) {
+            return (<Redirect to={fullPathOfNeedQuantities()} />);
+        }
+        if (sessionState.hasPermission('ROLE_PUBLISHER')) {
+            return (<Redirect to={fullPathOfNeedApply()} />);
+        }
         return (
             <>
                 <Typography component="h2" variant="h1" gutterBottom>

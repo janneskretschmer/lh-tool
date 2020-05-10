@@ -16,12 +16,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { fullPathOfItem } from '../../paths';
 import { SessionContext } from '../../providers/session-provider';
-import { withContext, convertToMUIFormat, convertFromMUIFormat } from '../../util';
+import { withContext, convertToMUIFormat, convertMUIFormat, requiresLogin } from '../../util';
 import ItemListComponent from '../item/item-list';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { fetchStore, createOrUpdateStore, fetchStoreProjects, deleteAndCreateStoreProjects } from '../../actions/store';
 import { fetchOwnProjects } from '../../actions/project';
 import SlotListComponent from '../slot/slot-list';
+import { PageContext } from '../../providers/page-provider';
 
 const styles = theme => ({
     button: {
@@ -73,8 +74,7 @@ const ProjectName = (props) => {
 }
 
 @withStyles(styles)
-@withContext('sessionState', SessionContext)
-export default class StoreDetailComponent extends React.Component {
+class StatefulStoreDetailComponent extends React.Component {
 
     constructor(props) {
         super(props);
@@ -206,6 +206,7 @@ export default class StoreDetailComponent extends React.Component {
     }
 
     changeStore(store, callback) {
+        this.props.pagesState.setCurrentItemName(store);
         this.setState(prevState => ({
             store,
             storeProjects: prevState.storeProjects ? prevState.storeProjects.map(storeProject => ({
@@ -403,3 +404,16 @@ export default class StoreDetailComponent extends React.Component {
         ) : (<CircularProgress />);
     }
 }
+
+const StoreDetailComponent = props => (
+    <PageContext.Consumer>
+        {pagesState => (
+            <SessionContext.Consumer>
+                {sessionState => (
+                    <StatefulStoreDetailComponent {...props} pagesState={pagesState} sessionState={sessionState} />
+                )}
+            </SessionContext.Consumer>
+        )}
+    </PageContext.Consumer>
+);
+export default requiresLogin(StoreDetailComponent);

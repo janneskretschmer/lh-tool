@@ -91,7 +91,7 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 
 	@Override
 	@Transactional
-	public User createUser(User user, String role) throws DefaultException {
+	public User createUser(User user) throws DefaultException {
 		if (user.getEmail() == null) {
 			throw ExceptionEnum.EX_USER_NO_EMAIL.createDefaultException();
 		}
@@ -109,16 +109,10 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 			throw ExceptionEnum.EX_USER_EMAIL_ALREADY_IN_USE.createDefaultException();
 		}
 		User savedUser = save(user);
-		if (userRoleService.hasCurrentUserRightToGrantRole(role)) {
-			userRoleService.save(new UserRole(null, savedUser, role));
-		}
+
 		PasswordChangeToken token = passwordChangeTokenService.saveRandomToken(savedUser);
 
-		if (UserRole.ROLE_LOCAL_COORDINATOR.equals(role)) {
-			mailService.sendNewLocalCoordinatorMail(savedUser, token);
-		} else if (UserRole.ROLE_PUBLISHER.equals(role)) {
-			mailService.sendNewPublisherMail(savedUser, token);
-		}
+		mailService.sendUserCreatedMail(savedUser, token);
 
 		return savedUser;
 	}
@@ -133,7 +127,14 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 
 		checkIfEditIsAllowed(old, true);
 
+		final boolean emailAlreadyInUse = !old.getEmail().equals(user.getEmail())
+				&& getRepository().findByEmail(user.getEmail()).isPresent();
+		if (emailAlreadyInUse) {
+			throw ExceptionEnum.EX_USER_EMAIL_ALREADY_IN_USE.createDefaultException();
+		}
+
 		ModelMapper mapper = new ModelMapper();
+		// if behavior gets changed, password hash has to be preserved
 		mapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
 		mapper.map(user, old);
 		return save(old);

@@ -8,6 +8,7 @@ import { requiresLogin } from '../../util';
 import { UsersContext } from '../../providers/users-provider';
 import Button from '@material-ui/core/Button';
 import { requestPasswordReset } from '../../actions/login';
+import { PageContext } from '../../providers/page-provider';
 
 const styles = theme => ({
     input: {
@@ -37,7 +38,10 @@ class StatefulUserEditComponent extends React.Component {
     }
 
     componentDidMount() {
-        this.props.usersState.selectUser(parseInt(this.props.match.params.userId), () => this.handleFailure()).then(user => this.setState({ user }));
+        this.props.usersState.selectUser(this.props.match.params.userId, () => this.handleFailure()).then(user => {
+            this.setState({ user });
+            this.props.pagesState.setCurrentItemName({ name: user.firstName + ' ' + user.lastName });
+        });
     }
 
     save() {
@@ -68,6 +72,33 @@ class StatefulUserEditComponent extends React.Component {
         this.props.enqueueSnackbar('Fehler beim Aktualisieren der Benutzerdaten', {
             variant: 'error',
         });
+    }
+
+    handleFirstNameChanged(firstName) {
+        this.setState(prevState => ({
+            user: {
+                ...prevState.user,
+                firstName,
+            },
+        }));
+    }
+
+    handleLastNameChanged(lastName) {
+        this.setState(prevState => ({
+            user: {
+                ...prevState.user,
+                lastName,
+            },
+        }));
+    }
+
+    handleEmailChanged(email) {
+        this.setState(prevState => ({
+            user: {
+                ...prevState.user,
+                email,
+            },
+        }));
     }
 
     handleTelephoneNumberChanged(telephoneNumber) {
@@ -116,50 +147,58 @@ class StatefulUserEditComponent extends React.Component {
     }
 
     render() {
-        const { classes } = this.props;
+        const { classes, usersState } = this.props;
         const { user, passwordEmailSent } = this.state;
+        const newUser = !usersState.selectedUserId;
         return user ? (
             <>
-                Benutzereintstellungen für {user.firstName} {user.lastName}<br /><br />
-                {/* <TextField
-                        id="first_name"
-                        value={user.firstName}
-                        label="Vorname"
-                        type="text"
-                        name="first_name"
-                        autoComplete="first name"
-                        margin="dense"
-                        variant="outlined"
-                        onChange={e => setUser({...user,firstName:e.target.value})}
-                        className={classes.input}
-                        required
-                    />
-                    <TextField
-                        id="last_name"
-                        value={user.lastName}
-                        label="Nachname"
-                        type="text"
-                        name="last_name"
-                        autoComplete="last name"
-                        margin="dense"
-                        variant="outlined"
-                        onChange={e => setUser({...user,lastName:e.target.value})}
-                        className={classes.input}
-                        required
-                    />
-                    <TextField
-                        id="email"
-                        value={user.email}
-                        label="Email"
-                        type="email"
-                        name="email"
-                        autoComplete="email"
-                        margin="dense"
-                        variant="outlined"
-                        onChange={e => setUser({...user,email:e.target.value})}
-                        className={classes.input}
-                        required
-                    /><br /> */}
+                {newUser ? (
+                    <>
+                        <TextField
+                            id="first_name"
+                            value={user.firstName}
+                            label="Vorname"
+                            type="text"
+                            name="first_name"
+                            autoComplete="first name"
+                            margin="dense"
+                            variant="outlined"
+                            onChange={event => this.handleFirstNameChanged(event.target.value)}
+                            className={classes.input}
+                            required
+                        />
+                        <TextField
+                            id="last_name"
+                            value={user.lastName}
+                            label="Nachname"
+                            type="text"
+                            name="last_name"
+                            autoComplete="last name"
+                            margin="dense"
+                            variant="outlined"
+                            onChange={event => this.handleLastNameChanged(event.target.value)}
+                            className={classes.input}
+                            required
+                        />
+                        <TextField
+                            id="email"
+                            value={user.email}
+                            label="Email"
+                            type="email"
+                            name="email"
+                            autoComplete="email"
+                            margin="dense"
+                            variant="outlined"
+                            onChange={event => this.handleEmailChanged(event.target.value)}
+                            className={classes.input}
+                            required
+                        /><br />
+                    </>
+                ) : (
+                        <>Benutzereintstellungen für {user.firstName} {user.lastName}<br /><br /></>
+
+                    )
+                }
                 <TextField
                     id="telephone_number"
                     value={user.telephoneNumber || ''}
@@ -196,15 +235,19 @@ class StatefulUserEditComponent extends React.Component {
                     onChange={event => this.handleBusinessNumberChanged(event.target.value)}
                     className={classes.input}
                 /><br />
-                {passwordEmailSent ? (
-                    <>
-                        Es wurde eine Email an {user.email} geschickt.<br /> Mit dem Link in der Email kann das Passwort geändert werden.
-                    </>
-                ) : (
-                        <Button variant="outlined" className={classes.button} type="submit" onClick={() => this.changePassword()}>
-                            Passwort ändern
-                        </Button>
-                    )}
+                {
+                    !newUser ? (
+                        passwordEmailSent ? (
+                            <>
+                                Es wurde eine Email an {user.email} geschickt.<br /> Mit dem Link in der Email kann das Passwort geändert werden.
+                            </>
+                        ) : (
+                                <Button variant="outlined" className={classes.button} type="submit" onClick={() => this.changePassword()}>
+                                    Passwort ändern
+                                </Button>
+                            )
+                    ) : null
+                }
                 <br /><br />
                 <TextField
                     id="profession"
@@ -240,7 +283,11 @@ const UserEditComponent = props => (
     <>
         <UsersContext.Consumer>
             {usersState =>
-                (<StatefulUserEditComponent {...props} usersState={usersState} />)
+                (
+                    <PageContext.Consumer>
+                        {pagesState => (<StatefulUserEditComponent {...props} usersState={usersState} pagesState={pagesState} />)}
+                    </PageContext.Consumer>
+                )
             }
         </UsersContext.Consumer>
     </>

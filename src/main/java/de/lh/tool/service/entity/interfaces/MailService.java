@@ -8,12 +8,10 @@ public interface MailService {
 
 	void sendPwResetMail(User user, PasswordChangeToken passwordChangeToken);
 
-	void sendNewLocalCoordinatorMail(User user, PasswordChangeToken passwordChangeToken);
-
-	void sendNewPublisherMail(User user, PasswordChangeToken passwordChangeToken);
-
 	void sendNeedUserStateChangedMailToUser(NeedUser needUser);
 
 	void sendNeedUserStateChangedMailToCoordinator(NeedUser needUser, User coordinator);
+
+	void sendUserCreatedMail(User user, PasswordChangeToken passwordChangeToken);
 
 }

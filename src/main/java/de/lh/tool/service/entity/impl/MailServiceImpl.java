@@ -67,47 +67,23 @@ public class MailServiceImpl implements MailService {
 	}
 
 	@Override
-	public void sendNewLocalCoordinatorMail(User user, PasswordChangeToken passwordChangeToken) {
-		if (user != null) {
-			if (user.getEmail() != null) {
-				StringBuilder text = new StringBuilder("Lieber Bruder ").append(user.getLastName()).append(
-						",\n\nes wurde für dich ein Account auf lh-tool.de angelegt. Diese Webseite hilft dir als lokalen Koordinator, den Bedarf an Helfern zu verwalten.\n")
-						.append("Bitte rufe folgenden Link auf, um ein Passwort zu setzen. Anschließend kannst du Accounts für alle Brüder und Schwestern erstellen, welche geeignet sind, bei der Baustelle mitzuhelfen.\n\n")
-						.append(urlService.getPasswordChangeUrl(user.getId(), passwordChangeToken.getToken()))
-						.append("\n\nVielen Dank für deine Bereitschaft. Wir wünschen dir Jehovas Segen bei deiner Aufgabe.\n\nViele Grüße\n")
-						.append(SENDER_NAME).append("\n\n").append(FOOTER);
-				sendMail(user.getEmail(), "Account bei lh-tool.de", text.toString());
-				if (log.isInfoEnabled()) {
-					log.info("Mail for new local coordinator " + user.getFirstName() + " " + user.getLastName()
-							+ " sent to " + user.getEmail());
-				}
-			} else {
-				if (log.isInfoEnabled()) {
-					log.warn("Mail for new local coordinator " + user.getFirstName() + " " + user.getLastName()
-							+ " with id " + user.getId() + " not sent");
-				}
-			}
-		}
-	}
-
-	@Override
-	public void sendNewPublisherMail(User user, PasswordChangeToken passwordChangeToken) {
+	public void sendUserCreatedMail(User user, PasswordChangeToken passwordChangeToken) {
 		if (user != null) {
 			if (user.getEmail() != null) {
 				StringBuilder text = getGreeting(user).append(
 						"es wurde für dich ein Account auf lh-tool.de angelegt. Auf dieser Webseite kannst du dich als Helfer bei der Baustelle an deinem Saal bewerben.\n")
-						.append("Bitte rufe folgenden Link auf, um ein Passwort zu setzen. Anschließend kannst du angeben, an welchen Tagen es dir möglich wäre mitzuhelfen.\n\n")
+						.append("Bitte rufe folgenden Link auf, um ein Passwort zu setzen.\n\n")
 						.append(urlService.getPasswordChangeUrl(user.getId(), passwordChangeToken.getToken()))
 						.append("\n\nVielen Dank für deine Bereitschaft. Wir wünschen dir Jehovas Segen.\n\nViele Grüße\n")
 						.append(SENDER_NAME).append("\n\n").append(FOOTER);
 				sendMail(user.getEmail(), "Account bei lh-tool.de", text.toString());
 				if (log.isInfoEnabled()) {
-					log.info("Mail for new publisher " + user.getFirstName() + " " + user.getLastName() + " sent to "
+					log.info("Mail for new user " + user.getFirstName() + " " + user.getLastName() + " sent to "
 							+ user.getEmail());
 				}
 			} else {
 				if (log.isInfoEnabled()) {
-					log.warn("Mail for new publisher " + user.getFirstName() + " " + user.getLastName() + " with id "
+					log.warn("Mail for new user " + user.getFirstName() + " " + user.getLastName() + " with id "
 							+ user.getId() + " not sent");
 				}
 			}

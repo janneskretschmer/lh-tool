@@ -1,17 +1,16 @@
-import React from 'react';
-import { Helmet } from 'react-helmet';
-import URI from 'urijs';
-import { withSnackbar } from 'notistack';
+import { Checkbox, FormControlLabel } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import { SessionContext } from '../providers/session-provider';
+import { withSnackbar } from 'notistack';
+import React from 'react';
+import { Redirect } from 'react-router';
+import URI from 'urijs';
 import { changePassword } from '../actions/user';
-import { withContext } from '../util';
-import { Link, Checkbox, FormControlLabel } from '@material-ui/core';
 import { fullPathOfDataProtection, fullPathOfLogin } from '../paths';
+import { SessionContext } from '../providers/session-provider';
+import { withContext } from '../util';
 import SimpleDialog from './simple-dialog';
-import { Redirect } from 'react-router'
 
 @withSnackbar
 @withContext('sessionState', SessionContext)
@@ -51,7 +50,7 @@ export default class ChangePasswordComponent extends React.Component {
         });
     }
 
-    checkDataprotection(event){
+    checkDataprotection(event) {
         this.setState({
             checkedDataprotection: event.target.checked,
         });
@@ -63,12 +62,11 @@ export default class ChangePasswordComponent extends React.Component {
                 {sessionState => {
                     const credentials = this.getUserCredentials(sessionState);
 
-                    const {redirect, success, checkedDataprotection} = this.state;
+                    const { redirect, success, checkedDataprotection } = this.state;
 
                     if (!credentials) {
                         return (
                             <>
-                                <Helmet titleTemplate="Passwort ändern - %s" />
                                 <Typography component="h2" variant="h1" gutterBottom>
                                     Nicht eingeloggt
                                 </Typography>
@@ -102,7 +100,6 @@ export default class ChangePasswordComponent extends React.Component {
 
                     return (
                         <>
-                            <Helmet titleTemplate="Passwort ändern - %s" />
                             <form onSubmit={evt => {
                                 evt.preventDefault();
                                 const { userId, token } = credentials;
@@ -156,12 +153,12 @@ export default class ChangePasswordComponent extends React.Component {
                                     }}
                                 />
                                 <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={checkedDataprotection}
-                                        onChange={this.checkDataprotection.bind(this)}
-                                    />
-                                }
+                                    control={
+                                        <Checkbox
+                                            checked={checkedDataprotection}
+                                            onChange={this.checkDataprotection.bind(this)}
+                                        />
+                                    }
                                     label={(<>Ich stimme der <a href={fullPathOfDataProtection()} target="_blank">Datenschutzerklärung</a> dieser Webseite zu.</>)}
                                 />
                                 <br />

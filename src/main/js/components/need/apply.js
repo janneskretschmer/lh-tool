@@ -3,7 +3,6 @@ import { green, red, yellow, grey } from '@material-ui/core/colors';
 import { withStyles } from '@material-ui/core/styles';
 import { withSnackbar } from 'notistack';
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { fetchOwnNeeds } from '../../actions/need';
 import { NeedsContext } from '../../providers/needs-provider';
 import { ProjectsContext } from '../../providers/projects-provider';
@@ -93,7 +92,6 @@ class StatefulNeedApplyComponent extends React.Component {
         setWaitingState(false);
         return (
             <>
-                <Helmet titleTemplate="%s › Bewerben" />
                 Aufgabe
                 <div className={classes.legendItem}>
                     <Button variant="outlined" disabled={true}>Zeitraum Bewerberanzahl/Bedarf</Button> &nbsp;Es besteht kein Bedarf an diesem Tag.

@@ -31,6 +31,7 @@ import de.lh.tool.domain.model.User;
 import de.lh.tool.domain.model.User.Gender;
 import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.repository.UserRepository;
+import de.lh.tool.service.entity.interfaces.MailService;
 import de.lh.tool.service.entity.interfaces.PasswordChangeTokenService;
 import de.lh.tool.service.entity.interfaces.UserRoleService;
 
@@ -50,6 +51,9 @@ public class UserServiceTest {
 
 	@Mock
 	private PasswordEncoder passwordEncoder;
+
+	@Mock
+	private MailService mailService;
 
 	@InjectMocks
 	private UserServiceImpl userService;
@@ -107,29 +111,28 @@ public class UserServiceTest {
 
 	@Test
 	public void testCreateUserNoEmail() {
-		DefaultException exception = assertThrows(DefaultException.class,
-				() -> userService.createUser(new User(), null));
+		DefaultException exception = assertThrows(DefaultException.class, () -> userService.createUser(new User()));
 		assertEquals(ExceptionEnum.EX_USER_NO_EMAIL, exception.getException());
 	}
 
 	@Test
 	public void testCreateUserNoFirstName() {
 		DefaultException exception = assertThrows(DefaultException.class,
-				() -> userService.createUser(User.builder().email("test@te.st").build(), null));
+				() -> userService.createUser(User.builder().email("test@te.st").build()));
 		assertEquals(ExceptionEnum.EX_USER_NO_FIRST_NAME, exception.getException());
 	}
 
 	@Test
 	public void testCreateUserNoLastName() {
 		DefaultException exception = assertThrows(DefaultException.class,
-				() -> userService.createUser(User.builder().email("test@te.st").firstName("Tes").build(), null));
+				() -> userService.createUser(User.builder().email("test@te.st").firstName("Tes").build()));
 		assertEquals(ExceptionEnum.EX_USER_NO_LAST_NAME, exception.getException());
 	}
 
 	@Test
 	public void testCreateUserNoGender() {
 		DefaultException exception = assertThrows(DefaultException.class, () -> userService
-				.createUser(User.builder().email("test@te.st").firstName("Tes").lastName("Ter").build(), null));
+				.createUser(User.builder().email("test@te.st").firstName("Tes").lastName("Ter").build()));
 		assertEquals(ExceptionEnum.EX_USER_NO_GENDER, exception.getException());
 	}
 
@@ -137,8 +140,9 @@ public class UserServiceTest {
 	public void testCreateUser() throws DefaultException {
 		Mockito.when(userRepository.save(Mockito.any())).thenAnswer(i -> i.getArgument(0));
 		User user = userService.createUser(
-				User.builder().email("test@te.st").firstName("Tes").lastName("Ter").gender(Gender.MALE).build(), null);
+				User.builder().email("test@te.st").firstName("Tes").lastName("Ter").gender(Gender.MALE).build());
 		Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any());
+		Mockito.verify(mailService, Mockito.times(1)).sendUserCreatedMail(Mockito.any(), Mockito.any());
 		Mockito.verify(passwordChangeTokenService, Mockito.times(1)).saveRandomToken(Mockito.eq(user));
 	}
 

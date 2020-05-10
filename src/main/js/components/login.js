@@ -1,26 +1,21 @@
-import React from 'react';
-import { Helmet } from 'react-helmet';
-import { withSnackbar } from 'notistack';
-import { SessionContext } from '../providers/session-provider';
-import { login, requestPasswordReset } from '../actions/login';
-import Grid from '@material-ui/core/Grid';
-import { withStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { Redirect } from 'react-router'
-import {
-    fullPathOfProjects,
-    fullPathOfNeedApply,
-    fullPathOfNeedQuantities,
- } from '../paths';
+import Grid from '@material-ui/core/Grid';
+import { withStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
+import { withSnackbar } from 'notistack';
+import React from 'react';
+import { Redirect } from 'react-router';
+import { login, requestPasswordReset } from '../actions/login';
+import { SessionContext } from '../providers/session-provider';
 import { setWaitingState } from '../util';
+import { fullPathOf } from '../paths';
 
 const styles = theme => ({
     container: {
@@ -72,7 +67,7 @@ export default class LoginComponent extends React.Component {
     setWaiting() {
         setWaitingState(true);
         this.setState({
-        	pwResetDialogOpen: this.state.pwResetDialogOpen,
+            pwResetDialogOpen: this.state.pwResetDialogOpen,
             loading: true,
             redirectAdmin: true,
         })
@@ -85,121 +80,114 @@ export default class LoginComponent extends React.Component {
         return (
             <SessionContext.Consumer>
                 {loginState => {
-                    if(!loginState.isLoggedIn() || (!this.state.redirectAdmin && loginState.hasPermission('ROLE_ADMIN'))) {
+                    if (!loginState.isLoggedIn() || (!this.state.redirectAdmin && loginState.hasPermission('ROLE_ADMIN'))) {
                         return (
-                        <form onSubmit={evt => {
-                            evt.preventDefault();
-                            const email = this.inputUsername.value;
-                            const password = this.inputPassword.value;
-                            this.inputPassword.value = '';
-                            this.setWaiting();
-                            login({
-                                loginState,
-                                email,
-                                password,
-                                handleLoginFailure: this.handleLoginFailure.bind(this),
-                            });
-                        }}>
-                            <Helmet titleTemplate="Login - %s" />
-                            <Grid container justify="center">
-                                <div>
-                                    <Typography variant="h3" color="primary" inline={false}>Local Helper Tool</Typography>
-                                    <Typography variant="subtitle1" color="secondary" inline={false}>Willkommen</Typography>
-                                    <div className={classes.container}>
-                                        <TextField
-                                            id="username"
-                                            autoFocus={true}
-                                            label="Email"
-                                            type="email"
-                                            name="username"
-                                            autoComplete="email"
-                                            margin="dense"
-                                            variant="outlined"
-                                            fullWidth={true}
-                                            InputProps={{
-                                                inputRef: ref => this.inputUsername = ref
-                                            }}
-                                        />
-                                        <br />
-                                        <TextField
-                                            id="password"
-                                            label="Passwort"
-                                            type="password"
-                                            autoComplete="current-password"
-                                            margin="dense"
-                                            variant="outlined"
-                                            fullWidth={true}
-                                            InputProps={{
-                                                inputRef: ref => this.inputPassword = ref
-                                            }}
-                                        />
-                                        <br />
-                                        { this.state.loading ? (<CircularProgress />) : (
-	                                        <>
-                                        		<Button size="small" color="secondary" className={classes.button} onClick={this.openPwResetDialog.bind(this)}>
-		                                        	Passwort vergessen
+                            <form onSubmit={evt => {
+                                evt.preventDefault();
+                                const email = this.inputUsername.value;
+                                const password = this.inputPassword.value;
+                                this.inputPassword.value = '';
+                                this.setWaiting();
+                                login({
+                                    loginState,
+                                    email,
+                                    password,
+                                    handleLoginFailure: this.handleLoginFailure.bind(this),
+                                });
+                            }}>
+                                <Grid container justify="center">
+                                    <div>
+                                        <Typography variant="h3" color="primary" inline={false}>Local Helper Tool</Typography>
+                                        <Typography variant="subtitle1" color="secondary" inline={false}>Willkommen</Typography>
+                                        <div className={classes.container}>
+                                            <TextField
+                                                id="username"
+                                                autoFocus={true}
+                                                label="Email"
+                                                type="email"
+                                                name="username"
+                                                autoComplete="email"
+                                                margin="dense"
+                                                variant="outlined"
+                                                fullWidth={true}
+                                                InputProps={{
+                                                    inputRef: ref => this.inputUsername = ref
+                                                }}
+                                            />
+                                            <br />
+                                            <TextField
+                                                id="password"
+                                                label="Passwort"
+                                                type="password"
+                                                autoComplete="current-password"
+                                                margin="dense"
+                                                variant="outlined"
+                                                fullWidth={true}
+                                                InputProps={{
+                                                    inputRef: ref => this.inputPassword = ref
+                                                }}
+                                            />
+                                            <br />
+                                            {this.state.loading ? (<CircularProgress />) : (
+                                                <>
+                                                    <Button size="small" color="secondary" className={classes.button} onClick={this.openPwResetDialog.bind(this)}>
+                                                        Passwort vergessen
 		                                        </Button>
-		                                        <Button variant="contained" type="submit" className={classes.button}>
-		                                            Anmelden
+                                                    <Button variant="contained" type="submit" className={classes.button}>
+                                                        Anmelden
 		                                        </Button>
-                                            </>
-                                        )}
-                                        <Dialog
-                                            open={this.state.pwResetDialogOpen}
-                                            onClose={this.closePwResetDialog.bind(this)}
-                                            aria-labelledby="form-dialog-title"
-                                        >
-                                            <DialogTitle id="form-dialog-title">Passwort vergessen</DialogTitle>
-                                            <DialogContent>
-                                                <DialogContentText>
-                                                    Wenn du dein Passwort vergessen hast, kannst du dir per E-Mail einen Link zusenden lassen, mit dem du dein Passwort neu setzen kannst.
+                                                </>
+                                            )}
+                                            <Dialog
+                                                open={this.state.pwResetDialogOpen}
+                                                onClose={this.closePwResetDialog.bind(this)}
+                                                aria-labelledby="form-dialog-title"
+                                            >
+                                                <DialogTitle id="form-dialog-title">Passwort vergessen</DialogTitle>
+                                                <DialogContent>
+                                                    <DialogContentText>
+                                                        Wenn du dein Passwort vergessen hast, kannst du dir per E-Mail einen Link zusenden lassen, mit dem du dein Passwort neu setzen kannst.
                                                 </DialogContentText>
-                                                <TextField
-                                                    autoFocus
-                                                    margin="dense"
-                                                    id="resetEmail"
-                                                    label="E-Mail"
-                                                    type="email"
-                                                    fullWidth
-                                                    InputProps={{
-                                                        inputRef: ref => this.inputResetEmail = ref
-                                                    }}
-                                                />
-                                            </DialogContent>
-                                            <DialogActions>
-                                                <Button onClick={this.closePwResetDialog.bind(this)} color="secondary">
-                                                    Abbrechen
+                                                    <TextField
+                                                        autoFocus
+                                                        margin="dense"
+                                                        id="resetEmail"
+                                                        label="E-Mail"
+                                                        type="email"
+                                                        fullWidth
+                                                        InputProps={{
+                                                            inputRef: ref => this.inputResetEmail = ref
+                                                        }}
+                                                    />
+                                                </DialogContent>
+                                                <DialogActions>
+                                                    <Button onClick={this.closePwResetDialog.bind(this)} color="secondary">
+                                                        Abbrechen
                                                 </Button>
-                                                <Button onClick={() => {
-                                                    const email = this.inputResetEmail.value;
-                                                    requestPasswordReset({ email })
-                                                        .then(() => {
-                                                            this.props.enqueueSnackbar('Anforderung abgesendet', { variant: 'success', });
-                                                            this.closePwResetDialog();
-                                                        })
-                                                        .catch(() => {
-                                                            this.props.enqueueSnackbar('Fehler beim Anfordern des Links', { variant: 'error', });
-                                                        });
-                                                }} color="primary">
-                                                    Link für neues Passwort anfordern
+                                                    <Button onClick={() => {
+                                                        const email = this.inputResetEmail.value;
+                                                        requestPasswordReset({ email })
+                                                            .then(() => {
+                                                                this.props.enqueueSnackbar('Anforderung abgesendet', { variant: 'success', });
+                                                                this.closePwResetDialog();
+                                                            })
+                                                            .catch(() => {
+                                                                this.props.enqueueSnackbar('Fehler beim Anfordern des Links', { variant: 'error', });
+                                                            });
+                                                    }} color="primary">
+                                                        Link für neues Passwort anfordern
                                                 </Button>
-                                            </DialogActions>
-                                        </Dialog>
+                                                </DialogActions>
+                                            </Dialog>
+                                        </div>
                                     </div>
-                                </div>
-                            </Grid>
-                        </form>
-                    );
-                } else if(loginState.hasPermission('ROLE_ADMIN') || loginState.hasPermission('ROLE_CONSTRUCTION_SERVANT')){
-                    return (<Redirect to={fullPathOfProjects()}/>);
-                } else if(loginState.hasPermission('ROLE_LOCAL_COORDINATOR')){
-                    return (<Redirect to={fullPathOfNeedQuantities()}/>);
-                } else if(loginState.hasPermission('ROLE_PUBLISHER')){
-                    return (<Redirect to={fullPathOfNeedApply()}/>);
-                } else {
-                    return (<div>Willkommen</div>);
-                }
-            }}
+                                </Grid>
+                            </form>
+                        );
+                    } else {
+                        return (<Redirect to={fullPathOf()} />);
+                    }
+                }}
             </SessionContext.Consumer>
         );
     }
