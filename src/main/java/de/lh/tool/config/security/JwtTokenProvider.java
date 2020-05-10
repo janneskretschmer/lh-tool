@@ -16,10 +16,10 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.Setter;
-import lombok.extern.apachecommons.CommonsLog;
+import lombok.extern.log4j.Log4j2;
 
 @Component
-@CommonsLog
+@Log4j2
 @PropertySource(value = { "classpath:credentials.properties" })
 public class JwtTokenProvider {
 

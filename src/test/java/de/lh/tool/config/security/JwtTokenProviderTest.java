@@ -9,7 +9,7 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Base64;
 
-import org.apache.commons.logging.Log;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -22,7 +22,7 @@ import io.jsonwebtoken.MalformedJwtException;
 public class JwtTokenProviderTest {
 	private JwtTokenProvider provider;
 
-	private Log log;
+	private Logger log;
 
 	@BeforeEach
 	public void before() throws NoSuchFieldException, SecurityException, Exception {
@@ -30,7 +30,7 @@ public class JwtTokenProviderTest {
 		provider.setJwtSecret("secret");
 		provider.setJwtExpirationInMs(1000000);
 
-		log = Mockito.mock(Log.class);
+		log = Mockito.mock(Logger.class);
 		setFinalStatic(provider.getClass().getDeclaredField("log"), log);
 	}
 
@@ -55,20 +55,23 @@ public class JwtTokenProviderTest {
 	@Test
 	public void testValidateTokenEmpty() {
 		assertFalse(provider.validateToken(null));
-		Mockito.verify(log, Mockito.times(1)).error(Mockito.any(), Mockito.any(IllegalArgumentException.class));
+		Mockito.verify(log, Mockito.times(1)).error(Mockito.eq("JWT claims string is empty."),
+				Mockito.any(IllegalArgumentException.class));
 	}
 
 	@Test
 	public void testValidateTokenExpired() {
 		provider.setJwtExpirationInMs(0);
 		assertFalse(provider.validateToken(getTestToken()));
-		Mockito.verify(log, Mockito.times(1)).error(Mockito.any(), Mockito.any(ExpiredJwtException.class));
+		Mockito.verify(log, Mockito.times(1)).error(Mockito.eq("Expired JWT token"),
+				Mockito.any(ExpiredJwtException.class));
 	}
 
 	@Test
 	public void testValidateTokenMalformed() {
 		assertFalse(provider.validateToken(getTestToken().substring(10)));
-		Mockito.verify(log, Mockito.times(1)).error(Mockito.any(), Mockito.any(MalformedJwtException.class));
+		Mockito.verify(log, Mockito.times(1)).error(Mockito.eq("Invalid JWT token"),
+				Mockito.any(MalformedJwtException.class));
 	}
 
 	public String getTestToken() {

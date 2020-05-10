@@ -42,9 +42,10 @@ import de.lh.tool.service.entity.interfaces.UserService;
 import de.lh.tool.util.StringUtil;
 import lombok.Data;
 import lombok.extern.apachecommons.CommonsLog;
+import lombok.extern.log4j.Log4j2;
 
 @Service
-@CommonsLog
+@Log4j2
 public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserRepository, User, UserDto, Long>
 		implements UserService, UserDetailsService {
 

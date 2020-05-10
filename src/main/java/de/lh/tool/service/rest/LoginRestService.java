@@ -15,11 +15,9 @@ import de.lh.tool.domain.dto.LoginDto;
 import de.lh.tool.domain.dto.PasswordResetDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.service.entity.interfaces.UserService;
-import lombok.extern.apachecommons.CommonsLog;
 
 @RestController
 @RequestMapping(UrlMappings.LOGIN_PREFIX)
-@CommonsLog
 public class LoginRestService {
 
 	@Autowired
