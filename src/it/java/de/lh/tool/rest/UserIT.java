@@ -330,7 +330,8 @@ public class UserIT extends BasicRestIntegrationTest {
 						.telephoneNumber("987").mobileNumber("").businessNumber("321").profession("KA").skills("nix")
 						.gender(Gender.MALE.name()).build())
 				.userTests(List.of(UserTest.builder()
-						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, "test@lh-tool.de"))
+						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL,
+								"test@lh-tool.de"))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
 								"{\"id\":1000,\"firstName\":\"Chan\",\"lastName\":\"Ged\",\"gender\":\"MALE\",\"email\":\"changed@lh-tool.de\",\"telephoneNumber\":\"987\",\"mobileNumber\":\"\",\"businessNumber\":\"321\",\"profession\":\"KA\",\"skills\":\"nix\",\"active\":false,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
@@ -768,7 +769,8 @@ public class UserIT extends BasicRestIntegrationTest {
 						"INSERT INTO user_role(user_id,role) VALUES(1000,'ROLE_STORE_KEEPER')",
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
 						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user"))
-				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL))
+				.userTests(List.of(UserTest.builder()
+						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL))
 						.expectedHttpCode(HttpStatus.NO_CONTENT).expectedResponse("")
 						.validationQueries(
 								List.of("SELECT 1 WHERE NOT EXISTS(SELECT * FROM user WHERE email='test@lh-tool.de')"))
