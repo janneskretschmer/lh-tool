@@ -38,4 +38,9 @@ public interface UserService extends BasicEntityService<User, Long> {
 
 	UserDto findDtoById(Long id) throws DefaultException;
 
+	/**
+	 * @throws DefaultException if editing is not allowed
+	 */
+	void checkIfEditIsAllowed(User user, boolean allowedToEditSelf) throws DefaultException;
+
 }

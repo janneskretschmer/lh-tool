@@ -23,6 +23,7 @@ public enum ExceptionEnum {
 	EX_USER_NO_LAST_NAME("The user has no last name.", HttpStatus.BAD_REQUEST),
 	EX_USER_NO_GENDER("The user has no gender.", HttpStatus.BAD_REQUEST),
 	EX_USER_EMAIL_ALREADY_IN_USE("The provided e-mail address is already in use.", HttpStatus.CONFLICT),
+	EX_USER_ROLE_ALREADY_EXISTS("The user already has this role.", HttpStatus.CONFLICT),
 
 	EX_PASSWORDS_DO_NOT_MATCH("The provided passwords do not match.", HttpStatus.BAD_REQUEST),
 	EX_PASSWORDS_NO_TOKEN_OR_OLD_PASSWORD("No token or old password was provided.", HttpStatus.BAD_REQUEST),

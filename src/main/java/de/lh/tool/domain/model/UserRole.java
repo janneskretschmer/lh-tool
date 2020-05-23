@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.Column;
@@ -31,7 +32,7 @@ import lombok.RequiredArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "user_role")
-@EqualsAndHashCode(of = "role")
+@EqualsAndHashCode(of = { "role" })
 @RequiredArgsConstructor
 public class UserRole implements GrantedAuthority {
 
@@ -89,6 +90,7 @@ public class UserRole implements GrantedAuthority {
 	public static final String RIGHT_USERS_GRANT_ROLE_ADMIN = "ROLE_RIGHT_USERS_GRANT_ROLE_ADMIN";
 	public static final String RIGHT_USERS_GRANT_ROLE_CONSTRUCTION_SERVANT = "ROLE_RIGHT_USERS_GRANT_ROLE_CONSTRUCTION_SERVANT";
 	public static final String RIGHT_USERS_GRANT_ROLE_LOCAL_COORDINATOR = "ROLE_RIGHT_USERS_GRANT_ROLE_LOCAL_COORDINATOR";
+	public static final String RIGHT_USERS_GRANT_ROLE_ATTENDANCE = "ROLE_RIGHT_USERS_GRANT_ROLE_ATTENDANCE";
 	public static final String RIGHT_USERS_GRANT_ROLE_PUBLISHER = "ROLE_RIGHT_USERS_GRANT_ROLE_PUBLISHER";
 	public static final String RIGHT_USERS_GRANT_ROLE_STORE_KEEPER = "ROLE_RIGHT_USERS_GRANT_ROLE_STORE_KEEPER";
 	public static final String RIGHT_USERS_GRANT_ROLE_INVENTORY_MANAGER = "ROLE_RIGHT_USERS_GRANT_ROLE_INVENTORY_MANAGER";
@@ -163,10 +165,12 @@ public class UserRole implements GrantedAuthority {
 
 			roleRights.put(ROLE_ADMIN, List.of(//
 					RIGHT_USERS_GET, RIGHT_USERS_GET_BY_ID, RIGHT_USERS_GET_FOREIGN, RIGHT_USERS_CREATE,
-					RIGHT_USERS_PUT, RIGHT_USERS_DELETE, RIGHT_USERS_CHANGE_FOREIGN_PASSWORD, RIGHT_USERS_CHANGE_ROLES,
-					RIGHT_USERS_GRANT_ROLE_ADMIN, RIGHT_USERS_GRANT_ROLE_CONSTRUCTION_SERVANT,
+					RIGHT_USERS_PUT, RIGHT_USERS_DELETE, RIGHT_USERS_CHANGE_FOREIGN_PASSWORD,
+					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+					RIGHT_USERS_CHANGE_ROLES, RIGHT_USERS_GRANT_ROLE_ADMIN, RIGHT_USERS_GRANT_ROLE_CONSTRUCTION_SERVANT,
 					RIGHT_USERS_GRANT_ROLE_INVENTORY_MANAGER, RIGHT_USERS_GRANT_ROLE_LOCAL_COORDINATOR,
-					RIGHT_USERS_GRANT_ROLE_PUBLISHER, RIGHT_USERS_GRANT_ROLE_STORE_KEEPER,
+					RIGHT_USERS_GRANT_ROLE_ATTENDANCE, RIGHT_USERS_GRANT_ROLE_PUBLISHER,
+					RIGHT_USERS_GRANT_ROLE_STORE_KEEPER,
 					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
 					RIGHT_PROJECTS_GET, RIGHT_PROJECTS_GET_BY_ID, RIGHT_PROJECTS_GET_FOREIGN, RIGHT_PROJECTS_POST,
 					RIGHT_PROJECTS_DELETE, RIGHT_PROJECTS_PUT, RIGHT_PROJECTS_CHANGE_FOREIGN,
@@ -197,8 +201,10 @@ public class UserRole implements GrantedAuthority {
 							RIGHT_PROJECTS_POST, RIGHT_PROJECTS_PUT, RIGHT_PROJECTS_USERS_DELETE,
 							RIGHT_PROJECTS_USERS_POST,
 							// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+							RIGHT_USERS_CHANGE_ROLES, RIGHT_USERS_GRANT_ROLE_CONSTRUCTION_SERVANT,
 							RIGHT_USERS_GRANT_ROLE_INVENTORY_MANAGER, RIGHT_USERS_GRANT_ROLE_LOCAL_COORDINATOR,
-							RIGHT_USERS_GRANT_ROLE_PUBLISHER, RIGHT_USERS_GRANT_ROLE_STORE_KEEPER,
+							RIGHT_USERS_GRANT_ROLE_ATTENDANCE, RIGHT_USERS_GRANT_ROLE_PUBLISHER,
+							RIGHT_USERS_GRANT_ROLE_STORE_KEEPER,
 							// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
 							RIGHT_HELPER_TYPES_GET, RIGHT_HELPER_TYPES_GET_BY_ID,
 							// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
@@ -216,14 +222,17 @@ public class UserRole implements GrantedAuthority {
 							// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
 							RIGHT_TECHNICAL_CREWS_GET, RIGHT_TECHNICAL_CREWS_GET_BY_ID));
 
-			roleRights.put(ROLE_LOCAL_COORDINATOR,
-					List.of(RIGHT_USERS_GET, RIGHT_USERS_GET_BY_ID, RIGHT_USERS_GET_FOREIGN, RIGHT_USERS_CREATE,
-							RIGHT_USERS_PUT, RIGHT_USERS_DELETE, RIGHT_USERS_GRANT_ROLE_PUBLISHER, RIGHT_PROJECTS_GET,
-							RIGHT_PROJECTS_GET_BY_ID, RIGHT_PROJECTS_USERS_POST, RIGHT_HELPER_TYPES_GET,
-							RIGHT_HELPER_TYPES_GET_BY_ID, RIGHT_NEEDS_POST, RIGHT_NEEDS_PUT, RIGHT_NEEDS_GET,
-							RIGHT_NEEDS_GET_BY_ID, RIGHT_NEEDS_DELETE, RIGHT_NEEDS_CHANGE_FOREIGN_USER,
-							RIGHT_NEEDS_USERS_GET, RIGHT_NEEDS_USERS_PUT, RIGHT_NEEDS_APPLY, RIGHT_NEEDS_APPROVE,
-							RIGHT_NEEDS_VIEW_APPROVED));
+			roleRights.put(ROLE_LOCAL_COORDINATOR, List.of(RIGHT_USERS_GET, RIGHT_USERS_GET_BY_ID,
+					RIGHT_USERS_GET_FOREIGN, RIGHT_USERS_CREATE, RIGHT_USERS_PUT, RIGHT_USERS_DELETE,
+					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+					RIGHT_USERS_CHANGE_ROLES, RIGHT_USERS_GRANT_ROLE_PUBLISHER, RIGHT_USERS_GRANT_ROLE_STORE_KEEPER,
+					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+					RIGHT_PROJECTS_GET, RIGHT_PROJECTS_GET_BY_ID, RIGHT_PROJECTS_USERS_POST,
+					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+					RIGHT_HELPER_TYPES_GET, RIGHT_HELPER_TYPES_GET_BY_ID, RIGHT_NEEDS_POST, RIGHT_NEEDS_PUT,
+					RIGHT_NEEDS_GET, RIGHT_NEEDS_GET_BY_ID, RIGHT_NEEDS_DELETE, RIGHT_NEEDS_CHANGE_FOREIGN_USER,
+					RIGHT_NEEDS_USERS_GET, RIGHT_NEEDS_USERS_PUT, RIGHT_NEEDS_APPLY, RIGHT_NEEDS_APPROVE,
+					RIGHT_NEEDS_VIEW_APPROVED));
 
 			roleRights.put(ROLE_ATTENDANCE,
 					List.of(RIGHT_USERS_GET, RIGHT_USERS_GET_BY_ID, RIGHT_USERS_GET_FOREIGN, RIGHT_USERS_PUT,
@@ -251,6 +260,10 @@ public class UserRole implements GrantedAuthority {
 			return roleRights.get(role);
 		}
 
+		private Set<String> getRoles() {
+			return roleRights.keySet();
+		}
+
 	}
 
 	@Override
@@ -273,6 +286,10 @@ public class UserRole implements GrantedAuthority {
 			}).collect(Collectors.toList()));
 		}
 		return result;
+	}
+
+	public static Set<String> getRoles() {
+		return RoleRightManager.getInstance().getRoles();
 	}
 
 }

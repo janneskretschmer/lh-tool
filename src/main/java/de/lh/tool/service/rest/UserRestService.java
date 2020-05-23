@@ -3,11 +3,7 @@ package de.lh.tool.service.rest;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.transaction.Transactional;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
@@ -29,11 +25,12 @@ import org.springframework.web.bind.annotation.RestController;
 import de.lh.tool.domain.dto.PasswordChangeDto;
 import de.lh.tool.domain.dto.UserCreationDto;
 import de.lh.tool.domain.dto.UserDto;
-import de.lh.tool.domain.dto.UserRolesDto;
+import de.lh.tool.domain.dto.UserRoleDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.User;
 import de.lh.tool.domain.model.UserRole;
+import de.lh.tool.service.entity.interfaces.UserRoleService;
 import de.lh.tool.service.entity.interfaces.UserService;
 import io.swagger.annotations.ApiOperation;
 
@@ -42,6 +39,9 @@ import io.swagger.annotations.ApiOperation;
 public class UserRestService {
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private UserRoleService userRoleService;
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of all users")
@@ -77,8 +77,7 @@ public class UserRestService {
 	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@Secured(UserRole.RIGHT_USERS_CREATE)
 	public Resource<UserDto> add(@RequestBody UserCreationDto userCreationDto) throws DefaultException {
-		return new Resource<>(
-				convertToDto(userService.createUser(new ModelMapper().map(userCreationDto, User.class))),
+		return new Resource<>(convertToDto(userService.createUser(new ModelMapper().map(userCreationDto, User.class))),
 				linkTo(methodOn(UserRestService.class).add(userCreationDto)).withSelfRel(),
 				linkTo(methodOn(UserRestService.class).changePassword(null)).withRel(UrlMappings.USER_PASSWORD));
 	}
@@ -99,33 +98,39 @@ public class UserRestService {
 				passwordChangeDto.getConfirmPassword())));
 	}
 
-	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.USER_ROLES)
-	@Secured(UserRole.RIGHT_USERS_CHANGE_ROLES)
-	@Transactional
-	public Resource<UserDto> changeRoles(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
-			@RequestBody UserRolesDto userRolesDto) throws DefaultException {
-		User user = userService.findById(id)
-				.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_WRONG_ID_PROVIDED));
-		if (userRolesDto != null) {
-			if (userRolesDto.getRoles() != null) {
-				if (user.getRoles() == null) {
-					user.setRoles(Collections.emptyList());
-				} else {
-					user.getRoles().clear();
-				}
-				user.getRoles().addAll(userRolesDto.getRoles().stream().map(s -> new UserRole(null, user, s))
-						.collect(Collectors.toList()));
-			}
-			userService.save(user);
-		}
-		return new Resource<>(convertToDto(user));
-	}
-
 	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
 	@Secured(UserRole.RIGHT_USERS_DELETE)
 	public ResponseEntity<Void> delete(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 		userService.deleteUserById(id);
+		return ResponseEntity.noContent().build();
+	}
+
+	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.USER_ROLES)
+	@Secured(UserRole.RIGHT_USERS_CHANGE_ROLES)
+	public Resources<UserRoleDto> getUserRoles(
+			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long userId) throws DefaultException {
+		List<UserRoleDto> dtoList = userRoleService.findDtosByUserId(userId);
+		return new Resources<>(dtoList, linkTo(methodOn(UserRestService.class).getUserRoles(userId)).withSelfRel());
+	}
+
+	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.USER_ROLES)
+	@Secured(UserRole.RIGHT_USERS_CHANGE_ROLES)
+	public Resource<UserRoleDto> createUserRole(
+			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long userId,
+			@RequestBody(required = true) UserRoleDto userRoleDto) throws DefaultException {
+		userRoleDto.setUserId(userId);
+		UserRoleDto savedUserRole = userRoleService.createUserRoleDto(userRoleDto);
+		return new Resource<>(savedUserRole,
+				linkTo(methodOn(UserRestService.class).createUserRole(userId, userRoleDto)).withSelfRel());
+	}
+
+	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.USER_ROLES_ID)
+	@Secured(UserRole.RIGHT_USERS_CHANGE_ROLES)
+	public ResponseEntity<Void> deleteUserRole(
+			@PathVariable(name = UrlMappings.USER_ID_VARIABLE, required = true) Long userId,
+			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long userRoleId) throws DefaultException {
+		userRoleService.deleteUserRoleById(userRoleId);
 		return ResponseEntity.noContent().build();
 	}
 

@@ -41,7 +41,6 @@ import de.lh.tool.service.entity.interfaces.UserRoleService;
 import de.lh.tool.service.entity.interfaces.UserService;
 import de.lh.tool.util.StringUtil;
 import lombok.Data;
-import lombok.extern.apachecommons.CommonsLog;
 import lombok.extern.log4j.Log4j2;
 
 @Service
@@ -93,13 +92,13 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 	@Override
 	@Transactional
 	public User createUser(User user) throws DefaultException {
-		if (user.getEmail() == null) {
+		if (StringUtils.isBlank(user.getEmail())) {
 			throw ExceptionEnum.EX_USER_NO_EMAIL.createDefaultException();
 		}
-		if (user.getFirstName() == null) {
+		if (StringUtils.isBlank(user.getFirstName())) {
 			throw ExceptionEnum.EX_USER_NO_FIRST_NAME.createDefaultException();
 		}
-		if (user.getLastName() == null) {
+		if (StringUtils.isBlank(user.getLastName())) {
 			throw ExceptionEnum.EX_USER_NO_LAST_NAME.createDefaultException();
 		}
 		if (user.getGender() == null) {
@@ -141,7 +140,8 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 		return save(old);
 	}
 
-	private void checkIfEditIsAllowed(User user, boolean allowedToEditSelf) throws DefaultException {
+	@Override
+	public void checkIfEditIsAllowed(User user, boolean allowedToEditSelf) throws DefaultException {
 		UserPermissionCriteria criteria = Optional.ofNullable(user).map(this::evaluatePermissionsOnOtherUser)
 				.orElse(new UserPermissionCriteria());
 
