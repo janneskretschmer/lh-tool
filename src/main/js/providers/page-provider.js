@@ -75,7 +75,7 @@ class StatefulPageProvider extends React.Component {
 
     render() {
         if (!this.isUserAllowedToSeeCurrentPage()) {
-            return (<NotFoundHandlerComponent />)
+            return (<NotFoundHandlerComponent />);
         }
         return (
             <PageContext.Provider

@@ -44,7 +44,7 @@ class StatefulUserEditComponent extends React.Component {
             saving: false,
             passwordEmailSent: false,
             redirectToUser: null,
-        }
+        };
         this.roleNames = new Map();
         this.roleNames.set('ROLE_STORE_KEEPER', 'Magaziner');
         this.roleNames.set('ROLE_INVENTORY_MANAGER', 'Lagerist');
@@ -63,7 +63,7 @@ class StatefulUserEditComponent extends React.Component {
     componentDidUpdate() {
         const { pagesState, usersState } = this.props;
         if (!pagesState.currentItemName && usersState.selectedUser && usersState.selectedUser.firstName && usersState.selectedUser.lastName) {
-            pagesState.setCurrentItemName({ name: usersState.selectedUser.firstName + ' ' + usersState.selectedUser.lastName })
+            pagesState.setCurrentItemName({ name: usersState.selectedUser.firstName + ' ' + usersState.selectedUser.lastName });
         }
     }
 

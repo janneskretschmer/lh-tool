@@ -125,5 +125,5 @@ export function fetchUserProjects(accessToken, { id }) {
         parameters: {
             [ID_VARIABLE]: id,
         }
-    }).then(result => result.response.content)
+    }).then(result => result.response.content);
 }
