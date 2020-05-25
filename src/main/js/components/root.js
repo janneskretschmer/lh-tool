@@ -70,8 +70,6 @@ export default class LHToolRoot extends React.Component {
         super(props);
         this.state = {
             drawerOpen: window.innerWidth > 960,
-            // empiric start value
-            contentMarginTop: 64,
         };
     }
 
@@ -89,7 +87,7 @@ export default class LHToolRoot extends React.Component {
 
     render() {
         const { classes, theme } = this.props;
-        const { drawerOpen, contentMarginTop } = this.state;
+        const { drawerOpen } = this.state;
         const TITLE = 'LH-Tool';
 
         return (
@@ -99,11 +97,6 @@ export default class LHToolRoot extends React.Component {
                         <CssBaseline />
                         <SessionProvider>
                             <PageProvider>
-                                <AppHeader
-                                    setContentTopMargin={margin => this.setContentTopMargin(margin)}
-                                    drawerOpen={drawerOpen}
-                                    onOpenRequest={this.handleDrawerOpen.bind(this)} />
-
                                 <Drawer
                                     className={classes.drawer}
                                     variant="persistent"
@@ -121,13 +114,14 @@ export default class LHToolRoot extends React.Component {
                                     <Divider />
                                     <AppMenu />
                                 </Drawer>
-
                                 <main
                                     className={classNames(classes.content, {
                                         [classes.contentShift]: drawerOpen,
                                     })}
-                                    style={{ marginTop: `${contentMarginTop}px` }}
                                 >
+                                    <AppHeader
+                                        drawerOpen={drawerOpen}
+                                        onOpenRequest={this.handleDrawerOpen.bind(this)} />
                                     <Switch>
                                         {/* 
                                             KEEP IN SYNC WITH pages.js

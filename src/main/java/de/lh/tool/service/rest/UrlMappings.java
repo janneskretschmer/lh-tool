@@ -33,6 +33,7 @@ public abstract class UrlMappings {
 	public static final String USER_CURRENT = "/current";
 	public static final String USER_ROLES = "/{" + ID_VARIABLE + "}/roles";
 	public static final String USER_ROLES_ID = "/{" + USER_ID_VARIABLE + "}/roles/{" + ID_VARIABLE + "}";
+	public static final String USER_PROJECTS = "/{" + ID_VARIABLE + "}/projects";
 
 	public static final String ROLES_PREFIX = REST_PREFIX + "/roles";
 

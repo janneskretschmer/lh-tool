@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.lh.tool.domain.dto.PasswordChangeDto;
+import de.lh.tool.domain.dto.ProjectUserDto;
 import de.lh.tool.domain.dto.UserCreationDto;
 import de.lh.tool.domain.dto.UserDto;
 import de.lh.tool.domain.dto.UserRoleDto;
@@ -30,6 +31,7 @@ import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.User;
 import de.lh.tool.domain.model.UserRole;
+import de.lh.tool.service.entity.interfaces.ProjectUserService;
 import de.lh.tool.service.entity.interfaces.UserRoleService;
 import de.lh.tool.service.entity.interfaces.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -42,6 +44,9 @@ public class UserRestService {
 
 	@Autowired
 	private UserRoleService userRoleService;
+
+	@Autowired
+	private ProjectUserService projectUserService;
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of all users")
@@ -132,6 +137,14 @@ public class UserRestService {
 			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long userRoleId) throws DefaultException {
 		userRoleService.deleteUserRoleById(userRoleId);
 		return ResponseEntity.noContent().build();
+	}
+
+	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.USER_PROJECTS)
+	@Secured(UserRole.RIGHT_PROJECTS_USERS_GET)
+	public Resources<ProjectUserDto> getUserProjects(
+			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long userId) throws DefaultException {
+		List<ProjectUserDto> dtoList = projectUserService.findDtosByUserId(userId);
+		return new Resources<>(dtoList, linkTo(methodOn(UserRestService.class).getUserProjects(userId)).withSelfRel());
 	}
 
 	private UserDto convertToDto(User user) {

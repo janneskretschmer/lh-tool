@@ -61,7 +61,7 @@ public class UserRoleServiceImpl extends BasicMappableEntityServiceImpl<UserRole
 			throw ExceptionEnum.EX_NO_ID_PROVIDED.createDefaultException();
 		}
 		User user = userService.findById(userId).orElseThrow(ExceptionEnum.EX_INVALID_USER_ID::createDefaultException);
-		userService.checkIfEditIsAllowed(user, false);
+		userService.checkIfEditIsAllowed(user, true);
 		return convertToDtoList(user.getRoles());
 	}
 
@@ -78,7 +78,7 @@ public class UserRoleServiceImpl extends BasicMappableEntityServiceImpl<UserRole
 		if (userRole.getUser() == null) {
 			throw ExceptionEnum.EX_INVALID_USER_ID.createDefaultException();
 		}
-		userService.checkIfEditIsAllowed(userRole.getUser(), false);
+		userService.checkIfEditIsAllowed(userRole.getUser(), true);
 		if (hasUserRight(userRole.getUser(), userRole.getRole())) {
 			throw ExceptionEnum.EX_USER_ROLE_ALREADY_EXISTS.createDefaultException();
 		}
@@ -95,7 +95,7 @@ public class UserRoleServiceImpl extends BasicMappableEntityServiceImpl<UserRole
 		if (!hasCurrentUserRightToGrantRole(userRole.getRole())) {
 			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
 		}
-		userService.checkIfEditIsAllowed(userRole.getUser(), false);
+		userService.checkIfEditIsAllowed(userRole.getUser(), true);
 		userRole.getUser().getRoles().remove(userRole);
 		delete(userRole);
 	}

@@ -1,5 +1,7 @@
 package de.lh.tool.service.entity.impl;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +60,18 @@ public class ProjectUserServiceImpl
 			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
 		}
 		getRepository().findByProjectAndUser(project, user).ifPresent(this::delete);
+	}
+
+	@Override
+	@Transactional
+	public List<ProjectUserDto> findDtosByUserId(Long userId) throws DefaultException {
+		User user = userService.findById(userId)
+				.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_USER_ID));
+
+		userService.checkIfEditIsAllowed(user, true);
+
+		return convertToDtoList(getRepository().findByUser(user));
+
 	}
 
 }

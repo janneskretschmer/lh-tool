@@ -126,3 +126,15 @@ export function convertToMUIFormat(moment) {
 export function convertFromMUIFormat(date) {
     return moment(date, MUI_DATE_FORMAT);
 }
+
+export function isStringBlank(str) {
+    if (str) {
+        const trimmed = str.trim();
+        return !trimmed || trimmed.length === 0;
+    }
+    return true;
+}
+
+export function isAnyStringBlank(strings) {
+    return strings.some(isStringBlank);
+}

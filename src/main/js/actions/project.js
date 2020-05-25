@@ -62,6 +62,13 @@ export function fetchOwnProjects({ accessToken }) {
     }
 }
 
+export function fetchProjects(accessToken) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.project.getOwn,
+        authToken: accessToken,
+    }).then(result => result.response.content);
+}
+
 export function createNewProject({ accessToken, projectsState, name, startMoment, endMoment, handleFailure }) {
     return apiRequest({
         apiEndpoint: apiEndpoints.project.createNew,
@@ -136,4 +143,27 @@ export function fetchProjectHelperTypes(accessToken, projectId, helperTypeId, we
     } else {
         return Promise.resolve([]);
     }
+}
+
+export function createProjectUser(accessToken, { projectId, userId }) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.project.addUser,
+        authToken: accessToken,
+        parameters: {
+            [ID_VARIABLE]: projectId,
+            [USER_ID_VARIABLE]: userId,
+        },
+    })
+        .then(result => result.response);
+}
+
+export function deleteProjectUser(accessToken, { projectId, userId }) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.project.deleteUser,
+        authToken: accessToken,
+        parameters: {
+            [ID_VARIABLE]: projectId,
+            [USER_ID_VARIABLE]: userId,
+        },
+    });
 }

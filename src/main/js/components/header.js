@@ -48,6 +48,8 @@ class StatefulAppHeader extends React.Component {
 
         this.state = {
             path: props.pagesState.currentPath,
+            // empiric start value
+            height: 64,
         };
 
         this.headerRef = React.createRef();
@@ -60,54 +62,63 @@ class StatefulAppHeader extends React.Component {
     }
 
     handleTitleChanged() {
-        this.props.setContentTopMargin(this.headerRef.current.getBoundingClientRect().height);
+        this.setState({
+            height: this.headerRef.current.getBoundingClientRect().height,
+        });
     }
 
     render() {
         const { classes, drawerOpen, pagesState } = this.props;
+        const { height } = this.state;
 
         return (
-            <AppBar
-                position="fixed"
-                className={classNames(classes.appBar, {
-                    [classes.appBarShift]: drawerOpen,
-                })}
-            >
-                <div ref={this.headerRef}>
-                    <Toolbar disableGutters={!drawerOpen}>
-                        <IconButton
-                            color="inherit"
-                            aria-label="Open drawer"
-                            onClick={() => this.props.onOpenRequest && this.props.onOpenRequest()}
-                            className={classNames(classes.menuButton, drawerOpen && classes.hide)}
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                        <Typography
-                            component="h1"
-                            variant="h6"
-                            color="inherit"
-                            noWrap
-                        >
-                            {
-                                //build breadcrump
-                                pagesState.currentTitleComponents ? pagesState.currentTitleComponents
-                                    .filter(component => component.title)
-                                    .map((component, i) => (
-                                        <span key={component.path}>
-                                            {i !== 0 ? ' › ' : null}
-                                            <Link to={component.path} className={classes.link}>{component.title}</Link>
-                                        </span>
-                                    )) : null
-                            }
-                        </Typography>
-                    </Toolbar>
-                    {/* TODO: dynamic tabs from subPages */}
-                    <Switch>
-                        <Route path={fullPathOfSettings()} component={SettingsTabsComponent} exact={false} />
-                    </Switch>
+            <>
+                <AppBar
+                    position="fixed"
+                    className={classNames(classes.appBar, {
+                        [classes.appBarShift]: drawerOpen,
+                    })}
+                >
+                    <div ref={this.headerRef}>
+                        <Toolbar disableGutters={!drawerOpen}>
+                            <IconButton
+                                color="inherit"
+                                aria-label="Open drawer"
+                                onClick={() => this.props.onOpenRequest && this.props.onOpenRequest()}
+                                className={classNames(classes.menuButton, drawerOpen && classes.hide)}
+                            >
+                                <MenuIcon />
+                            </IconButton>
+                            <Typography
+                                component="h1"
+                                variant="h6"
+                                color="inherit"
+                                noWrap
+                            >
+                                {
+                                    //build breadcrump
+                                    pagesState.currentTitleComponents ? pagesState.currentTitleComponents
+                                        .filter(component => component.title)
+                                        .map((component, i) => (
+                                            <span key={component.path}>
+                                                {i !== 0 ? ' › ' : null}
+                                                <Link to={component.path} className={classes.link}>{component.title}</Link>
+                                            </span>
+                                        )) : null
+                                }
+                            </Typography>
+                        </Toolbar>
+                        {/* TODO: dynamic tabs from subPages */}
+                        <Switch>
+                            <Route path={fullPathOfSettings()} component={SettingsTabsComponent} exact={false} />
+                        </Switch>
+                    </div>
+                </AppBar>
+
+                {/* Top spacer */}
+                <div style={{ height: `${height}px` }}>
                 </div>
-            </AppBar>
+            </>
         );
     }
 }

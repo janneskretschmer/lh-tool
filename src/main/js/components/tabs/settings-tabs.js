@@ -13,6 +13,7 @@ const styles = theme => ({
     },
 });
 
+// TODO generate dynamically from subpages
 @withStyles(styles)
 export default class SettingsTabsComponent extends React.Component {
     constructor(props) {
@@ -34,7 +35,7 @@ export default class SettingsTabsComponent extends React.Component {
                 <div className={classes.break} />
                 <Tabs value={value} className={classes.tabs}>
                     <Tab value={'users'} label="Benutzer" />
-                    <Tab value={'projects'} label="Projekte" />
+                    {/* <Tab value={'projects'} label="Projekte" /> */}
                 </Tabs>
             </>
         );

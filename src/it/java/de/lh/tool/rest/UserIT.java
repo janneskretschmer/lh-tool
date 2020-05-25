@@ -1210,4 +1210,59 @@ public class UserIT extends BasicRestIntegrationTest {
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 
+	@Test
+	public void testUserProjectsGetOwn() throws Exception {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.url(REST_URL + "/users/1000/projects").method(Method.GET)
+				.initializationQueries(List.of(
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'FEMALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (2, 'Test2', '2020-08-09', '2020-11-24')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 2,id FROM user"))
+				.userTests(List.of(UserTest.builder()
+						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL))
+						.expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/1000/projects\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":8,\"projectId\":1,\"userId\":1000},{\"id\":23,\"projectId\":2,\"userId\":1000}]}")
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
+	}
+
+	@Test
+	public void testUserProjectsGetForeign() throws Exception {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.url(REST_URL + "/users/1000/projects").method(Method.GET)
+				.initializationQueries(List.of(
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'FEMALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_user(project_id, user_id) VALUES (1,1000)",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (2, 'Test2', '2020-08-09', '2020-11-24')",
+						"INSERT INTO project_user(project_id, user_id) VALUES (2,1000)"))
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/1000/projects\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"projectId\":1,\"userId\":1000},{\"id\":2,\"projectId\":2,\"userId\":1000}]}")
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
+	}
+
+	@Test
+	public void testUserProjectsGetNonExisting() throws Exception {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.url(REST_URL + "/users/1002/projects").method(Method.GET)
+				.initializationQueries(List.of(
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'FEMALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (2, 'Test2', '2020-08-09', '2020-11-24')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 2,id FROM user"))
+				.userTests(List.of(UserTest.builder()
+						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL))
+						.expectedHttpCode(HttpStatus.BAD_REQUEST)
+						.expectedResponse(
+								"{\"key\":\"EX_INVALID_USER_ID\",\"message\":\"The provided user id is invalid.\",\"httpCode\":400}")
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
+	}
+
 }
