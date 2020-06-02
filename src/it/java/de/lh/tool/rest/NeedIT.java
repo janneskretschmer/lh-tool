@@ -294,11 +294,11 @@ public class NeedIT extends BasicRestIntegrationTest {
 						.validationQueries(
 								List.of("SELECT * FROM need_user WHERE need_id=1 AND user_id=1000 AND state='APPLIED'"))
 						.expectedEmails(List.of(EmailTest.builder().recipient("test@lh-tool.de")
-								.subject("Schicht am 23.04.2020 nicht genehmigt")
-								.content("Liebe Schwester Ter,\n" + "\n"
-										+ "deine Schicht am 23.04.2020 von 07:00 Uhr bis 17:00 Uhr als Test1 wurde nicht genehmigt.\n"
+								.subjectRegex("Schicht am 23\\.04\\.2020 nicht genehmigt")
+								.contentRegex("Liebe Schwester Ter,\n" + "\n"
+										+ "deine Schicht am 23\\.04\\.2020 von 07:00 Uhr bis 17:00 Uhr als Test1 wurde nicht genehmigt\\.\n"
 										+ "\n" + "Viele Grüße\n" + "LDC Baugruppe\n" + "\n"
-										+ "p.s. Das ist eine automatisch generierte Mail, bitte antworte nicht darauf. Bei Fragen wende dich bitte an den zuständigen Helferkoordinator.\n"
+										+ "p\\.s\\. Das ist eine automatisch generierte Mail, bitte antworte nicht darauf\\. Bei Fragen wende dich bitte an den zuständigen Helferkoordinator\\.\n"
 										+ "")
 								.build()))
 						.build()))
@@ -329,11 +329,11 @@ public class NeedIT extends BasicRestIntegrationTest {
 						.validationQueries(List
 								.of("SELECT * FROM need_user WHERE need_id=1 AND user_id=1000 AND state='APPROVED'"))
 						.expectedEmails(List.of(EmailTest.builder().recipient("test@lh-tool.de")
-								.subject("Schicht am 23.04.2020 genehmigt")
-								.content("Liebe Schwester Ter,\n" + "\n"
-										+ "deine Schicht am 23.04.2020 von 07:00 Uhr bis 17:00 Uhr als Test1 wurde genehmigt.\n"
+								.subjectRegex("Schicht am 23\\.04\\.2020 genehmigt")
+								.contentRegex("Liebe Schwester Ter,\n" + "\n"
+										+ "deine Schicht am 23\\.04\\.2020 von 07:00 Uhr bis 17:00 Uhr als Test1 wurde genehmigt\\.\n"
 										+ "\n" + "Viele Grüße\n" + "LDC Baugruppe\n" + "\n"
-										+ "p.s. Das ist eine automatisch generierte Mail, bitte antworte nicht darauf. Bei Fragen wende dich bitte an den zuständigen Helferkoordinator.\n"
+										+ "p\\.s\\. Das ist eine automatisch generierte Mail, bitte antworte nicht darauf\\. Bei Fragen wende dich bitte an den zuständigen Helferkoordinator\\.\n"
 										+ "")
 								.build()))
 						.build()))
@@ -364,11 +364,11 @@ public class NeedIT extends BasicRestIntegrationTest {
 						.validationQueries(List
 								.of("SELECT * FROM need_user WHERE need_id=1 AND user_id=1000 AND state='APPROVED'"))
 						.expectedEmails(List.of(EmailTest.builder().recipient("test@lh-tool.de")
-								.subject("Schicht am 23.04.2020 genehmigt")
-								.content("Liebe Schwester Ter,\n" + "\n"
-										+ "deine Schicht am 23.04.2020 von 07:00 Uhr bis 17:00 Uhr als Test1 wurde genehmigt.\n"
+								.subjectRegex("Schicht am 23\\.04\\.2020 genehmigt")
+								.contentRegex("Liebe Schwester Ter,\n" + "\n"
+										+ "deine Schicht am 23\\.04\\.2020 von 07:00 Uhr bis 17:00 Uhr als Test1 wurde genehmigt\\.\n"
 										+ "\n" + "Viele Grüße\n" + "LDC Baugruppe\n" + "\n"
-										+ "p.s. Das ist eine automatisch generierte Mail, bitte antworte nicht darauf. Bei Fragen wende dich bitte an den zuständigen Helferkoordinator.\n"
+										+ "p\\.s\\. Das ist eine automatisch generierte Mail, bitte antworte nicht darauf\\. Bei Fragen wende dich bitte an den zuständigen Helferkoordinator\\.\n"
 										+ "")
 								.build()))
 						.build()))
@@ -399,12 +399,11 @@ public class NeedIT extends BasicRestIntegrationTest {
 						.validationQueries(List
 								.of("SELECT * FROM need_user WHERE need_id=1 AND user_id=1000 AND state='REJECTED'"))
 						.expectedEmails(List.of(EmailTest.builder().recipient("test@lh-tool.de")
-								.subject("Schicht am 23.04.2020 abgelehnt")
-								.content("Liebe Schwester Ter,\n" + "\n"
-										+ "deine Schicht am 23.04.2020 von 07:00 Uhr bis 17:00 Uhr als Test1 wurde abgelehnt.\n"
+								.subjectRegex("Schicht am 23\\.04\\.2020 abgelehnt")
+								.contentRegex("Liebe Schwester Ter,\n" + "\n"
+										+ "deine Schicht am 23\\.04\\.2020 von 07:00 Uhr bis 17:00 Uhr als Test1 wurde abgelehnt\\.\n"
 										+ "\n" + "Viele Grüße\n" + "LDC Baugruppe\n" + "\n"
-										+ "p.s. Das ist eine automatisch generierte Mail, bitte antworte nicht darauf. Bei Fragen wende dich bitte an den zuständigen Helferkoordinator.\n"
-										+ "")
+										+ "p\\.s\\. Das ist eine automatisch generierte Mail, bitte antworte nicht darauf\\. Bei Fragen wende dich bitte an den zuständigen Helferkoordinator\\.\n")
 								.build()))
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
@@ -434,12 +433,13 @@ public class NeedIT extends BasicRestIntegrationTest {
 						.validationQueries(List.of(
 								"SELECT 1 WHERE NOT EXISTS (SELECT * FROM need_user WHERE need_id=1 AND user_id=1000)"))
 						.expectedEmails(List.of(EmailTest.builder().recipient("test-local_coordinator@lh-tool.de")
-								.subject("Schicht am 23.04.2020 zurückgezogen")
-								.content("Lieber Bruder Local_coordinator,\n" + "\n"
-										+ "die Bewerbung von Tes Ter für den 23.04.2020 wurde zurückgezogen.\n" + "\n"
-										+ "Bitte prüfe, ob an diesem Tag genügend Helfer zur Verfügung stehen.\n" + "\n"
-										+ "Viele Grüße\n" + "LDC Baugruppe\n" + "\n"
-										+ "p.s. Das ist eine automatisch generierte Mail, bitte antworte nicht darauf. Bei Fragen wende dich bitte an den zuständigen Helferkoordinator.\n")
+								.subjectRegex("Schicht am 23\\.04\\.2020 zurückgezogen")
+								.contentRegex("Lieber Bruder Local_coordinator,\n" + "\n"
+										+ "die Bewerbung von Tes Ter für den 23\\.04\\.2020 wurde zurückgezogen\\.\n"
+										+ "\n"
+										+ "Bitte prüfe, ob an diesem Tag genügend Helfer zur Verfügung stehen\\.\n"
+										+ "\n" + "Viele Grüße\n" + "LDC Baugruppe\n" + "\n"
+										+ "p\\.s\\. Das ist eine automatisch generierte Mail, bitte antworte nicht darauf\\. Bei Fragen wende dich bitte an den zuständigen Helferkoordinator\\.\n")
 								.build()))
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)

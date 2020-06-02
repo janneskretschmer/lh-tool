@@ -1,14 +1,12 @@
+import { CircularProgress } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import { withSnackbar } from 'notistack';
 import React from 'react';
-import { Helmet } from 'react-helmet';
-import { fetchOwnNeeds } from '../../actions/need';
-import { requiresLogin, setWaitingState, convertToReadableFormatWithoutYear } from '../../util';
+import { NeedsContext } from '../../providers/needs-provider';
+import { ProjectsContext } from '../../providers/projects-provider';
+import { requiresLogin, setWaitingState } from '../../util';
 import ProjectCalendar from '../util/project-calendar';
 import NeedQuantityEditComponent from './quantity-edit';
-import NeedsProvider, { NeedsContext } from '../../providers/needs-provider';
-import ProjectsProvider, { ProjectsContext } from '../../providers/projects-provider';
-import { CircularProgress } from '@material-ui/core';
 
 const styles = theme => ({
     helperTypeName: {
@@ -72,7 +70,6 @@ class StatefulNeedQuantityComponent extends React.Component {
         setWaitingState(false);
         return (
             <>
-                <Helmet titleTemplate="%s › Bedarf" />
                 <ProjectCalendar>
                     {dayMap && Array.from(dayMap.keys()).map(dateString => (
                         <div key={dateString} date={dayMap.get(dateString).date}>

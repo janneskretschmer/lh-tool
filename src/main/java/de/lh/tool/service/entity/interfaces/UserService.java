@@ -20,7 +20,7 @@ public interface UserService extends BasicEntityService<User, Long> {
 
 	List<User> findByProjectIdAndRoleIgnoreCase(Long projectId, String role);
 
-	User createUser(User user, String role) throws DefaultException;
+	User createUser(User user) throws DefaultException;
 
 	User getCurrentUser();
 
@@ -37,5 +37,10 @@ public interface UserService extends BasicEntityService<User, Long> {
 	List<UserDto> findDtosByProjectIdAndRoleIgnoreCase(Long projectId, String role) throws DefaultException;
 
 	UserDto findDtoById(Long id) throws DefaultException;
+
+	/**
+	 * @throws DefaultException if editing is not allowed
+	 */
+	void checkIfEditIsAllowed(User user, boolean allowedToEditSelf) throws DefaultException;
 
 }

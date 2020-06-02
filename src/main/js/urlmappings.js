@@ -28,6 +28,10 @@ export const USER_PREFIX = REST_PREFIX + '/users';
 export const USER_PASSWORD = '/password';
 export const USER_CURRENT = '/current';
 export const USER_ROLES = '/{' + ID_VARIABLE + '}/roles';
+export const USER_ROLES_ID = '/{' + USER_ID_VARIABLE + '}/roles/{' + ID_VARIABLE + '}';
+export const USER_PROJECTS = '/{' + ID_VARIABLE + '}/projects';
+
+export const ROLES_PREFIX = REST_PREFIX + '/roles';
 
 export const LOGIN_PREFIX = REST_PREFIX + '/login';
 export const LOGIN_PASSWORD_RESET = '/pwreset';

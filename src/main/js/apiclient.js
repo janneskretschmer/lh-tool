@@ -40,6 +40,10 @@ import {
     ASSEMBLED_NEED_FOR_CALENDAR,
     START_DATE_VARIABLE,
     END_DATE_VARIABLE,
+    ROLES_PREFIX,
+    USER_ROLES,
+    USER_ROLES_ID,
+    USER_PROJECTS,
 
 } from './urlmappings';
 
@@ -188,6 +192,11 @@ export const apiEndpoints = {
             path: PROJECT_PREFIX + ID_USER_ID_EXTENSION,
             parameters: [ID_VARIABLE, USER_ID_VARIABLE],
         },
+        deleteUser: {
+            method: 'DELETE',
+            path: PROJECT_PREFIX + ID_USER_ID_EXTENSION,
+            parameters: [ID_VARIABLE, USER_ID_VARIABLE],
+        },
         getHelperTypes: {
             method: 'GET',
             path: PROJECT_PREFIX + PROJECT_HELPER_TYPES,
@@ -228,6 +237,32 @@ export const apiEndpoints = {
             method: 'PUT',
             path: USER_PREFIX + ID_EXTENSION,
             parameters: [ID_VARIABLE],
+        },
+        getRoles: {
+            method: 'GET',
+            path: USER_PREFIX + USER_ROLES,
+            parameters: [ID_VARIABLE],
+        },
+        createRole: {
+            method: 'POST',
+            path: USER_PREFIX + USER_ROLES,
+            parameters: [ID_VARIABLE],
+        },
+        deleteRole: {
+            method: 'DELETE',
+            path: USER_PREFIX + USER_ROLES_ID,
+            parameters: [USER_ID_VARIABLE, ID_VARIABLE],
+        },
+        getProjects: {
+            method: 'GET',
+            path: USER_PREFIX + USER_PROJECTS,
+            parameters: [ID_VARIABLE],
+        },
+    },
+    role: {
+        get: {
+            method: 'GET',
+            path: ROLES_PREFIX,
         },
     },
     helperType: {

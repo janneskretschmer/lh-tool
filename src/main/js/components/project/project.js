@@ -1,22 +1,21 @@
-import React from 'react';
-import { Helmet } from 'react-helmet';
-import { withStyles } from '@material-ui/core/styles';
-import ListSubheader from '@material-ui/core/ListSubheader';
+import { Typography } from '@material-ui/core';
+import Collapse from '@material-ui/core/Collapse';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import { Typography } from '@material-ui/core';
-import Collapse from '@material-ui/core/Collapse';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import { withStyles } from '@material-ui/core/styles';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import GroupWorkIcon from '@material-ui/icons/GroupWork';
+import React from 'react';
 import ProjectsProvider, { ProjectsContext } from '../../providers/projects-provider';
 import { SessionContext } from '../../providers/session-provider';
+import { requiresLogin, setWaitingState } from '../../util';
+import WithPermission from '../with-permission';
 import ProjectCreatePanel from './project-create';
 import ProjectEditPanel from './project-edit';
-import WithPermission from '../with-permission';
-import { requiresLogin, setWaitingState } from '../../util';
 
 const styles = theme => ({
     root: {
@@ -105,7 +104,6 @@ class StatefulProjectsComponent extends React.Component {
 
 const ProjectsComponent = props => (
     <>
-        <Helmet titleTemplate="%s › Projekte" />
         <ProjectsProvider>
             <StatefulProjectsComponent {...props} />
         </ProjectsProvider>

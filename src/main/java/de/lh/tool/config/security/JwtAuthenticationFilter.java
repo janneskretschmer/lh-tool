@@ -18,9 +18,9 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import de.lh.tool.service.entity.interfaces.UserService;
-import lombok.extern.apachecommons.CommonsLog;
+import lombok.extern.log4j.Log4j2;
 
-@CommonsLog
+@Log4j2
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 

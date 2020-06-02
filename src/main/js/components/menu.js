@@ -14,10 +14,11 @@ import GroupWorkIcon from '@material-ui/icons/GroupWork';
 import HomeIcon from '@material-ui/icons/Home';
 import SecurityIcon from '@material-ui/icons/Security';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
+import SettingsIcon from '@material-ui/icons/Settings';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { logout } from '../actions/login';
-import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfStores } from '../paths';
+import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfStores, fullPathOfUsersSettings } from '../paths';
 import { SessionContext } from '../providers/session-provider';
 import WithPermission from './with-permission';
 
@@ -168,16 +169,15 @@ const DataProtectionItem = () => (
   </Link>
 );
 
-// TODO Settings not implemented
-const SettingsItem = () => (
-  <a href="javascript:alert('TODO: Einstellungen implementieren u.a. zum Pflegen von Gewerken')" style={linkStyle}>
+const SettingsItem = props => (
+  <Link to={fullPathOfUsersSettings()} style={linkStyle}>
     <ListItem button>
       <ListItemIcon>
         <SettingsIcon />
       </ListItemIcon>
       <ListItemText primary="Einstellungen" />
     </ListItem>
-  </a>
+  </Link>
 );
 
 export default function AppMenu() {
@@ -199,6 +199,7 @@ export default function AppMenu() {
           </List>
           <Divider />
           <List>
+            <SettingsItem />
             <LogoutItem loginState={loginState} />
             <ImprintItem />
             <DataProtectionItem />

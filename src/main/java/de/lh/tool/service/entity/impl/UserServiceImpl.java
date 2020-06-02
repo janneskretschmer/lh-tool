@@ -41,10 +41,10 @@ import de.lh.tool.service.entity.interfaces.UserRoleService;
 import de.lh.tool.service.entity.interfaces.UserService;
 import de.lh.tool.util.StringUtil;
 import lombok.Data;
-import lombok.extern.apachecommons.CommonsLog;
+import lombok.extern.log4j.Log4j2;
 
 @Service
-@CommonsLog
+@Log4j2
 public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserRepository, User, UserDto, Long>
 		implements UserService, UserDetailsService {
 
@@ -91,14 +91,14 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 
 	@Override
 	@Transactional
-	public User createUser(User user, String role) throws DefaultException {
-		if (user.getEmail() == null) {
+	public User createUser(User user) throws DefaultException {
+		if (StringUtils.isBlank(user.getEmail())) {
 			throw ExceptionEnum.EX_USER_NO_EMAIL.createDefaultException();
 		}
-		if (user.getFirstName() == null) {
+		if (StringUtils.isBlank(user.getFirstName())) {
 			throw ExceptionEnum.EX_USER_NO_FIRST_NAME.createDefaultException();
 		}
-		if (user.getLastName() == null) {
+		if (StringUtils.isBlank(user.getLastName())) {
 			throw ExceptionEnum.EX_USER_NO_LAST_NAME.createDefaultException();
 		}
 		if (user.getGender() == null) {
@@ -109,16 +109,10 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 			throw ExceptionEnum.EX_USER_EMAIL_ALREADY_IN_USE.createDefaultException();
 		}
 		User savedUser = save(user);
-		if (userRoleService.hasCurrentUserRightToGrantRole(role)) {
-			userRoleService.save(new UserRole(null, savedUser, role));
-		}
+
 		PasswordChangeToken token = passwordChangeTokenService.saveRandomToken(savedUser);
 
-		if (UserRole.ROLE_LOCAL_COORDINATOR.equals(role)) {
-			mailService.sendNewLocalCoordinatorMail(savedUser, token);
-		} else if (UserRole.ROLE_PUBLISHER.equals(role)) {
-			mailService.sendNewPublisherMail(savedUser, token);
-		}
+		mailService.sendUserCreatedMail(savedUser, token);
 
 		return savedUser;
 	}
@@ -133,13 +127,21 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 
 		checkIfEditIsAllowed(old, true);
 
+		final boolean emailAlreadyInUse = !old.getEmail().equals(user.getEmail())
+				&& getRepository().findByEmail(user.getEmail()).isPresent();
+		if (emailAlreadyInUse) {
+			throw ExceptionEnum.EX_USER_EMAIL_ALREADY_IN_USE.createDefaultException();
+		}
+
 		ModelMapper mapper = new ModelMapper();
+		// if behavior gets changed, password hash has to be preserved
 		mapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
 		mapper.map(user, old);
 		return save(old);
 	}
 
-	private void checkIfEditIsAllowed(User user, boolean allowedToEditSelf) throws DefaultException {
+	@Override
+	public void checkIfEditIsAllowed(User user, boolean allowedToEditSelf) throws DefaultException {
 		UserPermissionCriteria criteria = Optional.ofNullable(user).map(this::evaluatePermissionsOnOtherUser)
 				.orElse(new UserPermissionCriteria());
 

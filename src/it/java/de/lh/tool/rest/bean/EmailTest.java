@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EmailTest {
 	private String recipient;
-	private String subject;
-	private String content;
+	private String subjectRegex;
+	private String contentRegex;
 }

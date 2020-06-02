@@ -7,7 +7,7 @@ import NeedApplyComponent from './apply';
 import NeedApproveComponent from './approve';
 import NeedQuantityComponent from './quantities';
 import { fullPathOfNeedApprove, fullPathOfNeedApply, fullPathOfNeedQuantities } from '../../paths';
-import NotFoundComponent from '../notfound';
+import NotFoundHandlerComponent from '../notfound';
 
 class NeedWrapperComponent extends React.Component {
     render() {
@@ -15,10 +15,14 @@ class NeedWrapperComponent extends React.Component {
             <ProjectsProvider>
                 <NeedsProvider>
                     <Switch>
+                        {/* 
+                            KEEP IN SYNC WITH pages.js
+                            it's necessary for the generation of the title breadcrump
+                        */}
                         <Route path={fullPathOfNeedQuantities()} component={NeedQuantityComponent} />
                         <Route path={fullPathOfNeedApply()} component={NeedApplyComponent} />
                         <Route path={fullPathOfNeedApprove()} component={NeedApproveComponent} />
-                        <Route component={NotFoundComponent} />
+                        <Route component={NotFoundHandlerComponent} />
                     </Switch>
                 </NeedsProvider>
             </ProjectsProvider>

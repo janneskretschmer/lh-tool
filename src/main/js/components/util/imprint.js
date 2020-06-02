@@ -1,8 +1,6 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
 
 const Imprint = props => (<>
-    <Helmet titleTemplate="%s › Impressum" />
     <div><h1>Impressum</h1><p>Angaben gemäß § 5 TMG</p><p>Jannes Kretschmer <br />
         Wiesenstrasse 32<br />
         85368 Moosburg a.d.Isar <br />

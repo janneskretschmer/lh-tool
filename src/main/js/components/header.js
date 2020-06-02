@@ -1,12 +1,15 @@
-import React from 'react';
-import classNames from 'classnames';
-import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
+import IconButton from '@material-ui/core/IconButton';
+import { withStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import { Helmet } from 'react-helmet';
+import classNames from 'classnames';
+import React from 'react';
+import { Route, Switch, Link } from 'react-router-dom';
+import { fullPathOfSettings } from '../paths';
+import { PageContext } from '../providers/page-provider';
+import SettingsTabsComponent from './tabs/settings-tabs';
 
 const drawerWidth = 240;
 const styles = theme => ({
@@ -31,50 +34,102 @@ const styles = theme => ({
     hide: {
         display: 'none',
     },
+    link: {
+        color: theme.palette.primary.contrastText,
+        textDecoration: 'none',
+        cursor: 'pointer',
+    },
 });
 
 @withStyles(styles)
-export default class AppHeader extends React.Component {
+class StatefulAppHeader extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            title: props.defaultTitle,
+            path: props.pagesState.currentPath,
+            // empiric start value
+            height: 64,
         };
+
+        this.headerRef = React.createRef();
+    }
+
+    componentDidUpdate() {
+        if (this.state.path !== this.props.pagesState.currentPath) {
+            this.setState({ path: this.props.pagesState.currentPath }, () => this.handleTitleChanged());
+        }
+    }
+
+    handleTitleChanged() {
+        this.setState({
+            height: this.headerRef.current.getBoundingClientRect().height,
+        });
     }
 
     render() {
-        const { classes, drawerOpen } = this.props;
-        const { title } = this.state;
+        const { classes, drawerOpen, pagesState } = this.props;
+        const { height } = this.state;
 
         return (
-            <AppBar
-                position="fixed"
-                className={classNames(classes.appBar, {
-                    [classes.appBarShift]: drawerOpen,
-                })}
-            >
-                <Helmet onChangeClientState={newState => this.setState({ title: newState.title })} />
-                <Toolbar disableGutters={!drawerOpen}>
-                    <IconButton
-                        color="inherit"
-                        aria-label="Open drawer"
-                        onClick={() => this.props.onOpenRequest && this.props.onOpenRequest()}
-                        className={classNames(classes.menuButton, drawerOpen && classes.hide)}
-                    >
-                        <MenuIcon />
-                    </IconButton>
-                    <Typography
-                        component="h1"
-                        variant="h6"
-                        color="inherit"
-                        noWrap
-                    >
-                        {title}
-                    </Typography>
-                </Toolbar>
-            </AppBar>
+            <>
+                <AppBar
+                    position="fixed"
+                    className={classNames(classes.appBar, {
+                        [classes.appBarShift]: drawerOpen,
+                    })}
+                >
+                    <div ref={this.headerRef}>
+                        <Toolbar disableGutters={!drawerOpen}>
+                            <IconButton
+                                color="inherit"
+                                aria-label="Open drawer"
+                                onClick={() => this.props.onOpenRequest && this.props.onOpenRequest()}
+                                className={classNames(classes.menuButton, drawerOpen && classes.hide)}
+                            >
+                                <MenuIcon />
+                            </IconButton>
+                            <Typography
+                                component="h1"
+                                variant="h6"
+                                color="inherit"
+                                noWrap
+                            >
+                                {
+                                    //build breadcrump
+                                    pagesState.currentTitleComponents ? pagesState.currentTitleComponents
+                                        .filter(component => component.title)
+                                        .map((component, i) => (
+                                            <span key={component.path}>
+                                                {i !== 0 ? ' › ' : null}
+                                                <Link to={component.path} className={classes.link}>{component.title}</Link>
+                                            </span>
+                                        )) : null
+                                }
+                            </Typography>
+                        </Toolbar>
+                        {/* TODO: dynamic tabs from subPages */}
+                        <Switch>
+                            <Route path={fullPathOfSettings()} component={SettingsTabsComponent} exact={false} />
+                        </Switch>
+                    </div>
+                </AppBar>
+
+                {/* Top spacer */}
+                <div style={{ height: `${height}px` }}>
+                </div>
+            </>
         );
     }
 }
 
+const AppHeader = props => (
+    <>
+        <PageContext.Consumer>
+            {pagesState => (
+                (<StatefulAppHeader {...props} pagesState={pagesState} />)
+            )}
+        </PageContext.Consumer>
+    </>
+);
+export default AppHeader;

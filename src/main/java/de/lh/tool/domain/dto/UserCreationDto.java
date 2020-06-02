@@ -17,7 +17,6 @@ public class UserCreationDto {
 	private String telephoneNumber;
 	private String mobileNumber;
 	private String businessNumber;
-	private String role;
 	private String skills;
 	private String profession;
 }

@@ -25,7 +25,7 @@
 			<AppenderRef ref="Console" />
 			<AppenderRef ref="File" />
 		</Root>
-		<Logger name="de.lh.tool" level="debug">
+		<Logger name="de.lh.tool" level="debug" additivity="false">
 			<AppenderRef ref="Console" />
 			<AppenderRef ref="File" />
 		</Logger>
