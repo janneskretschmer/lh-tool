@@ -53,8 +53,11 @@ class StatefulPageProvider extends React.Component {
         while (matchedPage) {
             // workaround for detail pages (e.g. /users/:id) with dynamic title
             if (!matchedPage.title && !matchedPage.subPages && currentItemName) {
-                matchedPage.path = path;
-                matchedPage.title = currentItemName;
+                matchedPage = {
+                    ...matchedPage,
+                    path,
+                    title: currentItemName,
+                };
             }
             pageTrace = [...pageTrace, matchedPage];
             currentPage = matchedPage;

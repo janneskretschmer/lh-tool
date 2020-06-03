@@ -10,6 +10,9 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import React from 'react';
 import { Redirect } from 'react-router';
+import classNames from 'classnames';
+import { NEW_ENTITY_ID_PLACEHOLDER } from '../config';
+import { Typography } from '@material-ui/core';
 
 
 const styles = theme => ({
@@ -32,10 +35,37 @@ const styles = theme => ({
     },
     selectionText: {
         marginRight: '18px',
+        display: 'inline',
+        verticalAlign: 'middle',
+    },
+    toolbar: {
+        display: 'flex',
+        justifyContent: 'space-between',
     },
     clickable: {
         cursor: 'pointer',
-    }
+    },
+    checkboxColumn: {
+        width: '50px',
+    },
+    tableHeadCell: {
+        color: theme.palette.primary.main,
+    },
+    semiImportantCell: {
+        [theme.breakpoints.down('xs')]: {
+            display: 'none',
+        },
+    },
+    unimportantCell: {
+        [theme.breakpoints.down('sm')]: {
+            display: 'none',
+        },
+    },
+    paginationWrapper: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap-reverse',
+    },
 });
 
 @withStyles(styles)
@@ -50,10 +80,22 @@ export default class PagedTable extends React.Component {
         };
     }
 
-    handleSelection = (index) => {
+    handleSelection(index) {
         this.setState({
             selected: this.state.selected.includes(index) ? this.state.selected.filter(item => item !== index) : this.state.selected.concat(index),
         });
+    }
+
+    handleBulkCheckbox() {
+        this.setState(prevState => ({
+            selected: prevState.selected.length > 0 ? [] : this.props.rows.map(row => row.id),
+        }));
+    }
+
+    resetSelection() {
+        this.setState(prevState => ({
+            selected: [],
+        }));
     }
 
     handleChangePage = (event, page) => {
@@ -61,7 +103,7 @@ export default class PagedTable extends React.Component {
     };
 
     handleChangeRowsPerPage = event => {
-        this.setState({ page: 0, rowsPerPage: event.target.value });
+        this.setState({ page: 0, rowsPerPage: parseInt(event.target.value) });
     };
 
     handleRowClick(id) {
@@ -72,39 +114,54 @@ export default class PagedTable extends React.Component {
         }
     }
 
+
     render() {
-        const { classes, rows, selectionHeader, headers, redirect } = this.props;
+        const { classes, rows, SelectionHeader, headers, redirect, title } = this.props;
         const { rowsPerPage, page, selected } = this.state;
-        const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+        const emptyRows = rowsPerPage >= rows.length ? 0 : rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
         const singlePage = emptyRows < rows.length;
         if (this.state.redirect) {
             return (<Redirect to={redirect(this.state.redirect)} />);
         }
         return (
             <Table>
-                {selected.length > 0 ? (
-                    <>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell align="right" colSpan={headers.length + 1}>
-                                    <span className={classes.selectionText}>
-                                            Auswahl ({selected.length})
-                                    </span>
-                                    {selectionHeader}
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                    </>
-                ) : null}
                 <TableHead>
                     <TableRow>
-                        {headers.map(header => !header.hidden && (
-                                <TableCell key={header.key} align={header.align ? header.align : 'left'} onClick={event => this.handleRowClick(row.id)}>
-                                    {header.name}
-                                </TableCell>
-                            ))}
-                        <TableCell align="right" padding="checkbox">
+                        <TableCell align="left" colSpan={headers.length + 1}>
+                            <div className={classes.toolbar}>
+                                {selected.length > 0 ? (
+                                    <div>
+                                        <Typography variant="h6" className={classes.selectionText}>
+                                            Auswahl ({selected.length})
+                                    </Typography>
+                                        <SelectionHeader selected={selected} resetSelection={() => this.resetSelection()} />
+                                    </div>
+                                ) : (
+                                        <Typography variant="h6">{title}</Typography>
+                                    )}
+                                <div>Filter</div>
+                            </div>
                         </TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableHead>
+                    <TableRow>
+                        <TableCell align="left" className={classes.checkboxColumn} padding="checkbox">
+                            <Checkbox
+                                indeterminate={selected.length > 0 && selected.length < rows.length}
+                                checked={selected.length >= rows.length}
+                                onChange={() => this.handleBulkCheckbox()}
+                                color="primary"
+                            />
+                        </TableCell>
+                        {headers.map(header => !header.hidden && (
+                            <TableCell className={classNames(classes.tableHeadCell, {
+                                [classes.semiImportantCell]: header.semiImportant,
+                                [classes.unimportantCell]: header.unimportant,
+                            })} key={header.key} align={header.align ? header.align : 'left'} onClick={event => this.handleRowClick(row.id)}>
+                                {header.name}
+                            </TableCell>
+                        ))}
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -113,46 +170,52 @@ export default class PagedTable extends React.Component {
                             key={row.id}
                             className={classes.clickable}
                         >
-                            {headers.map(header => !header.hidden && (
-                                <TableCell key={header.key} align={header.align ? header.align : 'left'}  onClick={event => this.handleRowClick(row.id)}>
-                                    {row[header.key]}
-                                </TableCell>
-                            ))}
-                            <TableCell align="right" padding="checkbox">
+                            <TableCell align="left" className={classes.checkboxColumn} padding="checkbox">
                                 <Checkbox
                                     checked={selected.includes(row.id)}
                                     onChange={() => this.handleSelection(row.id)}
                                 />
                             </TableCell>
+                            {headers.map(header => !header.hidden && (
+                                <TableCell className={classNames({
+                                    [classes.semiImportantCell]: header.semiImportant,
+                                    [classes.unimportantCell]: header.unimportant,
+                                })} key={header.key} align={header.align ? header.align : 'left'} onClick={event => this.handleRowClick(row.id)}>
+                                    {row[header.key]}
+                                </TableCell>
+                            ))}
                         </TableRow>
                     ))}
                     {emptyRows > 0 && singlePage && (
                         <TableRow style={{ height: 48 * emptyRows }}>
-                            <TableCell colSpan={6} />
+                            <TableCell colSpan={headers.length + 1} />
                         </TableRow>
                     )}
                 </TableBody>
                 <TableFooter>
                     <TableRow>
-                        <TableCell>
-                            <Button variant="contained" onClick={() => this.handleRowClick('new')} className={classes.new}>
-                                Hinzufügen
-                            </Button>
+                        <TableCell colSpan={headers.length + 1}>
+                            <div className={classes.paginationWrapper}>
+                                <Button variant="contained" onClick={() => this.handleRowClick(NEW_ENTITY_ID_PLACEHOLDER)} className={classes.new}>
+                                    Hinzufügen
+                                </Button>
+                                {emptyRows < rows.length && (
+                                    <TablePagination
+                                        labelRowsPerPage="Einträge pro Seite:"
+                                        rowsPerPageOptions={[5, 10, 25, 100, 250]}
+                                        count={rows.length}
+                                        rowsPerPage={rowsPerPage}
+                                        page={page}
+                                        SelectProps={{
+                                            native: true,
+                                        }}
+                                        component="div"
+                                        onChangePage={this.handleChangePage}
+                                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                                    />
+                                )}
+                            </div>
                         </TableCell>
-                        {emptyRows < rows.length && (
-                            <TablePagination
-                                rowsPerPageOptions={[5, 10, 25]}
-                                colSpan={3}
-                                count={rows.length}
-                                rowsPerPage={rowsPerPage}
-                                page={page}
-                                SelectProps={{
-                                    native: true,
-                                }}
-                                onChangePage={this.handleChangePage}
-                                onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                            />
-                        )}
                     </TableRow>
                 </TableFooter>
             </Table>

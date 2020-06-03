@@ -1,20 +1,20 @@
 import React from 'react';
-import { createUser, fetchUser, updateUser, fetchUserRoles, createUserRole, deleteUserRole, fetchUserProjects } from "../actions/user";
-import { withContext, isAnyStringBlank } from '../util';
-import { SessionContext } from './session-provider';
+import { createUser, fetchUser, updateUser, fetchUserRoles, createUserRole, deleteUserRole, fetchUserProjects, fetchUsersByProjectIdAndRole, deleteUser } from "../actions/user";
+import { withContext, isAnyStringBlank, requiresLogin } from '../util';
+import SessionProvider, { SessionContext } from './session-provider';
 import { NEW_ENTITY_ID_PLACEHOLDER } from '../config';
 import { fetchRoles } from '../actions/role';
 import { fetchProjects, deleteProjectUser, createProjectUser } from '../actions/project';
 
 export const UsersContext = React.createContext();
 
-@withContext('sessionState', SessionContext)
-export default class UsersProvider extends React.Component {
+class StatefulUsersProvider extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
             users: new Map(),
+            loadedAllUsers: false,
             roles: null,
             projects: null,
             // copy for editing
@@ -27,6 +27,25 @@ export default class UsersProvider extends React.Component {
     createEmptyUser() {
         const projects = this.state.projects && this.state.projects.length === 1 ? [{ projectId: this.state.projects[0].id }] : [];
         return { gender: 'MALE', firstName: '', lastName: '', email: '', telephoneNumber: '', mobileNumber: '', businessNumber: '', skills: '', profession: '', roles: [{ role: 'ROLE_PUBLISHER' }], projects };
+    }
+
+    loadEditableUsers() {
+        if (!this.state.loadedAllUsers) {
+            return fetchUsersByProjectIdAndRole({ accessToken: this.props.sessionState.accessToken }).then(receivedUsers => {
+                this.setState(prevState => {
+                    const users = new Map(prevState.users);
+                    receivedUsers
+                        .filter(user => !users.has(user.id))
+                        .forEach(user => users.set(user.id, user));
+                    return {
+                        users,
+                        loadedAllUsers: true,
+                    };
+                });
+                return receivedUsers;
+            });
+        }
+        return Promise.resolve([...this.state.users.values()]);
     }
 
     selectUser(userId, handleFailure) {
@@ -45,21 +64,33 @@ export default class UsersProvider extends React.Component {
         }
         const parsedUserId = parseInt(userId);
         if (this.state.users.has(parsedUserId)) {
-            this.setState({
-                selectedUser: this.state.users.get(parsedUserId),
-            });
+            const cachedUser = this.state.users.get(parsedUserId)
+            if (cachedUser.projects && cachedUser.roles) {
+                this.setState({
+                    selectedUser: cachedUser,
+                });
+            } else {
+                this.loadRolesAndProjects(cachedUser)
+                    .then(user => this.handleUpdatedAndSelectdUser(user))
+                    .catch(handleFailure);
+            }
         } else {
-            fetchUser(this.props.sessionState.accessToken, parsedUserId).then(savedUser => this.loadRolesAndProjects(savedUser)).then(user =>
-                this.setState(prevState => {
-                    const users = new Map(prevState.users);
-                    users.set(user.id, user);
-                    return {
-                        users,
-                        selectedUser: user,
-                    };
-                })
-            ).catch(handleFailure);
+            fetchUser(this.props.sessionState.accessToken, parsedUserId)
+                .then(user => this.loadRolesAndProjects(user))
+                .then(user => this.handleUpdatedAndSelectdUser(user))
+                .catch(handleFailure);
         }
+    }
+
+    handleUpdatedAndSelectdUser(user) {
+        this.setState(prevState => {
+            const users = new Map(prevState.users);
+            users.set(user.id, user);
+            return {
+                users,
+                selectedUser: user,
+            };
+        })
     }
 
     resetSelectedUser() {
@@ -319,6 +350,22 @@ export default class UsersProvider extends React.Component {
         }
     }
 
+    bulkDeleteUsers(userIds) {
+        if (userIds && userIds.map) {
+            const idsWithoutSelf = userIds.filter(id => id !== this.props.sessionState.currentUser.id);
+            return Promise.all(idsWithoutSelf.map(id => deleteUser(this.props.sessionState.accessToken, { id })))
+                .then(() => this.setState(prevState => {
+                    const users = new Map(prevState.users);
+                    idsWithoutSelf.forEach(id => users.delete(id));
+                    return {
+                        users,
+                        selectedUser: prevState.selectedUser && !idsWithoutSelf.includes(prevState.selectedUser.id) ? prevState.selectedUser : null,
+                    };
+                }));
+        }
+        return Promise.resolve()
+    }
+
 
 
     render() {
@@ -327,6 +374,7 @@ export default class UsersProvider extends React.Component {
                 value={{
                     ...this.state,
                     selectUser: this.selectUser.bind(this),
+                    loadEditableUsers: this.loadEditableUsers.bind(this),
                     resetSelectedUser: this.resetSelectedUser.bind(this),
                     isUserValid: this.isUserValid.bind(this),
                     saveSelectedUser: this.saveSelectedUser.bind(this),
@@ -343,6 +391,8 @@ export default class UsersProvider extends React.Component {
                     changeTelephoneNumber: this.changeTelephoneNumber.bind(this),
                     toggleRole: this.toggleRole.bind(this),
                     toggleProject: this.toggleProject.bind(this),
+
+                    bulkDeleteUsers: this.bulkDeleteUsers.bind(this),
                 }}
             >
                 {this.props.children}
@@ -350,3 +400,12 @@ export default class UsersProvider extends React.Component {
         );
     }
 }
+
+const UsersProvider = props => (
+    <>
+        <SessionContext.Consumer>
+            {sessionState => (<StatefulUsersProvider {...props} sessionState={sessionState} />)}
+        </SessionContext.Consumer>
+    </>
+);
+export default UsersProvider;

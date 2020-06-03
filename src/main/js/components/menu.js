@@ -18,7 +18,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { logout } from '../actions/login';
-import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfStores, fullPathOfUsersSettings } from '../paths';
+import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfStores, fullPathOfUsersSettings, fullPathOfUserSettings } from '../paths';
 import { SessionContext } from '../providers/session-provider';
 import WithPermission from './with-permission';
 
@@ -170,7 +170,7 @@ const DataProtectionItem = () => (
 );
 
 const SettingsItem = props => (
-  <Link to={fullPathOfUsersSettings()} style={linkStyle}>
+  <Link to={props.sessionState.hasPermission('ROLE_RIGHT_USERS_GET') ? fullPathOfUsersSettings() : fullPathOfUserSettings(props.sessionState.currentUser.id)} style={linkStyle}>
     <ListItem button>
       <ListItemIcon>
         <SettingsIcon />
@@ -199,7 +199,7 @@ export default function AppMenu() {
           </List>
           <Divider />
           <List>
-            <SettingsItem />
+            <SettingsItem sessionState={loginState} />
             <LogoutItem loginState={loginState} />
             <ImprintItem />
             <DataProtectionItem />

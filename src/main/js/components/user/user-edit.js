@@ -11,7 +11,7 @@ import { requestPasswordReset } from '../../actions/login';
 import { PageContext } from '../../providers/page-provider';
 import { Typography, Checkbox, FormControlLabel, Tooltip } from '@material-ui/core';
 import { Redirect } from 'react-router';
-import { fullPathOfUserSettings } from '../../paths';
+import { fullPathOfUserSettings, fullPathOfUsersSettings } from '../../paths';
 import { NEW_ENTITY_ID_PLACEHOLDER } from '../../config';
 
 const styles = theme => ({
@@ -43,7 +43,8 @@ class StatefulUserEditComponent extends React.Component {
         this.state = {
             saving: false,
             passwordEmailSent: false,
-            redirectToUser: null,
+            redirectUrl: null,
+            userId: null,
         };
         this.roleNames = new Map();
         this.roleNames.set('ROLE_STORE_KEEPER', 'Magaziner');
@@ -55,32 +56,54 @@ class StatefulUserEditComponent extends React.Component {
         this.roleNames.set('ROLE_PUBLISHER', 'Verkündiger');
     }
 
-    componentDidMount() {
-        this.props.usersState.selectUser(this.props.match.params.userId,
-            error => this.handleFailure(error));
-    }
-
     componentDidUpdate() {
-        const { pagesState, usersState } = this.props;
-        if (!pagesState.currentItemName && usersState.selectedUser && usersState.selectedUser.firstName && usersState.selectedUser.lastName) {
+        const { pagesState, usersState, match } = this.props;
+        if (this.state.userId !== match.params.userId) {
+            this.setState({
+                userId: match.params.userId,
+            }, () => this.props.usersState.selectUser(this.props.match.params.userId,
+                error => this.handleFailure(error)));
+        }
+        if (usersState.selectedUser && pagesState.currentItemName !== (usersState.selectedUser.firstName + ' ' + usersState.selectedUser.lastName)) {
             pagesState.setCurrentItemName({ name: usersState.selectedUser.firstName + ' ' + usersState.selectedUser.lastName });
+        } else if (!usersState.selectedUser && pagesState.currentItemName) {
+            pagesState.setCurrentItemName({ name: null });
         }
     }
 
     save(redirectToUser) {
         this.setState({ saving: true });
+        const { usersState, match } = this.props;
         this.props.usersState.saveSelectedUser()
             .then(() => this.props.enqueueSnackbar('Benutzer gespeichert', { variant: 'success', }))
-            .then(() =>
-                (redirectToUser || parseInt(this.props.match.params.userId) !== this.props.usersState.selectedUser.id) && this.setState({ redirectToUser: redirectToUser || this.props.usersState.selectedUser.id })
-            )
+            .then(() => {
+                let redirectUrl;
+                if (redirectToUser) {
+                    if (match.params.userId === redirectToUser) {
+                        usersState.selectUser(redirectToUser, error => this.handleFailure(error))
+                    } else {
+                        redirectUrl = fullPathOfUserSettings(redirectToUser);
+                    }
+                } else {
+                    if (usersState.loadedAllUsers) {
+                        redirectUrl = fullPathOfUsersSettings();
+                    } else if (match.params.userId !== usersState.selectedUser.id) {
+                        redirectUrl = fullPathOfUserSettings(usersState.selectedUser.id);
+                    }
+                }
+                redirectUrl && this.setState({ redirectUrl })
+            })
             .catch(error => this.handleFailure(error)).finally(() => this.setState({ saving: false }));
     }
 
     cancel() {
-        this.setState({
-            user: this.props.usersState.resetSelectedUser(),
-        });
+        const { usersState } = this.props;
+        usersState.resetSelectedUser();
+        if (usersState.loadedAllUsers) {
+            this.setState({
+                redirectUrl: fullPathOfUsersSettings(),
+            });
+        }
     }
 
     changePassword() {
@@ -117,10 +140,10 @@ class StatefulUserEditComponent extends React.Component {
     }
 
     render() {
-        const { classes, usersState } = this.props;
-        const { passwordEmailSent, saving, redirectToUser } = this.state;
-        if (redirectToUser) {
-            return (<Redirect to={fullPathOfUserSettings(redirectToUser)} />);
+        const { classes, usersState, pagesState } = this.props;
+        const { passwordEmailSent, saving, redirectUrl } = this.state;
+        if (redirectUrl && redirectUrl !== pagesState.currentPath) {
+            return (<Redirect to={redirectUrl} />);
         }
         const user = usersState.selectedUser;
         const isNewUser = usersState.selectedUser && !usersState.selectedUser.id;

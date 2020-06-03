@@ -33,8 +33,7 @@ export function fetchUsersByProjectIdAndRole({ accessToken, projectId, role }) {
             [ROLE_VARIABLE]: role,
         }
     })
-        .then(result => result.response.content)
-        .catch(err => null);
+        .then(result => result.response.content);
 }
 
 export function fetchUser(accessToken, userId) {
@@ -57,22 +56,17 @@ export function createUser(accessToken, user) {
         .then(result => result.response);
 }
 
-export function deleteUser({ accessToken, userId, projectsState }) {
+export function deleteUser(accessToken, { id }) {
     return apiRequest({
         apiEndpoint: apiEndpoints.user.delete,
         authToken: accessToken,
         parameters: {
-            [ID_VARIABLE]: userId,
+            [ID_VARIABLE]: id,
         }
-    })
-        .then(() => {
-            return projectsState.userRemoved(userId);
-        })
-        // TODO Error message
-        .catch(e => console.log(e));
+    });
 }
 
-export function updateUser(accessToken, user, handleFailure) {
+export function updateUser(accessToken, user) {
     return apiRequest({
         apiEndpoint: apiEndpoints.user.put,
         authToken: accessToken,
@@ -81,8 +75,7 @@ export function updateUser(accessToken, user, handleFailure) {
         },
         data: user,
     })
-        .then(result => result.response)
-        .catch(handleFailure);
+        .then(result => result.response);
 }
 
 export function fetchUserRoles(accessToken, { id }) {
