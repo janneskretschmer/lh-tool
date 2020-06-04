@@ -1,5 +1,5 @@
 import React from 'react';
-import { createUser, fetchUser, updateUser, fetchUserRoles, createUserRole, deleteUserRole, fetchUserProjects, fetchUsersByProjectIdAndRoleAndFreeText, deleteUser } from "../actions/user";
+import { createUser, fetchUser, updateUser, fetchUserRoles, createUserRole, deleteUserRole, fetchUserProjects, fetchUsersByProjectIdAndRoleAndFreeText, deleteUser } from '../actions/user';
 import { withContext, isAnyStringBlank, requiresLogin } from '../util';
 import SessionProvider, { SessionContext } from './session-provider';
 import { NEW_ENTITY_ID_PLACEHOLDER } from '../config';
@@ -20,9 +20,9 @@ class StatefulUsersProvider extends React.Component {
             // copy for editing
             selectedUser: null,
 
-            filterFreeText: "",
-            filterProjectId: "",
-            filterRole: "",
+            filterFreeText: '',
+            filterProjectId: '',
+            filterRole: '',
         }
     }
 
@@ -34,7 +34,7 @@ class StatefulUsersProvider extends React.Component {
     }
 
     loadEditableUsers() {
-        const { filterFreeText, filterProjectId, filterRole, loadedForCurrentFilter } = this.state
+        const { filterFreeText, filterProjectId, filterRole, loadedForCurrentFilter } = this.state;
         if (!loadedForCurrentFilter) {
             this.loadGrantableRoles();
             this.loadProjects();
@@ -74,7 +74,7 @@ class StatefulUsersProvider extends React.Component {
         }
         const parsedUserId = parseInt(userId);
         if (this.state.users.has(parsedUserId)) {
-            const cachedUser = this.state.users.get(parsedUserId)
+            const cachedUser = this.state.users.get(parsedUserId);
             if (cachedUser.projects && cachedUser.roles) {
                 this.setState({
                     selectedUser: cachedUser,
@@ -100,7 +100,7 @@ class StatefulUsersProvider extends React.Component {
                 users,
                 selectedUser: user,
             };
-        })
+        });
     }
 
     resetSelectedUser() {
@@ -390,7 +390,7 @@ class StatefulUsersProvider extends React.Component {
                     };
                 }));
         }
-        return Promise.resolve()
+        return Promise.resolve();
     }
 
 

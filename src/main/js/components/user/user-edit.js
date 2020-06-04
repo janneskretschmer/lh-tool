@@ -72,7 +72,7 @@ class StatefulUserEditComponent extends React.Component {
                 let redirectUrl;
                 if (redirectToUser) {
                     if (match.params.userId === redirectToUser) {
-                        usersState.selectUser(redirectToUser, error => this.handleFailure(error))
+                        usersState.selectUser(redirectToUser, error => this.handleFailure(error));
                     } else {
                         redirectUrl = fullPathOfUserSettings(redirectToUser);
                     }
@@ -83,7 +83,7 @@ class StatefulUserEditComponent extends React.Component {
                         redirectUrl = fullPathOfUserSettings(usersState.selectedUser.id);
                     }
                 }
-                redirectUrl && this.setState({ redirectUrl })
+                redirectUrl && this.setState({ redirectUrl });
             })
             .catch(error => this.handleFailure(error)).finally(() => this.setState({ saving: false }));
     }
