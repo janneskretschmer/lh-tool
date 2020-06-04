@@ -34,7 +34,7 @@ public interface UserService extends BasicEntityService<User, Long> {
 
 	void deleteUserById(Long id) throws DefaultException;
 
-	List<UserDto> findDtosByProjectIdAndRoleIgnoreCase(Long projectId, String role) throws DefaultException;
+	List<UserDto> findDtosByProjectIdAndRoleIgnoreCase(Long projectId, String role, String freeText) throws DefaultException;
 
 	UserDto findDtoById(Long id) throws DefaultException;
 

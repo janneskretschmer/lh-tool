@@ -1,5 +1,5 @@
 import React from 'react';
-import { createUser, fetchUser, updateUser, fetchUserRoles, createUserRole, deleteUserRole, fetchUserProjects, fetchUsersByProjectIdAndRole, deleteUser } from "../actions/user";
+import { createUser, fetchUser, updateUser, fetchUserRoles, createUserRole, deleteUserRole, fetchUserProjects, fetchUsersByProjectIdAndRoleAndFreeText, deleteUser } from "../actions/user";
 import { withContext, isAnyStringBlank, requiresLogin } from '../util';
 import SessionProvider, { SessionContext } from './session-provider';
 import { NEW_ENTITY_ID_PLACEHOLDER } from '../config';
@@ -14,11 +14,15 @@ class StatefulUsersProvider extends React.Component {
         super(props);
         this.state = {
             users: new Map(),
-            loadedAllUsers: false,
+            loadedForCurrentFilter: false,
             roles: null,
             projects: null,
             // copy for editing
             selectedUser: null,
+
+            filterFreeText: "",
+            filterProjectId: "",
+            filterRole: "",
         }
     }
 
@@ -30,16 +34,22 @@ class StatefulUsersProvider extends React.Component {
     }
 
     loadEditableUsers() {
-        if (!this.state.loadedAllUsers) {
-            return fetchUsersByProjectIdAndRole({ accessToken: this.props.sessionState.accessToken }).then(receivedUsers => {
+        const { filterFreeText, filterProjectId, filterRole, loadedForCurrentFilter } = this.state
+        if (!loadedForCurrentFilter) {
+            this.loadGrantableRoles();
+            this.loadProjects();
+            return fetchUsersByProjectIdAndRoleAndFreeText(this.props.sessionState.accessToken, filterProjectId, filterRole, filterFreeText).then(receivedUsers => {
                 this.setState(prevState => {
                     const users = new Map(prevState.users);
                     receivedUsers
                         .filter(user => !users.has(user.id))
                         .forEach(user => users.set(user.id, user));
+                    [...users.keys()]
+                        .filter(id => !receivedUsers.find(user => user.id === id))
+                        .forEach(id => users.delete(id));
                     return {
                         users,
-                        loadedAllUsers: true,
+                        loadedForCurrentFilter: true,
                     };
                 });
                 return receivedUsers;
@@ -105,8 +115,8 @@ class StatefulUsersProvider extends React.Component {
         const user = this.state.selectedUser;
         return !!user &&
             !isAnyStringBlank([user.firstName, user.lastName, user.email]) &&
-            user.roles.length > 0 &&
-            (user.projects.length > 0 || user.roles.find(userRole => userRole.role === 'ROLE_ADMIN'));
+            (user.roles.length > 0 || !this.state.roles) &&
+            (user.projects.length > 0 || !this.state.projects || user.roles.find(userRole => userRole.role === 'ROLE_ADMIN'));
     }
 
     saveSelectedUser() {
@@ -170,6 +180,7 @@ class StatefulUsersProvider extends React.Component {
                 return {
                     users,
                     selectedUser: savedUser,
+                    loadedForCurrentFilter: !prevState.filterFreeText && !prevState.filterProjectId && !prevState.filterRole
                 };
             }));
     }
@@ -204,20 +215,22 @@ class StatefulUsersProvider extends React.Component {
     ///////////////////////////////////////////////////// Projects /////////////////////////////////////////////////////
 
     loadProjects() {
-        if (!this.state.projects) {
-            this.setState({ projects: [] });
-            fetchProjects(this.props.sessionState.accessToken).then(projects => this.setState(prevState => {
-                let selectedUser = { ...prevState.selectedUser };
-                if (!selectedUser.id && (!selectedUser.projects || selectedUser.projects.length === 0) && projects.length === 1) {
-                    selectedUser.projects = [{ projectId: projects[0].id }];
-                }
-                return { projects, selectedUser };
-            })).catch(error => this.setState({ projects: [] }));
+        if (this.props.sessionState.hasPermission('ROLE_RIGHT_PROJECTS_USERS_POST')) {
+            if (!this.state.projects) {
+                this.setState({ projects: [] });
+                fetchProjects(this.props.sessionState.accessToken).then(projects => this.setState(prevState => {
+                    let selectedUser = { ...prevState.selectedUser };
+                    if (!selectedUser.id && (!selectedUser.projects || selectedUser.projects.length === 0) && projects.length === 1) {
+                        selectedUser.projects = [{ projectId: projects[0].id }];
+                    }
+                    return { projects, selectedUser };
+                })).catch(error => this.setState({ projects: [] }));
+            }
         }
     }
 
     findProjectsForUser(user) {
-        if (user && this.props.sessionState.hasPermission('ROLE_RIGHT_PROJECTS_USERS_GET')) {
+        if (user && this.props.sessionState.hasPermission('ROLE_RIGHT_PROJECTS_USERS_POST')) {
             return fetchUserProjects(this.props.sessionState.accessToken, user).catch(error => []);
         }
         return Promise.resolve([]);
@@ -350,6 +363,20 @@ class StatefulUsersProvider extends React.Component {
         }
     }
 
+
+    changeFreeTextFilter(filterFreeText) {
+        this.setState({ filterFreeText, loadedForCurrentFilter: false });
+    }
+
+    changeProjectIdFilter(filterProjectId) {
+        this.setState({ filterProjectId, loadedForCurrentFilter: false });
+    }
+
+    changeRoleFilter(filterRole) {
+        this.setState({ filterRole, loadedForCurrentFilter: false });
+    }
+
+
     bulkDeleteUsers(userIds) {
         if (userIds && userIds.map) {
             const idsWithoutSelf = userIds.filter(id => id !== this.props.sessionState.currentUser.id);
@@ -391,6 +418,10 @@ class StatefulUsersProvider extends React.Component {
                     changeTelephoneNumber: this.changeTelephoneNumber.bind(this),
                     toggleRole: this.toggleRole.bind(this),
                     toggleProject: this.toggleProject.bind(this),
+
+                    changeFreeTextFilter: this.changeFreeTextFilter.bind(this),
+                    changeProjectIdFilter: this.changeProjectIdFilter.bind(this),
+                    changeRoleFilter: this.changeRoleFilter.bind(this),
 
                     bulkDeleteUsers: this.bulkDeleteUsers.bind(this),
                 }}

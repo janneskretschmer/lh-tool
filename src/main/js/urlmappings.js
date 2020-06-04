@@ -14,6 +14,7 @@ export const STORE_VARIABLE = 'store';
 export const WEEKDAY_VARIABLE = 'weekday';
 export const START_DATE_VARIABLE = 'start_date';
 export const END_DATE_VARIABLE = 'end_date';
+export const FREE_TEXT_VARIABLE = 'free_text';
 
 export const NO_EXTENSION = '';
 export const ID_EXTENSION = '/{' + ID_VARIABLE + '}';

@@ -18,6 +18,7 @@ public abstract class UrlMappings {
 	public static final String WEEKDAY_VARIABLE = "weekday";
 	public static final String START_DATE_VARIABLE = "start_date";
 	public static final String END_DATE_VARIABLE = "end_date";
+	public static final String FREE_TEXT_VARIABLE = "free_text";
 
 	public static final String NO_EXTENSION = "";
 	public static final String ID_EXTENSION = "/{" + ID_VARIABLE + "}";

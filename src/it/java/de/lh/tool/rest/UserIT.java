@@ -921,7 +921,7 @@ public class UserIT extends BasicRestIntegrationTest {
 				.userTests(List.of(//
 						UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/{?project_id,role}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"firstName\":\"Test\",\"lastName\":\"Admin\",\"gender\":\"MALE\","
+										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/{?project_id,role,free_text}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"firstName\":\"Test\",\"lastName\":\"Admin\",\"gender\":\"MALE\","
 												+ "\"email\":\"test-admin@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false},{\"id\":4,\"firstName\":\"Test\",\"lastName\":\"Attendance\",\"gender\":\"MALE\","
 												+ "\"email\":\"test-attendance@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false},{\"id\":2,\"firstName\":\"Test\",\"lastName\":\"Construction_servant\",\"gender\":\"MALE\","
 												+ "\"email\":\"test-construction_servant@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false},{\"id\":7,\"firstName\":\"Test\",\"lastName\":\"Inventory_manager\",\"gender\":\"MALE\","
@@ -934,15 +934,15 @@ public class UserIT extends BasicRestIntegrationTest {
 								.build(),
 						UserTest.builder().emails(List.of(CONSTRUCTION_SERVANT_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/{?project_id,role}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":2,\"firstName\":\"Test\",\"lastName\":\"Construction_servant\",\"gender\":\"MALE\",\"email\":\"test-construction_servant@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false}]}")
+										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/{?project_id,role,free_text}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":2,\"firstName\":\"Test\",\"lastName\":\"Construction_servant\",\"gender\":\"MALE\",\"email\":\"test-construction_servant@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false}]}")
 								.build(),
 						UserTest.builder().emails(List.of(LOCAL_COORDINATOR_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/{?project_id,role}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":3,\"firstName\":\"Test\",\"lastName\":\"Local_coordinator\",\"gender\":\"MALE\",\"email\":\"test-local_coordinator@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false}]}")
+										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/{?project_id,role,free_text}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":3,\"firstName\":\"Test\",\"lastName\":\"Local_coordinator\",\"gender\":\"MALE\",\"email\":\"test-local_coordinator@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false}]}")
 								.build(),
 						UserTest.builder().emails(List.of(ATTENDANCE_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/{?project_id,role}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":4,\"firstName\":\"Test\",\"lastName\":\"Attendance\",\"gender\":\"MALE\",\"email\":\"test-attendance@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false}]}")
+										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/{?project_id,role,free_text}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":4,\"firstName\":\"Test\",\"lastName\":\"Attendance\",\"gender\":\"MALE\",\"email\":\"test-attendance@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false}]}")
 								.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
@@ -958,7 +958,7 @@ public class UserIT extends BasicRestIntegrationTest {
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1002', 'Tes', 'Ter', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test2@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)"))
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/{?project_id,role}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"firstName\":\"Test\",\"lastName\":\"Admin\",\"gender\":\"MALE\","
+								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/{?project_id,role,free_text}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"firstName\":\"Test\",\"lastName\":\"Admin\",\"gender\":\"MALE\","
 										+ "\"email\":\"test-admin@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false},{\"id\":4,\"firstName\":\"Test\",\"lastName\":\"Attendance\",\"gender\":\"MALE\","
 										+ "\"email\":\"test-attendance@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false},{\"id\":2,\"firstName\":\"Test\",\"lastName\":\"Construction_servant\",\"gender\":\"MALE\","
 										+ "\"email\":\"test-construction_servant@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false},{\"id\":7,\"firstName\":\"Test\",\"lastName\":\"Inventory_manager\",\"gender\":\"MALE\","
@@ -973,7 +973,7 @@ public class UserIT extends BasicRestIntegrationTest {
 								.emails(List.of(CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL, ATTENDANCE_EMAIL))
 								.expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/{?project_id,role}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"firstName\":\"Test\",\"lastName\":\"Admin\",\"gender\":\"MALE\","
+										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/{?project_id,role,free_text}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"firstName\":\"Test\",\"lastName\":\"Admin\",\"gender\":\"MALE\","
 												+ "\"email\":\"test-admin@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false},{\"id\":4,\"firstName\":\"Test\",\"lastName\":\"Attendance\",\"gender\":\"MALE\","
 												+ "\"email\":\"test-attendance@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false},{\"id\":2,\"firstName\":\"Test\",\"lastName\":\"Construction_servant\",\"gender\":\"MALE\","
 												+ "\"email\":\"test-construction_servant@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false},{\"id\":7,\"firstName\":\"Test\",\"lastName\":\"Inventory_manager\",\"gender\":\"MALE\","
@@ -1003,7 +1003,7 @@ public class UserIT extends BasicRestIntegrationTest {
 								.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL, ATTENDANCE_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/?project_id=1{&role}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"firstName\":\"Test\",\"lastName\":\"Admin\",\"gender\":\"MALE\","
+								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/?project_id=1{&role,free_text}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"firstName\":\"Test\",\"lastName\":\"Admin\",\"gender\":\"MALE\","
 										+ "\"email\":\"test-admin@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false},{\"id\":4,\"firstName\":\"Test\",\"lastName\":\"Attendance\",\"gender\":\"MALE\","
 										+ "\"email\":\"test-attendance@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false},{\"id\":2,\"firstName\":\"Test\",\"lastName\":\"Construction_servant\",\"gender\":\"MALE\","
 										+ "\"email\":\"test-construction_servant@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false},{\"id\":7,\"firstName\":\"Test\",\"lastName\":\"Inventory_manager\",\"gender\":\"MALE\","
@@ -1031,7 +1031,7 @@ public class UserIT extends BasicRestIntegrationTest {
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1003', 'Firstname', 'Lastname', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test3@lh-tool.de', '541681', '61', NULL, '', NULL)"))
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/?project_id=2{&role}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1002,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":\"MALE\","
+								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/?project_id=2{&role,free_text}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1002,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":\"MALE\","
 										+ "\"email\":\"test2@lh-tool.de\",\"telephoneNumber\":\"123\",\"mobileNumber\":\"456\",\"businessNumber\":null,\"profession\":\"Hartzer\",\"skills\":null,\"active\":false},{\"id\":1000,\"firstName\":\"Tes\",\"lastName\":\"Terin\",\"gender\":\"FEMALE\","
 										+ "\"email\":\"test@lh-tool.de\",\"telephoneNumber\":\"123\",\"mobileNumber\":\"456\",\"businessNumber\":null,\"profession\":\"Hartzer\",\"skills\":null,\"active\":false}]}")
 						.build()))
@@ -1057,7 +1057,7 @@ public class UserIT extends BasicRestIntegrationTest {
 								.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL, ATTENDANCE_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/?project_id=1&role=ROLE_INVENTORY_MANAGER\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":7,\"firstName\":\"Test\",\"lastName\":\"Inventory_manager\",\"gender\":\"MALE\","
+								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/?project_id=1&role=ROLE_INVENTORY_MANAGER{&free_text}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":7,\"firstName\":\"Test\",\"lastName\":\"Inventory_manager\",\"gender\":\"MALE\","
 										+ "\"email\":\"test-inventory_manager@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false},{\"id\":1000,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":\"FEMALE\","
 										+ "\"email\":\"test@lh-tool.de\",\"telephoneNumber\":\"123\",\"mobileNumber\":\"456\",\"businessNumber\":null,\"profession\":\"Hartzer\",\"skills\":null,\"active\":false}]}")
 						.build()))
@@ -1081,7 +1081,63 @@ public class UserIT extends BasicRestIntegrationTest {
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1003', 'Firstname', 'Lastname', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test3@lh-tool.de', '541681', '61', NULL, '', NULL)"))
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/?project_id=2&role=ROLE_PUBLISHER\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1000,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":\"FEMALE\",\"email\":\"test@lh-tool.de\",\"telephoneNumber\":\"123\",\"mobileNumber\":\"456\",\"businessNumber\":null,\"profession\":\"Hartzer\",\"skills\":null,\"active\":false}]}")
+								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/?project_id=2&role=ROLE_PUBLISHER{&free_text}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1000,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":\"FEMALE\",\"email\":\"test@lh-tool.de\",\"telephoneNumber\":\"123\",\"mobileNumber\":\"456\",\"businessNumber\":null,\"profession\":\"Hartzer\",\"skills\":null,\"active\":false}]}")
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
+	}
+
+	@Test
+	public void testUserGetByOwnProjectIdAndRoleAndFreeText() throws Exception {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.url(REST_URL + "/users?project_id=1&role=ROLE_INVENTORY_MANAGER&fRe3T_eXt").method(Method.GET)
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (2, 'Test2', '2020-08-09', '2020-11-24')",
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1000', 'Tes', 'Ter', 'FEMALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
+						"INSERT INTO user_role(user_id,role) VALUES(1000,'ROLE_INVENTORY_MANAGER')",
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1002', 'Tes', 'Ter', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test2@lh-tool.de', '123', '456', NULL, 'Hartzer', NULL)",
+						"INSERT INTO user_role(user_id,role) VALUES(1002,'ROLE_INVENTORY_MANAGER')",
+						"INSERT INTO project_user(project_id, user_id) VALUES(2,1002)",
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1003', 'ewfRe3T_eXtasda', 'Lastname', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test3@lh-tool.de', '541681', '61', NULL, '', NULL)",
+						"INSERT INTO user_role(user_id,role) VALUES(1003,'ROLE_INVENTORY_MANAGER')",
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1004', 'Firstname', 'vewfRe3T_eXtaase', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test4@lh-tool.de', '541681', '61', NULL, '', NULL)",
+						"INSERT INTO user_role(user_id,role) VALUES(1004,'ROLE_INVENTORY_MANAGER')",
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1005', 'Firstname', 'Lastname', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'fRe3T_eXtf@lh-tool.de', '541681', '61', NULL, '', NULL)",
+						"INSERT INTO user_role(user_id,role) VALUES(1005,'ROLE_INVENTORY_MANAGER')",
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1006', 'Firstname', 'Lastname', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test6@lh-tool.de', 'ffffre3t_extase', '61', NULL, '', NULL)",
+						"INSERT INTO user_role(user_id,role) VALUES(1006,'ROLE_INVENTORY_MANAGER')",
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1007', 'Firstname', 'Lastname', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test7@lh-tool.de', '541681', 'fRe3T_eXt', NULL, '', NULL)",
+						"INSERT INTO user_role(user_id,role) VALUES(1007,'ROLE_INVENTORY_MANAGER')",
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1008', 'Firstname', 'Lastname', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test8@lh-tool.de', '541681', '61', 'basFWfRe3T_eXtdae', '', NULL)",
+						"INSERT INTO user_role(user_id,role) VALUES(1008,'ROLE_INVENTORY_MANAGER')",
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1009', 'Firstname', 'Lastname', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test9@lh-tool.de', '541681', '61', NULL, 'vasereFRE3T_EXTeaseav', NULL)",
+						"INSERT INTO user_role(user_id,role) VALUES(1009,'ROLE_INVENTORY_MANAGER')",
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1010', 'Firstname', 'Lastname', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test10@lh-tool.de', '541681', '61', NULL, '', 'ankalsnfRe3T_eXTalsknelk')",
+						"INSERT INTO user_role(user_id,role) VALUES(1010,'ROLE_INVENTORY_MANAGER')",
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1011', 'Firstname', 'Lastname', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test11@lh-tool.de', '541681', '61', NULL, '', NULL)",
+						"INSERT INTO user_role(user_id,role) VALUES(1011,'ROLE_INVENTORY_MANAGER')",
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1012', 'Firstname', 'Lastname', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test12@lh-tool.de', '541681', '61', NULL, '', NULL)",
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1013', 'fRe3T_eXt', 'Lastname', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test13@lh-tool.de', '541681', '61', NULL, '', NULL)",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1014', 'Firstname', 'Lastname', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test14@lh-tool.de', '541681', '61', NULL, '', NULL)",
+						"INSERT INTO user_role(user_id,role) VALUES(1014,'ROLE_INVENTORY_MANAGER')"))
+				.userTests(List.of(UserTest.builder()
+						.emails(List
+								.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL, ATTENDANCE_EMAIL))
+						.expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/?project_id=1&role=ROLE_INVENTORY_MANAGER{&free_text}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":7,\"firstName\":\"Test\",\"lastName\":\"Inventory_manager\",\"gender\":\"MALE\","
+										+ "\"email\":\"test-inventory_manager@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false},{\"id\":1003,\"firstName\":\"ewfRe3T_eXtasda\",\"lastName\":\"Lastname\",\"gender\":\"MALE\","
+										+ "\"email\":\"test3@lh-tool.de\",\"telephoneNumber\":\"541681\",\"mobileNumber\":\"61\",\"businessNumber\":null,\"profession\":\"\",\"skills\":null,\"active\":false},{\"id\":1005,\"firstName\":\"Firstname\",\"lastName\":\"Lastname\",\"gender\":\"MALE\","
+										+ "\"email\":\"fRe3T_eXtf@lh-tool.de\",\"telephoneNumber\":\"541681\",\"mobileNumber\":\"61\",\"businessNumber\":null,\"profession\":\"\",\"skills\":null,\"active\":false},{\"id\":1006,\"firstName\":\"Firstname\",\"lastName\":\"Lastname\",\"gender\":\"MALE\","
+										+ "\"email\":\"test6@lh-tool.de\",\"telephoneNumber\":\"ffffre3t_extase\",\"mobileNumber\":\"61\",\"businessNumber\":null,\"profession\":\"\",\"skills\":null,\"active\":false},{\"id\":1007,\"firstName\":\"Firstname\",\"lastName\":\"Lastname\",\"gender\":\"MALE\","
+										+ "\"email\":\"test7@lh-tool.de\",\"telephoneNumber\":\"541681\",\"mobileNumber\":\"fRe3T_eXt\",\"businessNumber\":null,\"profession\":\"\",\"skills\":null,\"active\":false},{\"id\":1008,\"firstName\":\"Firstname\",\"lastName\":\"Lastname\",\"gender\":\"MALE\","
+										+ "\"email\":\"test8@lh-tool.de\",\"telephoneNumber\":\"541681\",\"mobileNumber\":\"61\",\"businessNumber\":\"basFWfRe3T_eXtdae\",\"profession\":\"\",\"skills\":null,\"active\":false},{\"id\":1009,\"firstName\":\"Firstname\",\"lastName\":\"Lastname\",\"gender\":\"MALE\","
+										+ "\"email\":\"test9@lh-tool.de\",\"telephoneNumber\":\"541681\",\"mobileNumber\":\"61\",\"businessNumber\":null,\"profession\":\"vasereFRE3T_EXTeaseav\",\"skills\":null,\"active\":false},{\"id\":1010,\"firstName\":\"Firstname\",\"lastName\":\"Lastname\",\"gender\":\"MALE\","
+										+ "\"email\":\"test10@lh-tool.de\",\"telephoneNumber\":\"541681\",\"mobileNumber\":\"61\",\"businessNumber\":null,\"profession\":\"\",\"skills\":\"ankalsnfRe3T_eXTalsknelk\",\"active\":false},{\"id\":1000,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":\"FEMALE\","
+										+ "\"email\":\"test@lh-tool.de\",\"telephoneNumber\":\"123\",\"mobileNumber\":\"456\",\"businessNumber\":null,\"profession\":\"Hartzer\",\"skills\":null,\"active\":false},{\"id\":1002,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":\"MALE\","
+										+ "\"email\":\"test2@lh-tool.de\",\"telephoneNumber\":\"123\",\"mobileNumber\":\"456\",\"businessNumber\":null,\"profession\":\"Hartzer\",\"skills\":null,\"active\":false},{\"id\":1004,\"firstName\":\"Firstname\",\"lastName\":\"vewfRe3T_eXtaase\",\"gender\":\"MALE\","
+										+ "\"email\":\"test4@lh-tool.de\",\"telephoneNumber\":\"541681\",\"mobileNumber\":\"61\",\"businessNumber\":null,\"profession\":\"\",\"skills\":null,\"active\":false}]}")
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
@@ -1102,7 +1158,7 @@ public class UserIT extends BasicRestIntegrationTest {
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `password_hash`, `email`, `telephone_number`, `mobile_number`, `business_number`, `profession`, `skills`) VALUES ('1003', 'Firstname', 'Lastname', 'MALE', '$2a$10$SfXYNzO70C1BqSPOIN0oYOwkz2hPWaXWvRc5aWBHuYxNNlpmciE9W', 'test3@lh-tool.de', '541681', '61', NULL, '', NULL)"))
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/?role=ROLE_INVENTORY_MANAGER{&project_id}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":7,\"firstName\":\"Test\",\"lastName\":\"Inventory_manager\",\"gender\":\"MALE\","
+								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/?role=ROLE_INVENTORY_MANAGER{&project_id,free_text}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":7,\"firstName\":\"Test\",\"lastName\":\"Inventory_manager\",\"gender\":\"MALE\","
 										+ "\"email\":\"test-inventory_manager@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false},{\"id\":1000,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":\"FEMALE\","
 										+ "\"email\":\"test@lh-tool.de\",\"telephoneNumber\":\"123\",\"mobileNumber\":\"456\",\"businessNumber\":null,\"profession\":\"Hartzer\",\"skills\":null,\"active\":false},{\"id\":1002,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":\"MALE\","
 										+ "\"email\":\"test2@lh-tool.de\",\"telephoneNumber\":\"123\",\"mobileNumber\":\"456\",\"businessNumber\":null,\"profession\":\"Hartzer\",\"skills\":null,\"active\":false}]}")
@@ -1111,7 +1167,7 @@ public class UserIT extends BasicRestIntegrationTest {
 								.emails(List.of(CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL, ATTENDANCE_EMAIL))
 								.expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/?role=ROLE_INVENTORY_MANAGER{&project_id}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":7,\"firstName\":\"Test\",\"lastName\":\"Inventory_manager\",\"gender\":\"MALE\","
+										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/users/?role=ROLE_INVENTORY_MANAGER{&project_id,free_text}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":7,\"firstName\":\"Test\",\"lastName\":\"Inventory_manager\",\"gender\":\"MALE\","
 												+ "\"email\":\"test-inventory_manager@lh-tool.de\",\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":false},{\"id\":1000,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":\"FEMALE\","
 												+ "\"email\":\"test@lh-tool.de\",\"telephoneNumber\":\"123\",\"mobileNumber\":\"456\",\"businessNumber\":null,\"profession\":\"Hartzer\",\"skills\":null,\"active\":false}]}")
 								.build()))

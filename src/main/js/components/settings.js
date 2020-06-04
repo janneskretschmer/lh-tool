@@ -26,7 +26,7 @@ class SettingsComponent extends React.Component {
                     <Route component={props => (
                         <SessionContext.Consumer>
                             {sessionsState => (
-                                <Redirect to={fullPathOfUsersSettings()} />
+                                <Redirect to={sessionsState.hasPermission('ROLE_RIGHT_USERS_GET') ? fullPathOfUsersSettings() : fullPathOfUserSettings(sessionsState.currentUser.id)} />
                             )}
                         </SessionContext.Consumer>
                     )} />

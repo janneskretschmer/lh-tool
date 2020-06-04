@@ -44,6 +44,8 @@ import {
     USER_ROLES,
     USER_ROLES_ID,
     USER_PROJECTS,
+    ROLE_VARIABLE,
+    FREE_TEXT_VARIABLE,
 
 } from './urlmappings';
 
@@ -215,13 +217,12 @@ export const apiEndpoints = {
         },
         create: {
             method: 'POST',
-            // TODO Trailing '/' also necessary?
-            path: USER_PREFIX + '/'
+            path: USER_PREFIX
         },
         get: {
             method: 'GET',
-            // TODO Trailing '/' also necessary?
-            path: USER_PREFIX + '/'
+            path: USER_PREFIX,
+            queries: [PROJECT_ID_VARIABLE, ROLE_VARIABLE, FREE_TEXT_VARIABLE],
         },
         getById: {
             method: 'GET',

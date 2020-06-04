@@ -41,6 +41,8 @@ const styles = theme => ({
     toolbar: {
         display: 'flex',
         justifyContent: 'space-between',
+        alignItems: 'center',
+        flexWrap: 'wrap-reverse',
     },
     clickable: {
         cursor: 'pointer',
@@ -116,7 +118,7 @@ export default class PagedTable extends React.Component {
 
 
     render() {
-        const { classes, rows, SelectionHeader, headers, redirect, title } = this.props;
+        const { classes, rows, SelectionHeader, filter, headers, redirect, title, showAddButton } = this.props;
         const { rowsPerPage, page, selected } = this.state;
         const emptyRows = rowsPerPage >= rows.length ? 0 : rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
         const singlePage = emptyRows < rows.length;
@@ -139,7 +141,9 @@ export default class PagedTable extends React.Component {
                                 ) : (
                                         <Typography variant="h6">{title}</Typography>
                                     )}
-                                <div>Filter</div>
+                                <div>
+                                    {filter}
+                                </div>
                             </div>
                         </TableCell>
                     </TableRow>
@@ -158,7 +162,7 @@ export default class PagedTable extends React.Component {
                             <TableCell className={classNames(classes.tableHeadCell, {
                                 [classes.semiImportantCell]: header.semiImportant,
                                 [classes.unimportantCell]: header.unimportant,
-                            })} key={header.key} align={header.align ? header.align : 'left'} onClick={event => this.handleRowClick(row.id)}>
+                            })} key={header.key} align={header.align ? header.align : 'left'}>
                                 {header.name}
                             </TableCell>
                         ))}
@@ -196,9 +200,12 @@ export default class PagedTable extends React.Component {
                     <TableRow>
                         <TableCell colSpan={headers.length + 1}>
                             <div className={classes.paginationWrapper}>
-                                <Button variant="contained" onClick={() => this.handleRowClick(NEW_ENTITY_ID_PLACEHOLDER)} className={classes.new}>
-                                    Hinzufügen
-                                </Button>
+                                {showAddButton ? (
+                                    <Button variant="contained" onClick={() => this.handleRowClick(NEW_ENTITY_ID_PLACEHOLDER)} className={classes.new}>
+                                        Hinzufügen
+                                    </Button>
+                                ) : (<div></div>)}
+
                                 {emptyRows < rows.length && (
                                     <TablePagination
                                         labelRowsPerPage="Einträge pro Seite:"

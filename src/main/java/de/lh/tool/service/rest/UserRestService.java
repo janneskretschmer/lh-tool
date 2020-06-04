@@ -5,6 +5,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,9 +54,13 @@ public class UserRestService {
 	@Secured(UserRole.RIGHT_USERS_GET)
 	public Resources<UserDto> get(
 			@RequestParam(required = false, name = UrlMappings.PROJECT_ID_VARIABLE) Long projectId,
-			@RequestParam(required = false, name = UrlMappings.ROLE_VARIABLE) String role) throws DefaultException {
-		List<UserDto> dtos = userService.findDtosByProjectIdAndRoleIgnoreCase(projectId, role);
-		return new Resources<>(dtos, linkTo(methodOn(UserRestService.class).get(projectId, role)).withSelfRel());
+			@RequestParam(required = false, name = UrlMappings.ROLE_VARIABLE) String role,
+			@RequestParam(required = false, name = UrlMappings.FREE_TEXT_VARIABLE) String freeText)
+			throws DefaultException {
+		List<UserDto> dtos = userService.findDtosByProjectIdAndRoleIgnoreCase(projectId, StringUtils.trimToNull(role),
+				StringUtils.trimToNull(freeText));
+		return new Resources<>(dtos,
+				linkTo(methodOn(UserRestService.class).get(projectId, role, freeText)).withSelfRel());
 	}
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)

@@ -42,9 +42,11 @@ const PAGES = {
                 {
                     title: 'Benutzer',
                     path: fullPathOfUsersSettings(),
+                    permissions: ['ROLE_RIGHT_USERS_GET'],
                     subPages: [
                         {
                             path: fullPathOfUserSettings(),
+                            permissions: ['ROLE_RIGHT_USERS_GET_BY_ID'],
                         }
                     ]
                 },

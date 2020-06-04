@@ -5,6 +5,7 @@ import {
     ROLE_VARIABLE,
     ID_VARIABLE,
     USER_ID_VARIABLE,
+    FREE_TEXT_VARIABLE,
 } from '../urlmappings';
 
 export function fetchCurrentUser({ accessToken }) {
@@ -24,13 +25,14 @@ export function changePassword({ userId, token, oldPassword, newPassword, confir
         .then(result => result.response);
 }
 
-export function fetchUsersByProjectIdAndRole({ accessToken, projectId, role }) {
+export function fetchUsersByProjectIdAndRoleAndFreeText(accessToken, projectId, role, freeText) {
     return apiRequest({
         apiEndpoint: apiEndpoints.user.get,
         authToken: accessToken,
         queries: {
             [PROJECT_ID_VARIABLE]: projectId,
             [ROLE_VARIABLE]: role,
+            [FREE_TEXT_VARIABLE]: freeText,
         }
     })
         .then(result => result.response.content);

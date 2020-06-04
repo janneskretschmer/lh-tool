@@ -4,7 +4,7 @@ import TextField from '@material-ui/core/TextField';
 import { withSnackbar } from 'notistack';
 import React from 'react';
 import { NeedsContext } from '../../providers/needs-provider';
-import { requiresLogin, isAnyStringBlank } from '../../util';
+import { requiresLogin, isAnyStringBlank, getRoleName } from '../../util';
 import { UsersContext } from '../../providers/users-provider';
 import Button from '@material-ui/core/Button';
 import { requestPasswordReset } from '../../actions/login';
@@ -46,14 +46,6 @@ class StatefulUserEditComponent extends React.Component {
             redirectUrl: null,
             userId: null,
         };
-        this.roleNames = new Map();
-        this.roleNames.set('ROLE_STORE_KEEPER', 'Magaziner');
-        this.roleNames.set('ROLE_INVENTORY_MANAGER', 'Lagerist');
-        this.roleNames.set('ROLE_ATTENDANCE', 'Anwesenheit');
-        this.roleNames.set('ROLE_CONSTRUCTION_SERVANT', 'Baudiener');
-        this.roleNames.set('ROLE_LOCAL_COORDINATOR', 'Helferkoordinator');
-        this.roleNames.set('ROLE_ADMIN', 'Administrator');
-        this.roleNames.set('ROLE_PUBLISHER', 'Verkündiger');
     }
 
     componentDidUpdate() {
@@ -74,7 +66,7 @@ class StatefulUserEditComponent extends React.Component {
     save(redirectToUser) {
         this.setState({ saving: true });
         const { usersState, match } = this.props;
-        this.props.usersState.saveSelectedUser()
+        usersState.saveSelectedUser()
             .then(() => this.props.enqueueSnackbar('Benutzer gespeichert', { variant: 'success', }))
             .then(() => {
                 let redirectUrl;
@@ -85,7 +77,7 @@ class StatefulUserEditComponent extends React.Component {
                         redirectUrl = fullPathOfUserSettings(redirectToUser);
                     }
                 } else {
-                    if (usersState.loadedAllUsers) {
+                    if (this.props.sessionState.hasPermission('ROLE_RIGHT_USERS_GET')) {
                         redirectUrl = fullPathOfUsersSettings();
                     } else if (match.params.userId !== usersState.selectedUser.id) {
                         redirectUrl = fullPathOfUserSettings(usersState.selectedUser.id);
@@ -99,7 +91,7 @@ class StatefulUserEditComponent extends React.Component {
     cancel() {
         const { usersState } = this.props;
         usersState.resetSelectedUser();
-        if (usersState.loadedAllUsers) {
+        if (this.props.sessionState.hasPermission('ROLE_RIGHT_USERS_GET')) {
             this.setState({
                 redirectUrl: fullPathOfUsersSettings(),
             });
@@ -293,7 +285,7 @@ class StatefulUserEditComponent extends React.Component {
                                             onChange={event => usersState.toggleRole(role.role)}
                                         />
                                     }
-                                    label={this.roleNames.get(role.role)}
+                                    label={getRoleName(role.role)}
                                 />
                                 <br />
                             </div>
