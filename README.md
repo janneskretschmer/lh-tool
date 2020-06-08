@@ -70,7 +70,7 @@
 
 ## MySQL
 	1. Install and configure mysql-server
-	2. Make sure, timezone is UTC (e.g. add "[server-client]\ntimezone='+00:00'" to /etc/mysql/my.cnf)
+	2. Make sure, timezone is UTC (e.g. add "[server-client]\ndefault_time_zone='+00:00'" to /etc/mysql/my.cnf)
 	3. Adapt and execute the following statements:<br>
 	  CREATE DATABASE IF NOT EXISTS lhtool;<br>
 	  CREATE USER IF NOT EXISTS '<name>'@'localhost' IDENTIFIED BY '<password>';<br>
