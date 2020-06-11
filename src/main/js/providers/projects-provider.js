@@ -1,14 +1,14 @@
 import React from 'react';
 import { resolve } from 'react-resolver';
 import { SessionContext } from './session-provider';
-import { fetchOwnProjects } from '../actions/project';
+import { fetchOwnProjects, fetchProjects } from '../actions/project';
 import { withContext, getMonthOffsetWithinRange, getProjectMonth, isMonthOffsetWithinRange } from '../util';
 
 export const ProjectsContext = React.createContext();
 
 @withContext('sessionState', SessionContext)
 @resolve('initialProjectData', props => {
-    return fetchOwnProjects({ accessToken: props.sessionState.accessToken });
+    return fetchProjects(props.sessionState.accessToken);
 })
 export default class ProjectsProvider extends React.Component {
     constructor(props) {

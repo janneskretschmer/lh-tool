@@ -1,24 +1,28 @@
 import React from 'react';
-import { createUser, fetchUser, updateUser, fetchUserRoles, createUserRole, deleteUserRole, fetchUserProjects } from "../actions/user";
-import { withContext, isAnyStringBlank } from '../util';
-import { SessionContext } from './session-provider';
+import { createUser, fetchUser, updateUser, fetchUserRoles, createUserRole, deleteUserRole, fetchUserProjects, fetchUsersByProjectIdAndRoleAndFreeText, deleteUser } from '../actions/user';
+import { withContext, isAnyStringBlank, requiresLogin } from '../util';
+import SessionProvider, { SessionContext } from './session-provider';
 import { NEW_ENTITY_ID_PLACEHOLDER } from '../config';
 import { fetchRoles } from '../actions/role';
 import { fetchProjects, deleteProjectUser, createProjectUser } from '../actions/project';
 
 export const UsersContext = React.createContext();
 
-@withContext('sessionState', SessionContext)
-export default class UsersProvider extends React.Component {
+class StatefulUsersProvider extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
             users: new Map(),
+            loadedForCurrentFilter: false,
             roles: null,
             projects: null,
             // copy for editing
             selectedUser: null,
+
+            filterFreeText: '',
+            filterProjectId: '',
+            filterRole: '',
         }
     }
 
@@ -27,6 +31,31 @@ export default class UsersProvider extends React.Component {
     createEmptyUser() {
         const projects = this.state.projects && this.state.projects.length === 1 ? [{ projectId: this.state.projects[0].id }] : [];
         return { gender: 'MALE', firstName: '', lastName: '', email: '', telephoneNumber: '', mobileNumber: '', businessNumber: '', skills: '', profession: '', roles: [{ role: 'ROLE_PUBLISHER' }], projects };
+    }
+
+    loadEditableUsers() {
+        const { filterFreeText, filterProjectId, filterRole, loadedForCurrentFilter } = this.state;
+        if (!loadedForCurrentFilter) {
+            this.loadGrantableRoles();
+            this.loadProjects();
+            return fetchUsersByProjectIdAndRoleAndFreeText(this.props.sessionState.accessToken, filterProjectId, filterRole, filterFreeText).then(receivedUsers => {
+                this.setState(prevState => {
+                    const users = new Map(prevState.users);
+                    receivedUsers
+                        .filter(user => !users.has(user.id))
+                        .forEach(user => users.set(user.id, user));
+                    [...users.keys()]
+                        .filter(id => !receivedUsers.find(user => user.id === id))
+                        .forEach(id => users.delete(id));
+                    return {
+                        users,
+                        loadedForCurrentFilter: true,
+                    };
+                });
+                return receivedUsers;
+            });
+        }
+        return Promise.resolve([...this.state.users.values()]);
     }
 
     selectUser(userId, handleFailure) {
@@ -45,21 +74,33 @@ export default class UsersProvider extends React.Component {
         }
         const parsedUserId = parseInt(userId);
         if (this.state.users.has(parsedUserId)) {
-            this.setState({
-                selectedUser: this.state.users.get(parsedUserId),
-            });
+            const cachedUser = this.state.users.get(parsedUserId);
+            if (cachedUser.projects && cachedUser.roles) {
+                this.setState({
+                    selectedUser: cachedUser,
+                });
+            } else {
+                this.loadRolesAndProjects(cachedUser)
+                    .then(user => this.handleUpdatedAndSelectdUser(user))
+                    .catch(handleFailure);
+            }
         } else {
-            fetchUser(this.props.sessionState.accessToken, parsedUserId).then(savedUser => this.loadRolesAndProjects(savedUser)).then(user =>
-                this.setState(prevState => {
-                    const users = new Map(prevState.users);
-                    users.set(user.id, user);
-                    return {
-                        users,
-                        selectedUser: user,
-                    };
-                })
-            ).catch(handleFailure);
+            fetchUser(this.props.sessionState.accessToken, parsedUserId)
+                .then(user => this.loadRolesAndProjects(user))
+                .then(user => this.handleUpdatedAndSelectdUser(user))
+                .catch(handleFailure);
         }
+    }
+
+    handleUpdatedAndSelectdUser(user) {
+        this.setState(prevState => {
+            const users = new Map(prevState.users);
+            users.set(user.id, user);
+            return {
+                users,
+                selectedUser: user,
+            };
+        });
     }
 
     resetSelectedUser() {
@@ -74,8 +115,8 @@ export default class UsersProvider extends React.Component {
         const user = this.state.selectedUser;
         return !!user &&
             !isAnyStringBlank([user.firstName, user.lastName, user.email]) &&
-            user.roles.length > 0 &&
-            (user.projects.length > 0 || user.roles.find(userRole => userRole.role === 'ROLE_ADMIN'));
+            (user.roles.length > 0 || !this.state.roles) &&
+            (user.projects.length > 0 || !this.state.projects || user.roles.find(userRole => userRole.role === 'ROLE_ADMIN'));
     }
 
     saveSelectedUser() {
@@ -139,6 +180,7 @@ export default class UsersProvider extends React.Component {
                 return {
                     users,
                     selectedUser: savedUser,
+                    loadedForCurrentFilter: !prevState.filterFreeText && !prevState.filterProjectId && !prevState.filterRole
                 };
             }));
     }
@@ -173,20 +215,22 @@ export default class UsersProvider extends React.Component {
     ///////////////////////////////////////////////////// Projects /////////////////////////////////////////////////////
 
     loadProjects() {
-        if (!this.state.projects) {
-            this.setState({ projects: [] });
-            fetchProjects(this.props.sessionState.accessToken).then(projects => this.setState(prevState => {
-                let selectedUser = { ...prevState.selectedUser };
-                if (!selectedUser.id && (!selectedUser.projects || selectedUser.projects.length === 0) && projects.length === 1) {
-                    selectedUser.projects = [{ projectId: projects[0].id }];
-                }
-                return { projects, selectedUser };
-            })).catch(error => this.setState({ projects: [] }));
+        if (this.props.sessionState.hasPermission('ROLE_RIGHT_PROJECTS_USERS_POST')) {
+            if (!this.state.projects) {
+                this.setState({ projects: [] });
+                fetchProjects(this.props.sessionState.accessToken).then(projects => this.setState(prevState => {
+                    let selectedUser = { ...prevState.selectedUser };
+                    if (!selectedUser.id && (!selectedUser.projects || selectedUser.projects.length === 0) && projects.length === 1) {
+                        selectedUser.projects = [{ projectId: projects[0].id }];
+                    }
+                    return { projects, selectedUser };
+                })).catch(error => this.setState({ projects: [] }));
+            }
         }
     }
 
     findProjectsForUser(user) {
-        if (user && this.props.sessionState.hasPermission('ROLE_RIGHT_PROJECTS_USERS_GET')) {
+        if (user && this.props.sessionState.hasPermission('ROLE_RIGHT_PROJECTS_USERS_POST')) {
             return fetchUserProjects(this.props.sessionState.accessToken, user).catch(error => []);
         }
         return Promise.resolve([]);
@@ -320,6 +364,36 @@ export default class UsersProvider extends React.Component {
     }
 
 
+    changeFreeTextFilter(filterFreeText) {
+        this.setState({ filterFreeText, loadedForCurrentFilter: false });
+    }
+
+    changeProjectIdFilter(filterProjectId) {
+        this.setState({ filterProjectId, loadedForCurrentFilter: false });
+    }
+
+    changeRoleFilter(filterRole) {
+        this.setState({ filterRole, loadedForCurrentFilter: false });
+    }
+
+
+    bulkDeleteUsers(userIds) {
+        if (userIds && userIds.map) {
+            const idsWithoutSelf = userIds.filter(id => id !== this.props.sessionState.currentUser.id);
+            return Promise.all(idsWithoutSelf.map(id => deleteUser(this.props.sessionState.accessToken, { id })))
+                .then(() => this.setState(prevState => {
+                    const users = new Map(prevState.users);
+                    idsWithoutSelf.forEach(id => users.delete(id));
+                    return {
+                        users,
+                        selectedUser: prevState.selectedUser && !idsWithoutSelf.includes(prevState.selectedUser.id) ? prevState.selectedUser : null,
+                    };
+                }));
+        }
+        return Promise.resolve();
+    }
+
+
 
     render() {
         return (
@@ -327,6 +401,7 @@ export default class UsersProvider extends React.Component {
                 value={{
                     ...this.state,
                     selectUser: this.selectUser.bind(this),
+                    loadEditableUsers: this.loadEditableUsers.bind(this),
                     resetSelectedUser: this.resetSelectedUser.bind(this),
                     isUserValid: this.isUserValid.bind(this),
                     saveSelectedUser: this.saveSelectedUser.bind(this),
@@ -343,6 +418,12 @@ export default class UsersProvider extends React.Component {
                     changeTelephoneNumber: this.changeTelephoneNumber.bind(this),
                     toggleRole: this.toggleRole.bind(this),
                     toggleProject: this.toggleProject.bind(this),
+
+                    changeFreeTextFilter: this.changeFreeTextFilter.bind(this),
+                    changeProjectIdFilter: this.changeProjectIdFilter.bind(this),
+                    changeRoleFilter: this.changeRoleFilter.bind(this),
+
+                    bulkDeleteUsers: this.bulkDeleteUsers.bind(this),
                 }}
             >
                 {this.props.children}
@@ -350,3 +431,12 @@ export default class UsersProvider extends React.Component {
         );
     }
 }
+
+const UsersProvider = props => (
+    <>
+        <SessionContext.Consumer>
+            {sessionState => (<StatefulUsersProvider {...props} sessionState={sessionState} />)}
+        </SessionContext.Consumer>
+    </>
+);
+export default UsersProvider;

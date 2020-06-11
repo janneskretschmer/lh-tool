@@ -142,6 +142,12 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 
 	@Override
 	public void checkIfEditIsAllowed(User user, boolean allowedToEditSelf) throws DefaultException {
+		if (!isEditAllowed(user, allowedToEditSelf)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+	}
+
+	private boolean isEditAllowed(User user, boolean allowedToEditSelf) {
 		UserPermissionCriteria criteria = Optional.ofNullable(user).map(this::evaluatePermissionsOnOtherUser)
 				.orElse(new UserPermissionCriteria());
 
@@ -152,18 +158,7 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 
 		boolean allowedThroughProject = criteria.isSameProject() && criteria.isAllowedToGrantRoles();
 
-		if (!allowedThroughIdentity && !allowedThroughRights && !allowedThroughProject) {
-			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
-		}
-	}
-
-	private boolean isViewAllowed(User user) {
-		UserPermissionCriteria criteria = Optional.ofNullable(user).map(this::evaluatePermissionsOnOtherUser)
-				.orElse(new UserPermissionCriteria());
-
-		boolean otherAllowedUser = criteria.isSameProject() || criteria.isAllowedToGetFromForeignProjects();
-
-		return criteria.isSelf() || (criteria.isAllowedToGetOtherUsers() && otherAllowedUser);
+		return allowedThroughIdentity || allowedThroughRights || allowedThroughProject;
 	}
 
 	private UserPermissionCriteria evaluatePermissionsOnOtherUser(User user) {
@@ -269,30 +264,22 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 
 	@Override
 	public List<User> findByProjectIdAndRoleIgnoreCase(Long projectId, String role) {
-		return getRepository().findByProjects_IdAndRoles_RoleIgnoreCaseOrderByLastNameAscFirstNameAsc(projectId, role);
+		return getRepository().findByProjectIdAndRoleAndFreeTextIgnoreCase(projectId, role, null);
 	}
 
 	@Override
 	@Transactional
-	public List<UserDto> findDtosByProjectIdAndRoleIgnoreCase(Long projectId, String role) throws DefaultException {
+	public List<UserDto> findDtosByProjectIdAndRoleIgnoreCase(Long projectId, String role, String freeText)
+			throws DefaultException {
 		if (projectId != null && !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_GET_FOREIGN)
 				&& getCurrentUser().getProjects().stream().noneMatch(project -> projectId.equals(project.getId()))) {
 			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
 		}
 
-		List<User> users = null;
-		if (projectId != null && StringUtils.isNotBlank(role)) {
-			users = getRepository().findByProjects_IdAndRoles_RoleIgnoreCaseOrderByLastNameAscFirstNameAsc(projectId,
-					role);
-		} else if (projectId != null) {
-			users = getRepository().findByProjects_IdOrderByLastNameAscFirstNameAsc(projectId);
-		} else if (StringUtils.isNotBlank(role)) {
-			users = getRepository().findByRoles_RoleIgnoreCaseOrderByLastNameAscFirstNameAsc(role);
-		} else {
-			users = getRepository().findByOrderByLastNameAscFirstNameAsc();
-		}
+		List<User> users = getRepository().findByProjectIdAndRoleAndFreeTextIgnoreCase(projectId, role, freeText);
 		if (users != null) {
-			return convertToDtoList(users.stream().filter(this::isViewAllowed).collect(Collectors.toList()));
+			return convertToDtoList(
+					users.stream().filter(user -> isEditAllowed(user, true)).collect(Collectors.toList()));
 		}
 		throw ExceptionEnum.EX_USERS_NOT_FOUND.createDefaultException();
 	}
@@ -304,9 +291,7 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 				() -> new DefaultException(userRoleService.hasCurrentUserRight(UserRole.RIGHT_USERS_GET_FOREIGN)
 						? ExceptionEnum.EX_WRONG_ID_PROVIDED
 						: ExceptionEnum.EX_FORBIDDEN));
-		if (!isViewAllowed(user)) {
-			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
-		}
+		checkIfEditIsAllowed(user, true);
 		return convertToDto(user);
 	}
 

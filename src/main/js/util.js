@@ -138,3 +138,15 @@ export function isStringBlank(str) {
 export function isAnyStringBlank(strings) {
     return strings.some(isStringBlank);
 }
+
+const ROLE_NAMES = new Map();
+ROLE_NAMES.set('ROLE_STORE_KEEPER', 'Magaziner');
+ROLE_NAMES.set('ROLE_INVENTORY_MANAGER', 'Lagerist');
+ROLE_NAMES.set('ROLE_ATTENDANCE', 'Anwesenheit');
+ROLE_NAMES.set('ROLE_CONSTRUCTION_SERVANT', 'Baudiener');
+ROLE_NAMES.set('ROLE_LOCAL_COORDINATOR', 'Helferkoordinator');
+ROLE_NAMES.set('ROLE_ADMIN', 'Administrator');
+ROLE_NAMES.set('ROLE_PUBLISHER', 'Verkündiger');
+export function getRoleName(role) {
+    return ROLE_NAMES.get(role);
+}

@@ -1,72 +1,64 @@
 import moment from 'moment';
 import { apiEndpoints, apiRequest } from '../apiclient';
 import { HELPER_TYPE_ID_VARIABLE, ID_VARIABLE, USER_ID_VARIABLE, WEEKDAY_VARIABLE } from '../urlmappings';
-import { fetchUsersByProjectIdAndRole } from './user';
+import { fetchUsersByProjectIdAndRoleAndFreeText } from './user';
 
-function fetchAllUsersForProject({ projectId, accessToken }) {
-    const localCoordinatorsPromise = fetchUsersByProjectIdAndRole({
-        accessToken,
-        projectId,
-        role: 'ROLE_LOCAL_COORDINATOR',
-    })
-        .then(users => users)
-        .catch(() => []);
+// function fetchAllUsersForProject({ projectId, accessToken }) {
+//     const localCoordinatorsPromise = fetchUsersByProjectIdAndRoleAndFreeText({
+//         accessToken,
+//         projectId,
+//         role: 'ROLE_LOCAL_COORDINATOR',
+//     })
+//         .then(users => users)
+//         .catch(() => []);
 
-    const publishersPromise = fetchUsersByProjectIdAndRole({
-        accessToken,
-        projectId,
-        role: 'ROLE_PUBLISHER',
-    })
-        .then(users => users)
-        .catch(() => []);
+//     const publishersPromise = fetchUsersByProjectIdAndRoleAndFreeText(
+//         accessToken,
+//         projectId,
+//         role: 'ROLE_PUBLISHER',
+//     )
+//         .then(users => users)
+//         .catch(() => []);
 
-    return Promise.all([localCoordinatorsPromise, publishersPromise])
-        .then(([localCoordinators, publishers]) => ({
-            localCoordinators,
-            publishers,
-        }));
-}
+//     return Promise.all([localCoordinatorsPromise, publishersPromise])
+//         .then(([localCoordinators, publishers]) => ({
+//             localCoordinators,
+//             publishers,
+//         }));
+// }
 
-function mapProjectObject(accessToken, responseObj) {
-    const project = {
-        id: responseObj.id,
-        name: responseObj.name,
-        startDate: moment(responseObj.startDate, 'x'),
-        endDate: moment(responseObj.endDate, 'x'),
-        localCoordinator: null,
-        publishers: [],
-    };
-    return fetchAllUsersForProject({ projectId: responseObj.id, accessToken })
-        .then(users => ({
-            id: responseObj.id,
-            name: responseObj.name,
-            startDate: moment(responseObj.startDate, 'x'),
-            endDate: moment(responseObj.endDate, 'x'),
-            localCoordinators: users.localCoordinators,
-            publishers: users.publishers,
-        }))
-        // TODO Blow => error msg.
-        .catch(err => console.log(err));
-}
+// function mapProjectObject(accessToken, responseObj) {
+//     const project = {
+//         id: responseObj.id,
+//         name: responseObj.name,
+//         startDate: moment(responseObj.startDate, 'x'),
+//         endDate: moment(responseObj.endDate, 'x'),
+//         localCoordinator: null,
+//         publishers: [],
+//     };
+//     return fetchAllUsersForProject({ projectId: responseObj.id, accessToken })
+//         .then(users => ({
+//             id: responseObj.id,
+//             name: responseObj.name,
+//             startDate: moment(responseObj.startDate, 'x'),
+//             endDate: moment(responseObj.endDate, 'x'),
+//             localCoordinators: users.localCoordinators,
+//             publishers: users.publishers,
+//         }))
+//         // TODO Blow => error msg.
+//         .catch(err => console.log(err));
+// }
 
-export function fetchOwnProjects({ accessToken }) {
-    if (accessToken) {
-        return apiRequest({
-            apiEndpoint: apiEndpoints.project.getOwn,
-            authToken: accessToken,
-        })
-            .then(result => Promise.all(result.response.content.map(robj => mapProjectObject(accessToken, robj))))
-            .catch(() => []);
-    } else {
-        return Promise.resolve([]);
-    }
-}
 
 export function fetchProjects(accessToken) {
     return apiRequest({
         apiEndpoint: apiEndpoints.project.getOwn,
         authToken: accessToken,
-    }).then(result => result.response.content);
+    }).then(result => result.response.content.map(project => ({
+        ...project,
+        startDate: moment(project.startDate, 'x'),
+        endDate: moment(project.endDate, 'x'),
+    })));
 }
 
 export function createNewProject({ accessToken, projectsState, name, startMoment, endMoment, handleFailure }) {
