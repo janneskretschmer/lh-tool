@@ -14,8 +14,8 @@ public interface UserRepository extends BasicEntityRepository<User, Long> {
 
 	Optional<User> findByEmail(String email);
 
-	@Query("SELECT u FROM User u WHERE 1=1 "
-			+ "AND (:projectId IS NULL OR :projectId IN (SELECT pu.project.id FROM ProjectUser pu WHERE pu.user.id = u.id)) "
+	@Query("SELECT u FROM User u WHERE "
+			+ "(:projectId IS NULL OR :projectId IN (SELECT pu.project.id FROM ProjectUser pu WHERE pu.user.id = u.id)) "
 			+ "AND (:role IS NULL OR UPPER(:role) IN (SELECT ur.role FROM UserRole ur WHERE ur.user.id = u.id)) "
 			+ "AND (:freeText IS NULL OR LOWER("
 			//
