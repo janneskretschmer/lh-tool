@@ -7,7 +7,7 @@ import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import IconButton from '@material-ui/core/IconButton';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { ProjectsContext } from '../../providers/projects-provider';
+import { OldProjectsContext } from '../../providers/projects-provider.old';
 import MonthSelection from './month-selection';
 
 const styles = theme => ({
@@ -133,11 +133,11 @@ class StatefulProjectCalendar extends React.Component {
 
 const ProjectCalendar = props => (
     <>
-        <ProjectsContext.Consumer>
+        <OldProjectsContext.Consumer>
             {projectsState => (
                 (<StatefulProjectCalendar {...props} projectsState={projectsState} />)
             )}
-        </ProjectsContext.Consumer>
+        </OldProjectsContext.Consumer>
     </>
 );
 export default requiresLogin(ProjectCalendar);

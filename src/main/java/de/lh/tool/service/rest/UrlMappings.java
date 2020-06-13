@@ -43,7 +43,8 @@ public abstract class UrlMappings {
 
 	public static final String PROJECT_PREFIX = REST_PREFIX + "/projects";
 	public static final String PROJECT_DELETE = PROJECT_PREFIX + ID_EXTENSION;
-	public static final String PROJECT_HELPER_TYPES = ID_EXTENSION + "/helper_types/{" + HELPER_TYPE_ID_VARIABLE + "}";
+	public static final String PROJECT_HELPER_TYPES = "/{" + PROJECT_ID_VARIABLE + "}/helper_types";
+	public static final String PROJECT_HELPER_TYPES_ID = PROJECT_HELPER_TYPES + ID_EXTENSION;
 
 	public static final String HELPER_TYPE_PREFIX = REST_PREFIX + "/helper_types";
 

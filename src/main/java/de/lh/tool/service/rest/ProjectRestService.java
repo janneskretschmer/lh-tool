@@ -126,11 +126,11 @@ public class ProjectRestService {
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.PROJECT_HELPER_TYPES)
 	@ApiOperation(value = "Get a list of relationships between project and helpertypes")
-	@Secured(UserRole.RIGHT_PROJECTS_GET)
+	@Secured(UserRole.RIGHT_PROJECTS_HELPER_TYPES_GET)
 	public Resources<ProjectHelperTypeDto> getProjectHelperTypes(
-			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long projectId,
-			@PathVariable(name = UrlMappings.HELPER_TYPE_ID_VARIABLE) Long helperTypeId,
-			@RequestParam(required = true, name = UrlMappings.WEEKDAY_VARIABLE) Integer weekday)
+			@PathVariable(name = UrlMappings.PROJECT_ID_VARIABLE, required = true) Long projectId,
+			@RequestParam(required = false, name = UrlMappings.HELPER_TYPE_ID_VARIABLE) Long helperTypeId,
+			@RequestParam(required = false, name = UrlMappings.WEEKDAY_VARIABLE) Integer weekday)
 			throws DefaultException {
 
 		List<ProjectHelperTypeDto> dtoList = projectHelperTypeService
@@ -140,4 +140,33 @@ public class ProjectRestService {
 				linkTo(methodOn(ProjectRestService.class).getProjectHelperTypes(projectId, helperTypeId, weekday))
 						.withSelfRel());
 	}
+
+	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.PROJECT_HELPER_TYPES)
+	@ApiOperation(value = "Create a new relationship between project and helpertype")
+	@Secured(UserRole.RIGHT_PROJECTS_HELPER_TYPES_POST)
+	public Resource<ProjectHelperTypeDto> createPojectHelperType(
+			@PathVariable(name = UrlMappings.PROJECT_ID_VARIABLE, required = true) Long id,
+			@RequestBody ProjectHelperTypeDto dto) throws DefaultException {
+
+		ProjectHelperTypeDto savedDto = projectHelperTypeService.createDto(dto);
+
+		return new Resource<>(savedDto,
+				linkTo(methodOn(ProjectRestService.class).createPojectHelperType(id, dto)).withSelfRel());
+	}
+
+	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.PROJECT_HELPER_TYPES_ID)
+	@ApiOperation(value = "Update a new relationship between project and helpertype")
+	@Secured(UserRole.RIGHT_PROJECTS_HELPER_TYPES_POST)
+	public Resource<ProjectHelperTypeDto> updatePojectHelperType(
+			@PathVariable(name = UrlMappings.PROJECT_ID_VARIABLE, required = true) Long projectId,
+			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
+			@RequestBody ProjectHelperTypeDto dto) throws DefaultException {
+
+		dto.setProjectId(projectId);
+		ProjectHelperTypeDto savedDto = projectHelperTypeService.updateDto(dto, id);
+
+		return new Resource<>(savedDto,
+				linkTo(methodOn(ProjectRestService.class).updatePojectHelperType(projectId, id, dto)).withSelfRel());
+	}
+
 }

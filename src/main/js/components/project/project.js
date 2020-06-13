@@ -10,12 +10,12 @@ import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import GroupWorkIcon from '@material-ui/icons/GroupWork';
 import React from 'react';
-import ProjectsProvider, { ProjectsContext } from '../../providers/projects-provider';
+import OldProjectsProvider, { OldProjectsContext } from '../../providers/projects-provider.old';
 import { SessionContext } from '../../providers/session-provider';
 import { requiresLogin, setWaitingState } from '../../util';
 import WithPermission from '../with-permission';
 import ProjectCreatePanel from './project-create';
-import ProjectEditPanel from './project-edit';
+import ProjectEditPanel from './project-edit.old';
 
 const styles = theme => ({
     root: {
@@ -64,7 +64,7 @@ class StatefulProjectsComponent extends React.Component {
         const tmp = (
             <SessionContext.Consumer>
                 {sessionState => (
-                    <ProjectsContext.Consumer>
+                    <OldProjectsContext.Consumer>
                         {projectsState => (
                             <div className={classes.root}>
                                 <WithPermission permission="ROLE_RIGHT_PROJECTS_POST">
@@ -92,7 +92,7 @@ class StatefulProjectsComponent extends React.Component {
                                 </List>
                             </div>
                         )}
-                    </ProjectsContext.Consumer>
+                    </OldProjectsContext.Consumer>
 
                 )}
             </SessionContext.Consumer>
@@ -104,9 +104,9 @@ class StatefulProjectsComponent extends React.Component {
 
 const ProjectsComponent = props => (
     <>
-        <ProjectsProvider>
+        <OldProjectsProvider>
             <StatefulProjectsComponent {...props} />
-        </ProjectsProvider>
+        </OldProjectsProvider>
     </>
 );
 export default requiresLogin(ProjectsComponent);

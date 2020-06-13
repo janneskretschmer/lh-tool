@@ -4,7 +4,7 @@ import { withSnackbar } from 'notistack';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { withStyles } from '@material-ui/core/styles';
-import { ProjectsContext } from '../../providers/projects-provider';
+import { OldProjectsContext } from '../../providers/projects-provider.old';
 import { SessionContext } from '../../providers/session-provider';
 import { createNewProject } from '../../actions/project';
 import { convertToMUIFormat } from '../../util';
@@ -48,7 +48,7 @@ export default class ProjectCreatePanel extends React.Component {
         return (
             <SessionContext.Consumer>
                 {sessionState => (
-                    <ProjectsContext.Consumer>
+                    <OldProjectsContext.Consumer>
                         {projectsState => (
                             <form onSubmit={evt => {
                                 evt.preventDefault();
@@ -90,7 +90,7 @@ export default class ProjectCreatePanel extends React.Component {
                                 </Button>
                             </form>
                         )}
-                    </ProjectsContext.Consumer>
+                    </OldProjectsContext.Consumer>
                 )}
             </SessionContext.Consumer>
         );

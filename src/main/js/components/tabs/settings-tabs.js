@@ -1,7 +1,7 @@
 import { withStyles } from '@material-ui/core/styles';
 import React from 'react';
 import { Tabs, Tab } from '@material-ui/core';
-import { fullPathOfUsersSettings } from '../../paths';
+import { fullPathOfUsersSettings, fullPathOfProjectHelperTypesSettings, fullPathOfProjectsSettings } from '../../paths';
 
 const styles = theme => ({
     tabs: {
@@ -25,6 +25,9 @@ export default class SettingsTabsComponent extends React.Component {
         if (path.startsWith(fullPathOfUsersSettings())) {
             return 'users';
         }
+        if (path.startsWith(fullPathOfProjectsSettings())) {
+            return 'projects';
+        }
     }
 
     render() {
@@ -35,7 +38,7 @@ export default class SettingsTabsComponent extends React.Component {
                 <div className={classes.break} />
                 <Tabs value={value} className={classes.tabs}>
                     <Tab value={'users'} label="Benutzer" />
-                    {/* <Tab value={'projects'} label="Projekte" /> */}
+                    <Tab value={'projects'} label="Projekte" />
                 </Tabs>
             </>
         );

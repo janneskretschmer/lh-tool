@@ -29,3 +29,6 @@ export const fullPathOfDataProtection = () => fullPathOf('/data-protection/');
 export const fullPathOfSettings = () => fullPathOf('/settings');
 export const fullPathOfUsersSettings = () => fullPathOf('/settings/users');
 export const fullPathOfUserSettings = (id) => fullPathOf('/settings/users/' + (id ? id : ':userId'));
+
+export const fullPathOfProjectsSettings = () => fullPathOf('/settings/projects');
+export const fullPathOfProjectSettings = (id) => fullPathOf('/settings/projects/' + (id ? id : ':projectId'));

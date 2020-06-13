@@ -16,7 +16,7 @@ import { getMonthOffsetWithinRange, getProjectMonth, isMonthOffsetWithinRange, r
 import ProjectSelection from '../util/project-selection';
 import NeedApproveEditComponent from './approve-edit';
 import WithPermission from '../with-permission';
-import { ProjectsContext } from '../../providers/projects-provider';
+import { OldProjectsContext } from '../../providers/projects-provider.old';
 import { NeedsContext } from '../../providers/needs-provider';
 import MonthSelection from '../util/month-selection';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -300,7 +300,7 @@ class StatefulNeedApproveComponent extends React.Component {
 
 const NeedApproveComponent = props => (
     <>
-        <ProjectsContext.Consumer>
+        <OldProjectsContext.Consumer>
             {projectsState => (
                 <NeedsContext.Consumer>
                     {needsState =>
@@ -308,7 +308,7 @@ const NeedApproveComponent = props => (
                     }
                 </NeedsContext.Consumer>
             )}
-        </ProjectsContext.Consumer>
+        </OldProjectsContext.Consumer>
     </>
 );
 export default requiresLogin(NeedApproveComponent);

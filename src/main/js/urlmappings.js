@@ -39,8 +39,8 @@ export const LOGIN_PASSWORD_RESET = '/pwreset';
 
 export const PROJECT_PREFIX = REST_PREFIX + '/projects';
 export const PROJECT_DELETE = PROJECT_PREFIX + ID_EXTENSION;
-export const PROJECT_HELPER_TYPES = ID_EXTENSION + '/helper_types/{'
-    + HELPER_TYPE_ID_VARIABLE + '}';
+export const PROJECT_HELPER_TYPES = '/{' + PROJECT_ID_VARIABLE + '}/helper_types';
+export const PROJECT_HELPER_TYPES_ID = PROJECT_HELPER_TYPES + ID_EXTENSION;
 
 export const HELPER_TYPE_PREFIX = REST_PREFIX + '/helper_types';
 

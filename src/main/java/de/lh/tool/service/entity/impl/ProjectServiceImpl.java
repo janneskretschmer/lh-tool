@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +45,7 @@ public class ProjectServiceImpl extends BasicMappableEntityServiceImpl<ProjectRe
 	public Collection<Project> getOwnProjects() {
 		User currentUser = userService.getCurrentUser();
 		if (currentUser != null) {
-			return userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_GET_FOREIGN) ? findAll()
+			return userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_CHANGE_FOREIGN) ? findAll()
 					: currentUser.getProjects();
 		}
 		return Collections.emptyList();
@@ -54,10 +55,8 @@ public class ProjectServiceImpl extends BasicMappableEntityServiceImpl<ProjectRe
 	@Transactional
 	public ProjectDto getProjectDtoById(Long id) throws DefaultException {
 		Project project = findById(id).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
-		if (isOwnProject(project) || userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_GET_FOREIGN)) {
-			return convertToDto(project);
-		}
-		throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
+		checkIfViewable(project);
+		return convertToDto(project);
 	}
 
 	@Override
@@ -87,14 +86,11 @@ public class ProjectServiceImpl extends BasicMappableEntityServiceImpl<ProjectRe
 			throw ExceptionEnum.EX_NO_ID_PROVIDED.createDefaultException();
 		}
 
+		checkIfViewable(id);
 		Project project = convertToEntity(projectDto);
-		boolean ownProject = isOwnProject(getRepository().findById(project.getId())
-				.orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException));
-		if (!ownProject && !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_CHANGE_FOREIGN)) {
-			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
-		}
 
-		if (getRepository().findByName(projectDto.getName()).isPresent()) {
+		if (getRepository().findByName(projectDto.getName()).map(Project::getId).map(id::equals)
+				.map(BooleanUtils::negate).orElse(false)) {
 			throw ExceptionEnum.EX_PROJECT_NAME_ALREADY_EXISTS.createDefaultException();
 		}
 
@@ -106,9 +102,7 @@ public class ProjectServiceImpl extends BasicMappableEntityServiceImpl<ProjectRe
 	@Transactional
 	public void deleteOwn(Long id) throws DefaultException {
 		Project project = findById(id).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
-		if (!isOwnProject(project) && !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_CHANGE_FOREIGN)) {
-			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
-		}
+		checkIfViewable(project);
 		delete(project);
 	}
 
@@ -121,7 +115,24 @@ public class ProjectServiceImpl extends BasicMappableEntityServiceImpl<ProjectRe
 	@Override
 	@Transactional
 	public boolean isOwnProject(Long projectId) throws DefaultException {
-		return isOwnProject(findById(projectId).orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException));
+		return isOwnProject(
+				findById(projectId).orElseThrow(ExceptionEnum.EX_INVALID_PROJECT_ID::createDefaultException));
+	}
+
+	@Override
+	@Transactional
+	public void checkIfViewable(Long projectId) throws DefaultException {
+		if (!isOwnProject(projectId) && !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_CHANGE_FOREIGN)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+	}
+
+	@Override
+	@Transactional
+	public void checkIfViewable(Project project) throws DefaultException {
+		if (!isOwnProject(project) && !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_CHANGE_FOREIGN)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
 	}
 
 }

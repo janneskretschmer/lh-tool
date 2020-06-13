@@ -121,10 +121,10 @@ export function convertToReadableFormatWithoutYear(moment) {
 
 const MUI_DATE_FORMAT = 'YYYY-MM-DD';
 export function convertToMUIFormat(moment) {
-    return moment.format(MUI_DATE_FORMAT);
+    return moment && moment.format(MUI_DATE_FORMAT);
 }
 export function convertFromMUIFormat(date) {
-    return moment(date, MUI_DATE_FORMAT);
+    return !isStringBlank(date) && moment(date, MUI_DATE_FORMAT);
 }
 
 export function isStringBlank(str) {

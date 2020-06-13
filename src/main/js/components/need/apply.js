@@ -5,7 +5,7 @@ import { withSnackbar } from 'notistack';
 import React from 'react';
 import { fetchOwnNeeds } from '../../actions/need';
 import { NeedsContext } from '../../providers/needs-provider';
-import { ProjectsContext } from '../../providers/projects-provider';
+import { OldProjectsContext } from '../../providers/projects-provider.old';
 import { requiresLogin, setWaitingState, withContext } from '../../util';
 import ProjectCalendar from '../util/project-calendar';
 import NeedApplyEditComponent from './apply-edit';
@@ -147,7 +147,7 @@ class StatefulNeedApplyComponent extends React.Component {
 
 const NeedApplyComponent = props => (
     <>
-        <ProjectsContext.Consumer>
+        <OldProjectsContext.Consumer>
             {projectsState => (
                 <NeedsContext.Consumer>
                     {needsState =>
@@ -155,7 +155,7 @@ const NeedApplyComponent = props => (
                     }
                 </NeedsContext.Consumer>
             )}
-        </ProjectsContext.Consumer>
+        </OldProjectsContext.Consumer>
     </>
 );
 export default requiresLogin(NeedApplyComponent);

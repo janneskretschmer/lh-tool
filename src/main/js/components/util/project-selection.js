@@ -4,7 +4,7 @@ import { fetchOwnProjects } from '../../actions/project';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { withContext } from '../../util';
-import { ProjectsContext } from '../../providers/projects-provider';
+import { OldProjectsContext } from '../../providers/projects-provider.old';
 
 class StatefulProjectSelection extends React.Component {
 
@@ -36,11 +36,11 @@ class StatefulProjectSelection extends React.Component {
 
 const ProjectSelection = props => (
   <>
-    <ProjectsContext.Consumer>
+    <OldProjectsContext.Consumer>
       {projectsState => (
         (<StatefulProjectSelection {...props} projectsState={projectsState} />)
       )}
-    </ProjectsContext.Consumer>
+    </OldProjectsContext.Consumer>
   </>
 );
 export default ProjectSelection;

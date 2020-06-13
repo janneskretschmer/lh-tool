@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { apiEndpoints, apiRequest } from '../apiclient';
-import { HELPER_TYPE_ID_VARIABLE, ID_VARIABLE, USER_ID_VARIABLE, WEEKDAY_VARIABLE } from '../urlmappings';
+import { HELPER_TYPE_ID_VARIABLE, ID_VARIABLE, USER_ID_VARIABLE, WEEKDAY_VARIABLE, PROJECT_ID_VARIABLE } from '../urlmappings';
 import { fetchUsersByProjectIdAndRoleAndFreeText } from './user';
 
 // function fetchAllUsersForProject({ projectId, accessToken }) {
@@ -50,34 +50,56 @@ import { fetchUsersByProjectIdAndRoleAndFreeText } from './user';
 // }
 
 
+function parseProjectDates(project) {
+    return {
+        ...project,
+        startDate: moment(project.startDate, 'x'),
+        endDate: moment(project.endDate, 'x'),
+    };
+}
+
+function serializeProjectDates(project) {
+    return {
+        ...project,
+        startDate: project.startDate.format('x'),
+        endDate: project.endDate.format('x'),
+    };
+}
+
 export function fetchProjects(accessToken) {
     return apiRequest({
         apiEndpoint: apiEndpoints.project.getOwn,
         authToken: accessToken,
-    }).then(result => result.response.content.map(project => ({
-        ...project,
-        startDate: moment(project.startDate, 'x'),
-        endDate: moment(project.endDate, 'x'),
-    })));
+    }).then(result => result.response.content.map(parseProjectDates));
 }
 
-export function createNewProject({ accessToken, projectsState, name, startMoment, endMoment, handleFailure }) {
+export function fetchProject(accessToken, projectId) {
     return apiRequest({
-        apiEndpoint: apiEndpoints.project.createNew,
+        apiEndpoint: apiEndpoints.project.getById,
         authToken: accessToken,
-        data: {
-            name,
-            startDate: startMoment.valueOf(),
-            endDate: endMoment.valueOf(),
+        parameters: {
+            [ID_VARIABLE]: projectId,
         },
-    })
-        .then(result => mapProjectObject(accessToken, result.response))
-        .then(createdProject => projectsState.projectAdded(createdProject))
-        .catch(err => {
-            if (handleFailure) {
-                handleFailure(err);
-            }
-        });
+    }).then(result => result.response).then(parseProjectDates);
+}
+
+export function createProject(accessToken, project) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.project.create,
+        authToken: accessToken,
+        data: serializeProjectDates(project),
+    }).then(result => result.response).then(parseProjectDates);
+}
+
+export function updateProject(accessToken, project) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.project.update,
+        authToken: accessToken,
+        data: serializeProjectDates(project),
+        parameters: {
+            [ID_VARIABLE]: project.id,
+        },
+    }).then(result => result.response).then(parseProjectDates);
 }
 
 export function deleteProject({ accessToken, projectsState, projectId, handleFailure }) {
@@ -117,21 +139,20 @@ export function addUserToProject({ accessToken, projectId, user, role, projectsS
         .catch(e => console.log(e));
 }
 
-export function fetchProjectHelperTypes(accessToken, projectId, helperTypeId, weekday, handleFailure) {
+export function fetchProjectHelperTypes(accessToken, projectId, helperTypeId, weekday) {
     if (accessToken) {
         return apiRequest({
             apiEndpoint: apiEndpoints.project.getHelperTypes,
             authToken: accessToken,
             parameters: {
-                [ID_VARIABLE]: projectId,
-                [HELPER_TYPE_ID_VARIABLE]: helperTypeId,
+                [PROJECT_ID_VARIABLE]: projectId,
             },
             queries: {
+                [HELPER_TYPE_ID_VARIABLE]: helperTypeId,
                 [WEEKDAY_VARIABLE]: weekday,
             }
         })
             .then(result => result.response.content)
-            .catch(handleFailure);
     } else {
         return Promise.resolve([]);
     }

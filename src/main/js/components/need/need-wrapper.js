@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Switch } from 'react-router';
 import NeedsProvider from '../../providers/needs-provider';
-import ProjectsProvider from '../../providers/projects-provider';
+import OldProjectsProvider from '../../providers/projects-provider.old';
 import { requiresLogin } from '../../util';
 import NeedApplyComponent from './apply';
 import NeedApproveComponent from './approve';
@@ -12,7 +12,7 @@ import NotFoundHandlerComponent from '../notfound';
 class NeedWrapperComponent extends React.Component {
     render() {
         return (<>
-            <ProjectsProvider>
+            <OldProjectsProvider>
                 <NeedsProvider>
                     <Switch>
                         {/* 
@@ -25,7 +25,7 @@ class NeedWrapperComponent extends React.Component {
                         <Route component={NotFoundHandlerComponent} />
                     </Switch>
                 </NeedsProvider>
-            </ProjectsProvider>
+            </OldProjectsProvider>
         </>);
     }
 }

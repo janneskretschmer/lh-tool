@@ -23,4 +23,18 @@ public interface ProjectService extends BasicEntityService<Project, Long> {
 	Collection<Project> getOwnProjects();
 
 	boolean isOwnProject(Long projectId) throws DefaultException;
+
+	/**
+	 * @throws DefaultException <br>
+	 *                          EX_FORBIDDEN if user isn't allowed to edit this
+	 *                          project <br>
+	 *                          EX_INVALID_ID if project doesn't exist
+	 */
+	void checkIfViewable(Long projectId) throws DefaultException;
+
+	/**
+	 * @throws DefaultException EX_FORBIDDEN if user isn't allowed to edit this
+	 *                          project
+	 */
+	void checkIfViewable(Project project) throws DefaultException;
 }

@@ -1,7 +1,7 @@
 import { apiEndpoints, apiRequest } from '../apiclient';
 import { WEEKDAY_VARIABLE, PROJECT_ID_VARIABLE } from '../urlmappings';
 
-export function fetchHelperTypes(accessToken, projectId, weekday, handleFailure) {
+export function fetchHelperTypes(accessToken, projectId, weekday) {
     if (accessToken) {
         return apiRequest({
             apiEndpoint: apiEndpoints.helperType.get,
@@ -12,7 +12,6 @@ export function fetchHelperTypes(accessToken, projectId, weekday, handleFailure)
             }
         })
             .then(result => result.response.content)
-            .catch(handleFailure);
     } else {
         return Promise.resolve([]);
     }

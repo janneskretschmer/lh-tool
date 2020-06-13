@@ -1,5 +1,5 @@
 import React from 'react';
-import { ProjectsContext } from '../../providers/projects-provider';
+import { OldProjectsContext } from '../../providers/projects-provider.old';
 import { isMonthOffsetWithinRange } from '../../util';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
@@ -40,11 +40,11 @@ class StatefulMonthSelection extends React.Component {
 
 const MonthSelection = props => (
   <>
-    <ProjectsContext.Consumer>
+    <OldProjectsContext.Consumer>
       {projectsState => (
         (<StatefulMonthSelection {...props} projectsState={projectsState} />)
       )}
-    </ProjectsContext.Consumer>
+    </OldProjectsContext.Consumer>
   </>
 );
 export default MonthSelection;

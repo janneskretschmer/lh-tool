@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { withSnackbar } from 'notistack';
 import React from 'react';
 import { NeedsContext } from '../../providers/needs-provider';
-import { ProjectsContext } from '../../providers/projects-provider';
+import { OldProjectsContext } from '../../providers/projects-provider.old';
 import { requiresLogin, setWaitingState } from '../../util';
 import ProjectCalendar from '../util/project-calendar';
 import NeedQuantityEditComponent from './quantity-edit';
@@ -102,7 +102,7 @@ class StatefulNeedQuantityComponent extends React.Component {
 
 const NeedQuantityComponent = props => (
     <>
-        <ProjectsContext.Consumer>
+        <OldProjectsContext.Consumer>
             {projectsState => (
                 <NeedsContext.Consumer>
                     {needsState =>
@@ -110,7 +110,7 @@ const NeedQuantityComponent = props => (
                     }
                 </NeedsContext.Consumer>
             )}
-        </ProjectsContext.Consumer>
+        </OldProjectsContext.Consumer>
     </>
 );
 export default requiresLogin(NeedQuantityComponent);
