@@ -97,7 +97,7 @@ class StatefulProjectShiftEditComponent extends React.Component {
                         <th className={classes.dayName}>Sonntag</th>
                     </tr>
                 </thead>
-                {shifts && (
+                {shifts ? (
                     <tbody>
                         <tr className={classes.calendarRow}>
                             {
@@ -147,7 +147,11 @@ class StatefulProjectShiftEditComponent extends React.Component {
                             }
                         </tr>
                     </tbody>
-                )}
+                ) : (
+                        <tbody>
+                            <tr colspan={7}><td><CircularProgress /></td></tr>
+                        </tbody>
+                    )}
             </table>
             {!disabled && projectsState.selectedShift && (
                 <Dialog

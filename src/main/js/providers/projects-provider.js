@@ -1,10 +1,11 @@
 import React from 'react';
-import { withContext, isStringBlank, convertFromMUIFormat } from '../util';
-import { fetchProjects, fetchProjectHelperTypes, fetchProject, updateProject, createProject } from '../actions/project';
+import { withContext, isStringBlank, convertFromMUIFormat, shallowEquals } from '../util';
+import { fetchProjects, fetchProjectHelperTypes, fetchProject, updateProject, createProject, createProjectHelperType, updateProjectHelperType, deleteProjectHelperType } from '../actions/project';
 import { SessionContext } from './session-provider';
 import { fetchHelperTypes } from '../actions/helper-type';
 import moment, { weekdays } from 'moment';
 import { NEW_ENTITY_ID_PLACEHOLDER } from '../config';
+import _ from "lodash";
 
 export const ProjectsContext = React.createContext();
 
@@ -84,15 +85,15 @@ export default class ProjectsProvider extends React.Component {
         }
     }
 
-    handleUpdatedAndSelectedProject(project) {
+    handleUpdatedAndSelectedProject(project, callback) {
         this.setState(prevState => {
             const projects = new Map(prevState.projects);
             projects.set(project.id, project);
             return {
                 projects,
-                selectedProject: project,
+                selectedProject: _.cloneDeep(project),
             };
-        });
+        }, callback);
     }
 
     saveSelectedProject() {
@@ -100,33 +101,58 @@ export default class ProjectsProvider extends React.Component {
             return Promise.reject();
         }
         const project = this.state.selectedProject;
+        const accessToken = this.props.sessionState.accessToken;
         let projectPromise;
         if (project.id) {
-            projectPromise = updateProject(this.props.sessionState.accessToken, project);
+            projectPromise = updateProject(accessToken, project)
+                .then(savedProject => {
+                    const oldShifts = this.flattenShiftMap(this.state.projects.get(project.id).shifts);
+                    const newShifts = this.flattenShiftMap(project.shifts);
+
+                    const addedShifts = newShifts.filter(shift => !shift.id);
+                    const deletedShifts = [];
+                    const updatedShifts = [];
+                    oldShifts.forEach(shift => {
+                        const modifiedShift = newShifts.find(newShift => newShift.id === shift.id);
+                        if (!modifiedShift) {
+                            deletedShifts.push(shift);
+                        } else if (!_.isEqual(shift, modifiedShift)) {
+                            updatedShifts.push(modifiedShift);
+                        }
+                    });
+
+                    return Promise.all([
+                        ...addedShifts.map(shift => createProjectHelperType(accessToken, shift)),
+                        ...updatedShifts.map(shift => updateProjectHelperType(accessToken, shift)),
+                        ...deletedShifts.map(shift => deleteProjectHelperType(accessToken, shift))
+                    ]).then(() => savedProject);
+                });
         } else {
-            projectPromise = createProject(this.props.sessionState.accessToken, project)
-            // .then(savedProject => Promise.all(
-            //     this.flattenShiftMap(project.shifts).map(shift => ({
-            //     ...shift,
-            //     projectId: savedProject.id,
-            //     }).map(shift => sa)));
+            projectPromise = createProject(accessToken, project)
+                .then(savedProject => Promise.all(
+                    this.flattenShiftMap(project.shifts).map(shift => ({
+                        ...shift,
+                        projectId: savedProject.id,
+                    })).map(shift => createProjectHelperType(accessToken, shift))
+                ).then(() => savedProject));
         }
-        return projectPromise.then(savedProject => new Promise((resolve, reject) => this.setState({ selectedProject: savedProject }, resolve(savedProject))));
+        return projectPromise.then(savedProject => new Promise((resolve, reject) => this.handleUpdatedAndSelectedProject(savedProject, resolve(savedProject))));
     }
 
     flattenShiftMap(shifts) {
-        return [...shifts.values()].map(helperTypeMap => [...helperTypeMap.values()]);
+        return [...shifts.values()].map(helperTypeMap => [...helperTypeMap.values()]).flat(2);
     }
 
 
     loadShiftsForSelectedProject() {
-        if (this.state.selectedProject && this.state.selectedProject.id) {
-            fetchProjectHelperTypes(this.props.sessionState.accessToken, this.state.selectedProject.id).then(shifts => {
-                const project = { ...this.state.selectedProject };
+        const project = this.state.selectedProject;
+        if (project && project.id) {
+            fetchProjectHelperTypes(this.props.sessionState.accessToken, project.id).then(shifts => {
+                const tmpProject = { ...project };
                 shifts.forEach(shift => {
-                    project.shifts.get(shift.weekday).get(shift.helperTypeId).push(shift);
+                    tmpProject.shifts.get(shift.weekday).get(shift.helperTypeId).push(shift);
                 })
-                this.handleUpdatedAndSelectedProject(project);
+                this.handleUpdatedAndSelectedProject(tmpProject);
             });
         }
     }
@@ -288,7 +314,7 @@ export default class ProjectsProvider extends React.Component {
 
     isShiftValid() {
         const shift = this.state.selectedShift;
-        return !isStringBlank(shift.startTime) && shift.helperTypeId && shift.weekday && shift.projectId;
+        return !isStringBlank(shift.startTime) && shift.helperTypeId && shift.weekday && (!this.state.selectedProject.id || shift.projectId);
     }
 
     isProjectValid() {

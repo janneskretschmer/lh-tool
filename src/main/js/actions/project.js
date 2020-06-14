@@ -1,53 +1,6 @@
 import moment from 'moment';
 import { apiEndpoints, apiRequest } from '../apiclient';
 import { HELPER_TYPE_ID_VARIABLE, ID_VARIABLE, USER_ID_VARIABLE, WEEKDAY_VARIABLE, PROJECT_ID_VARIABLE } from '../urlmappings';
-import { fetchUsersByProjectIdAndRoleAndFreeText } from './user';
-
-// function fetchAllUsersForProject({ projectId, accessToken }) {
-//     const localCoordinatorsPromise = fetchUsersByProjectIdAndRoleAndFreeText({
-//         accessToken,
-//         projectId,
-//         role: 'ROLE_LOCAL_COORDINATOR',
-//     })
-//         .then(users => users)
-//         .catch(() => []);
-
-//     const publishersPromise = fetchUsersByProjectIdAndRoleAndFreeText(
-//         accessToken,
-//         projectId,
-//         role: 'ROLE_PUBLISHER',
-//     )
-//         .then(users => users)
-//         .catch(() => []);
-
-//     return Promise.all([localCoordinatorsPromise, publishersPromise])
-//         .then(([localCoordinators, publishers]) => ({
-//             localCoordinators,
-//             publishers,
-//         }));
-// }
-
-// function mapProjectObject(accessToken, responseObj) {
-//     const project = {
-//         id: responseObj.id,
-//         name: responseObj.name,
-//         startDate: moment(responseObj.startDate, 'x'),
-//         endDate: moment(responseObj.endDate, 'x'),
-//         localCoordinator: null,
-//         publishers: [],
-//     };
-//     return fetchAllUsersForProject({ projectId: responseObj.id, accessToken })
-//         .then(users => ({
-//             id: responseObj.id,
-//             name: responseObj.name,
-//             startDate: moment(responseObj.startDate, 'x'),
-//             endDate: moment(responseObj.endDate, 'x'),
-//             localCoordinators: users.localCoordinators,
-//             publishers: users.publishers,
-//         }))
-//         // TODO Blow => error msg.
-//         .catch(err => console.log(err));
-// }
 
 
 function parseProjectDates(project) {
@@ -102,60 +55,14 @@ export function updateProject(accessToken, project) {
     }).then(result => result.response).then(parseProjectDates);
 }
 
-export function deleteProject({ accessToken, projectsState, projectId, handleFailure }) {
+export function deleteProject(accessToken, { id }) {
     return apiRequest({
         apiEndpoint: apiEndpoints.project.delete,
         authToken: accessToken,
         parameters: {
-            [ID_VARIABLE]: projectId,
+            [ID_VARIABLE]: id,
         },
     })
-        .then(() => {
-            projectsState.projectRemoved(projectId);
-            return true;
-        })
-        .catch(err => {
-            if (handleFailure) {
-                handleFailure(err);
-            }
-        });
-}
-
-export function addUserToProject({ accessToken, projectId, user, role, projectsState }) {
-    return apiRequest({
-        apiEndpoint: apiEndpoints.project.addUser,
-        authToken: accessToken,
-        parameters: {
-            [ID_VARIABLE]: projectId,
-            [USER_ID_VARIABLE]: user.id,
-        },
-    })
-        .then(() => {
-            if (projectsState) {
-                projectsState.userAdded(projectId, user, role);
-            }
-        })
-        // TODO Error message
-        .catch(e => console.log(e));
-}
-
-export function fetchProjectHelperTypes(accessToken, projectId, helperTypeId, weekday) {
-    if (accessToken) {
-        return apiRequest({
-            apiEndpoint: apiEndpoints.project.getHelperTypes,
-            authToken: accessToken,
-            parameters: {
-                [PROJECT_ID_VARIABLE]: projectId,
-            },
-            queries: {
-                [HELPER_TYPE_ID_VARIABLE]: helperTypeId,
-                [WEEKDAY_VARIABLE]: weekday,
-            }
-        })
-            .then(result => result.response.content)
-    } else {
-        return Promise.resolve([]);
-    }
 }
 
 export function createProjectUser(accessToken, { projectId, userId }) {
@@ -177,6 +84,59 @@ export function deleteProjectUser(accessToken, { projectId, userId }) {
         parameters: {
             [ID_VARIABLE]: projectId,
             [USER_ID_VARIABLE]: userId,
+        },
+    });
+}
+
+export function fetchProjectHelperTypes(accessToken, projectId, helperTypeId, weekday) {
+    if (accessToken) {
+        return apiRequest({
+            apiEndpoint: apiEndpoints.project.getHelperTypes,
+            authToken: accessToken,
+            parameters: {
+                [PROJECT_ID_VARIABLE]: projectId,
+            },
+            queries: {
+                [HELPER_TYPE_ID_VARIABLE]: helperTypeId,
+                [WEEKDAY_VARIABLE]: weekday,
+            }
+        })
+            .then(result => result.response.content);
+    } else {
+        return Promise.resolve([]);
+    }
+}
+
+export function createProjectHelperType(accessToken, projectHelperType) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.project.addHelperType,
+        authToken: accessToken,
+        data: projectHelperType,
+        parameters: {
+            [PROJECT_ID_VARIABLE]: projectHelperType.projectId,
+        },
+    }).then(result => result.response);
+}
+
+export function updateProjectHelperType(accessToken, projectHelperType) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.project.updateHelperType,
+        authToken: accessToken,
+        data: projectHelperType,
+        parameters: {
+            [PROJECT_ID_VARIABLE]: projectHelperType.projectId,
+            [ID_VARIABLE]: projectHelperType.id,
+        },
+    }).then(result => result.response);
+}
+
+export function deleteProjectHelperType(accessToken, { id, projectId }) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.project.deleteHelperType,
+        authToken: accessToken,
+        parameters: {
+            [PROJECT_ID_VARIABLE]: projectId,
+            [ID_VARIABLE]: id,
         },
     });
 }

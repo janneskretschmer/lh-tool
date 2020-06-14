@@ -38,7 +38,7 @@ class StatefulProjectEditComponent extends React.Component {
     }
 
     componentDidUpdate() {
-        const projectId = this.props.projectsState.selectedProject.id;
+        const projectId = this.props.projectsState.selectedProject && this.props.projectsState.selectedProject.id;
         if (!this.state.redirectToProject && projectId && parseInt(this.props.match.params.projectId) !== projectId) {
             this.setState({ redirectToProject: projectId })
         }

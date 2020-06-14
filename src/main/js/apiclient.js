@@ -214,10 +214,20 @@ export const apiEndpoints = {
             parameters: [PROJECT_ID_VARIABLE],
             queries: [WEEKDAY_VARIABLE, HELPER_TYPE_ID_VARIABLE]
         },
-        createHelperType: {
+        addHelperType: {
             method: 'POST',
             path: PROJECT_PREFIX + PROJECT_HELPER_TYPES,
             parameters: [PROJECT_ID_VARIABLE],
+        },
+        updateHelperType: {
+            method: 'PUT',
+            path: PROJECT_PREFIX + PROJECT_HELPER_TYPES_ID,
+            parameters: [PROJECT_ID_VARIABLE, ID_VARIABLE],
+        },
+        deleteHelperType: {
+            method: 'DELETE',
+            path: PROJECT_PREFIX + PROJECT_HELPER_TYPES_ID,
+            parameters: [PROJECT_ID_VARIABLE, ID_VARIABLE],
         },
     },
     user: {
