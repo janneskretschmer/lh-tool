@@ -17,4 +17,6 @@ public interface ProjectHelperTypeService extends BasicEntityService<ProjectHelp
 	List<ProjectHelperTypeDto> findDtosByProjectIdAndHelperTypeIdAndWeekday(Long projectId, Long helperTypeId,
 			Integer weekday) throws DefaultException;
 
+	void delete(Long id) throws DefaultException;
+
 }

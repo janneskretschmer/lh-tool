@@ -397,6 +397,37 @@ public class ProjectIT extends BasicRestIntegrationTest {
 				.build()));
 	}
 
+	@Test
+	public void testProjectHelperTypesModificationNotExistingHelperType() throws Exception {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of("INSERT INTO `helper_type` (`id`, `name`) VALUES (1, 'Test1')",
+						"INSERT INTO `helper_type` (`id`, `name`) VALUES (2, 'Test2')",
+						"INSERT INTO `helper_type` (`id`, `name`) VALUES (3, 'Test3')",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (2, 'Test2', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (1, 1, 1, 1, '07:00:00', '12:00:00')",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (2, 1, 1, 1, '12:00:00', '17:00:00')",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (3, 2, 1, 1, '07:00:00', '17:00:00')",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (4, 1, 3, 2, '07:00:00', '17:00:00')"))
+				.url(REST_URL + "/projects/1/helper_types/1").method(Method.PUT)
+				.body(ProjectHelperTypeDto.builder().id(1l).projectId(1l).helperTypeId(5l).weekday(3).startTime("12:00")
+						.endTime("13:00").build())
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL))
+						.expectedHttpCode(HttpStatus.BAD_REQUEST)
+						.expectedResponse(
+								"{\"key\":\"EX_INVALID_HELPER_TYPE_ID\",\"message\":\"The provided id is invalid.\",\"httpCode\":400}")
+						.validationQueries(List.of(
+								"SELECT * FROM project_helper_type WHERE project_id=1 AND helper_type_id=1 AND weekday=1 AND start_time='07:00:00' AND end_time='12:00:00'",
+								"SELECT 1 WHERE NOT EXISTS(SELECT * FROM project_helper_type WHERE project_id=1 AND helper_type_id=1 AND end_time='13:00')"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of(
+						"SELECT * FROM project_helper_type WHERE project_id=1 AND helper_type_id=1 AND weekday=1 AND start_time='07:00:00' AND end_time='12:00:00'",
+						"SELECT 1 WHERE NOT EXISTS(SELECT * FROM project_helper_type WHERE project_id=1 AND helper_type_id=1 AND end_time='13:00')"))
+				.build()));
+	}
+
 //  ██████╗_███████╗██╗_____███████╗████████╗███████╗
 //  ██╔══██╗██╔════╝██║_____██╔════╝╚══██╔══╝██╔════╝
 //  ██║__██║█████╗__██║_____█████╗_____██║___█████╗__
@@ -482,6 +513,76 @@ public class ProjectIT extends BasicRestIntegrationTest {
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
 				.validationQueriesForOthers(List.of("SELECT * FROM project_user WHERE project_id=1 AND user_id=1000"))
+				.build()));
+	}
+
+	@Test
+	public void testProjectHelperTypesDeletionForeign() throws Exception {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of("INSERT INTO `helper_type` (`id`, `name`) VALUES (1, 'Test1')",
+						"INSERT INTO `helper_type` (`id`, `name`) VALUES (2, 'Test2')",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (1, 1, 1, 1, '07:00:00', '12:00:00')",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (2, 1, 2, 2, '07:00:00', '17:00:00')"))
+				.url(REST_URL + "/projects/1/helper_types/1").method(Method.DELETE)
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL))
+						.expectedHttpCode(HttpStatus.NO_CONTENT)
+						.validationQueries(List.of(
+								"SELECT * FROM project_helper_type WHERE project_id=1 AND helper_type_id=2 AND weekday=2 AND start_time='07:00' AND end_time='17:00'",
+								"SELECT 1 WHERE NOT EXISTS(SELECT * FROM project_helper_type WHERE project_id=1 AND helper_type_id=1)"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of(
+						"SELECT * FROM project_helper_type WHERE project_id=1 AND helper_type_id=1 AND weekday=1 AND start_time='07:00:00' AND end_time='12:00:00'",
+						"SELECT * FROM project_helper_type WHERE project_id=1 AND helper_type_id=2 AND weekday=2 AND start_time='07:00' AND end_time='17:00'"))
+				.build()));
+	}
+
+	@Test
+	public void testProjectHelperTypesDeletionOwn() throws Exception {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of("INSERT INTO `helper_type` (`id`, `name`) VALUES (1, 'Test1')",
+						"INSERT INTO `helper_type` (`id`, `name`) VALUES (2, 'Test2')",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (1, 1, 1, 1, '07:00:00', '12:00:00')",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (2, 1, 2, 2, '07:00:00', '17:00:00')"))
+				.url(REST_URL + "/projects/1/helper_types/1").method(Method.DELETE)
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL))
+						.expectedHttpCode(HttpStatus.NO_CONTENT)
+						.validationQueries(List.of(
+								"SELECT * FROM project_helper_type WHERE project_id=1 AND helper_type_id=2 AND weekday=2 AND start_time='07:00' AND end_time='17:00'",
+								"SELECT 1 WHERE NOT EXISTS(SELECT * FROM project_helper_type WHERE project_id=1 AND helper_type_id=1)"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of(
+						"SELECT * FROM project_helper_type WHERE project_id=1 AND helper_type_id=1 AND weekday=1 AND start_time='07:00:00' AND end_time='12:00:00'",
+						"SELECT * FROM project_helper_type WHERE project_id=1 AND helper_type_id=2 AND weekday=2 AND start_time='07:00' AND end_time='17:00'"))
+				.build()));
+	}
+
+	@Test
+	public void testProjectHelperTypesDeletionNotExisting() throws Exception {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of("INSERT INTO `helper_type` (`id`, `name`) VALUES (1, 'Test1')",
+						"INSERT INTO `helper_type` (`id`, `name`) VALUES (2, 'Test2')",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (1, 1, 1, 1, '07:00:00', '12:00:00')",
+						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (2, 1, 2, 2, '07:00:00', '17:00:00')"))
+				.url(REST_URL + "/projects/1/helper_types/3").method(Method.DELETE)
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL))
+						.expectedHttpCode(HttpStatus.BAD_REQUEST)
+						.expectedResponse(
+								"{\"key\":\"EX_INVALID_ID\",\"message\":\"The provided id is invalid.\",\"httpCode\":400}")
+						.validationQueries(List.of(
+								"SELECT * FROM project_helper_type WHERE project_id=1 AND helper_type_id=1 AND weekday=1 AND start_time='07:00:00' AND end_time='12:00:00'",
+								"SELECT * FROM project_helper_type WHERE project_id=1 AND helper_type_id=2 AND weekday=2 AND start_time='07:00' AND end_time='17:00'"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of(
+						"SELECT * FROM project_helper_type WHERE project_id=1 AND helper_type_id=1 AND weekday=1 AND start_time='07:00:00' AND end_time='12:00:00'",
+						"SELECT * FROM project_helper_type WHERE project_id=1 AND helper_type_id=2 AND weekday=2 AND start_time='07:00' AND end_time='17:00'"))
 				.build()));
 	}
 

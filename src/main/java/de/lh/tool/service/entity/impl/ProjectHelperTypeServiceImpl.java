@@ -72,6 +72,19 @@ public class ProjectHelperTypeServiceImpl extends
 	}
 
 	@Override
+	@Transactional
+	public void delete(Long id) throws DefaultException {
+		if (id == null) {
+			throw ExceptionEnum.EX_NO_ID_PROVIDED.createDefaultException();
+		}
+		ProjectHelperType projectHelperType = findById(id)
+				.orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException);
+		projectService.checkIfViewable(projectHelperType.getProject());
+
+		deleteById(id);
+	}
+
+	@Override
 	public ProjectHelperType convertToEntity(ProjectHelperTypeDto dto) {
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addMappings(new PropertyMap<ProjectHelperTypeDto, ProjectHelperType>() {

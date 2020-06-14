@@ -156,7 +156,7 @@ public class ProjectRestService {
 
 	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.PROJECT_HELPER_TYPES_ID)
 	@ApiOperation(value = "Update a new relationship between project and helpertype")
-	@Secured(UserRole.RIGHT_PROJECTS_HELPER_TYPES_POST)
+	@Secured(UserRole.RIGHT_PROJECTS_HELPER_TYPES_PUT)
 	public Resource<ProjectHelperTypeDto> updatePojectHelperType(
 			@PathVariable(name = UrlMappings.PROJECT_ID_VARIABLE, required = true) Long projectId,
 			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
@@ -167,6 +167,18 @@ public class ProjectRestService {
 
 		return new Resource<>(savedDto,
 				linkTo(methodOn(ProjectRestService.class).updatePojectHelperType(projectId, id, dto)).withSelfRel());
+	}
+
+	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.PROJECT_HELPER_TYPES_ID)
+	@ApiOperation(value = "Delete relationship between project and helpertype")
+	@Secured(UserRole.RIGHT_PROJECTS_HELPER_TYPES_DELETE)
+	public ResponseEntity<Void> deletePojectHelperType(
+			@PathVariable(name = UrlMappings.PROJECT_ID_VARIABLE, required = true) Long projectId,
+			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id) throws DefaultException {
+
+		projectHelperTypeService.delete(id);
+
+		return ResponseEntity.noContent().build();
 	}
 
 }
