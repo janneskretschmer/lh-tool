@@ -155,7 +155,7 @@ export class StatefulUserListComponent extends React.Component {
                 ]}
                 rows={users}
                 redirect={fullPathOfUserSettings}
-                showAddButton={true} />
+                showAddButton={usersState.isAllowedToCreate()} />
         </>) : (<CircularProgress />)
     }
 

@@ -7,7 +7,7 @@ import { requiresLogin, convertToMUIFormat } from '../../util';
 import ProjectShiftEditComponent from './project-shifts-edit';
 import { withSnackbar } from 'notistack';
 import { Redirect } from 'react-router';
-import { fullPathOfProjectSettings } from '../../paths';
+import { fullPathOfProjectSettings, fullPathOfProjectsSettings } from '../../paths';
 
 
 const styles = theme => ({
@@ -28,7 +28,7 @@ class StatefulProjectEditComponent extends React.Component {
         super(props);
         this.state = {
             saving: false,
-            redirectToProject: null,
+            redirectToUrl: null,
         };
     }
 
@@ -39,8 +39,8 @@ class StatefulProjectEditComponent extends React.Component {
 
     componentDidUpdate() {
         const projectId = this.props.projectsState.selectedProject && this.props.projectsState.selectedProject.id;
-        if (!this.state.redirectToProject && projectId && parseInt(this.props.match.params.projectId) !== projectId) {
-            this.setState({ redirectToProject: projectId })
+        if (!this.state.redirectToUrl && projectId && parseInt(this.props.match.params.projectId) !== projectId) {
+            this.setState({ redirectToUrl: fullPathOfProjectSettings(projectId) })
         }
     }
 
@@ -62,17 +62,23 @@ class StatefulProjectEditComponent extends React.Component {
         this.setState({ saving: true });
         this.props.projectsState.saveSelectedProject()
             .then(() => this.props.enqueueSnackbar('Projekt gespeichert', { variant: 'success', }))
+            .then(() => this.setState({ redirectToUrl: fullPathOfProjectsSettings() }))
             .catch(error => this.handleFailure(error)).finally(() => this.setState({ saving: false }));
+    }
+
+    cancel() {
+        this.props.projectsState.resetSelectedProject();
+        this.setState({ redirectToUrl: fullPathOfProjectsSettings() });
     }
 
     render() {
         const { classes, projectsState } = this.props;
-        const { saving, redirectToProject } = this.state;
+        const { saving, redirectToUrl } = this.state;
         const project = projectsState.selectedProject;
         const saveDisabled = !projectsState.isProjectValid();
 
-        if (redirectToProject) {
-            return (<Redirect to={fullPathOfProjectSettings(redirectToProject)} />);
+        if (redirectToUrl) {
+            return (<Redirect to={redirectToUrl} />);
         }
 
         if (!project) {
@@ -124,7 +130,7 @@ class StatefulProjectEditComponent extends React.Component {
                     </Button>
                     <Button
                         className={classes.button}
-                        onClick={() => projectsState.resetSelectedProject()}
+                        onClick={() => this.cancel()}
                         variant="outlined"
                     >
                         Abbrechen

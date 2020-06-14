@@ -393,7 +393,9 @@ class StatefulUsersProvider extends React.Component {
         return Promise.resolve();
     }
 
-
+    isAllowedToCreate() {
+        return this.props.sessionState.hasPermission('ROLE_RIGHT_USERS_CREATE');
+    }
 
     render() {
         return (
@@ -424,6 +426,8 @@ class StatefulUsersProvider extends React.Component {
                     changeRoleFilter: this.changeRoleFilter.bind(this),
 
                     bulkDeleteUsers: this.bulkDeleteUsers.bind(this),
+
+                    isAllowedToCreate: this.isAllowedToCreate.bind(this),
                 }}
             >
                 {this.props.children}

@@ -147,7 +147,7 @@ class StatefulUserEditComponent extends React.Component {
                         <>
                             <TextField
                                 id="first_name"
-                                value={user.firstName}
+                                value={user.firstName || ''}
                                 label="Vorname"
                                 type="text"
                                 name="first_name"
@@ -160,7 +160,7 @@ class StatefulUserEditComponent extends React.Component {
                             />
                             <TextField
                                 id="last_name"
-                                value={user.lastName}
+                                value={user.lastName || ''}
                                 label="Nachname"
                                 type="text"
                                 name="last_name"
@@ -173,7 +173,7 @@ class StatefulUserEditComponent extends React.Component {
                             />
                             <TextField
                                 id="email"
-                                value={user.email}
+                                value={user.email || ''}
                                 label="Email"
                                 type="email"
                                 name="email"

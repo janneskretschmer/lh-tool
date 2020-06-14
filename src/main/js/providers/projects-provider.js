@@ -55,6 +55,18 @@ export default class ProjectsProvider extends React.Component {
         }
     }
 
+    loadEditableProjects() {
+        return fetchProjects(this.props.sessionState.accessToken).then(projects => {
+            const cachedProjects = _.cloneDeep(this.state.projects);
+            projects.forEach(project => {
+                if (!cachedProjects.has(project.id)) {
+                    cachedProjects.set(project.id, project);
+                }
+            });
+            this.setState({ projects: cachedProjects });
+        });
+    }
+
     createEmptyProject() {
         return { name: "", startDate: null, endDate: null };
     }
@@ -411,6 +423,10 @@ export default class ProjectsProvider extends React.Component {
         }));
     }
 
+    isAllowedToCreate() {
+        return this.props.sessionState.hasPermission('ROLE_RIGHT_PROJECTS_POST');
+    }
+
     render() {
         return (
             <ProjectsContext.Provider
@@ -419,6 +435,7 @@ export default class ProjectsProvider extends React.Component {
                     getCurrentShifts: this.getCurrentShifts.bind(this),
                     getHelperTypeName: this.getHelperTypeName.bind(this),
 
+                    loadEditableProjects: this.loadEditableProjects.bind(this),
                     selectProject: this.selectProject.bind(this),
                     saveSelectedProject: this.saveSelectedProject.bind(this),
                     resetSelectedProject: this.resetSelectedProject.bind(this),
@@ -441,6 +458,8 @@ export default class ProjectsProvider extends React.Component {
                     changeShiftStartTime: this.changeShiftStartTime.bind(this),
                     changeShiftEndTime: this.changeShiftEndTime.bind(this),
                     changeShiftHelperTypeId: this.changeShiftHelperTypeId.bind(this),
+
+                    isAllowedToCreate: this.isAllowedToCreate.bind(this),
                 }}
             >
                 {this.props.children}
