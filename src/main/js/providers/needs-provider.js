@@ -23,22 +23,24 @@ class StatefulNeedsProvider extends React.Component {
 
     componentDidMount() {
         fetchProjects(this.props.sessionState.accessToken).then(receivedProjects => {
-            const projects = this.state.projects;
-            receivedProjects.forEach(project => {
-                const selectedMonthData = getClosestProjectMonth(0, project.startDate, project.endDate);
-                if (!projects.has(project.id)) {
-                    projects.set(project.id, {
-                        ...project,
-                        selectedMonthData,
-                        loadingMonthData: false,
-                    });
-                }
+            this.setState(prevState => {
+                const projects = _.cloneDeep(prevState.projects);
+                receivedProjects.forEach(project => {
+                    const selectedMonthData = getClosestProjectMonth(0, project.startDate, project.endDate);
+                    if (!projects.has(project.id)) {
+                        projects.set(project.id, {
+                            ...project,
+                            selectedMonthData,
+                            loadingMonthData: false,
+                        });
+                    }
+                });
+                return {
+                    projects,
+                    selectedProjectId: receivedProjects.length > 0 && receivedProjects[0].id,
+                };
             });
-            this.setState({
-                projects,
-                selectedProjectId: receivedProjects.length > 0 && receivedProjects[0].id,
-            })
-        })
+        });
     }
 
     componentDidUpdate() {
@@ -49,19 +51,23 @@ class StatefulNeedsProvider extends React.Component {
                 || !project.days.has(convertToMUIFormat(project.selectedMonthData.lastValidDate))
             )
         ) {
-            const projects = _.cloneDeep(this.state.projects);
-            projects.get(project.id).loadingMonthData = true;
-            if (!project.days) {
-                projects.get(project.id).days = new Map();
-            }
-            this.setState({ projects }, () =>
+            this.setState(prevState => {
+                const projects = _.cloneDeep(prevState.projects);
+                projects.get(project.id).loadingMonthData = true;
+                if (!project.days) {
+                    projects.get(project.id).days = new Map();
+                }
+                return { projects };
+            }, () =>
                 fetchNeedsForCalendar(this.props.sessionState.accessToken, project.id, convertToMUIFormat(project.selectedMonthData.firstValidDate), convertToMUIFormat(project.selectedMonthData.lastValidDate))
                     .then(dateMap => {
-                        const tmpProjects = _.cloneDeep(this.state.projects);
-                        tmpProjects.get(project.id).days = new Map([...dateMap, ...tmpProjects.get(project.id).days]);
-                        tmpProjects.get(project.id).loadingMonthData = false;
-                        this.setState({
-                            projects: tmpProjects,
+                        this.setState(prevState => {
+                            const tmpProjects = _.cloneDeep(prevState.projects);
+                            tmpProjects.get(project.id).days = new Map([...dateMap, ...tmpProjects.get(project.id).days]);
+                            tmpProjects.get(project.id).loadingMonthData = false;
+                            return {
+                                projects: tmpProjects,
+                            };
                         });
                     })
             );
@@ -232,10 +238,12 @@ class StatefulNeedsProvider extends React.Component {
     }
 
     selectMonth(monthOffset) {
-        const projects = _.cloneDeep(this.state.projects);
-        const project = projects.get(this.state.selectedProjectId);
-        project.selectedMonthData = getClosestProjectMonth(monthOffset, project.startDate, project.endDate);
-        this.setState({ projects });
+        this.setState(prevState => {
+            const projects = _.cloneDeep(prevState.projects);
+            const project = projects.get(prevState.selectedProjectId);
+            project.selectedMonthData = getClosestProjectMonth(monthOffset, project.startDate, project.endDate);
+            return { projects };
+        });
     }
 
     render() {

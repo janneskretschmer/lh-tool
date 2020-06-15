@@ -1,13 +1,13 @@
-import React from 'react';
+import { Button, CircularProgress, TextField } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import { Button, IconButton, TextField, Dialog, DialogTitle, DialogContent, FormControl, InputLabel, Select, MenuItem, DialogActions, CircularProgress } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import ProjectsProvider, { ProjectsContext } from '../../providers/projects-provider';
-import { requiresLogin, convertToMUIFormat } from '../../util';
-import ProjectShiftEditComponent from './project-shifts-edit';
 import { withSnackbar } from 'notistack';
-import { Redirect } from 'react-router';
+import React from 'react';
 import { fullPathOfProjectSettings, fullPathOfProjectsSettings } from '../../paths';
+import { ProjectsContext } from '../../providers/projects-provider';
+import { convertToMUIFormat, requiresLogin } from '../../util';
+import LenientRedirect from '../util/lenient-redirect';
+import ProjectShiftEditComponent from './project-shifts-edit';
+import { PageContext } from '../../providers/page-provider';
 
 
 const styles = theme => ({
@@ -38,9 +38,12 @@ class StatefulProjectEditComponent extends React.Component {
     }
 
     componentDidUpdate() {
-        const projectId = this.props.projectsState.selectedProject && this.props.projectsState.selectedProject.id;
-        if (!this.state.redirectToUrl && projectId && parseInt(this.props.match.params.projectId) !== projectId) {
-            this.setState({ redirectToUrl: fullPathOfProjectSettings(projectId) })
+        const project = this.props.projectsState.selectedProject;
+        if (!this.state.redirectToUrl && project && project.id && parseInt(this.props.match.params.projectId) !== project.id) {
+            this.setState({ redirectToUrl: fullPathOfProjectSettings(project.id) })
+        }
+        if (project && this.props.pageState.currentItemName !== project.name) {
+            this.props.pageState.setCurrentItemName(project);
         }
     }
 
@@ -78,7 +81,7 @@ class StatefulProjectEditComponent extends React.Component {
         const saveDisabled = !projectsState.isProjectValid();
 
         if (redirectToUrl) {
-            return (<Redirect to={redirectToUrl} />);
+            return (<LenientRedirect to={redirectToUrl} />);
         }
 
         if (!project) {
@@ -143,7 +146,13 @@ class StatefulProjectEditComponent extends React.Component {
 
 const ProjectEditComponent = props => (
     <ProjectsContext.Consumer>
-        {projectsState => (<StatefulProjectEditComponent {...props} projectsState={projectsState} />)}
+        {projectsState => (
+            <PageContext.Consumer>
+                {pageState => (
+                    <StatefulProjectEditComponent {...props} projectsState={projectsState} pageState={pageState} />
+                )}
+            </PageContext.Consumer>
+        )}
     </ProjectsContext.Consumer>
 );
 export default requiresLogin(ProjectEditComponent);

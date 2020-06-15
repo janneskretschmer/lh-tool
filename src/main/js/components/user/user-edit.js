@@ -13,6 +13,7 @@ import { Typography, Checkbox, FormControlLabel, Tooltip } from '@material-ui/co
 import { Redirect } from 'react-router';
 import { fullPathOfUserSettings, fullPathOfUsersSettings } from '../../paths';
 import { NEW_ENTITY_ID_PLACEHOLDER } from '../../config';
+import LenientRedirect from '../util/lenient-redirect';
 
 const styles = theme => ({
     input: {
@@ -134,8 +135,8 @@ class StatefulUserEditComponent extends React.Component {
     render() {
         const { classes, usersState, pagesState } = this.props;
         const { passwordEmailSent, saving, redirectUrl } = this.state;
-        if (redirectUrl && redirectUrl !== pagesState.currentPath) {
-            return (<Redirect to={redirectUrl} />);
+        if (redirectUrl) {
+            return (<LenientRedirect to={redirectUrl} />);
         }
         const user = usersState.selectedUser;
         const isNewUser = usersState.selectedUser && !usersState.selectedUser.id;

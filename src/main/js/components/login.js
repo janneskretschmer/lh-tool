@@ -14,7 +14,6 @@ import React from 'react';
 import { Redirect } from 'react-router';
 import { login, requestPasswordReset } from '../actions/login';
 import { SessionContext } from '../providers/session-provider';
-import { setWaitingState } from '../util';
 import { fullPathOf } from '../paths';
 
 const styles = theme => ({
@@ -65,7 +64,6 @@ export default class LoginComponent extends React.Component {
     }
 
     setWaiting() {
-        setWaitingState(true);
         this.setState({
             pwResetDialogOpen: this.state.pwResetDialogOpen,
             loading: true,

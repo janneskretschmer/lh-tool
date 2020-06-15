@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { withSnackbar } from 'notistack';
 import React from 'react';
 import { NeedsContext } from '../../providers/needs-provider';
-import { requiresLogin, setWaitingState, withContext, convertToMUIFormat } from '../../util';
+import { requiresLogin, withContext, convertToMUIFormat } from '../../util';
 import NeedProjectCalendar from './need-project-calendar';
 import NeedApplyEditComponent from './apply-edit';
 import { CircularProgress } from '@material-ui/core';
@@ -62,7 +62,6 @@ class StatefulNeedApplyComponent extends React.Component {
         const project = needsState.getSelectedProject();
         const dayMap = project && project.days;
         const selectedDays = project && project.selectedMonthData.days;
-        setWaitingState(false);
 
         const dateContentMap = new Map();
         if (dayMap && selectedDays) {

@@ -36,10 +36,6 @@ export function requiresLogin(Component) {
     );
 }
 
-export function setWaitingState(waiting) {
-    document.body.style.cursor = waiting ? 'wait' : 'default';
-}
-
 export function getMonthArrayWithOffsets(start, end) {
     const today = moment().utc().startOf('day');
     let date = start.diff(today, 'days') > 0 ? start.clone() : today.clone();

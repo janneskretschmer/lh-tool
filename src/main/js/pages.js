@@ -38,6 +38,7 @@ const PAGES = {
         {
             title: 'Einstellungen',
             path: fullPathOfSettings(),
+            tabs: true,
             subPages: [
                 {
                     title: 'Benutzer',

@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { withSnackbar } from 'notistack';
 import React from 'react';
 import { NeedsContext } from '../../providers/needs-provider';
-import { requiresLogin, setWaitingState, convertToMUIFormat } from '../../util';
+import { requiresLogin, convertToMUIFormat } from '../../util';
 import NeedProjectCalendar from './need-project-calendar';
 import NeedQuantityEditComponent from './quantity-edit';
 
@@ -41,7 +41,6 @@ class StatefulNeedQuantityComponent extends React.Component {
         const project = needsState.getSelectedProject();
         const dayMap = project && project.days;
         const selectedDays = project && project.selectedMonthData.days;
-        setWaitingState(false);
 
         const dateContentMap = new Map();
         if (dayMap && selectedDays) {

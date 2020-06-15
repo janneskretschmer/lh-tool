@@ -13,6 +13,7 @@ import { Redirect } from 'react-router';
 import classNames from 'classnames';
 import { NEW_ENTITY_ID_PLACEHOLDER } from '../config';
 import { Typography } from '@material-ui/core';
+import LenientRedirect from './util/lenient-redirect';
 
 
 const styles = theme => ({
@@ -126,7 +127,7 @@ export default class PagedTable extends React.Component {
         const emptyRows = rowsPerPage >= rows.length ? 0 : rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
         const singlePage = emptyRows < rows.length;
         if (this.state.redirect) {
-            return (<Redirect to={redirect(this.state.redirect)} />);
+            return (<LenientRedirect to={redirect(this.state.redirect)} />);
         }
         return (
             <Table className={fitWidth && classes.fitWidth}>

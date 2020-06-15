@@ -99,7 +99,7 @@ export default class ProjectsProvider extends React.Component {
 
     handleUpdatedAndSelectedProject(project, callback) {
         this.setState(prevState => {
-            const projects = new Map(prevState.projects);
+            const projects = _.cloneDeep(prevState.projects);
             projects.set(project.id, project);
             return {
                 projects,
@@ -185,143 +185,153 @@ export default class ProjectsProvider extends React.Component {
 
     applySelectedShift() {
         if (this.isShiftValid()) {
-            const shift = this.state.selectedShift;
-            const project = { ...this.state.selectedProject };
-            const shifts = project.shifts.get(shift.weekday).get(shift.helperTypeId).filter(cachedShift => !cachedShift.id || cachedShift.id !== shift.id);
-            project.shifts.get(shift.weekday).set(shift.helperTypeId, [...shifts, shift]);
-            this.setState({
-                selectedProject: project,
-                selectedShift: null,
+            this.setState(prevState => {
+                const shift = prevState.selectedShift;
+                const project = _.cloneDeep(prevState.selectedProject);
+                const shifts = project.shifts.get(shift.weekday).get(shift.helperTypeId).filter(cachedShift => !cachedShift.id || cachedShift.id !== shift.id);
+                project.shifts.get(shift.weekday).set(shift.helperTypeId, [...shifts, shift]);
+                return {
+                    selectedProject: project,
+                    selectedShift: null,
+                };
             });
         }
     }
 
     removeShift(shift) {
-        const project = { ...this.state.selectedProject };
-        const shifts = project.shifts.get(shift.weekday).get(shift.helperTypeId).filter(cachedShift => cachedShift.id !== shift.id || cachedShift.startTime !== shift.startTime);
-        project.shifts.get(shift.weekday).set(shift.helperTypeId, shifts);
-        this.setState({
-            selectedProject: project,
-            selectedShift: null,
+        this.setState(prevState => {
+            const project = _.cloneDeep(prevState.selectedProject);
+            const shifts = project.shifts.get(shift.weekday).get(shift.helperTypeId).filter(cachedShift => cachedShift.id !== shift.id || cachedShift.startTime !== shift.startTime);
+            project.shifts.get(shift.weekday).set(shift.helperTypeId, shifts);
+            return {
+                selectedProject: project,
+                selectedShift: null,
+            };
         });
     }
 
     // FUTURE clean dynamic solution
     addStandardShifts() {
-        const project = { ...this.state.selectedProject };
-        const standardShifts = [
-            // Tuesday
-            { projectId: project.id, weekday: 2, helperTypeId: this.HELPER_TYPE_CONSTRUCTION_ID, startTime: '07:00', endTime: '17:00' },
-            { projectId: project.id, weekday: 2, helperTypeId: this.HELPER_TYPE_KITCHEN_ID, startTime: '07:00', endTime: '17:00' },
-            { projectId: project.id, weekday: 2, helperTypeId: this.HELPER_TYPE_STORE_KEEPER_ID, startTime: '07:00', endTime: '17:00' },
-            { projectId: project.id, weekday: 2, helperTypeId: this.HELPER_TYPE_DRIVER_ID, startTime: '07:00', endTime: '17:00' },
-            { projectId: project.id, weekday: 2, helperTypeId: this.HELPER_TYPE_CLEANER_ID, startTime: '07:00' },
-            // Wednesday
-            { projectId: project.id, weekday: 3, helperTypeId: this.HELPER_TYPE_CONSTRUCTION_ID, startTime: '07:00', endTime: '17:00' },
-            { projectId: project.id, weekday: 3, helperTypeId: this.HELPER_TYPE_KITCHEN_ID, startTime: '07:00', endTime: '17:00' },
-            { projectId: project.id, weekday: 3, helperTypeId: this.HELPER_TYPE_STORE_KEEPER_ID, startTime: '07:00', endTime: '17:00' },
-            { projectId: project.id, weekday: 3, helperTypeId: this.HELPER_TYPE_DRIVER_ID, startTime: '07:00', endTime: '17:00' },
-            { projectId: project.id, weekday: 3, helperTypeId: this.HELPER_TYPE_CLEANER_ID, startTime: '07:00' },
-            // Thursday
-            { projectId: project.id, weekday: 4, helperTypeId: this.HELPER_TYPE_CONSTRUCTION_ID, startTime: '07:00', endTime: '17:00' },
-            { projectId: project.id, weekday: 4, helperTypeId: this.HELPER_TYPE_KITCHEN_ID, startTime: '07:00', endTime: '17:00' },
-            { projectId: project.id, weekday: 4, helperTypeId: this.HELPER_TYPE_STORE_KEEPER_ID, startTime: '07:00', endTime: '17:00' },
-            { projectId: project.id, weekday: 4, helperTypeId: this.HELPER_TYPE_DRIVER_ID, startTime: '07:00', endTime: '17:00' },
-            { projectId: project.id, weekday: 4, helperTypeId: this.HELPER_TYPE_CLEANER_ID, startTime: '07:00' },
-            // Friday
-            { projectId: project.id, weekday: 5, helperTypeId: this.HELPER_TYPE_CONSTRUCTION_ID, startTime: '07:00', endTime: '17:00' },
-            { projectId: project.id, weekday: 5, helperTypeId: this.HELPER_TYPE_KITCHEN_ID, startTime: '07:00', endTime: '17:00' },
-            { projectId: project.id, weekday: 5, helperTypeId: this.HELPER_TYPE_STORE_KEEPER_ID, startTime: '07:00', endTime: '17:00' },
-            { projectId: project.id, weekday: 5, helperTypeId: this.HELPER_TYPE_DRIVER_ID, startTime: '07:00', endTime: '17:00' },
-            { projectId: project.id, weekday: 5, helperTypeId: this.HELPER_TYPE_CLEANER_ID, startTime: '07:00' },
-            // Saturday
-            { projectId: project.id, weekday: 6, helperTypeId: this.HELPER_TYPE_CONSTRUCTION_ID, startTime: '07:00', endTime: '17:00' },
-            { projectId: project.id, weekday: 6, helperTypeId: this.HELPER_TYPE_KITCHEN_ID, startTime: '07:00', endTime: '17:00' },
-            { projectId: project.id, weekday: 6, helperTypeId: this.HELPER_TYPE_STORE_KEEPER_ID, startTime: '07:00', endTime: '17:00' },
-            { projectId: project.id, weekday: 6, helperTypeId: this.HELPER_TYPE_DRIVER_ID, startTime: '07:00', endTime: '17:00' },
-            { projectId: project.id, weekday: 6, helperTypeId: this.HELPER_TYPE_CLEANER_ID, startTime: '07:00' },
-        ];
-        standardShifts.forEach(shift => {
-            if (!project.shifts.get(shift.weekday).get(shift.helperTypeId).find(cachedShift => cachedShift.startTime === shift.startTime)) {
-                project.shifts.get(shift.weekday).get(shift.helperTypeId).push(shift);
-            }
-        })
-        this.setState({ selectedProject: project });
+        this.setState(prevState => {
+            const project = _.cloneDeep(prevState.selectedProject);
+            const standardShifts = [
+                // Tuesday
+                { projectId: project.id, weekday: 2, helperTypeId: this.HELPER_TYPE_CONSTRUCTION_ID, startTime: '07:00', endTime: '17:00' },
+                { projectId: project.id, weekday: 2, helperTypeId: this.HELPER_TYPE_KITCHEN_ID, startTime: '07:00', endTime: '17:00' },
+                { projectId: project.id, weekday: 2, helperTypeId: this.HELPER_TYPE_STORE_KEEPER_ID, startTime: '07:00', endTime: '17:00' },
+                { projectId: project.id, weekday: 2, helperTypeId: this.HELPER_TYPE_DRIVER_ID, startTime: '07:00', endTime: '17:00' },
+                { projectId: project.id, weekday: 2, helperTypeId: this.HELPER_TYPE_CLEANER_ID, startTime: '07:00' },
+                // Wednesday
+                { projectId: project.id, weekday: 3, helperTypeId: this.HELPER_TYPE_CONSTRUCTION_ID, startTime: '07:00', endTime: '17:00' },
+                { projectId: project.id, weekday: 3, helperTypeId: this.HELPER_TYPE_KITCHEN_ID, startTime: '07:00', endTime: '17:00' },
+                { projectId: project.id, weekday: 3, helperTypeId: this.HELPER_TYPE_STORE_KEEPER_ID, startTime: '07:00', endTime: '17:00' },
+                { projectId: project.id, weekday: 3, helperTypeId: this.HELPER_TYPE_DRIVER_ID, startTime: '07:00', endTime: '17:00' },
+                { projectId: project.id, weekday: 3, helperTypeId: this.HELPER_TYPE_CLEANER_ID, startTime: '07:00' },
+                // Thursday
+                { projectId: project.id, weekday: 4, helperTypeId: this.HELPER_TYPE_CONSTRUCTION_ID, startTime: '07:00', endTime: '17:00' },
+                { projectId: project.id, weekday: 4, helperTypeId: this.HELPER_TYPE_KITCHEN_ID, startTime: '07:00', endTime: '17:00' },
+                { projectId: project.id, weekday: 4, helperTypeId: this.HELPER_TYPE_STORE_KEEPER_ID, startTime: '07:00', endTime: '17:00' },
+                { projectId: project.id, weekday: 4, helperTypeId: this.HELPER_TYPE_DRIVER_ID, startTime: '07:00', endTime: '17:00' },
+                { projectId: project.id, weekday: 4, helperTypeId: this.HELPER_TYPE_CLEANER_ID, startTime: '07:00' },
+                // Friday
+                { projectId: project.id, weekday: 5, helperTypeId: this.HELPER_TYPE_CONSTRUCTION_ID, startTime: '07:00', endTime: '17:00' },
+                { projectId: project.id, weekday: 5, helperTypeId: this.HELPER_TYPE_KITCHEN_ID, startTime: '07:00', endTime: '17:00' },
+                { projectId: project.id, weekday: 5, helperTypeId: this.HELPER_TYPE_STORE_KEEPER_ID, startTime: '07:00', endTime: '17:00' },
+                { projectId: project.id, weekday: 5, helperTypeId: this.HELPER_TYPE_DRIVER_ID, startTime: '07:00', endTime: '17:00' },
+                { projectId: project.id, weekday: 5, helperTypeId: this.HELPER_TYPE_CLEANER_ID, startTime: '07:00' },
+                // Saturday
+                { projectId: project.id, weekday: 6, helperTypeId: this.HELPER_TYPE_CONSTRUCTION_ID, startTime: '07:00', endTime: '17:00' },
+                { projectId: project.id, weekday: 6, helperTypeId: this.HELPER_TYPE_KITCHEN_ID, startTime: '07:00', endTime: '17:00' },
+                { projectId: project.id, weekday: 6, helperTypeId: this.HELPER_TYPE_STORE_KEEPER_ID, startTime: '07:00', endTime: '17:00' },
+                { projectId: project.id, weekday: 6, helperTypeId: this.HELPER_TYPE_DRIVER_ID, startTime: '07:00', endTime: '17:00' },
+                { projectId: project.id, weekday: 6, helperTypeId: this.HELPER_TYPE_CLEANER_ID, startTime: '07:00' },
+            ];
+            standardShifts.forEach(shift => {
+                if (!project.shifts.get(shift.weekday).get(shift.helperTypeId).find(cachedShift => cachedShift.startTime === shift.startTime)) {
+                    project.shifts.get(shift.weekday).get(shift.helperTypeId).push(shift);
+                }
+            });
+            return { selectedProject: project }
+        });
     }
 
     // FUTURE clean dynamic solution
     addGateKeeperShifts() {
-        const project = { ...this.state.selectedProject };
-        const gateKeeperShifts = [
-            // Tuesday
-            { projectId: project.id, weekday: 2, helperTypeId: this.HELPER_TYPE_GATE_KEEPER_ID, startTime: '07:00', endTime: '12:30' },
-            { projectId: project.id, weekday: 2, helperTypeId: this.HELPER_TYPE_GATE_KEEPER_ID, startTime: '12:30', endTime: '17:00' },
-            // Wednesday
-            { projectId: project.id, weekday: 3, helperTypeId: this.HELPER_TYPE_GATE_KEEPER_ID, startTime: '07:00', endTime: '12:30' },
-            { projectId: project.id, weekday: 3, helperTypeId: this.HELPER_TYPE_GATE_KEEPER_ID, startTime: '12:30', endTime: '17:00' },
-            // Thursday
-            { projectId: project.id, weekday: 4, helperTypeId: this.HELPER_TYPE_GATE_KEEPER_ID, startTime: '07:00', endTime: '12:30' },
-            { projectId: project.id, weekday: 4, helperTypeId: this.HELPER_TYPE_GATE_KEEPER_ID, startTime: '12:30', endTime: '17:00' },
-            // Friday
-            { projectId: project.id, weekday: 5, helperTypeId: this.HELPER_TYPE_GATE_KEEPER_ID, startTime: '07:00', endTime: '12:30' },
-            { projectId: project.id, weekday: 5, helperTypeId: this.HELPER_TYPE_GATE_KEEPER_ID, startTime: '12:30', endTime: '17:00' },
-            // Saturday
-            { projectId: project.id, weekday: 6, helperTypeId: this.HELPER_TYPE_GATE_KEEPER_ID, startTime: '07:00', endTime: '12:30' },
-            { projectId: project.id, weekday: 6, helperTypeId: this.HELPER_TYPE_GATE_KEEPER_ID, startTime: '12:30', endTime: '17:00' },
-        ];
-        gateKeeperShifts.forEach(shift => {
-            if (!project.shifts.get(shift.weekday).get(shift.helperTypeId).find(cachedShift => cachedShift.startTime === shift.startTime)) {
-                project.shifts.get(shift.weekday).get(shift.helperTypeId).push(shift);
-            }
-        })
-        this.setState({ selectedProject: project });
+        this.setState(prevState => {
+            const project = _.cloneDeep(prevState.selectedProject);
+            const gateKeeperShifts = [
+                // Tuesday
+                { projectId: project.id, weekday: 2, helperTypeId: this.HELPER_TYPE_GATE_KEEPER_ID, startTime: '07:00', endTime: '12:30' },
+                { projectId: project.id, weekday: 2, helperTypeId: this.HELPER_TYPE_GATE_KEEPER_ID, startTime: '12:30', endTime: '17:00' },
+                // Wednesday
+                { projectId: project.id, weekday: 3, helperTypeId: this.HELPER_TYPE_GATE_KEEPER_ID, startTime: '07:00', endTime: '12:30' },
+                { projectId: project.id, weekday: 3, helperTypeId: this.HELPER_TYPE_GATE_KEEPER_ID, startTime: '12:30', endTime: '17:00' },
+                // Thursday
+                { projectId: project.id, weekday: 4, helperTypeId: this.HELPER_TYPE_GATE_KEEPER_ID, startTime: '07:00', endTime: '12:30' },
+                { projectId: project.id, weekday: 4, helperTypeId: this.HELPER_TYPE_GATE_KEEPER_ID, startTime: '12:30', endTime: '17:00' },
+                // Friday
+                { projectId: project.id, weekday: 5, helperTypeId: this.HELPER_TYPE_GATE_KEEPER_ID, startTime: '07:00', endTime: '12:30' },
+                { projectId: project.id, weekday: 5, helperTypeId: this.HELPER_TYPE_GATE_KEEPER_ID, startTime: '12:30', endTime: '17:00' },
+                // Saturday
+                { projectId: project.id, weekday: 6, helperTypeId: this.HELPER_TYPE_GATE_KEEPER_ID, startTime: '07:00', endTime: '12:30' },
+                { projectId: project.id, weekday: 6, helperTypeId: this.HELPER_TYPE_GATE_KEEPER_ID, startTime: '12:30', endTime: '17:00' },
+            ];
+            gateKeeperShifts.forEach(shift => {
+                if (!project.shifts.get(shift.weekday).get(shift.helperTypeId).find(cachedShift => cachedShift.startTime === shift.startTime)) {
+                    project.shifts.get(shift.weekday).get(shift.helperTypeId).push(shift);
+                }
+            })
+            return { selectedProject: project };
+        });
     }
 
     // FUTURE clean dynamic solution
     addSecurityShifts() {
-        const project = { ...this.state.selectedProject };
-        const securityShifts = [
-            // Monday
-            { projectId: project.id, weekday: 1, helperTypeId: this.HELPER_TYPE_SECURITY_DAY_ID, startTime: '07:00', endTime: '10:00' },
-            { projectId: project.id, weekday: 1, helperTypeId: this.HELPER_TYPE_SECURITY_DAY_ID, startTime: '10:00', endTime: '14:00' },
-            { projectId: project.id, weekday: 1, helperTypeId: this.HELPER_TYPE_SECURITY_DAY_ID, startTime: '14:00', endTime: '17:00' },
-            { projectId: project.id, weekday: 1, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '02:00', endTime: '07:00' },
-            { projectId: project.id, weekday: 1, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '17:00', endTime: '22:00' },
-            { projectId: project.id, weekday: 1, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '22:00', endTime: '02:00' },
-            // Tuesday
-            { projectId: project.id, weekday: 2, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '02:00', endTime: '07:00' },
-            { projectId: project.id, weekday: 2, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '17:00', endTime: '22:00' },
-            { projectId: project.id, weekday: 2, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '22:00', endTime: '02:00' },
-            // Wednesday
-            { projectId: project.id, weekday: 3, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '02:00', endTime: '07:00' },
-            { projectId: project.id, weekday: 3, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '17:00', endTime: '22:00' },
-            { projectId: project.id, weekday: 3, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '22:00', endTime: '02:00' },
-            // Thursday
-            { projectId: project.id, weekday: 4, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '02:00', endTime: '07:00' },
-            { projectId: project.id, weekday: 4, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '17:00', endTime: '22:00' },
-            { projectId: project.id, weekday: 4, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '22:00', endTime: '02:00' },
-            // Friday
-            { projectId: project.id, weekday: 5, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '02:00', endTime: '07:00' },
-            { projectId: project.id, weekday: 5, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '17:00', endTime: '22:00' },
-            { projectId: project.id, weekday: 5, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '22:00', endTime: '02:00' },
-            // Saturday
-            { projectId: project.id, weekday: 6, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '02:00', endTime: '07:00' },
-            { projectId: project.id, weekday: 6, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '17:00', endTime: '22:00' },
-            { projectId: project.id, weekday: 6, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '22:00', endTime: '02:00' },
-            // Sunday
-            { projectId: project.id, weekday: 7, helperTypeId: this.HELPER_TYPE_SECURITY_DAY_ID, startTime: '07:00', endTime: '10:00' },
-            { projectId: project.id, weekday: 7, helperTypeId: this.HELPER_TYPE_SECURITY_DAY_ID, startTime: '10:00', endTime: '14:00' },
-            { projectId: project.id, weekday: 7, helperTypeId: this.HELPER_TYPE_SECURITY_DAY_ID, startTime: '14:00', endTime: '17:00' },
-            { projectId: project.id, weekday: 7, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '02:00', endTime: '07:00' },
-            { projectId: project.id, weekday: 7, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '17:00', endTime: '22:00' },
-            { projectId: project.id, weekday: 7, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '22:00', endTime: '02:00' },
-        ];
-        securityShifts.forEach(shift => {
-            if (!project.shifts.get(shift.weekday).get(shift.helperTypeId).find(cachedShift => cachedShift.startTime === shift.startTime)) {
-                project.shifts.get(shift.weekday).get(shift.helperTypeId).push(shift);
-            }
-        })
-        this.setState({ selectedProject: project });
+        this.setState(prevState => {
+            const project = _.cloneDeep(prevState.selectedProject);
+            const securityShifts = [
+                // Monday
+                { projectId: project.id, weekday: 1, helperTypeId: this.HELPER_TYPE_SECURITY_DAY_ID, startTime: '07:00', endTime: '10:00' },
+                { projectId: project.id, weekday: 1, helperTypeId: this.HELPER_TYPE_SECURITY_DAY_ID, startTime: '10:00', endTime: '14:00' },
+                { projectId: project.id, weekday: 1, helperTypeId: this.HELPER_TYPE_SECURITY_DAY_ID, startTime: '14:00', endTime: '17:00' },
+                { projectId: project.id, weekday: 1, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '02:00', endTime: '07:00' },
+                { projectId: project.id, weekday: 1, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '17:00', endTime: '22:00' },
+                { projectId: project.id, weekday: 1, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '22:00', endTime: '02:00' },
+                // Tuesday
+                { projectId: project.id, weekday: 2, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '02:00', endTime: '07:00' },
+                { projectId: project.id, weekday: 2, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '17:00', endTime: '22:00' },
+                { projectId: project.id, weekday: 2, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '22:00', endTime: '02:00' },
+                // Wednesday
+                { projectId: project.id, weekday: 3, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '02:00', endTime: '07:00' },
+                { projectId: project.id, weekday: 3, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '17:00', endTime: '22:00' },
+                { projectId: project.id, weekday: 3, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '22:00', endTime: '02:00' },
+                // Thursday
+                { projectId: project.id, weekday: 4, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '02:00', endTime: '07:00' },
+                { projectId: project.id, weekday: 4, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '17:00', endTime: '22:00' },
+                { projectId: project.id, weekday: 4, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '22:00', endTime: '02:00' },
+                // Friday
+                { projectId: project.id, weekday: 5, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '02:00', endTime: '07:00' },
+                { projectId: project.id, weekday: 5, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '17:00', endTime: '22:00' },
+                { projectId: project.id, weekday: 5, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '22:00', endTime: '02:00' },
+                // Saturday
+                { projectId: project.id, weekday: 6, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '02:00', endTime: '07:00' },
+                { projectId: project.id, weekday: 6, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '17:00', endTime: '22:00' },
+                { projectId: project.id, weekday: 6, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '22:00', endTime: '02:00' },
+                // Sunday
+                { projectId: project.id, weekday: 7, helperTypeId: this.HELPER_TYPE_SECURITY_DAY_ID, startTime: '07:00', endTime: '10:00' },
+                { projectId: project.id, weekday: 7, helperTypeId: this.HELPER_TYPE_SECURITY_DAY_ID, startTime: '10:00', endTime: '14:00' },
+                { projectId: project.id, weekday: 7, helperTypeId: this.HELPER_TYPE_SECURITY_DAY_ID, startTime: '14:00', endTime: '17:00' },
+                { projectId: project.id, weekday: 7, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '02:00', endTime: '07:00' },
+                { projectId: project.id, weekday: 7, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '17:00', endTime: '22:00' },
+                { projectId: project.id, weekday: 7, helperTypeId: this.HELPER_TYPE_SECURITY_NIGHT_ID, startTime: '22:00', endTime: '02:00' },
+            ];
+            securityShifts.forEach(shift => {
+                if (!project.shifts.get(shift.weekday).get(shift.helperTypeId).find(cachedShift => cachedShift.startTime === shift.startTime)) {
+                    project.shifts.get(shift.weekday).get(shift.helperTypeId).push(shift);
+                }
+            });
+            return { selectedProject: project };
+        });
     }
 
     isShiftValid() {
@@ -362,32 +372,36 @@ export default class ProjectsProvider extends React.Component {
         if (isStringBlank(date)) {
             return;
         }
-        let startDate = convertFromMUIFormat(date).utc(true);
-        if (this.state.selectedProject.endDate) {
-            startDate = moment.min(startDate, this.state.selectedProject.endDate);
-        }
-        this.setState(prevState => ({
-            selectedProject: {
-                ...prevState.selectedProject,
-                startDate,
+        this.setState(prevState => {
+            let startDate = convertFromMUIFormat(date).utc(true);
+            if (prevState.selectedProject.endDate) {
+                startDate = moment.max(startDate, prevState.selectedProject.endDate);
             }
-        }));
+            return {
+                selectedProject: {
+                    ...prevState.selectedProject,
+                    startDate,
+                }
+            }
+        });
     }
 
     changeProjectEndDate(date) {
         if (isStringBlank(date)) {
             return;
         }
-        let endDate = convertFromMUIFormat(date).utc(true);
-        if (this.state.selectedProject.startDate) {
-            endDate = moment.max(endDate, this.state.selectedProject.startDate);
-        }
-        this.setState(prevState => ({
-            selectedProject: {
-                ...prevState.selectedProject,
-                endDate,
+        this.setState(prevState => {
+            let endDate = convertFromMUIFormat(date).utc(true);
+            if (prevState.selectedProject.startDate) {
+                endDate = moment.max(endDate, prevState.selectedProject.startDate);
             }
-        }));
+            return {
+                selectedProject: {
+                    ...prevState.selectedProject,
+                    endDate,
+                }
+            }
+        });
     }
 
     changeShift(selectedShift) {
