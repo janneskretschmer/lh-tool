@@ -7,7 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import classNames from 'classnames';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItem, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfSlot, fullPathOfStore, fullPathOfStores, partialPathOfNeed, fullPathOfSettings } from '../paths';
+import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItem, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfSlot, fullPathOfStore, fullPathOfStores, partialPathOfNeed, fullPathOfSettings } from '../paths';
 import SessionProvider from '../providers/session-provider';
 import ChangePasswordComponent from './changepw';
 import AppHeader from './header';
@@ -17,7 +17,6 @@ import NeedWrapperComponent from './need/need-wrapper';
 import ItemListComponent from './item/item-list';
 import ItemDetailComponent from './item/item-detail';
 import NotFoundHandlerComponent from './notfound';
-import ProjectsComponent from './project/project';
 import SlotDetailComponent from './slot/slot-detail';
 import StoreDetailComponent from './store/store-detail';
 import StoreListComponent from './store/store-list';
@@ -129,7 +128,6 @@ export default class LHToolRoot extends React.Component {
                                             FUTURE: could probably be generated dynamically
                                         */}
                                         <Route path={fullPathOfLogin()} component={LoginComponent} />
-                                        <Route path={fullPathOfProjects()} component={ProjectsComponent} />
                                         <Route path={partialPathOfNeed()} component={NeedWrapperComponent} exact={false} />
                                         <Route path={fullPathOfStore()} component={StoreDetailComponent} />
                                         <Route path={fullPathOfStores()} component={StoreListComponent} />

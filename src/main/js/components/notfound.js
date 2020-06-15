@@ -22,7 +22,7 @@ export default class NotFoundHandlerComponent extends React.Component {
             return (<Redirect to={fullPathOfLogin()} />)
         }
         if (sessionState.hasPermission('ROLE_ADMIN') || sessionState.hasPermission('ROLE_CONSTRUCTION_SERVANT')) {
-            return (<Redirect to={fullPathOfProjects()} />);
+            return (<Redirect to={fullPathOfNeedApprove()} />);
         }
         if (sessionState.hasPermission('ROLE_LOCAL_COORDINATOR')) {
             return (<Redirect to={fullPathOfNeedQuantities()} />);

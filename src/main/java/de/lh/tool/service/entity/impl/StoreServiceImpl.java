@@ -42,7 +42,7 @@ public class StoreServiceImpl extends BasicMappableEntityServiceImpl<StoreReposi
 	@Transactional
 	public StoreDto getStoreDtoById(Long id) throws DefaultException {
 		Store store = findById(id).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
-		if (userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_GET_FOREIGN)
+		if (userRoleService.hasCurrentUserRight(UserRole.RIGHT_STORES_GET_FOREIGN_PROJECT)
 				|| store.getStoreProjects().stream().anyMatch(sp -> new Date().after(sp.getStart())
 						&& new Date().before(sp.getEnd()) && projectService.isOwnProject(sp.getProject()))) {
 			return convertToDto(store);

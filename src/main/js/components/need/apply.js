@@ -3,13 +3,12 @@ import { green, red, yellow, grey } from '@material-ui/core/colors';
 import { withStyles } from '@material-ui/core/styles';
 import { withSnackbar } from 'notistack';
 import React from 'react';
-import { fetchOwnNeeds } from '../../actions/need';
 import { NeedsContext } from '../../providers/needs-provider';
-import { OldProjectsContext } from '../../providers/projects-provider.old';
-import { requiresLogin, setWaitingState, withContext } from '../../util';
-import ProjectCalendar from '../util/project-calendar';
+import { requiresLogin, setWaitingState, withContext, convertToMUIFormat } from '../../util';
+import NeedProjectCalendar from './need-project-calendar';
 import NeedApplyEditComponent from './apply-edit';
 import { CircularProgress } from '@material-ui/core';
+import { ProjectsContext } from '../../providers/projects-provider';
 
 const styles = theme => ({
     helperTypeName: {
@@ -49,8 +48,6 @@ class StatefulNeedApplyComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedMonth: null,
-            selectedProject: null,
         };
     }
 
@@ -60,36 +57,47 @@ class StatefulNeedApplyComponent extends React.Component {
         });
     }
 
-    static getDerivedStateFromProps(nextProps, prevState) {
-        //new data needs to be loaded on every change of project or month
-        if (nextProps.projectsState.selectedMonthCalendarData.monthOffset !== prevState.selectedMonth
-            || nextProps.projectsState.selectedProjectIndex !== prevState.selectedProject) {
-            const projectId = nextProps.projectsState.getSelectedProject().id;
-            const days = nextProps.projectsState.selectedMonthCalendarData.days.filter(day => !day.disabled);
-            nextProps.needsState.loadNeedsForCalendarBetweenDates(projectId,
-                days[0].date,
-                days[days.length - 1].date,
-                () => nextProps.enqueueSnackbar('Fehler beim Laden des Bedarfs', {
-                    variant: 'error',
-                }));
-            // const userId = nextProps.sessionState.currentUser.id;
-            // nextProps.projectsState.selectedMonthCalendarData.days.filter(day => !day.disabled)
-            //     .forEach(
-            //         day => nextProps.needsState.loadHelperTypesWithNeedsAndCurrentUserByProjectIdAndDate(projectId, day.date, err => this.handleFailure())
-            //     );
-            return {
-                selectedMonth: nextProps.projectsState.selectedMonthCalendarData.monthOffset,
-                selectedProject: nextProps.projectsState.selectedProjectIndex,
-            };
-        }
-        return null;
-    }
-
     render() {
         const { classes, needsState } = this.props;
-        const projectId = this.props.projectsState.getSelectedProject().id;
-        const dayMap = needsState.projects && needsState.projects.has(projectId) && needsState.projects.get(projectId).days;
+        const project = needsState.getSelectedProject();
+        const dayMap = project && project.days;
+        const selectedDays = project && project.selectedMonthData.days;
         setWaitingState(false);
+
+        const dateContentMap = new Map();
+        if (dayMap && selectedDays) {
+            selectedDays.forEach(day => {
+                const dateString = convertToMUIFormat(day.date);
+                const dayData = dayMap.get(dateString);
+                if (dayData) {
+                    dateContentMap.set(dateString, (
+                        <div key={dateString} date={dayData.date}>
+                            {dayData.helperTypes && dayData.helperTypes
+                                .map(
+                                    helperType => helperType && (
+                                        <div key={helperType.id}>
+                                            <div className={classes.helperTypeName}>
+                                                {helperType.name}
+                                            </div>
+                                            {helperType.shifts && helperType.shifts[0] && helperType.shifts[0].need ? helperType.shifts.map(shift => (
+                                                <div key={shift.id} className={classes.inputWrapper}>
+                                                    {shift.need && (shift.need.state || !shift.need.id) ? (
+                                                        <NeedApplyEditComponent
+                                                            need={shift.need}
+                                                            helperTypeName={helperType.name}
+                                                            projectHelperType={shift}
+                                                            label={shift.endTime ? shift.startTime + ' - ' + shift.endTime : 'ab ' + shift.startTime}></NeedApplyEditComponent>
+                                                    ) : (<CircularProgress size={15} />)}
+                                                </div>
+                                            )) : (<CircularProgress size={15} />)}
+                                        </div>
+                                    )
+                                )}
+                        </div>
+                    ));
+                }
+            });
+        }
         return (
             <>
                 Aufgabe
@@ -113,33 +121,9 @@ class StatefulNeedApplyComponent extends React.Component {
                     <Button variant="contained" className={classes.rejected}>Zeitraum</Button> &nbsp;Nicht zugeteilt, bitte bewerbe dich für ein anderes Datum.
                 </div>
                 <br />
-                <ProjectCalendar>
-                    {dayMap && Array.from(dayMap.keys()).map(dateString => (
-                        <div key={dateString} date={dayMap.get(dateString).date}>
-                            {dayMap.get(dateString).helperTypes && dayMap.get(dateString).helperTypes
-                                .map(
-                                    helperType => helperType && (
-                                        <div key={helperType.id}>
-                                            <div className={classes.helperTypeName}>
-                                                {helperType.name}
-                                            </div>
-                                            {helperType.shifts && helperType.shifts[0] && helperType.shifts[0].need ? helperType.shifts.map(shift => (
-                                                <div key={shift.id} className={classes.inputWrapper}>
-                                                    {shift.need && (shift.need.state || !shift.need.id) ? (
-                                                        <NeedApplyEditComponent
-                                                            need={shift.need}
-                                                            helperTypeName={helperType.name}
-                                                            projectHelperType={shift}
-                                                            label={shift.endTime ? shift.startTime + ' - ' + shift.endTime : 'ab ' + shift.startTime}></NeedApplyEditComponent>
-                                                    ) : (<CircularProgress size={15} />)}
-                                                </div>
-                                            )) : (<CircularProgress size={15} />)}
-                                        </div>
-                                    )
-                                )}
-                        </div>
-                    ))}
-                </ProjectCalendar>
+
+
+                <NeedProjectCalendar dateContentMap={dateContentMap} />
             </>
         );
     }
@@ -147,7 +131,7 @@ class StatefulNeedApplyComponent extends React.Component {
 
 const NeedApplyComponent = props => (
     <>
-        <OldProjectsContext.Consumer>
+        <ProjectsContext.Consumer>
             {projectsState => (
                 <NeedsContext.Consumer>
                     {needsState =>
@@ -155,7 +139,7 @@ const NeedApplyComponent = props => (
                     }
                 </NeedsContext.Consumer>
             )}
-        </OldProjectsContext.Consumer>
+        </ProjectsContext.Consumer>
     </>
 );
 export default requiresLogin(NeedApplyComponent);

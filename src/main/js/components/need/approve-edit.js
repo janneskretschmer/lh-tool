@@ -17,6 +17,7 @@ import { fetchUser } from '../../actions/user';
 import { requiresLogin } from '../../util';
 import WithPermission from '../with-permission';
 import { NeedsContext } from '../../providers/needs-provider';
+import { withSnackbar } from 'notistack';
 
 
 const styles = theme => ({
@@ -45,7 +46,8 @@ const styles = theme => ({
         color: green[600],
     }
 });
-
+@withStyles(styles)
+@withSnackbar
 class StatefulNeedApproveEditComponent extends React.Component {
 
     constructor(props) {
@@ -108,7 +110,7 @@ class StatefulNeedApproveEditComponent extends React.Component {
                                                     <ListItemText primary={`${user.lastName}, ${user.firstName}`} />
                                                     <WithPermission permission="ROLE_RIGHT_NEEDS_APPROVE">
                                                         <IconButton
-                                                            disabled={user.state !== 'APPROVED' && approved >= need.quantity}
+                                                            disabled={needUser.state !== 'APPROVED' && approved >= need.quantity}
                                                             onClick={() => this.handleToggle(needUser, needUser.state !== 'APPROVED' ? 'APPROVED' : 'APPLIED')}
                                                         >
                                                             {needUser.state === 'APPROVED' ? (
@@ -118,6 +120,7 @@ class StatefulNeedApproveEditComponent extends React.Component {
                                                                 )}
                                                         </IconButton>
                                                         <IconButton
+                                                            disabled={needUser.state === 'REJECTED'}
                                                             onClick={() => this.handleToggle(needUser, needUser.state !== 'REJECTED' ? 'REJECTED' : 'APPLIED')}
                                                         >
                                                             {needUser.state === 'REJECTED' ? (

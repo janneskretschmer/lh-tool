@@ -1,4 +1,5 @@
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import grey from '@material-ui/core/colors/grey';
 import IconButton from '@material-ui/core/IconButton';
 import { withStyles } from '@material-ui/core/styles';
@@ -7,19 +8,15 @@ import CloseIcon from '@material-ui/icons/Close';
 import DoneIcon from '@material-ui/icons/Done';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
 import EventBusyIcon from '@material-ui/icons/EventBusy';
-import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import classNames from 'classnames';
+import { withSnackbar } from 'notistack';
 import React from 'react';
-import { fetchOwnNeeds } from '../../actions/need';
-import { getMonthOffsetWithinRange, getProjectMonth, isMonthOffsetWithinRange, requiresLogin, convertToMUIFormat } from '../../util';
-import ProjectSelection from '../util/project-selection';
-import NeedApproveEditComponent from './approve-edit';
-import WithPermission from '../with-permission';
-import { OldProjectsContext } from '../../providers/projects-provider.old';
 import { NeedsContext } from '../../providers/needs-provider';
-import MonthSelection from '../util/month-selection';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { convertToMUIFormat, requiresLogin } from '../../util';
+import WithPermission from '../with-permission';
+import NeedApproveEditComponent from './approve-edit';
+import NeedMonthSelection from './need-month-selection';
+import NeedProjectSelection from './need-project-selection';
 
 
 const styles = theme => ({
@@ -94,6 +91,7 @@ const Date = props => (
 );
 
 @withStyles(styles)
+@withSnackbar
 class StatefulNeedApproveComponent extends React.Component {
 
     constructor(props) {
@@ -114,29 +112,16 @@ class StatefulNeedApproveComponent extends React.Component {
 
     static getDerivedStateFromProps(nextProps, prevState) {
         //new data needs to be loaded on every change of project or month
-        if (nextProps.projectsState.selectedMonthCalendarData
-            && nextProps.projectsState.selectedMonthCalendarData.days.length > 0
-            && (nextProps.projectsState.selectedMonthCalendarData.monthOffset !== prevState.selectedMonth
-                || nextProps.projectsState.selectedProjectIndex !== prevState.selectedProject)) {
+        const project = nextProps.needsState.getSelectedProject();
+        if (project && project.selectedMonthData && project.selectedMonthData.days.length > 0
+            && (project.selectedMonthData.monthOffset !== prevState.selectedMonth
+                || project.id !== prevState.selectedProject)) {
             const selectedStart = 0;
-            const selectedEnd = nextProps.projectsState.selectedMonthCalendarData.days.length - 1;
-            const projectId = nextProps.projectsState.getSelectedProject().id;
-            const days = nextProps.projectsState.selectedMonthCalendarData.days.filter(day => !day.disabled);
-            nextProps.needsState.loadNeedsForCalendarBetweenDates(projectId,
-                days[0].date,
-                days[days.length - 1].date,
-                () => nextProps.enqueueSnackbar('Fehler beim Laden der Zuteilungen', {
-                    variant: 'error',
-                }));
-            // Array.from(Array(selectedEnd)).map((_, index) => {
-            //     const day = nextProps.projectsState.selectedMonthCalendarData.days[index];
-            //     if (!day.disabled) {
-            //         nextProps.needsState.loadHelperTypesWithNeedsAndUsersByProjectIdAndDate(nextProps.projectsState.getSelectedProject().id, day.date, err => this.handleFailure());
-            //     }
-            // });
+            const selectedEnd = project.selectedMonthData.days.length - 1;
+
             return {
-                selectedMonth: nextProps.projectsState.selectedMonthCalendarData.monthOffset,
-                selectedProject: nextProps.projectsState.selectedProjectIndex,
+                selectedMonth: project.selectedMonthData.monthOffset,
+                selectedProject: project.id,
                 selectedStart,
                 selectedEnd,
             };
@@ -158,31 +143,30 @@ class StatefulNeedApproveComponent extends React.Component {
     }
 
     isDayReady(index) {
-        const data = this.props.projectsState.selectedMonthCalendarData;
-        if (data.days[index] && data.days[index].needs) {
-            return this.areNeedsReady(data.days[index].needs);
+        const project = this.props.needsState.getSelectedProject();
+        const data = project.selectedMonthData;
+        if (data && data.days[index] && project.days) {
+            const dayData = project.days.get(convertToMUIFormat(data.days[index].date));
+            return dayData &&
+                dayData.helperTypes
+                    .flat(2).map(helperType => helperType.shifts)
+                    .flat(2).map(shift => shift.need)
+                    .every(need => this.props.needsState.getApprovedCount(need) >= need.quantity);
+
         }
         return false;
     }
-    areNeedsReady(needs) {
-        var ready = true;
-        needs.forEach((need) => {
-            ready = ready && this.props.needsState.getApprovedCount(need) >= need.quantity;
-        });
-        return ready;
-    }
 
-    //{data.days[i*5+j].content ? data.days[i*5+j].content : !data.days[i*5+j].disabled ? (<CircularProgress size={15}/>) : null}
     render() {
-        const { classes, sessionState, projectsState, needsState } = this.props;
+        const { classes, sessionState, needsState } = this.props;
         const { selectedStart, selectedEnd, month } = this.state;
-        const data = projectsState.selectedMonthCalendarData;
-        const projectId = projectsState.getSelectedProject().id;
-        const dayMap = needsState.projects && needsState.projects.has(projectId) && needsState.projects.get(projectId).days;
+        const project = needsState.getSelectedProject();
+        const data = project && project.selectedMonthData;
+        const dayMap = project && project.days;
         return (
             <>
                 <div>
-                    <ProjectSelection />
+                    <NeedProjectSelection />
                 </div>
                 {data ? (
                     <>
@@ -190,7 +174,7 @@ class StatefulNeedApproveComponent extends React.Component {
                             <thead>
                                 <tr>
                                     <th colSpan="8">
-                                        <MonthSelection onClick={() => this.selectDays(0, data.days.length - 1)} />
+                                        <NeedMonthSelection onClick={() => this.selectDays(0, data.days.length - 1)} />
                                     </th>
                                 </tr>
                             </thead>
@@ -212,7 +196,9 @@ class StatefulNeedApproveComponent extends React.Component {
                                                     >
                                                         {data.days[index].date.date()}
                                                     </Button><br />
-                                                    {this.isDayReady(i * 7 + j) ? (<DoneIcon />) : (<>&nbsp;</>)}
+                                                    {this.isDayReady(i * 7 + j) ? (
+                                                        <DoneIcon color={data.days[index].disabled ? 'disabled' : 'inherit'} />
+                                                    ) : (<>&nbsp;</>)}
                                                 </td>
                                             );
                                         })}
@@ -299,16 +285,10 @@ class StatefulNeedApproveComponent extends React.Component {
 }
 
 const NeedApproveComponent = props => (
-    <>
-        <OldProjectsContext.Consumer>
-            {projectsState => (
-                <NeedsContext.Consumer>
-                    {needsState =>
-                        (<StatefulNeedApproveComponent {...props} needsState={needsState} projectsState={projectsState} />)
-                    }
-                </NeedsContext.Consumer>
-            )}
-        </OldProjectsContext.Consumer>
-    </>
+    <NeedsContext.Consumer>
+        {needsState =>
+            (<StatefulNeedApproveComponent {...props} needsState={needsState} />)
+        }
+    </NeedsContext.Consumer>
 );
 export default requiresLogin(NeedApproveComponent);

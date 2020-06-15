@@ -53,9 +53,11 @@ const PAGES = {
                 {
                     title: 'Projekte',
                     path: fullPathOfProjectsSettings(),
+                    permissions: ['ROLE_RIGHT_PROJECTS_POST'],
                     subPages: [
                         {
                             path: fullPathOfProjectSettings(),
+                            permissions: ['ROLE_RIGHT_PROJECTS_POST'],
                         }
                     ]
                 },

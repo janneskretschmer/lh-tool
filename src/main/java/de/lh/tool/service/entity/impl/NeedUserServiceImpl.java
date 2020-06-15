@@ -2,6 +2,7 @@ package de.lh.tool.service.entity.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -50,6 +51,7 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 	private MailService mailService;
 
 	// necessary rights:
+	// . . . . . . +----------------8--+
 	// 1-apply-2 . 3-approve4+5approve-6
 	// v . . . v . v . . . . v . . . . v
 	// NONE . APPLIED . APPROVED . REJECTED
@@ -61,7 +63,7 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 	public NeedUserDto saveOrUpdateDto(Long needId, Long userId, NeedUserDto dto) throws DefaultException {
 		NeedUser needUser = findByNeedIdAndUserId(needId, userId);
 
-		boolean noPermissionOnProject = !projectService.isOwnProject(getProjectWithIdByNeedUser(needUser))
+		boolean noPermissionOnProject = !projectService.isOwnProject(getProject(needUser))
 				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT);
 		boolean noPermissionOnUser = needUser.getUser() != userService.getCurrentUser()
 				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_USER);
@@ -73,6 +75,10 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 		NeedUserState oldState = needUser.getState();
 		NeedUserState newState = Optional.ofNullable(dto).map(NeedUserDto::getState)
 				.orElseThrow(ExceptionEnum.EX_NEED_USER_INVALID_STATE::createDefaultException);
+
+		if (oldState == newState) {
+			return convertToDto(needUser);
+		}
 
 		if (oldState == NeedUserState.APPLIED && newState == NeedUserState.NONE) {
 			// 1: APPLIED -> NONE
@@ -91,8 +97,10 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 				// 4: APPLIED -> APPROVED
 				|| (oldState == NeedUserState.REJECTED && newState == NeedUserState.APPROVED)
 				// 5: REJECTED -> APPROVED
-				|| (oldState == NeedUserState.APPROVED && newState == NeedUserState.REJECTED
+				|| (oldState == NeedUserState.APPROVED && newState == NeedUserState.REJECTED)
 				// 6: APPROVED -> REJECTED
+				|| (oldState == NeedUserState.APPLIED && newState == NeedUserState.REJECTED
+				// 8: APPLIED -> REJECTED
 				)) {
 
 			userRoleService.checkCurrentUserRight(UserRole.RIGHT_NEEDS_APPROVE);
@@ -103,9 +111,7 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 			// 7: APPROVED -> NONE
 			userRoleService.checkCurrentUserRight(UserRole.RIGHT_NEEDS_APPLY);
 			needUser.setState(NeedUserState.NONE);
-			userService
-					.findByProjectIdAndRoleIgnoreCase(getProjectWithIdByNeedUser(needUser).getId(),
-							UserRole.ROLE_LOCAL_COORDINATOR)
+			userService.findByProjectIdAndRoleIgnoreCase(getProject(needUser).getId(), UserRole.ROLE_LOCAL_COORDINATOR)
 					.stream().forEach(u -> mailService.sendNeedUserStateChangedMailToCoordinator(needUser, u));
 			delete(needUser);
 			dto.setId(null);
@@ -121,19 +127,26 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 
 	}
 
-	private @NonNull Project getProjectWithIdByNeedUser(NeedUser needUser) {
+	private @NonNull Project getProject(NeedUser needUser) {
 		Optional<@NonNull Project> project = Optional.ofNullable(needUser).map(NeedUser::getNeed)
 				.map(Need::getProjectHelperType).map(ProjectHelperType::getProject).filter(p -> p.getId() != null);
-		return project.orElseThrow(() -> new DefaultRuntimeException(ExceptionEnum.EX_WRONG_ID_PROVIDED));
+		return project.orElseThrow(() -> new DefaultRuntimeException(ExceptionEnum.EX_INVALID_PROJECT_ID));
+	}
+
+	private boolean isViewAllowed(NeedUser needUser) {
+		boolean self = userService.getCurrentUser().getId().equals(needUser.getUser().getId());
+		boolean permissionOnProject = projectService.isOwnProject(getProject(needUser))
+				|| userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT);
+		boolean allowedToViewForeign = userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_GET_FOREIGN_USER);
+		return self || (permissionOnProject && allowedToViewForeign);
 	}
 
 	@Override
 	@Transactional
 	public NeedUserDto findDtoByNeedIdAndUserId(Long needId, Long userId) throws DefaultException {
 		NeedUser needUser = findByNeedIdAndUserId(needId, userId);
-		if (!projectService.isOwnProject(getProjectWithIdByNeedUser(needUser))
-				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT)) {
-			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
+		if (!isViewAllowed(needUser)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
 		}
 		return convertToDto(needUser);
 	}
@@ -149,12 +162,15 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 	@Transactional
 	public List<NeedUserDto> findDtosByNeedId(Long needId) throws DefaultException {
 		Need need = needService.findById(needId).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
-		List<NeedUser> needUserList = getRepository().findByNeedOrderByUser_LastNameAscUser_FirstNameAsc(need);
-		boolean ownProject = needUserList.stream().findFirst().map(this::getProjectWithIdByNeedUser)
-				.map(projectService::isOwnProject).orElse(false);
+
+		boolean ownProject = projectService.isOwnProject(need.getProjectHelperType().getProject());
 		if (!ownProject && !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT)) {
 			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
 		}
+
+		List<NeedUser> needUserList = getRepository().findByNeedOrderByUser_LastNameAscUser_FirstNameAsc(need);
+		needUserList = needUserList.stream().filter(this::isViewAllowed).collect(Collectors.toList());
+
 		return convertToDtoList(needUserList);
 	}
 

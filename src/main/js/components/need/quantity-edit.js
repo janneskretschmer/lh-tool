@@ -31,8 +31,8 @@ class StatefulNeedQuantityEditComponent extends React.Component {
         });
     }
 
-    handleQuantityChange(event) {
-        const quantity = parseInt(event.target.value, 10);
+    handleQuantityChange(quantityString) {
+        const quantity = parseInt(quantityString, 10);
         const { projectId, helperTypeId } = this.props.projectHelperType;
         const need = {
             ...this.props.projectHelperType.need,
@@ -55,7 +55,7 @@ class StatefulNeedQuantityEditComponent extends React.Component {
                     margin="dense"
                     variant="outlined"
                     className={update ? classes.quantityUpdating : classes.quantityInput}
-                    onChange={this.handleQuantityChange.bind(this)}
+                    onChange={event => this.handleQuantityChange(event.target.value)}
                     inputProps={{
                         'min': '0',
                         'step': '1',

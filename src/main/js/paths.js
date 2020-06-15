@@ -5,8 +5,6 @@ export const fullPathOf = (subPath) => (getBasePath() || '/') + (subPath || '');
 
 export const fullPathOfLogin = () => fullPathOf('/login/');
 
-export const fullPathOfProjects = () => fullPathOf('/projects/');
-
 export const partialPathOfNeed = () => fullPathOf('/needs');
 export const fullPathOfNeedQuantities = () => fullPathOf('/needs/quantities/');
 export const fullPathOfNeedApply = () => fullPathOf('/needs/apply/');

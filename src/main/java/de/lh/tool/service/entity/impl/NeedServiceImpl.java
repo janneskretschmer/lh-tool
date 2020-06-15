@@ -52,10 +52,8 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 		ProjectHelperType projectHelperType = projectHelperTypeService.findById(projectHelperTypeId)
 				.filter(pht -> pht.getProject() != null)
 				.orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException);
-		if (!projectService.isOwnProject(projectHelperType.getProject())
-				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_GET_FOREIGN)) {
-			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
-		}
+
+		projectService.checkIfViewable(projectHelperType.getProject());
 
 		Optional<Need> need = getRepository().findByProjectHelperType_IdAndDate(projectHelperTypeId, date);
 
@@ -67,11 +65,10 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 	@Transactional
 	public NeedDto getNeedDtoById(Long id) throws DefaultException {
 		Need need = findById(id).orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException);
-		if (projectService.isOwnProject(need.getProjectHelperType().getProject())
-				|| userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_GET_FOREIGN)) {
-			return convertToDto(need);
-		}
-		throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+
+		projectService.checkIfViewable(need.getProjectHelperType().getProject());
+
+		return convertToDto(need);
 	}
 
 	@Override
