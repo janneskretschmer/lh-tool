@@ -36,7 +36,7 @@ export function fetchNeedsForCalendar(accessToken, projectId, startDate, endDate
                     })
                 );
                 return dateMap;
-            })
+            });
     } else {
         return Promise.resolve([]);
     }

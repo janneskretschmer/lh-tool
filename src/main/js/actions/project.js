@@ -62,7 +62,7 @@ export function deleteProject(accessToken, { id }) {
         parameters: {
             [ID_VARIABLE]: id,
         },
-    })
+    });
 }
 
 export function createProjectUser(accessToken, { projectId, userId }) {
