@@ -36,6 +36,18 @@ export function requiresLogin(Component) {
     );
 }
 
+export function isStringBlank(str) {
+    if (str) {
+        const trimmed = str.trim();
+        return !trimmed || trimmed.length === 0;
+    }
+    return true;
+}
+
+export function isAnyStringBlank(strings) {
+    return strings.some(isStringBlank);
+}
+
 export function getMonthArrayWithOffsets(start, end) {
     const today = moment().utc().startOf('day');
     let date = start.diff(today, 'days') > 0 ? start.clone() : today.clone();
@@ -132,18 +144,6 @@ export function convertToMUIFormat(moment) {
 }
 export function convertFromMUIFormat(date) {
     return !isStringBlank(date) && moment(date, MUI_DATE_FORMAT);
-}
-
-export function isStringBlank(str) {
-    if (str) {
-        const trimmed = str.trim();
-        return !trimmed || trimmed.length === 0;
-    }
-    return true;
-}
-
-export function isAnyStringBlank(strings) {
-    return strings.some(isStringBlank);
 }
 
 const ROLE_NAMES = new Map();

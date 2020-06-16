@@ -1,6 +1,6 @@
 import React from 'react';
-import { NeedsContext } from "../../providers/needs-provider";
-import { Select, MenuItem, CircularProgress } from "@material-ui/core";
+import { NeedsContext } from '../../providers/needs-provider';
+import { Select, MenuItem, CircularProgress } from '@material-ui/core';
 
 const NeedProjectSelection = props => (
     <NeedsContext.Consumer>
@@ -22,5 +22,5 @@ const NeedProjectSelection = props => (
             }
         </>)}
     </NeedsContext.Consumer>
-)
+);
 export default NeedProjectSelection;

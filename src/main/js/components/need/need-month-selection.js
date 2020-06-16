@@ -25,7 +25,7 @@ const NeedMonthSelection = props => (
             <NavigateNextIcon />
           </IconButton>
         </div>
-      )
+      );
     }}
   </NeedsContext.Consumer>
 );

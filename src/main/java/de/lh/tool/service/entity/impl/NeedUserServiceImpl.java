@@ -76,7 +76,7 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 		NeedUserState newState = Optional.ofNullable(dto).map(NeedUserDto::getState)
 				.orElseThrow(ExceptionEnum.EX_NEED_USER_INVALID_STATE::createDefaultException);
 
-		if (oldState == newState) {
+		if (newState.equals(oldState)) {
 			return convertToDto(needUser);
 		}
 

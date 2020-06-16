@@ -17,7 +17,6 @@ import de.lh.tool.domain.model.Project;
 import de.lh.tool.repository.HelperTypeRepository;
 import de.lh.tool.service.entity.interfaces.HelperTypeService;
 import de.lh.tool.service.entity.interfaces.ProjectService;
-import de.lh.tool.service.entity.interfaces.UserRoleService;
 
 @Service
 public class HelperTypeServiceImpl
@@ -26,9 +25,6 @@ public class HelperTypeServiceImpl
 
 	@Autowired
 	private ProjectService projectService;
-
-	@Autowired
-	private UserRoleService userRoleService;
 
 	@Override
 	@Transactional

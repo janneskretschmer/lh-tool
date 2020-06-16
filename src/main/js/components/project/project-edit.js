@@ -40,7 +40,7 @@ class StatefulProjectEditComponent extends React.Component {
     componentDidUpdate() {
         const project = this.props.projectsState.selectedProject;
         if (!this.state.redirectToUrl && project && project.id && parseInt(this.props.match.params.projectId) !== project.id) {
-            this.setState({ redirectToUrl: fullPathOfProjectSettings(project.id) })
+            this.setState({ redirectToUrl: fullPathOfProjectSettings(project.id) });
         }
         if (project && this.props.pageState.currentItemName !== project.name) {
             this.props.pageState.setCurrentItemName(project);
@@ -101,7 +101,7 @@ class StatefulProjectEditComponent extends React.Component {
                 Von&nbsp;
                 <TextField
                     type="date"
-                    value={convertToMUIFormat(project.startDate) || ""}
+                    value={convertToMUIFormat(project.startDate) || ''}
                     variant="outlined"
                     margin="dense"
                     disabled={saving}
@@ -110,7 +110,7 @@ class StatefulProjectEditComponent extends React.Component {
                 &nbsp;bis&nbsp;
                 <TextField
                     type="date"
-                    value={convertToMUIFormat(project.endDate) || ""}
+                    value={convertToMUIFormat(project.endDate) || ''}
                     variant="outlined"
                     margin="dense"
                     disabled={saving}

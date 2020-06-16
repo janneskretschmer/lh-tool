@@ -124,7 +124,7 @@ class StatefulNeedsProvider extends React.Component {
                         projects,
                         openQuantityUpdates,
                     };
-                })
+                });
             }
         );
     }
@@ -146,7 +146,7 @@ class StatefulNeedsProvider extends React.Component {
                     const need = projects.get(projectHelperType.projectId).days.get(convertToMUIFormat(projectHelperType.need.date)).helperTypes
                         .find(helperType => helperType.id === projectHelperType.helperTypeId).shifts
                         .find(pht => pht.id === projectHelperType.id)
-                        .need
+                        .need;
                     need.state = needUser.state;
 
                     if (needUser.state === 'NONE') {
@@ -155,7 +155,7 @@ class StatefulNeedsProvider extends React.Component {
                         if (projectHelperType.need.users.find(nu => nu.needId === needUser.needId && nu.userId === needUser.userId)) {
                             need.users = projectHelperType.need.users.map(nu => nu.needId === needUser.needId && nu.userId === needUser.userId ? needUser : nu);
                         } else {
-                            need.users = [...projectHelperType.need.users, needUser]
+                            need.users = [...projectHelperType.need.users, needUser];
                         }
                     }
 
@@ -174,13 +174,13 @@ class StatefulNeedsProvider extends React.Component {
                 if (editedNeedUsers.has(needUser.id)) {
                     editedNeedUsers.get(needUser.id).state = needUser.state;
                 } else {
-                    editedNeedUsers.set(needUser.id, needUser)
+                    editedNeedUsers.set(needUser.id, needUser);
                 }
                 return {
                     editedNeedUsers,
                 };
             }
-        )
+        );
     }
 
     saveEditedNeedUsers(projectHelperType, handleFailure) {
@@ -202,7 +202,7 @@ class StatefulNeedsProvider extends React.Component {
                             return {
                                 ...needUser,
                                 state: updated ? updated.state : needUser.state,
-                            }
+                            };
                         }
                     )
                     const userState = need.users.find(needUser => needUser.userId === this.props.sessionState.currentUser.id);
