@@ -86,8 +86,14 @@ public class ProjectServiceImpl extends BasicMappableEntityServiceImpl<ProjectRe
 			throw ExceptionEnum.EX_NO_ID_PROVIDED.createDefaultException();
 		}
 
-		checkIfViewable(id);
+		Project existing = findById(id).orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException);
+		checkIfViewable(existing);
 		Project project = convertToEntity(projectDto);
+
+		// otherwise a project will loose all users after it gets modified
+		if (project.getUsers() == null) {
+			project.setUsers(existing.getUsers());
+		}
 
 		if (getRepository().findByName(projectDto.getName()).map(Project::getId).map(id::equals)
 				.map(BooleanUtils::negate).orElse(false)) {
