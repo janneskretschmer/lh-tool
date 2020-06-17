@@ -86,7 +86,7 @@ public class ProjectServiceImpl extends BasicMappableEntityServiceImpl<ProjectRe
 			throw ExceptionEnum.EX_NO_ID_PROVIDED.createDefaultException();
 		}
 
-		Project existing = findById(id).orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException);
+		Project existing = findById(id).orElseThrow(ExceptionEnum.EX_INVALID_PROJECT_ID::createDefaultException);
 		checkIfViewable(existing);
 		Project project = convertToEntity(projectDto);
 
