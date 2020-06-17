@@ -58,9 +58,9 @@ echo "-----END RSA PRIVATE KEY-----" >> $ssh_key
 
 scp -P $DEPLOY_PORT -i $ssh_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $war_file $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_WAR_PATH/tmp.war
 
-wget -O- --user="travis" --password=$DEPLOY_PW "https://$DEPLOY_TARGET/manager/text/undeploy?path=/$path"
+wget -O- --no-check-certificate --user="travis" --password=$DEPLOY_PW "https://$DEPLOY_TARGET/manager/text/undeploy?path=/$path"
 
-wget -O- --user="travis" --password=$DEPLOY_PW "https://$DEPLOY_TARGET/manager/text/deploy?path=/$path&war=file:$DEPLOY_WAR_PATH/tmp.war"
+wget -O- --no-check-certificate --user="travis" --password=$DEPLOY_PW "https://$DEPLOY_TARGET/manager/text/deploy?path=/$path&war=file:$DEPLOY_WAR_PATH/tmp.war"
 
 echo "" > $ssh_key
 rm $ssh_key
