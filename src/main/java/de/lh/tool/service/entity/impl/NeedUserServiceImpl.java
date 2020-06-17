@@ -6,8 +6,6 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
-import org.modelmapper.ModelMapper;
-import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -172,29 +170,6 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 		needUserList = needUserList.stream().filter(this::isViewAllowed).collect(Collectors.toList());
 
 		return convertToDtoList(needUserList);
-	}
-
-	@Override
-	public void deleteByNeedAndUser(Long needId, Long userId) throws DefaultException {
-		delete(findByNeedIdAndUserId(needId, userId));
-
-	}
-
-	@Override
-	public NeedUser convertToEntity(NeedUserDto dto) {
-		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.addMappings(new PropertyMap<NeedUserDto, NeedUser>() {
-			@Override
-			protected void configure() {
-				using(c -> ((NeedUserDto) c.getSource()).getNeedId() != null
-						? needService.findById(((NeedUserDto) c.getSource()).getNeedId()).orElse(null)
-						: null).map(source).setNeed(null);
-				using(c -> ((NeedUserDto) c.getSource()).getUserId() != null
-						? userService.findById(((NeedUserDto) c.getSource()).getUserId()).orElse(null)
-						: null).map(source).setUser(null);
-			}
-		});
-		return modelMapper.map(dto, NeedUser.class);
 	}
 
 }
