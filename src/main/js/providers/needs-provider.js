@@ -204,7 +204,7 @@ class StatefulNeedsProvider extends React.Component {
                                 state: updated ? updated.state : needUser.state,
                             };
                         }
-                    )
+                    );
                     const userState = need.users.find(needUser => needUser.userId === this.props.sessionState.currentUser.id);
                     need.state = userState ? userState.state : 'NONE';
                     return {
@@ -213,7 +213,7 @@ class StatefulNeedsProvider extends React.Component {
                     }
                 }
             )
-        )
+        );
     }
 
     hasNeedEditedUsers(needId) {
