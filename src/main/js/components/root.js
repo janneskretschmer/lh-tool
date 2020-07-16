@@ -24,6 +24,7 @@ import DataProtection from './util/data-protection';
 import Imprint from './util/imprint';
 import SettingsComponent from './settings';
 import PageProvider from '../providers/page-provider';
+import ItemsProvider from '../providers/items-provider';
 
 const drawerWidth = 240;
 
@@ -132,14 +133,20 @@ export default class LHToolRoot extends React.Component {
                                         <Route path={fullPathOfStore()} component={StoreDetailComponent} />
                                         <Route path={fullPathOfStores()} component={StoreListComponent} />
                                         <Route path={fullPathOfSlot()} component={SlotDetailComponent} />
-                                        <Route path={fullPathOfItem()} component={ItemDetailComponent} />
-                                        <Route path={fullPathOfItems()} component={ItemListComponent} />
+                                        <Route path={fullPathOfItem()} component={props => <></>} />
+                                        <Route path={fullPathOfItems()} component={props => <></>} />
                                         <Route path={fullPathOfSettings()} component={SettingsComponent} exact={false} />
                                         <Route path={fullPathOfChangePw()} component={ChangePasswordComponent} />
                                         <Route path={fullPathOfImprint()} component={Imprint} />
                                         <Route path={fullPathOfDataProtection()} component={DataProtection} />
                                         <Route component={NotFoundHandlerComponent} />
                                     </Switch>
+                                    <ItemsProvider>
+                                        <Switch>
+                                            <Route path={fullPathOfItem()} component={ItemDetailComponent} />
+                                            <Route path={fullPathOfItems()} component={ItemListComponent} />
+                                        </Switch>
+                                    </ItemsProvider>
                                 </main>
                             </PageProvider>
                         </SessionProvider>

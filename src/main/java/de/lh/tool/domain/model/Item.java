@@ -1,6 +1,6 @@
 package de.lh.tool.domain.model;
 
-import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -75,13 +75,13 @@ public class Item {
 	private TechnicalCrew technicalCrew;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "item")
-	private Collection<ItemNote> itemNotes;
+	private List<ItemNote> itemNotes;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "item")
-	private Collection<ItemHistory> history;
+	private List<ItemHistory> history;
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinTable(name = "item_tag", inverseJoinColumns = @JoinColumn(name = "tag_id"), joinColumns = @JoinColumn(name = "item_id"))
-	private Collection<ItemTag> tags;
+	@JoinTable(name = "item_item_tag", inverseJoinColumns = @JoinColumn(name = "item_tag_id"), joinColumns = @JoinColumn(name = "item_id"))
+	private List<ItemTag> tags;
 
 }

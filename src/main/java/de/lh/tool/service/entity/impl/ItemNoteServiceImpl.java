@@ -1,8 +1,11 @@
 package de.lh.tool.service.entity.impl;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -13,13 +16,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.lh.tool.domain.dto.ItemNoteDto;
+import de.lh.tool.domain.dto.UserDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
+import de.lh.tool.domain.model.Item;
 import de.lh.tool.domain.model.ItemNote;
+import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.repository.ItemNoteRepository;
 import de.lh.tool.service.entity.interfaces.ItemNoteService;
 import de.lh.tool.service.entity.interfaces.ItemService;
+import de.lh.tool.service.entity.interfaces.UserRoleService;
 import de.lh.tool.service.entity.interfaces.UserService;
+import de.lh.tool.util.ValidationUtil;
 
 @Service
 public class ItemNoteServiceImpl extends BasicMappableEntityServiceImpl<ItemNoteRepository, ItemNote, ItemNoteDto, Long>
@@ -29,37 +37,84 @@ public class ItemNoteServiceImpl extends BasicMappableEntityServiceImpl<ItemNote
 	private ItemService itemService;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private UserRoleService userRoleService;
 
 	@Override
 	@Transactional
 	public Collection<ItemNoteDto> getDtosByItemId(Long itemId) throws DefaultException {
-		return convertToDtoList(itemService.findById(itemId)
-				.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID)).getItemNotes());
+		Item item = itemService.findById(itemId).orElseThrow(ExceptionEnum.EX_INVALID_ITEM_ID::createDefaultException);
+		if (!itemService.isViewAllowed(item)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+		List<ItemNote> notes = item.getItemNotes().stream()
+				.sorted(Comparator.comparing(ItemNote::getTimestamp).reversed()).collect(Collectors.toList());
+		return convertToDtoList(notes);
 	}
 
 	@Override
 	@Transactional
 	public ItemNoteDto createItemNoteDto(ItemNoteDto dto) throws DefaultException {
 		if (dto.getId() != null) {
-			throw new DefaultException(ExceptionEnum.EX_ID_PROVIDED);
+			throw ExceptionEnum.EX_ID_PROVIDED.createDefaultException();
 		}
+
+		Item item = itemService.findById(dto.getItemId())
+				.orElseThrow(ExceptionEnum.EX_INVALID_ITEM_ID::createDefaultException);
+		if (!itemService.isViewAllowed(item)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+
 		dto.setUserId(userService.getCurrentUser().getId());
-		dto.setTimestamp(new Date());
+		dto.setTimestamp(LocalDateTime.now());
 		return convertToDto(save(convertToEntity(dto)));
 	}
 
 	@Override
 	@Transactional
 	public ItemNoteDto updateItemNoteDto(ItemNoteDto dto, Long id) throws DefaultException {
+
 		dto.setId(ObjectUtils.defaultIfNull(id, dto.getId()));
-		if (dto.getId() == null) {
-			throw new DefaultException(ExceptionEnum.EX_NO_ID_PROVIDED);
-		}
+		ValidationUtil.checkIdNull(dto.getId());
+
 		if (dto.getUserId() != userService.getCurrentUser().getId()) {
-			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
 		}
-		dto.setTimestamp(new Date());
+		dto.setTimestamp(LocalDateTime.now());
 		return convertToDto(save(convertToEntity(dto)));
+	}
+
+	@Override
+	@Transactional
+	public void deleteItemNoteById(Long id) throws DefaultException {
+		ValidationUtil.checkIdNull(id);
+
+		ItemNote itemNote = findById(id).orElseThrow(ExceptionEnum.EX_INVALID_NOTE_ID::createDefaultException);
+		if (!userService.getCurrentUser().getId().equals(itemNote.getUser().getId())
+				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_ITEMS_NOTES_DELETE_FOREIGN)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+		delete(itemNote);
+	}
+
+	@Override
+	@Transactional
+	public UserDto getUserNameDto(Long itemId, Long noteId) throws DefaultException {
+		ValidationUtil.checkIdNull(itemId, noteId);
+
+		ItemNote itemNote = findById(noteId).orElseThrow(ExceptionEnum.EX_INVALID_NOTE_ID::createDefaultException);
+
+		if (!itemService.isViewAllowed(itemNote.getItem())) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+
+		UserDto userDto = Optional.of(itemNote).map(ItemNote::getUser)
+				// don't expose personal data except name
+				.map(user -> UserDto.builder().id(user.getId()).firstName(user.getFirstName())
+						.lastName(user.getLastName()).build())
+				.orElse(new UserDto());
+
+		return userDto;
 	}
 
 	@Override

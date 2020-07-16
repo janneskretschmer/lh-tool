@@ -137,6 +137,10 @@ const READABLE_DATE_FORMAT_WITHOUT_YEAR = 'DD.MM.';
 export function convertToReadableFormatWithoutYear(moment) {
     return moment.format(READABLE_DATE_FORMAT_WITHOUT_YEAR);
 }
+const READABLE_DATE_FORMAT_WITH_TIME = 'DD.MM.YYYY HH:mm';
+export function convertToReadableFormatWithTime(moment) {
+    return moment.format(READABLE_DATE_FORMAT_WITH_TIME);
+}
 
 const MUI_DATE_FORMAT = 'YYYY-MM-DD';
 export function convertToMUIFormat(moment) {
@@ -156,4 +160,12 @@ ROLE_NAMES.set('ROLE_ADMIN', 'Administrator');
 ROLE_NAMES.set('ROLE_PUBLISHER', 'Verkündiger');
 export function getRoleName(role) {
     return ROLE_NAMES.get(role);
+}
+
+export function convertToIdMap(idObjectList) {
+    const idMap = new Map();
+    idObjectList.forEach(idObject => {
+        idMap.set(idObject.id, idObject);
+    });
+    return idMap;
 }

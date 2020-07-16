@@ -11,7 +11,7 @@ const Transition = props => (<Slide direction="up" {...props} />);
 
 const SimpleDialog = props => {
 
-    const { open, onOK, title, text, cancelText, okText } = props;
+    const { open, onOK, title, text, cancelText, okText, content } = props;
 
     const [isOpen, setOpen] = useState(!!props.open);
 
@@ -34,9 +34,11 @@ const SimpleDialog = props => {
                 {title}
             </DialogTitle>
             <DialogContent>
-                <DialogContentText id="alert-dialog-slide-description">
-                    {text}
-                </DialogContentText>
+                {content ? content : (
+                    <DialogContentText id="alert-dialog-slide-description">
+                        {text}
+                    </DialogContentText>
+                )}
             </DialogContent>
             <DialogActions>
                 {cancelText && (

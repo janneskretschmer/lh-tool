@@ -16,6 +16,8 @@ public enum ExceptionEnum {
 	EX_INVALID_USER_ID("The provided user id is invalid.", HttpStatus.BAD_REQUEST),
 	EX_INVALID_PROJECT_ID("The provided project id is invalid.", HttpStatus.BAD_REQUEST),
 	EX_INVALID_HELPER_TYPE_ID("The provided id is invalid.", HttpStatus.BAD_REQUEST),
+	EX_INVALID_ITEM_ID("The provided item id is invalid.", HttpStatus.BAD_REQUEST),
+	EX_INVALID_NOTE_ID("The provided note id is invalid.", HttpStatus.BAD_REQUEST),
 	EX_FORBIDDEN("You don't have the sufficient rights for this action.", HttpStatus.FORBIDDEN),
 
 	EX_USERS_NOT_FOUND("The users couldn't be found.", HttpStatus.NOT_FOUND),
@@ -48,6 +50,8 @@ public enum ExceptionEnum {
 	EX_HELPER_TYPE_ALREADY_EXISTS("A helper type with the provided name already exists.", HttpStatus.CONFLICT),
 	EX_HELPER_TYPE_WEEKDAY_WITHOUT_PROJECT("Please provide a valid project id with the weekday query.",
 			HttpStatus.BAD_REQUEST),
+
+	EX_ITEM_NO_TAG("Please provide a tag name.", HttpStatus.BAD_REQUEST),
 	//
 	;
 

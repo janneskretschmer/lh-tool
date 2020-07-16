@@ -1,6 +1,6 @@
 package de.lh.tool.service.entity.impl;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -19,6 +19,7 @@ import de.lh.tool.service.entity.interfaces.ProjectService;
 import de.lh.tool.service.entity.interfaces.StoreService;
 import de.lh.tool.service.entity.interfaces.UserRoleService;
 import de.lh.tool.service.entity.interfaces.UserService;
+import de.lh.tool.util.DateUtil;
 
 @Service
 public class StoreServiceImpl extends BasicMappableEntityServiceImpl<StoreRepository, Store, StoreDto, Long>
@@ -43,8 +44,9 @@ public class StoreServiceImpl extends BasicMappableEntityServiceImpl<StoreReposi
 	public StoreDto getStoreDtoById(Long id) throws DefaultException {
 		Store store = findById(id).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
 		if (userRoleService.hasCurrentUserRight(UserRole.RIGHT_STORES_GET_FOREIGN_PROJECT)
-				|| store.getStoreProjects().stream().anyMatch(sp -> new Date().after(sp.getStart())
-						&& new Date().before(sp.getEnd()) && projectService.isOwnProject(sp.getProject()))) {
+				|| store.getStoreProjects().stream()
+				.anyMatch(sp -> DateUtil.isDateWithinRange(LocalDate.now(), sp.getStart(), sp.getEnd())
+						&& projectService.isOwnProject(sp.getProject()))) {
 			return convertToDto(store);
 		}
 		throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);

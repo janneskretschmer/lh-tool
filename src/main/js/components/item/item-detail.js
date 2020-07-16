@@ -7,6 +7,10 @@ import { SessionContext } from '../../providers/session-provider';
 import { withContext } from '../../util';
 import ItemDisplayComponent from './item-display';
 import ItemEditComponent from './item-edit';
+import ItemSlotEditComponent from './item-slot';
+import ItemsProvider, { ItemsContext } from '../../providers/items-provider';
+import WithPermission from '../with-permission';
+import SimpleDialog from '../simple-dialog';
 
 const styles = theme => ({
     bold: {
@@ -14,13 +18,13 @@ const styles = theme => ({
     },
     button: {
         marginRight: theme.spacing.unit,
+        marginTop: theme.spacing.unit,
     },
 
 });
 
 @withStyles(styles)
-@withContext('sessionState', SessionContext)
-export default class ItemDetailComponent extends React.Component {
+class StatefulItemDetailComponent extends React.Component {
 
     constructor(props) {
         super(props);
@@ -33,32 +37,6 @@ export default class ItemDetailComponent extends React.Component {
         this.setState({
             edit
         });
-    }
-
-    loadItem() {
-        const id = this.props.match.params.id
-        if (id === 'new') {
-            this.setState({
-                edit: true,
-                item: {
-                    broken: false,
-                    consumable: false,
-                    depth: '',
-                    description: '',
-                    hasBarcode: false,
-                    height: '',
-                    identifier: Date.now().toString(36),
-                    name: '',
-                    outsideQualified: false,
-                    pictureUrl: '',
-                    quantity: 1,
-                    unit: 'Stück',
-                    width: '',
-                },
-            });
-        } else {
-            fetchItem({ accessToken: this.props.sessionState.accessToken, itemId: id }).then(item => this.setState({ item }));
-        }
     }
 
     saveIfBroken(broken) {
@@ -78,18 +56,19 @@ export default class ItemDetailComponent extends React.Component {
     }
 
     componentDidMount() {
-        this.loadItem();
+        const id = this.props.match.params.id
+        this.props.itemsState.selectItem(id);
     }
 
     render() {
-        const { classes } = this.props;
-        const { item, savingIfBroken } = this.state;
+        const { classes, itemsState } = this.props;
+        const { savingIfBroken } = this.state;
+        const item = itemsState.getSelectedItem();
         if (!item) {
             return (<CircularProgress />);
         }
         return (
             <>
-                [Detail-Ansicht für {this.props.match.params.id}]
                 {this.state.edit ? (
                     <>
                         <ItemEditComponent item={item}></ItemEditComponent>
@@ -100,27 +79,85 @@ export default class ItemDetailComponent extends React.Component {
                 ) : (
                         <>
                             <ItemDisplayComponent item={item}></ItemDisplayComponent>
-                            <Button variant="contained" className={classes.button} onClick={() => this.changeEditState(true)}>
-                                Bearbeiten
-                        </Button>
-                            <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Verschieben"')}>
-                                Verschieben
-                        </Button>
-                            <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Kopieren"')}>
-                                Kopieren
-                        </Button>
-                            <Button variant="contained" className={classes.button} onClick={() => this.saveIfBroken(!item.broken)}>
-                                {savingIfBroken ? (<CircularProgress size="12" />) : item.broken ? 'Repariert' : 'Defekt'}
+                            <WithPermission permission="ROLE_RIGHT_ITEMS_PUT">
+                                <Button
+                                    variant="contained"
+                                    className={classes.button}
+                                    onClick={() => this.changeEditState(true)}
+                                    disabled={itemsState.actionsDisabled}
+                                >
+                                    Bearbeiten
                             </Button>
-                            <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Ausleihen"')}>
+                            </WithPermission>
+                            <WithPermission permission="ROLE_RIGHT_ITEMS_PATCH_SLOT">
+                                <SimpleDialog
+                                    title="Neuer Lagerplatz"
+                                    content={<ItemSlotEditComponent />}
+                                    onOK={() => itemsState.saveSlot()}
+                                    okText="Speichern"
+                                    cancelText="Abbrechen"
+                                >
+                                    <Button
+                                        variant="contained"
+                                        className={classes.button}
+                                        disabled={itemsState.actionsDisabled}
+                                    >
+                                        Verschieben
+                                    </Button>
+                                </SimpleDialog>
+                            </WithPermission>
+                            <Button
+                                variant="contained"
+                                className={classes.button}
+                                onClick={() => alert('TODO: implement "Kopieren"')}
+                                disabled={itemsState.actionsDisabled}
+                            >
+                                Kopieren
+                            </Button>
+                            <WithPermission permission="ROLE_RIGHT_ITEMS_PATCH_BROKEN">
+                                <Button
+                                    variant="contained"
+                                    className={classes.button}
+                                    onClick={() => itemsState.saveBrokenState(!item.broken)}
+                                    disabled={itemsState.actionsDisabled}
+                                >
+                                    {item.broken ? 'Repariert' : 'Defekt'}
+                                </Button>
+                            </WithPermission>
+                            <Button
+                                variant="contained"
+                                className={classes.button}
+                                onClick={() => alert('TODO: implement "Ausleihen"')}
+                                disabled={itemsState.actionsDisabled}
+                            >
                                 Ausleihen
-                        </Button>
-                            <Button variant="outlined" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                className={classes.button}
+                                onClick={() => alert('TODO: implement "Zerstörung"')}
+                                disabled={itemsState.actionsDisabled}
+                            >
                                 Löschen
-                        </Button>
+                            </Button>
                         </>
                     )}
             </>
         );
     }
 }
+
+const ItemDetailComponent = props => (
+    <>
+        <SessionContext.Consumer>
+            {sessionState => (
+                <ItemsContext.Consumer>
+                    {itemsState => (
+                        <StatefulItemDetailComponent {...props} sessionState={sessionState} itemsState={itemsState} />
+                    )}
+                </ItemsContext.Consumer>
+            )}
+        </SessionContext.Consumer>
+    </>
+);
+export default ItemDetailComponent;

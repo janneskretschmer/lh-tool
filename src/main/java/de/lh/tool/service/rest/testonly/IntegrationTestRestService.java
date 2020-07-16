@@ -102,7 +102,8 @@ public class IntegrationTestRestService {
 	public int resetDatabase() throws DefaultException {
 		checkEnvironment();
 		entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS=0").executeUpdate();
-		int result = entityManager.createNativeQuery("SHOW TABLES").getResultStream()
+		@SuppressWarnings("unchecked")
+		int result = ((Stream<Object>) entityManager.createNativeQuery("SHOW TABLES").getResultStream())
 				.filter(tableName -> !"schema_version".equalsIgnoreCase(tableName.toString()))
 				.mapToInt(tableName -> entityManager.createNativeQuery("TRUNCATE TABLE " + tableName).executeUpdate())
 				.sum();

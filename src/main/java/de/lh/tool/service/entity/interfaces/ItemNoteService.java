@@ -3,6 +3,7 @@ package de.lh.tool.service.entity.interfaces;
 import java.util.Collection;
 
 import de.lh.tool.domain.dto.ItemNoteDto;
+import de.lh.tool.domain.dto.UserDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.model.ItemNote;
 
@@ -12,4 +13,8 @@ public interface ItemNoteService extends BasicEntityService<ItemNote, Long> {
 	ItemNoteDto createItemNoteDto(ItemNoteDto dto) throws DefaultException;
 
 	ItemNoteDto updateItemNoteDto(ItemNoteDto dto, Long id) throws DefaultException;
+
+	void deleteItemNoteById(Long id) throws DefaultException;
+
+	UserDto getUserNameDto(Long itemId, Long noteId) throws DefaultException;
 }

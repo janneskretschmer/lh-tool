@@ -16,4 +16,6 @@ public interface SlotService extends BasicEntityService<Slot, Long> {
 
 	List<SlotDto> getSlotDtosByStore(Long storeId);
 
+	String getSlotNameWithStore(Slot slot);
+
 }

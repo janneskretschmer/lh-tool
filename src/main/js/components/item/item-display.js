@@ -1,17 +1,18 @@
-import { Button, CircularProgress, Link, TextField } from '@material-ui/core';
+import { Button, CircularProgress, Divider, IconButton, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from '@material-ui/core';
+import Select, { components } from 'react-select';
 import Chip from '@material-ui/core/Chip';
 import { withStyles } from '@material-ui/core/styles';
+import DeleteIcon from '@material-ui/icons/Delete';
 import React from 'react';
-import { createItemNote, fetchItemHistory, fetchItemNotes, fetchItemTags } from '../../actions/item';
-import { fetchSlot } from '../../actions/slot';
-import { fetchStore } from '../../actions/store';
-import { fetchUser } from '../../actions/user';
-import { fullPathOfSlot, fullPathOfStore } from '../../paths';
+import { createItemNote } from '../../actions/item';
+import { ItemsContext } from '../../providers/items-provider';
 import { SessionContext } from '../../providers/session-provider';
-import { convertToReadableFormat, withContext } from '../../util';
+import { convertToReadableFormat, convertToReadableFormatWithTime } from '../../util';
 import SimpleDialog from '../simple-dialog';
-import { fetchTechnicalCrew } from '../../actions/technical-crew';
 import SlotFieldComponent from '../slot/slot-field';
+import WithPermission from '../with-permission';
+import ItemTagsComponent from './item-tags';
+
 
 const styles = theme => ({
     bold: {
@@ -31,200 +32,224 @@ const styles = theme => ({
     },
     container: {
         display: 'inline-block',
-        marginBottom: '20px',
+        verticalAlign: 'top',
+        marginRight: theme.spacing.unit * 3,
+        marginBottom: theme.spacing.unit * 3,
+    },
+    fullSizeContainer: {
+        marginRight: theme.spacing.unit * 3,
+        marginBottom: theme.spacing.unit * 3,
     },
     chip: {
         marginRight: theme.spacing.unit,
+        marginTop: theme.spacing.unit,
+    },
+    divider: {
+        marginTop: theme.spacing.unit,
+        marginBottom: theme.spacing.unit,
+    },
+    noteHeader: {
+        fontWeight: '500',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
 });
 
 @withStyles(styles)
-@withContext('sessionState', SessionContext)
-export default class ItemDisplayComponent extends React.Component {
+class StatefulItemDisplayComponent extends React.Component {
 
     constructor(props) {
         super(props);
         const { currentUser } = props.sessionState;
         this.state = {
-            users: {
-                [currentUser.id]: currentUser.firstName + ' ' + currentUser.lastName,
-            },
-            note: '',
         };
     }
 
-    saveNote() {
-        if (this.state.note && this.state.note.length > 0) {
-            createItemNote({
-                accessToken: this.props.sessionState.accessToken, itemNote: {
-                    note: this.state.note,
-                    itemId: this.props.item.id,
-                }
-            }).then(note => this.setState(prevState => ({
-                note: '',
-                notes: [
-                    ...prevState.notes,
-                    note,
-                ]
-            })));
-        }
-    }
-
-    componentDidMount() {
-        fetchSlot({ accessToken: this.props.sessionState.accessToken, slotId: this.props.item.slotId }).then(
-            slot => this.setState({ slot }, () => fetchStore({ accessToken: this.props.sessionState.accessToken, storeId: this.state.slot.storeId }).then(
-                store => this.setState({ store })
-            ))
-        );
-        fetchItemNotes({ accessToken: this.props.sessionState.accessToken, itemId: this.props.item.id }).then(
-            notes => this.setState({ notes }, () => this.state.notes.map(note => note.userId).filter((v, i, a) => a.indexOf(v) === i).map(
-                userId => fetchUser({ accessToken: this.props.sessionState.accessToken, userId }).then(
-                    user => this.setState(prevState => ({
-                        users: {
-                            ...prevState.users,
-                            [user.id]: user.firstName + ' ' + user.lastName,
-                        }
-                    }))
-                )
-            ))
-        );
-        fetchItemTags({ accessToken: this.props.sessionState.accessToken, itemId: this.props.item.id }).then(
-            tags => this.setState({ tags })
-        );
-        fetchItemHistory({ accessToken: this.props.sessionState.accessToken, itemId: this.props.item.id }).then(
-            history => this.setState({ history })
-        );
-        fetchTechnicalCrew({ accessToken: this.props.sessionState.accessToken, technicalCrewId: this.props.item.technicalCrewId }).then(
-            technicalCrew => this.setState({ technicalCrew })
-        );
-    }
-
-    getHistoryText(historyEntry) {
-        let res = convertToReadableFormat(historyEntry.timestamp) + ': '
-        switch (historyEntry.type) {
+    getHistoryActionText(event) {
+        switch (event.type) {
             case 'CREATED':
-                res += 'Angelegt'
-                break;
+                return 'Angelegt'
             case 'UPDATED':
-                res += 'Geändert'
-                break;
+                return 'Geändert'
             case 'MOVED':
-                res += 'Von ' + historyEntry.data.from + ' nach ' + historyEntry.data.to + ' verschoben'
-                break;
+                return 'Von ' + event.data.from + ' nach ' + event.data.to + ' verschoben'
             case 'BROKEN':
-                res += 'Defekt gemeldet'
-                break;
+                return 'Defekt gemeldet'
             case 'FIXED':
-                res += 'Reparatur gemeldet'
-                break;
+                return 'Reparatur gemeldet'
         }
-        if (historyEntry.userId) {
-            const { users } = this.state;
-            res += ' von ' + (users[historyEntry.userId] ? users[historyEntry.userId] : (<CircularProgress size="12" />));
+        return '';
+    }
+
+    getFirstAndLastName({ userId, user }) {
+        if (!userId) {
+            return '-';
         }
-        return res;
+        if (!user) {
+            return (<CircularProgress size={12} />);
+        }
+        return user.firstName + ' ' + user.lastName;
+    }
+
+    showNoteDeleteButton({ userId }) {
+        const { sessionState } = this.props;
+        return sessionState.hasPermission('ROLE_RIGHT_ITEMS_NOTES_DELETE')
+            && (userId === sessionState.currentUser.id || sessionState.hasPermission('ROLE_RIGHT_ITEMS_NOTES_DELETE_FOREIGN'));
     }
 
     render() {
-        const { classes, item } = this.props;
-        const { store, slot, notes, note, users, tags, history, technicalCrew } = this.state;
+        const { classes, itemsState } = this.props;
+        const item = itemsState.getSelectedItem();
 
         return (
             <div>
-                <div className={classes.title}>Hammer</div>
+                <div className={classes.title}>{item.name}</div>
                 <img className={classes.image} src={item.pictureUrl} />
                 <div className={classes.container}>
-                    <div className={classes.bold}>
-                        Eindeutiger Bezeichner{item.hasBarcode ? ' (Barcode)' : ''}
+                    <Typography variant="h6">Daten</Typography>
+                    <div className={classes.container}>
+                        <div className={classes.bold}>
+                            Eindeutiger Bezeichner{item.hasBarcode ? ' (Barcode)' : ''}
+                        </div>
+                        {item.identifier}<br />
+                        <br />
+                        <div className={classes.bold}>
+                            Lagerplatz
                     </div>
-                    {item.identifier}<br />
-                    <br />
-                    <div className={classes.bold}>
-                        Lagerplatz
-                </div>
-                    <SlotFieldComponent slotId={item.slotId} />
-                    <br />
-                    <br />
-                    <div className={classes.bold}>
-                        Menge+Einheit
-                </div>
-                    {item.quantity} {item.unit}<br />
-                    <br />
-                    <div className={classes.bold}>
-                        Maße
-                </div>
+                        {item.storeName}: {item.slotName}
+                        <br />
+                        <br />
+                        <div className={classes.bold}>
+                            Menge + Einheit
+                    </div>
+                        {item.quantity} {item.unit}<br />
+                        <br />
+                        <div className={classes.bold}>
+                            Maße
+                    </div>
                     Breite: {item.width} cm<br />
                     Höhe: {item.height} cm<br />
                     Tiefe: {item.depth} cm<br />
-                    <br />
-                    <div className={classes.bold}>
-                        Verbrauchsgegenstand
+                    </div>
+                    <div className={classes.container}>
+                        <div className={classes.bold}>
+                            Verbrauchsgegenstand
+                        </div>
+                        {item.consumable ? 'Ja' : 'Nein'}<br />
+                        <br />
+                        <div className={classes.bold}>
+                            Beschreibung
+                        </div>
+                        {item.description}<br />
+                        <br />
+                        <div className={classes.bold}>
+                            Gewerk
+                    </div>
+                        {item.technicalCrewName}
+                    </div>
                 </div>
-                    {item.consumable ? 'Ja' : 'Nein'}<br />
-                    <br />
-                    <div className={classes.bold}>
-                        Beschreibung
+                <div className={classes.container}>
+                    <Typography variant="h6">Protokoll</Typography>
+                    <Table size="small">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Datum</TableCell>
+                                <TableCell>Benutzer</TableCell>
+                                <TableCell>Aktion</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+
+                            {item.history ? item.history.map(event => (
+                                <TableRow key={event.id}>
+                                    <TableCell>{convertToReadableFormat(event.timestamp.local())}</TableCell>
+                                    <TableCell>
+                                        {this.getFirstAndLastName(event)}
+                                    </TableCell>
+                                    <TableCell>{this.getHistoryActionText(event)}</TableCell>
+                                </TableRow>
+                            )) : (
+                                    <TableRow>
+                                        <TableCell colSpan={3}>
+                                            <CircularProgress />
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                        </TableBody>
+                    </Table>
                 </div>
-                    {item.description}<br />
-                    <br />
-                    <div className={classes.bold}>
-                        Tags
-                </div>
-                    {tags ? tags.map(tag => (
-                        <Chip key={tag.name} label={tag.name} className={classes.chip} />
-                    )) : (<CircularProgress />)}
-                    <br />
-                    <br />
-                    <div className={classes.bold}>
-                        Gewerk
-                </div>
-                    {technicalCrew ? technicalCrew.name : (<CircularProgress size={12} />)}
-                    <br />
-                    <br />
-                    <div className={classes.bold}>
-                        Protokoll
-                </div>
-                    {history ? history.map(entry => (
-                        <div key={entry.id}>
-                            {this.getHistoryText(entry)}
+                <div className={classes.container}>
+                    <Typography variant="h6">Notizen</Typography>
+                    {item.notes ? item.notes.map(note => (
+                        <div key={note.id}>
+                            <div className={classes.noteHeader}>
+                                <div>
+                                    <div className={classes.bold}>
+                                        {this.getFirstAndLastName(note)}
+                                    </div>
+                                    <Typography variant="caption">{convertToReadableFormatWithTime(note.timestamp.local())}</Typography>
+                                </div>
+                                {this.showNoteDeleteButton(note) &&
+                                    <IconButton
+                                        onClick={() => itemsState.deleteNote(note)}
+                                        disabled={itemsState.actionsDisabled}
+                                    >
+                                        <DeleteIcon />
+                                    </IconButton>
+                                }
+                            </div>
+                            {note.note}<br />
+                            <Divider className={classes.divider} />
                         </div>
                     )) : (<CircularProgress />)}
-                    <br />
-                    <div className={classes.bold}>
-                        Zugehörig
+                    <WithPermission permission="ROLE_RIGHT_ITEMS_NOTES_POST">
+                        <SimpleDialog
+                            title={'Notiz hinzufügen'}
+                            content={(<TextField
+                                variant="outlined"
+                                multiline
+                                value={itemsState.note}
+                                onChange={event => itemsState.changeNote(event.target.value)}
+                            />)}
+                            cancelText="Abbrechen"
+                            okText={'Speichern'}
+                            onOK={() => itemsState.saveNote()}
+                        >
+                            <Button variant="contained">
+                                Notiz hinzufügen
+                        </Button>
+                        </SimpleDialog>
+                    </WithPermission>
                 </div>
+                <br />
+                <div className={classes.fullSizeContainer}>
+                    <Typography variant="h6">Schlagwörter</Typography>
+                    <ItemTagsComponent />
+                </div>
+                <br />
+                <div className={classes.container}>
+                    <Typography variant="h6">Zugehörige Artikel</Typography>
                     <a href="javascript:alert('Umleitung zum Nagel')">Nagel</a><br />
                     <a href="javascript:alert('Umleitung zum Meißel')">Meißel</a><br />
-                    <br />
-                    <div className={classes.bold}>
-                        Notizen
-                </div>
-                    {notes ? notes.map(note => (
-                        <div key={note.id}>
-                            {convertToReadableFormat(note.timestamp)} von {users[note.userId] ? users[note.userId] : (<CircularProgress size="12" />)}<br />
-                            {note.note}<br />
-                            <br />
-                        </div>
-                    )) : (<CircularProgress />)}
-
-                    <SimpleDialog
-                        title={'Notiz hinzufügen'}
-                        content={(<TextField
-                            variant="outlined"
-                            multiline
-                            value={note}
-                            onChange={event => this.setState({ note: event.target.value })}
-                        />)}
-                        cancelText="Abbrechen"
-                        okText={'Speichern'}
-                        onOK={this.saveNote.bind(this)}
-                    >
-                        <Button variant="contained">
-                            Notiz hinzufügen
-                        </Button>
-                    </SimpleDialog>
                 </div>
             </div>
         );
     }
 }
+
+
+const ItemDisplayComponent = props => (
+    <>
+        <SessionContext.Consumer>
+            {sessionState => (
+                <ItemsContext.Consumer>
+                    {itemsState => (
+                        <StatefulItemDisplayComponent {...props} sessionState={sessionState} itemsState={itemsState} />
+                    )}
+                </ItemsContext.Consumer>
+            )}
+        </SessionContext.Consumer>
+    </>
+);
+export default ItemDisplayComponent;

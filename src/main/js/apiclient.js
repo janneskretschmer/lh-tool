@@ -18,8 +18,6 @@ import {
     PROJECT_DELETE,
     PROJECT_ID_VARIABLE,
     NEED_PREFIX,
-    NEED_START_DIFF_VARIABLE,
-    NEED_END_DIFF_VARIABLE,
     STORE_PREFIX,
     STORE_PROJECTS,
     SLOT_PREFIX,
@@ -27,6 +25,7 @@ import {
     ITEM_PREFIX,
     ITEM_NOTES,
     ITEM_TAGS,
+    ITEM_TAGS_ID,
     ITEM_HISTORY,
     TECHNICAL_CREW_PREFIX,
     PROJECT_HELPER_TYPE_ID_VARIABLE,
@@ -47,6 +46,12 @@ import {
     ROLE_VARIABLE,
     FREE_TEXT_VARIABLE,
     PROJECT_HELPER_TYPES_ID,
+    ITEM_ID_VARIABLE,
+    ITEM_NOTES_ID,
+    NOTE_ID_VARIABLE,
+    ITEM_NOTES_USER,
+    ITEM_HISTORY_USER,
+    ITEM_TAG_PREFIX,
 
 } from './urlmappings';
 
@@ -413,26 +418,61 @@ export const apiEndpoints = {
             path: ITEM_PREFIX + ID_EXTENSION,
             parameters: [ID_VARIABLE],
         },
+        patch: {
+            method: 'PATCH',
+            path: ITEM_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
         getNotes: {
             method: 'GET',
             path: ITEM_PREFIX + ITEM_NOTES,
-            parameters: [ID_VARIABLE],
+            parameters: [ITEM_ID_VARIABLE],
+        },
+        getNotesUser: {
+            method: 'GET',
+            path: ITEM_PREFIX + ITEM_NOTES_USER,
+            parameters: [ITEM_ID_VARIABLE, NOTE_ID_VARIABLE],
         },
         createNotes: {
             method: 'POST',
-            // TODO Trailing '/' also necessary?
             path: ITEM_PREFIX + ITEM_NOTES,
-            parameters: [ID_VARIABLE],
+            parameters: [ITEM_ID_VARIABLE],
+        },
+        deleteNotes: {
+            method: 'DELETE',
+            path: ITEM_PREFIX + ITEM_NOTES_ID,
+            parameters: [ITEM_ID_VARIABLE, NOTE_ID_VARIABLE],
         },
         getTags: {
             method: 'GET',
             path: ITEM_PREFIX + ITEM_TAGS,
-            parameters: [ID_VARIABLE],
+            parameters: [ITEM_ID_VARIABLE],
+        },
+        createTag: {
+            method: 'POST',
+            path: ITEM_PREFIX + ITEM_TAGS,
+            parameters: [ITEM_ID_VARIABLE],
+        },
+        deleteTag: {
+            method: 'DELETE',
+            path: ITEM_PREFIX + ITEM_TAGS_ID,
+            parameters: [ITEM_ID_VARIABLE, ID_VARIABLE],
         },
         getHistory: {
             method: 'GET',
             path: ITEM_PREFIX + ITEM_HISTORY,
-            parameters: [ID_VARIABLE],
+            parameters: [ITEM_ID_VARIABLE],
+        },
+        getHistoryUser: {
+            method: 'GET',
+            path: ITEM_PREFIX + ITEM_HISTORY_USER,
+            parameters: [ITEM_ID_VARIABLE, ID_VARIABLE],
+        },
+    },
+    itemTag: {
+        get: {
+            method: 'GET',
+            path: ITEM_TAG_PREFIX + '/',
         },
     },
     technicalCrew: {

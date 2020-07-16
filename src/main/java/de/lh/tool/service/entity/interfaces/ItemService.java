@@ -16,4 +16,8 @@ public interface ItemService extends BasicEntityService<Item, Long> {
 
 	ItemDto updateItemDto(ItemDto dto, Long id) throws DefaultException;
 
+	boolean isViewAllowed(Item item);
+
+	ItemDto patchItemDto(ItemDto dto, Long id) throws DefaultException;
+
 }

@@ -7,8 +7,7 @@ export function fetchOwnStores(accessToken) {
         return apiRequest({
             apiEndpoint: apiEndpoints.store.get,
             authToken: accessToken
-        }).then(result => result.response.content)
-            .catch(e => console.log(e));
+        }).then(result => result.response.content);
     } else {
         return Promise.resolve([]);
     }

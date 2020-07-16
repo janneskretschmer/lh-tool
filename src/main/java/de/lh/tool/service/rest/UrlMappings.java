@@ -11,6 +11,8 @@ public abstract class UrlMappings {
 	public static final String PROJECT_ID_VARIABLE = "project_id";
 	public static final String HELPER_TYPE_ID_VARIABLE = "helper_type_id";
 	public static final String PROJECT_HELPER_TYPE_ID_VARIABLE = "project_helper_type_id";
+	public static final String ITEM_ID_VARIABLE = "item_id";
+	public static final String NOTE_ID_VARIABLE = "note_id";
 
 	public static final String DATE_VARIABLE = "date";
 	public static final String ROLE_VARIABLE = "role";
@@ -56,9 +58,15 @@ public abstract class UrlMappings {
 	public static final String SLOT_PREFIX = REST_PREFIX + "/slots";
 
 	public static final String ITEM_PREFIX = REST_PREFIX + "/items";
-	public static final String ITEM_NOTES = ID_EXTENSION + "/notes";
-	public static final String ITEM_TAGS = ID_EXTENSION + "/tags";
-	public static final String ITEM_HISTORY = ID_EXTENSION + "/history";
+	public static final String ITEM_NOTES = "/{" + ITEM_ID_VARIABLE + "}/notes";
+	public static final String ITEM_NOTES_ID = ITEM_NOTES + "/{" + NOTE_ID_VARIABLE + "}";
+	public static final String ITEM_NOTES_USER = ITEM_NOTES_ID + "/user";
+	public static final String ITEM_TAGS = "/{" + ITEM_ID_VARIABLE + "}/tags";
+	public static final String ITEM_TAGS_ID = ITEM_TAGS + ID_EXTENSION;
+	public static final String ITEM_HISTORY = "/{" + ITEM_ID_VARIABLE + "}/history";
+	public static final String ITEM_HISTORY_USER = ITEM_HISTORY + "/{" + ID_VARIABLE + "}/user";
+
+	public static final String ITEM_TAG_PREFIX = REST_PREFIX + "/item_tags";
 
 	public static final String TECHNICAL_CREW_PREFIX = REST_PREFIX + "/technical_crews";
 

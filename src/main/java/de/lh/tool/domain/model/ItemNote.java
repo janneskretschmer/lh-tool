@@ -1,6 +1,6 @@
 package de.lh.tool.domain.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,5 +39,5 @@ public class ItemNote {
 	private String note;
 
 	@Column(name = "timestamp", nullable = false)
-	private Date timestamp;
+	private LocalDateTime timestamp;
 }

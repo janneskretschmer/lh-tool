@@ -29,6 +29,7 @@
 		"react-resolver": "^3.1.2",
 		"react-router": "^4.3.1",
 		"react-router-dom": "^4.3.1",
+		"react-select": "^3.1.0",
 		"superagent": "^4.1.0",
 		"urijs": "^1.19.1"
 	},

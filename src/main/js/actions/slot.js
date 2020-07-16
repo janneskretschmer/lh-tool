@@ -2,7 +2,7 @@ import { apiEndpoints, apiRequest } from '../apiclient';
 import { ID_VARIABLE, SLOT_STORE_VARIABLE } from '../urlmappings';
 import moment from 'moment';
 
-export function fetchSlotsByStore({accessToken, storeId}) {
+export function fetchSlotsByStore(accessToken, storeId) {
     if (accessToken) {
         return apiRequest({
             apiEndpoint: apiEndpoints.slot.getByStore,
@@ -10,8 +10,7 @@ export function fetchSlotsByStore({accessToken, storeId}) {
             queries: {
                 [SLOT_STORE_VARIABLE]: storeId,
             }
-        }).then(result => result.response.content)
-            .catch(e => console.log(e));
+        }).then(result => result.response.content);
     } else {
         return Promise.resolve([]);
     }

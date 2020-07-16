@@ -9,8 +9,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -22,6 +25,7 @@ import de.lh.tool.domain.dto.ItemDto;
 import de.lh.tool.domain.dto.ItemHistoryDto;
 import de.lh.tool.domain.dto.ItemNoteDto;
 import de.lh.tool.domain.dto.ItemTagDto;
+import de.lh.tool.domain.dto.UserDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.service.entity.interfaces.ItemHistoryService;
@@ -40,7 +44,7 @@ public class ItemRestService {
 	@Autowired
 	private ItemHistoryService itemHistoryService;
 	@Autowired
-	private ItemTagService tagService;
+	private ItemTagService itemTagService;
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of items")
@@ -84,11 +88,22 @@ public class ItemRestService {
 		return new Resource<>(itemDto, linkTo(methodOn(ItemRestService.class).update(id, dto)).withSelfRel());
 	}
 
+	@PatchMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
+	@ApiOperation(value = "Update an item (only non null values)")
+	@Secured(UserRole.RIGHT_ITEMS_PATCH)
+	public Resource<ItemDto> patch(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
+			@RequestBody(required = true) ItemDto dto) throws DefaultException {
+
+		ItemDto itemDto = itemService.patchItemDto(dto, id);
+
+		return new Resource<>(itemDto, linkTo(methodOn(ItemRestService.class).patch(id, dto)).withSelfRel());
+	}
+
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ITEM_NOTES)
 	@ApiOperation(value = "Get a list of notes for item")
-	@Secured(UserRole.RIGHT_ITEMS_GET)
-	public Resources<ItemNoteDto> getNotes(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long itemId)
-			throws DefaultException {
+	@Secured(UserRole.RIGHT_ITEMS_NOTES_GET)
+	public Resources<ItemNoteDto> getNotes(
+			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId) throws DefaultException {
 
 		Collection<ItemNoteDto> dtoList = itemNoteService.getDtosByItemId(itemId);
 
@@ -97,58 +112,101 @@ public class ItemRestService {
 
 	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ITEM_NOTES)
 	@ApiOperation(value = "Create a new note for an item")
-	@Secured(UserRole.RIGHT_ITEMS_POST)
-	public Resource<ItemNoteDto> create(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long itemId,
+	@Secured(UserRole.RIGHT_ITEMS_NOTES_POST)
+	public Resource<ItemNoteDto> createNote(
+			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId,
 			@RequestBody(required = true) ItemNoteDto dto) throws DefaultException {
 
 		dto.setItemId(itemId);
 		ItemNoteDto itemNoteDto = itemNoteService.createItemNoteDto(dto);
 
 		return new Resource<>(itemNoteDto,
-				linkTo(methodOn(ItemRestService.class).create(itemId, itemNoteDto)).withSelfRel());
+				linkTo(methodOn(ItemRestService.class).createNote(itemId, itemNoteDto)).withSelfRel());
+	}
+
+	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ITEM_NOTES_ID)
+	@ApiOperation(value = "Create a new note for an item")
+	@Secured(UserRole.RIGHT_ITEMS_NOTES_POST)
+	public ResponseEntity<Void> deleteNote(
+			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId,
+			@PathVariable(name = UrlMappings.NOTE_ID_VARIABLE, required = true) Long id) throws DefaultException {
+
+		itemNoteService.deleteItemNoteById(id);
+
+		return ResponseEntity.noContent().build();
+	}
+
+	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ITEM_NOTES_USER)
+	@ApiOperation(value = "Get creator (first and last name) of the note. Necessary bc /users/{id} exposes more data and might be forbidden for the user.")
+	@Secured(UserRole.RIGHT_ITEMS_NOTES_GET)
+	public Resource<UserDto> getNoteUser(
+			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId,
+			@PathVariable(name = UrlMappings.NOTE_ID_VARIABLE, required = true) Long noteId) throws DefaultException {
+
+		UserDto userDto = itemNoteService.getUserNameDto(itemId, noteId);
+
+		return new Resource<>(userDto,
+				linkTo(methodOn(ItemRestService.class).getNoteUser(itemId, noteId)).withSelfRel());
 	}
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ITEM_TAGS)
 	@ApiOperation(value = "Get a list of tags for item")
 	@Secured(UserRole.RIGHT_ITEMS_GET)
-	public Resources<ItemTagDto> getTags(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long itemId)
-			throws DefaultException {
+	public Resources<ItemTagDto> getTags(
+			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId) throws DefaultException {
 
-		Collection<ItemTagDto> dtoList = tagService.getItemTagDtosByItemId(itemId);
+		Collection<ItemTagDto> dtoList = itemTagService.getItemTagDtosByItemId(itemId);
 
 		return new Resources<>(dtoList, linkTo(methodOn(ItemRestService.class).getTags(itemId)).withSelfRel());
+	}
+
+	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ITEM_TAGS)
+	@ApiOperation(value = "Add tag to item and create it if it doesn't exist")
+	@Secured(UserRole.RIGHT_ITEMS_POST)
+	public Resource<ItemTagDto> createTag(
+			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId,
+			@RequestBody(required = true) ItemTagDto itemTagDto) throws DefaultException {
+
+		ItemTagDto savedItemTag = itemTagService.createItemTagForItem(itemId, itemTagDto);
+
+		return new Resource<ItemTagDto>(savedItemTag,
+				linkTo(methodOn(ItemRestService.class).createTag(itemId, itemTagDto)).withSelfRel());
+	}
+
+	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ITEM_TAGS_ID)
+	@ApiOperation(value = "Remove tag from item and delete tag if it is not referenced anymore")
+	@Secured(UserRole.RIGHT_ITEMS_POST)
+	public ResponseEntity<Void> removeTags(
+			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId,
+			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id) throws DefaultException {
+
+		itemTagService.deleteItemTagFromItem(itemId, id);
+
+		return ResponseEntity.noContent().build();
 	}
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ITEM_HISTORY)
 	@ApiOperation(value = "Get history for item")
 	@Secured(UserRole.RIGHT_ITEMS_GET)
 	public Resources<ItemHistoryDto> getHistory(
-			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long itemId) throws DefaultException {
+			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId) throws DefaultException {
 
 		Collection<ItemHistoryDto> dtoList = itemHistoryService.getDtosByItemId(itemId);
 
 		return new Resources<>(dtoList, linkTo(methodOn(ItemRestService.class).getHistory(itemId)).withSelfRel());
 	}
 
-	/*
-	 * TODO Add URLMapping for NoteId
-	 * 
-	 * @PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path =
-	 * UrlMappings.ITEM_NOTES)
-	 * 
-	 * @ApiOperation(value = "Update a note")
-	 * 
-	 * @Secured(UserRole.RIGHT_ITEMS_PUT) public Resource<ItemNoteDto>
-	 * update(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long
-	 * id,
-	 * 
-	 * @RequestBody(required = true) ItemNoteDto dto) throws DefaultException {
-	 * 
-	 * ItemNoteDto itemNoteDto = itemNoteService.updateItemDto(dto, id);
-	 * 
-	 * return new Resource<>(itemNoteDto,
-	 * linkTo(methodOn(ItemRestService.class).update(id,
-	 * itemNoteDto)).withSelfRel()); }
-	 */
+	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ITEM_HISTORY_USER)
+	@ApiOperation(value = "Get creator (first and last name) of the event. Necessary bc /users/{id} exposes more data and might be forbidden for the user.")
+	@Secured(UserRole.RIGHT_ITEMS_GET)
+	public Resource<UserDto> getHistoryUser(
+			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId,
+			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id) throws DefaultException {
+
+		UserDto userDto = itemHistoryService.getUserNameDto(itemId, id);
+
+		return new Resource<>(userDto,
+				linkTo(methodOn(ItemRestService.class).getHistoryUser(itemId, id)).withSelfRel());
+	}
 
 }
