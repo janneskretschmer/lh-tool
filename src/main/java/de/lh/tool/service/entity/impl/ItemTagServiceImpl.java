@@ -46,7 +46,7 @@ public class ItemTagServiceImpl extends BasicMappableEntityServiceImpl<ItemTagRe
 	@Override
 	@Transactional
 	public ItemTagDto createItemTagForItem(Long itemId, ItemTagDto dto) throws DefaultException {
-		ValidationUtil.checkIdNull(itemId);
+		ValidationUtil.checkIdsNonNull(itemId);
 		Item item = itemService.findById(itemId).orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException);
 		if (!itemService.isViewAllowed(item)) {
 			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
@@ -65,7 +65,7 @@ public class ItemTagServiceImpl extends BasicMappableEntityServiceImpl<ItemTagRe
 	@Override
 	@Transactional
 	public void deleteItemTagFromItem(Long itemId, Long itemTagId) throws DefaultException {
-		ValidationUtil.checkIdNull(itemId, itemTagId);
+		ValidationUtil.checkIdsNonNull(itemId, itemTagId);
 
 		Item item = itemService.findById(itemId).orElseThrow(ExceptionEnum.EX_INVALID_ITEM_ID::createDefaultException);
 

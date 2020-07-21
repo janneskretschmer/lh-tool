@@ -4,10 +4,11 @@ import { withStyles } from '@material-ui/core/styles';
 import React from 'react';
 import { createOrUpdateItem, fetchItem } from '../../actions/item';
 import { SessionContext } from '../../providers/session-provider';
-import { withContext } from '../../util';
+import { withContext, generateUniqueId } from '../../util';
 import ItemDisplayComponent from './item-display';
 import ItemEditComponent from './item-edit';
 import ItemSlotEditComponent from './item-slot';
+import ItemIdentifierEditComponent from './item-identifier';
 import ItemsProvider, { ItemsContext } from '../../providers/items-provider';
 import WithPermission from '../with-permission';
 import SimpleDialog from '../simple-dialog';
@@ -29,30 +30,7 @@ class StatefulItemDetailComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            edit: false,
         };
-    }
-
-    changeEditState(edit) {
-        this.setState({
-            edit
-        });
-    }
-
-    saveIfBroken(broken) {
-        this.setState(prevState => ({
-            savingIfBroken: true,
-            item: {
-                ...prevState.item,
-                broken,
-            }
-        }), () => createOrUpdateItem({
-            accessToken: this.props.sessionState.accessToken,
-            item: this.state.item,
-        }).then(item => this.setState({
-            savingIfBroken: false,
-        })));
-
     }
 
     componentDidMount() {
@@ -69,11 +47,14 @@ class StatefulItemDetailComponent extends React.Component {
         }
         return (
             <>
-                {this.state.edit ? (
+                {itemsState.edit ? (
                     <>
                         <ItemEditComponent item={item}></ItemEditComponent>
-                        <Button variant="contained" className={classes.button} type="submit" onClick={() => this.changeEditState(false)}>
+                        <Button variant="contained" className={classes.button} onClick={() => itemsState.saveSelectedItem()}>
                             Speichern
+                        </Button>
+                        <Button variant="outlined" className={classes.button} onClick={() => itemsState.resetSelectedItem()}>
+                            Abbrechen
                         </Button>
                     </>
                 ) : (
@@ -83,7 +64,7 @@ class StatefulItemDetailComponent extends React.Component {
                                 <Button
                                     variant="contained"
                                     className={classes.button}
-                                    onClick={() => this.changeEditState(true)}
+                                    onClick={() => itemsState.changeEdit(true)}
                                     disabled={itemsState.actionsDisabled}
                                 >
                                     Bearbeiten
@@ -106,14 +87,24 @@ class StatefulItemDetailComponent extends React.Component {
                                     </Button>
                                 </SimpleDialog>
                             </WithPermission>
-                            <Button
-                                variant="contained"
-                                className={classes.button}
-                                onClick={() => alert('TODO: implement "Kopieren"')}
-                                disabled={itemsState.actionsDisabled}
-                            >
-                                Kopieren
-                            </Button>
+                            <WithPermission permission="ROLE_RIGHT_ITEMS_POST">
+                                <SimpleDialog
+                                    title={item.name + ' kopieren'}
+                                    content={<ItemIdentifierEditComponent />}
+                                    onOK={() => itemsState.saveSlot()}
+                                    onOpen={() => itemsState.changeCopyIdentifier(generateUniqueId())}
+                                    okText="Kopieren"
+                                    cancelText="Abbrechen"
+                                >
+                                    <Button
+                                        variant="contained"
+                                        className={classes.button}
+                                        disabled={itemsState.actionsDisabled}
+                                    >
+                                        Kopieren
+                                </Button>
+                                </SimpleDialog>
+                            </WithPermission>
                             <WithPermission permission="ROLE_RIGHT_ITEMS_PATCH_BROKEN">
                                 <Button
                                     variant="contained"

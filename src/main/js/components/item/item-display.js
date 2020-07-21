@@ -9,7 +9,6 @@ import { ItemsContext } from '../../providers/items-provider';
 import { SessionContext } from '../../providers/session-provider';
 import { convertToReadableFormat, convertToReadableFormatWithTime } from '../../util';
 import SimpleDialog from '../simple-dialog';
-import SlotFieldComponent from '../slot/slot-field';
 import WithPermission from '../with-permission';
 import ItemTagsComponent from './item-tags';
 
@@ -72,6 +71,8 @@ class StatefulItemDisplayComponent extends React.Component {
                 return 'Angelegt'
             case 'UPDATED':
                 return 'Geändert'
+            case 'QUANTITY_CHANGED':
+                return 'Menge von ' + event.data.from + ' auf ' + event.data.to + ' geändert'
             case 'MOVED':
                 return 'Von ' + event.data.from + ' nach ' + event.data.to + ' verschoben'
             case 'BROKEN':
@@ -137,6 +138,11 @@ class StatefulItemDisplayComponent extends React.Component {
                             Verbrauchsgegenstand
                         </div>
                         {item.consumable ? 'Ja' : 'Nein'}<br />
+                        <br />
+                        <div className={classes.bold}>
+                            Wetterbeständig
+                        </div>
+                        {item.outsideQualified ? 'Ja' : 'Nein'}<br />
                         <br />
                         <div className={classes.bold}>
                             Beschreibung

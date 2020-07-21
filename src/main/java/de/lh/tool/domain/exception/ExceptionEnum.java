@@ -52,6 +52,11 @@ public enum ExceptionEnum {
 			HttpStatus.BAD_REQUEST),
 
 	EX_ITEM_NO_TAG("Please provide a tag name.", HttpStatus.BAD_REQUEST),
+	EX_ITEM_NO_SLOT("The item has no slot.", HttpStatus.BAD_REQUEST),
+	EX_ITEM_NO_IDENTIFIER("The item has no identifier.", HttpStatus.BAD_REQUEST),
+	EX_ITEM_NO_NAME("The item has no name.", HttpStatus.BAD_REQUEST),
+	EX_ITEM_NO_TECHNICAL_CREW("The item has no technical crew.", HttpStatus.BAD_REQUEST),
+	EX_ITEM_IDENTIFIER_ALREADY_IN_USE("The identifier is already in use.", HttpStatus.CONFLICT),
 	//
 	;
 

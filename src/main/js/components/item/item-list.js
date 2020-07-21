@@ -145,7 +145,7 @@ class StatefulItemListComponent extends React.Component {
                             align: 'right',
                         },
                         {
-                            key: 'quantity',
+                            key: 'quantityWithUnit',
                             name: 'Menge',
                             align: 'right',
                         },

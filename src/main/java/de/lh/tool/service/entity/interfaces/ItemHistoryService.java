@@ -21,4 +21,6 @@ public interface ItemHistoryService extends BasicEntityService<ItemHistory, Long
 	void logCreated(Item item);
 
 	void logNewSlot(Item item, Slot old);
+
+	void logNewQuantity(Item item, Double old);
 }

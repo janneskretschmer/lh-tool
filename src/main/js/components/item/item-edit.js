@@ -8,11 +8,9 @@ import Select from '@material-ui/core/Select';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import React from 'react';
-import { fetchTechnicalCrews } from '../../actions/technical-crew';
 import { SessionContext } from '../../providers/session-provider';
-import { withContext } from '../../util';
-import SlotFieldComponent from '../slot/slot-field';
-
+import { ItemsContext } from '../../providers/items-provider';
+import ItemSlotEditComponent from './item-slot';
 
 const styles = theme => ({
     bold: {
@@ -45,39 +43,21 @@ const styles = theme => ({
 });
 
 @withStyles(styles)
-@withContext('sessionState', SessionContext)
-export default class ItemEditComponent extends React.Component {
+class StatefulItemEditComponent extends React.Component {
 
     constructor(props) {
         super(props);
         const { currentUser } = props.sessionState;
         this.state = {
-            item: props.item,
         };
     }
 
     componentDidMount() {
-        fetchTechnicalCrews(this.props.sessionState.accessToken).then(
-            technicalCrews => this.setState(prevState => ({
-                technicalCrews, item: {
-                    ...prevState.item,
-                    technicalCrewId: prevState.item.technicalCrewId ? prevState.item.technicalCrewId : technicalCrews[0].id,
-                }
-            }))
-        );
     }
 
-    changeItem(attribute, value) {
-        this.setState(prevState => ({
-            item: {
-                ...prevState.item,
-                [attribute]: value,
-            }
-        }));
-    }
     render() {
-        const { classes } = this.props;
-        const { technicalCrews, item } = this.state;
+        const { classes, itemsState } = this.props;
+        const item = itemsState.getSelectedItem();
         return (
             <div>
                 <div className={classes.verticallyCenteredContainer}>
@@ -86,7 +66,7 @@ export default class ItemEditComponent extends React.Component {
                         label="Name"
                         className={classes.textField}
                         value={item.name}
-                        onChange={event => this.changeItem('name', event.target.value)}
+                        onChange={event => itemsState.changeItemName(event.target.value)}
                         margin="dense"
                         variant="outlined"
                     /><TextField
@@ -94,7 +74,7 @@ export default class ItemEditComponent extends React.Component {
                         label="Eindeutiger Bezeichner"
                         className={classes.textField}
                         value={item.identifier}
-                        onChange={event => this.changeItem('identifier', event.target.value)}
+                        onChange={event => itemsState.changeItemIdentifier(event.target.value)}
                         margin="dense"
                         variant="outlined"
                     />
@@ -102,7 +82,7 @@ export default class ItemEditComponent extends React.Component {
                         control={
                             <Checkbox
                                 checked={item.hasBarcode}
-                                onChange={event => this.changeItem('hasBarcode', event.target.checked)}
+                                onChange={event => itemsState.changeItemHasBarcode(event.target.checked)}
                                 disableRipple
                             />
                         }
@@ -110,7 +90,7 @@ export default class ItemEditComponent extends React.Component {
                     />
                 </div>
 
-                Lagerplatz: <SlotFieldComponent edit={true} slotId={item.slotId}/>
+                Lagerplatz: <ItemSlotEditComponent />
                 <br />
                 <br />
                 <input
@@ -133,7 +113,7 @@ export default class ItemEditComponent extends React.Component {
                         label="Menge"
                         className={classes.textField}
                         value={item.quantity}
-                        onChange={event => this.changeItem('quantity', event.target.value)}
+                        onChange={event => itemsState.changeItemQuantity(event.target.value)}
                         margin="dense"
                         variant="outlined"
                         type="number"
@@ -144,7 +124,7 @@ export default class ItemEditComponent extends React.Component {
                         label="Einheit"
                         className={classes.textField}
                         value={item.unit}
-                        onChange={event => this.changeItem('unit', event.target.value)}
+                        onChange={event => itemsState.changeItemUnit(event.target.value)}
                         margin="dense"
                         variant="outlined"
                     />
@@ -152,7 +132,7 @@ export default class ItemEditComponent extends React.Component {
                         control={
                             <Checkbox
                                 checked={item.consumable}
-                                onChange={event => this.changeItem('consumable', event.target.checked)}
+                                onChange={event => itemsState.changeItemConsumable(event.target.checked)}
                                 disableRipple
                             />
                         }
@@ -164,7 +144,7 @@ export default class ItemEditComponent extends React.Component {
                     label="Breite in cm"
                     className={classes.textField}
                     value={item.width}
-                    onChange={event => this.changeItem('width', event.target.value)}
+                    onChange={event => itemsState.changeItemWidth(event.target.value)}
                     margin="dense"
                     variant="outlined"
                     type="number"
@@ -175,7 +155,7 @@ export default class ItemEditComponent extends React.Component {
                     label="Höhe in cm"
                     className={classes.textField}
                     value={item.height}
-                    onChange={event => this.changeItem('height', event.target.value)}
+                    onChange={event => itemsState.changeItemHeight(event.target.value)}
                     margin="dense"
                     variant="outlined"
                     type="number"
@@ -186,7 +166,7 @@ export default class ItemEditComponent extends React.Component {
                     label="Tiefe in cm"
                     className={classes.textField}
                     value={item.depth}
-                    onChange={event => this.changeItem('depth', event.target.value)}
+                    onChange={event => itemsState.changeItemDepth(event.target.value)}
                     margin="dense"
                     variant="outlined"
                     type="number"
@@ -197,7 +177,7 @@ export default class ItemEditComponent extends React.Component {
                     control={
                         <Checkbox
                             checked={item.outsideQualified}
-                            onChange={event => this.changeItem('outsideQualified', event.target.checked)}
+                            onChange={event => itemsState.changeItemOutsideQualified(event.target.checked)}
                             disableRipple
                         />
                     }
@@ -212,24 +192,24 @@ export default class ItemEditComponent extends React.Component {
                     multiline
                     className={classes.textArea}
                     value={item.description}
-                    onChange={event => this.changeItem('description', event.target.value)}
+                    onChange={event => itemsState.changeItemDescription(event.target.value)}
                     margin="dense"
                     variant="outlined"
                 /><br />
                 <br />
                 <br />
-                {technicalCrews ? (
+                {itemsState.technicalCrews ? (
                     <FormControl className={classes.formControl}>
                         <InputLabel htmlFor="technical-crew">Gewerk</InputLabel>
                         <Select
                             value={item.technicalCrewId}
-                            onChange={event => this.changeItem('technicalCrewId', event.target.value)}
+                            onChange={event => itemsState.changeItemTechnicalCrewId(event.target.value)}
                             inputProps={{
                                 name: 'technical-crew',
                                 id: 'technical-crew',
                             }}
                         >
-                            {technicalCrews.map(crew => (
+                            {[...itemsState.technicalCrews.values()].map(crew => (
                                 <MenuItem key={crew.id} value={crew.id}>{crew.name}</MenuItem>
                             ))}
                         </Select>
@@ -253,3 +233,18 @@ export default class ItemEditComponent extends React.Component {
 }
 
 
+
+const ItemEditComponent = props => (
+    <>
+        <SessionContext.Consumer>
+            {sessionState => (
+                <ItemsContext.Consumer>
+                    {itemsState => (
+                        <StatefulItemEditComponent {...props} sessionState={sessionState} itemsState={itemsState} />
+                    )}
+                </ItemsContext.Consumer>
+            )}
+        </SessionContext.Consumer>
+    </>
+);
+export default ItemEditComponent;

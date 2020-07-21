@@ -13,11 +13,11 @@ public class ValidationUtil {
 		throw new IllegalStateException("Utility class");
 	}
 
-	public static void checkIdNull(Long... ids) throws DefaultException {
-		checkIdNull(ExceptionEnum.EX_NO_ID_PROVIDED, ids);
+	public static void checkIdsNonNull(Long... ids) throws DefaultException {
+		checkAllNonNull(ExceptionEnum.EX_NO_ID_PROVIDED, (Object[]) ids);
 	}
 
-	public static void checkIdNull(ExceptionEnum exception, Long... ids) throws DefaultException {
+	public static void checkAllNonNull(ExceptionEnum exception, Object... ids) throws DefaultException {
 		if (!Arrays.stream(ids).allMatch(Objects::nonNull)) {
 			throw exception.createDefaultException();
 		}

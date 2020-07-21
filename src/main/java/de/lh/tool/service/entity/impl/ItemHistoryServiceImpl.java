@@ -48,7 +48,7 @@ public class ItemHistoryServiceImpl
 	@Override
 	@Transactional
 	public Collection<ItemHistoryDto> getDtosByItemId(Long itemId) throws DefaultException {
-		ValidationUtil.checkIdNull(itemId);
+		ValidationUtil.checkIdsNonNull(itemId);
 		Item item = itemService.findById(itemId).orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException);
 		if (!itemService.isViewAllowed(item)) {
 			ExceptionEnum.EX_FORBIDDEN.createDefaultException();
@@ -61,7 +61,7 @@ public class ItemHistoryServiceImpl
 	@Override
 	@Transactional
 	public UserDto getUserNameDto(Long itemId, Long id) throws DefaultException {
-		ValidationUtil.checkIdNull(itemId, id);
+		ValidationUtil.checkIdsNonNull(itemId, id);
 
 		ItemHistory event = findById(id).orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException);
 		if (!itemService.isViewAllowed(event.getItem())) {
@@ -79,37 +79,49 @@ public class ItemHistoryServiceImpl
 	@Override
 	@Transactional
 	public void logNewBrokenState(Item item) {
-		save(ItemHistory.builder().item(item).type(item.getBroken() ? HistoryType.BROKEN : HistoryType.FIXED)
-				.user(userService.getCurrentUser()).timestamp(LocalDateTime.now()).build());
-	}
-
-	@Override
-	@Transactional
-	public void logNewSlot(Item item, Slot old) {
-		String data = new Gson().toJson(
-				new MoveData(slotService.getSlotNameWithStore(old), slotService.getSlotNameWithStore(item.getSlot())));
-		save(ItemHistory.builder().item(item).type(HistoryType.MOVED).data(data).user(userService.getCurrentUser())
-				.timestamp(LocalDateTime.now()).build());
+		saveHistoryEntry(item, item.getBroken() ? HistoryType.BROKEN : HistoryType.FIXED);
 	}
 
 	@Data
 	@AllArgsConstructor
-	private class MoveData {
+	private class FromToData {
 		private String from;
 		private String to;
 	}
 
 	@Override
 	@Transactional
+	public void logNewSlot(Item item, Slot old) {
+		String data = new Gson().toJson(new FromToData(slotService.getSlotNameWithStore(old),
+				slotService.getSlotNameWithStore(item.getSlot())));
+		saveHistoryEntry(item, data, HistoryType.MOVED);
+	}
+
+	@Override
+	@Transactional
+	public void logNewQuantity(Item item, Double old) {
+		String data = new Gson().toJson(new FromToData(Double.toString(old), Double.toString(item.getQuantity())));
+		saveHistoryEntry(item, data, HistoryType.QUANTITY_CHANGED);
+	}
+
+	@Override
+	@Transactional
 	public void logCreated(Item item) {
-		save(ItemHistory.builder().item(item).type(HistoryType.CREATED).user(userService.getCurrentUser())
-				.timestamp(LocalDateTime.now()).build());
+		saveHistoryEntry(item, HistoryType.CREATED);
 	}
 
 	@Override
 	@Transactional
 	public void logUpdated(Item item) {
-		save(ItemHistory.builder().item(item).type(HistoryType.UPDATED).user(userService.getCurrentUser())
+		saveHistoryEntry(item, HistoryType.UPDATED);
+	}
+
+	private void saveHistoryEntry(Item item, HistoryType type) {
+		saveHistoryEntry(item, null, type);
+	}
+
+	private void saveHistoryEntry(Item item, String data, HistoryType type) {
+		save(ItemHistory.builder().item(item).type(type).data(data).user(userService.getCurrentUser())
 				.timestamp(LocalDateTime.now()).build());
 	}
 

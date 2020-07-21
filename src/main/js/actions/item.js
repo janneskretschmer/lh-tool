@@ -1,6 +1,7 @@
 import { apiEndpoints, apiRequest } from '../apiclient';
 import { ID_VARIABLE, ITEM_ID_VARIABLE, NOTE_ID_VARIABLE } from '../urlmappings';
 import moment from 'moment';
+import { result } from 'lodash';
 
 export function fetchItems(accessToken) {
     if (accessToken) {
@@ -35,6 +36,15 @@ export function createOrUpdateItem({ accessToken, item, handleFailure }) {
                 handleFailure(err);
             }
         });
+}
+
+export function updateItem(accessToken, item) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.item.update,
+        authToken: accessToken,
+        data: item,
+        parameters: { [ID_VARIABLE]: item.id },
+    }).then(result => result.response);
 }
 
 export function updateItemBrokenState(accessToken, itemId, broken) {

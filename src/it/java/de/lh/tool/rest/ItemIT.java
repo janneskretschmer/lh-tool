@@ -73,6 +73,363 @@ public class ItemIT extends BasicRestIntegrationTest {
 //  ██║_____╚██████╔╝___██║___
 //  ╚═╝______╚═════╝____╚═╝___
 
+	@Test
+	public void testItemModificationOwn() throws IOException {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `store` (`id`, `type`, `name`, `address`) VALUES ('1', 'STANDARD', 'Store', NULL)",
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `width`, `height`, `depth`, `outside`) VALUES (1, '1', 'Slot', NULL, NULL, NULL, NULL, '0')",
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `width`, `height`, `depth`, `outside`) VALUES (2, 1, 'Slot2', NULL, NULL, NULL, NULL, '0')",
+						"INSERT INTO `technical_crew` (`id`, `name`) VALUES ('1', 'Technical Crew'),(2, 'TK2')",
+						"INSERT INTO `item` (`id`, `slot_id`, `identifier`, `has_barcode`, `name`, `description`, `quantity`, `unit`, `width`, `height`, `depth`, `outside_qualified`, `consumable`, `broken`, `picture_url`, `technical_crew_id`) VALUES ('1', '1', 'Identifier1', '0', 'Item1', 'Description 1', '1', 'Stück', '12', '24', '48', '1', '1', '1', 'Url1', '1')",
+						"INSERT INTO `item_tag` (`id`, `name`) VALUES ('1', 'Tag1'), ('2', 'Tag2')",
+						"INSERT INTO `item_item_tag` (`id`, `item_id`, `item_tag_id`) VALUES ('1', '1', '1'), ('2', '1', '2')",
+						"INSERT INTO `item_note` (`id`, `item_id`, `user_id`, `note`, `timestamp`) VALUES ('1', '1', NULL, 'Test Notiz', '2020-07-22 11:37:34'), (2, '1', '2', 'Noch eine Notiz', '2020-07-23 14:37:34')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO `store_project` (`id`, `store_id`, `project_id`, `start`, `end`) VALUES ('1', '1', '1', '2020-06-01', '2030-12-31');"))
+				.url(REST_URL + "/items/1").method(Method.PUT)
+				.body(ItemDto.builder().broken(false).consumable(false).depth(5f).description("description")
+						.hasBarcode(true).height(4f).identifier("identifier").name("name").outsideQualified(false)
+						.pictureUrl("pictureUrl").quantity(123d).slotId(2l).technicalCrewId(2l).unit("unit").width(3f)
+						.build())
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"width\":3.0,\"height\":4.0,\"depth\":5.0,\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"pictureUrl\":\"pictureUrl\",\"technicalCrewId\":2,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.validationQueries(List.of(
+								"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='identifier' AND has_barcode=1 AND name='name' AND description='description' AND quantity=123.0 AND unit='unit' AND width=3.0 AND height=4.0 AND depth=5.0 AND outside_qualified=0 AND consumable=0 AND picture_url='pictureUrl' AND technical_crew_id=2",
+								"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
+										+ getUserIdByEmail(ADMIN_EMAIL),
+								"SELECT * FROM item_history WHERE item_id=1 AND type='MOVED' AND data = '{\"from\":\"Store: Slot\",\"to\":\"Store: Slot2\"}' AND user_id="
+										+ getUserIdByEmail(ADMIN_EMAIL),
+								"SELECT * FROM item_history WHERE item_id=1 AND type='QUANTITY_CHANGED' AND data='{\"from\":\"1.0\",\"to\":\"123.0\"}' AND user_id="
+										+ getUserIdByEmail(ADMIN_EMAIL),
+								"SELECT * FROM item_history WHERE item_id=1 AND type='UPDATED' AND data IS NULL AND user_id="
+										+ getUserIdByEmail(ADMIN_EMAIL),
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=4",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_item_tag WHERE item_id=1)=2",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_note WHERE item_id=1)=2"))
+						.build(),
+						UserTest.builder().emails(List.of(CONSTRUCTION_SERVANT_EMAIL)).expectedHttpCode(HttpStatus.OK)
+								.expectedResponse(
+										"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"width\":3.0,\"height\":4.0,\"depth\":5.0,\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"pictureUrl\":\"pictureUrl\",\"technicalCrewId\":2,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								.validationQueries(List.of(
+										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='identifier' AND has_barcode=1 AND name='name' AND description='description' AND quantity=123.0 AND unit='unit' AND width=3.0 AND height=4.0 AND depth=5.0 AND outside_qualified=0 AND consumable=0 AND picture_url='pictureUrl' AND technical_crew_id=2",
+										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
+												+ getUserIdByEmail(CONSTRUCTION_SERVANT_EMAIL),
+										"SELECT * FROM item_history WHERE item_id=1 AND type='MOVED' AND data = '{\"from\":\"Store: Slot\",\"to\":\"Store: Slot2\"}' AND user_id="
+												+ getUserIdByEmail(CONSTRUCTION_SERVANT_EMAIL),
+										"SELECT * FROM item_history WHERE item_id=1 AND type='QUANTITY_CHANGED' AND data='{\"from\":\"1.0\",\"to\":\"123.0\"}' AND user_id="
+												+ getUserIdByEmail(CONSTRUCTION_SERVANT_EMAIL),
+										"SELECT * FROM item_history WHERE item_id=1 AND type='UPDATED' AND data IS NULL AND user_id="
+												+ getUserIdByEmail(CONSTRUCTION_SERVANT_EMAIL),
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=4",
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_item_tag WHERE item_id=1)=2",
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_note WHERE item_id=1)=2"))
+								.build(),
+						UserTest.builder().emails(List.of(INVENTORY_MANAGER_EMAIL)).expectedHttpCode(HttpStatus.OK)
+								.expectedResponse(
+										"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"width\":3.0,\"height\":4.0,\"depth\":5.0,\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"pictureUrl\":\"pictureUrl\",\"technicalCrewId\":2,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								.validationQueries(List.of(
+										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='identifier' AND has_barcode=1 AND name='name' AND description='description' AND quantity=123.0 AND unit='unit' AND width=3.0 AND height=4.0 AND depth=5.0 AND outside_qualified=0 AND consumable=0 AND picture_url='pictureUrl' AND technical_crew_id=2",
+										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
+												+ getUserIdByEmail(INVENTORY_MANAGER_EMAIL),
+										"SELECT * FROM item_history WHERE item_id=1 AND type='MOVED' AND data = '{\"from\":\"Store: Slot\",\"to\":\"Store: Slot2\"}' AND user_id="
+												+ getUserIdByEmail(INVENTORY_MANAGER_EMAIL),
+										"SELECT * FROM item_history WHERE item_id=1 AND type='QUANTITY_CHANGED' AND data='{\"from\":\"1.0\",\"to\":\"123.0\"}' AND user_id="
+												+ getUserIdByEmail(INVENTORY_MANAGER_EMAIL),
+										"SELECT * FROM item_history WHERE item_id=1 AND type='UPDATED' AND data IS NULL AND user_id="
+												+ getUserIdByEmail(INVENTORY_MANAGER_EMAIL),
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=4",
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_item_tag WHERE item_id=1)=2",
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_note WHERE item_id=1)=2"))
+								.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of("SELECT * FROM item WHERE id=1 AND broken=1",
+						"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0"))
+				.build()));
+	}
+
+	@Test
+	public void testItemModificationBrokenAndSlot() throws IOException {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `store` (`id`, `type`, `name`, `address`) VALUES ('1', 'STANDARD', 'Store', NULL)",
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `width`, `height`, `depth`, `outside`) VALUES (1, '1', 'Slot', NULL, NULL, NULL, NULL, '0')",
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `width`, `height`, `depth`, `outside`) VALUES (2, 1, 'Slot2', NULL, NULL, NULL, NULL, '0')",
+						"INSERT INTO `technical_crew` (`id`, `name`) VALUES ('1', 'Technical Crew'),(2, 'TK2')",
+						"INSERT INTO `item` (`id`, `slot_id`, `identifier`, `has_barcode`, `name`, `description`, `quantity`, `unit`, `width`, `height`, `depth`, `outside_qualified`, `consumable`, `broken`, `picture_url`, `technical_crew_id`) VALUES ('1', '1', 'Identifier1', '0', 'Item1', 'Description 1', '1', 'Stück', '12', '24', '48', '1', '1', '1', 'Url1', '1')",
+						"INSERT INTO `item_tag` (`id`, `name`) VALUES ('1', 'Tag1'), ('2', 'Tag2')",
+						"INSERT INTO `item_item_tag` (`id`, `item_id`, `item_tag_id`) VALUES ('1', '1', '1'), ('2', '1', '2')",
+						"INSERT INTO `item_note` (`id`, `item_id`, `user_id`, `note`, `timestamp`) VALUES ('1', '1', NULL, 'Test Notiz', '2020-07-22 11:37:34'), (2, '1', '2', 'Noch eine Notiz', '2020-07-23 14:37:34')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO `store_project` (`id`, `store_id`, `project_id`, `start`, `end`) VALUES ('1', '1', '1', '2020-06-01', '2030-12-31');"))
+				.url(REST_URL + "/items/1").method(Method.PUT)
+				.body(ItemDto.builder().broken(false).consumable(true).depth(48f).description("Description 1")
+						.hasBarcode(false).height(24f).identifier("Identifier1").name("Item1").outsideQualified(true)
+						.pictureUrl("Url1").quantity(1d).slotId(2l).technicalCrewId(1l).unit("Stück").width(12f)
+						.build())
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"id\":1,\"slotId\":2,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"width\":12.0,\"height\":24.0,\"depth\":48.0,\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"pictureUrl\":\"Url1\",\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.validationQueries(List.of(
+								"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND width=12.0 AND height=24.0 AND depth=48.0 AND outside_qualified=1 AND consumable=1 AND picture_url='Url1' AND technical_crew_id=1",
+								"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
+										+ getUserIdByEmail(ADMIN_EMAIL),
+								"SELECT * FROM item_history WHERE item_id=1 AND type='MOVED' AND data = '{\"from\":\"Store: Slot\",\"to\":\"Store: Slot2\"}' AND user_id="
+										+ getUserIdByEmail(ADMIN_EMAIL),
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=2",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_item_tag WHERE item_id=1)=2",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_note WHERE item_id=1)=2"))
+						.build(),
+						UserTest.builder().emails(List.of(CONSTRUCTION_SERVANT_EMAIL)).expectedHttpCode(HttpStatus.OK)
+								.expectedResponse(
+										"{\"id\":1,\"slotId\":2,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"width\":12.0,\"height\":24.0,\"depth\":48.0,\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"pictureUrl\":\"Url1\",\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								.validationQueries(List.of(
+										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND width=12.0 AND height=24.0 AND depth=48.0 AND outside_qualified=1 AND consumable=1 AND picture_url='Url1' AND technical_crew_id=1",
+										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
+												+ getUserIdByEmail(CONSTRUCTION_SERVANT_EMAIL),
+										"SELECT * FROM item_history WHERE item_id=1 AND type='MOVED' AND data = '{\"from\":\"Store: Slot\",\"to\":\"Store: Slot2\"}' AND user_id="
+												+ getUserIdByEmail(CONSTRUCTION_SERVANT_EMAIL),
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=2",
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_item_tag WHERE item_id=1)=2",
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_note WHERE item_id=1)=2"))
+								.build(),
+						UserTest.builder().emails(List.of(INVENTORY_MANAGER_EMAIL)).expectedHttpCode(HttpStatus.OK)
+								.expectedResponse(
+										"{\"id\":1,\"slotId\":2,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"width\":12.0,\"height\":24.0,\"depth\":48.0,\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"pictureUrl\":\"Url1\",\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								.validationQueries(List.of(
+										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND width=12.0 AND height=24.0 AND depth=48.0 AND outside_qualified=1 AND consumable=1 AND picture_url='Url1' AND technical_crew_id=1",
+										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
+												+ getUserIdByEmail(INVENTORY_MANAGER_EMAIL),
+										"SELECT * FROM item_history WHERE item_id=1 AND type='MOVED' AND data = '{\"from\":\"Store: Slot\",\"to\":\"Store: Slot2\"}' AND user_id="
+												+ getUserIdByEmail(INVENTORY_MANAGER_EMAIL),
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=2",
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_item_tag WHERE item_id=1)=2",
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_note WHERE item_id=1)=2"))
+								.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of("SELECT * FROM item WHERE id=1 AND broken=1",
+						"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0"))
+				.build()));
+	}
+
+	@Test
+	public void testItemModificationForeign() throws IOException {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `store` (`id`, `type`, `name`, `address`) VALUES ('1', 'STANDARD', 'Store', NULL)",
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `width`, `height`, `depth`, `outside`) VALUES (1, '1', 'Slot', NULL, NULL, NULL, NULL, '0')",
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `width`, `height`, `depth`, `outside`) VALUES (2, 1, 'Slot2', NULL, NULL, NULL, NULL, '0')",
+						"INSERT INTO `technical_crew` (`id`, `name`) VALUES ('1', 'Technical Crew'),(2, 'TK2')",
+						"INSERT INTO `item` (`id`, `slot_id`, `identifier`, `has_barcode`, `name`, `description`, `quantity`, `unit`, `width`, `height`, `depth`, `outside_qualified`, `consumable`, `broken`, `picture_url`, `technical_crew_id`) VALUES ('1', '1', 'Identifier1', '0', 'Item1', 'Description 1', '1', 'Stück', '12', '24', '48', '1', '1', '1', 'Url1', '1')",
+						"INSERT INTO `item_tag` (`id`, `name`) VALUES ('1', 'Tag1'), ('2', 'Tag2')",
+						"INSERT INTO `item_item_tag` (`id`, `item_id`, `item_tag_id`) VALUES ('1', '1', '1'), ('2', '1', '2')",
+						"INSERT INTO `item_note` (`id`, `item_id`, `user_id`, `note`, `timestamp`) VALUES ('1', '1', NULL, 'Test Notiz', '2020-07-22 11:37:34'), (2, '1', '2', 'Noch eine Notiz', '2020-07-23 14:37:34')"))
+				.url(REST_URL + "/items/1").method(Method.PUT)
+				.body(ItemDto.builder().broken(false).consumable(false).depth(5f).description("description")
+						.hasBarcode(true).height(4f).identifier("identifier").name("name").outsideQualified(false)
+						.pictureUrl("pictureUrl").quantity(123d).slotId(2l).technicalCrewId(2l).unit("unit").width(3f)
+						.build())
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"width\":3.0,\"height\":4.0,\"depth\":5.0,\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"pictureUrl\":\"pictureUrl\",\"technicalCrewId\":2,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.validationQueries(List.of(
+								"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='identifier' AND has_barcode=1 AND name='name' AND description='description' AND quantity=123.0 AND unit='unit' AND width=3.0 AND height=4.0 AND depth=5.0 AND outside_qualified=0 AND consumable=0 AND picture_url='pictureUrl' AND technical_crew_id=2",
+								"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
+										+ getUserIdByEmail(ADMIN_EMAIL),
+								"SELECT * FROM item_history WHERE item_id=1 AND type='MOVED' AND data = '{\"from\":\"Store: Slot\",\"to\":\"Store: Slot2\"}' AND user_id="
+										+ getUserIdByEmail(ADMIN_EMAIL),
+								"SELECT * FROM item_history WHERE item_id=1 AND type='QUANTITY_CHANGED' AND data='{\"from\":\"1.0\",\"to\":\"123.0\"}' AND user_id="
+										+ getUserIdByEmail(ADMIN_EMAIL),
+								"SELECT * FROM item_history WHERE item_id=1 AND type='UPDATED' AND data IS NULL AND user_id="
+										+ getUserIdByEmail(ADMIN_EMAIL),
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=4",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_item_tag WHERE item_id=1)=2",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_note WHERE item_id=1)=2"))
+						.build(),
+						UserTest.builder().emails(List.of(CONSTRUCTION_SERVANT_EMAIL)).expectedHttpCode(HttpStatus.OK)
+								.expectedResponse(
+										"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"width\":3.0,\"height\":4.0,\"depth\":5.0,\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"pictureUrl\":\"pictureUrl\",\"technicalCrewId\":2,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								.validationQueries(List.of(
+										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='identifier' AND has_barcode=1 AND name='name' AND description='description' AND quantity=123.0 AND unit='unit' AND width=3.0 AND height=4.0 AND depth=5.0 AND outside_qualified=0 AND consumable=0 AND picture_url='pictureUrl' AND technical_crew_id=2",
+										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
+												+ getUserIdByEmail(CONSTRUCTION_SERVANT_EMAIL),
+										"SELECT * FROM item_history WHERE item_id=1 AND type='MOVED' AND data = '{\"from\":\"Store: Slot\",\"to\":\"Store: Slot2\"}' AND user_id="
+												+ getUserIdByEmail(CONSTRUCTION_SERVANT_EMAIL),
+										"SELECT * FROM item_history WHERE item_id=1 AND type='QUANTITY_CHANGED' AND data='{\"from\":\"1.0\",\"to\":\"123.0\"}' AND user_id="
+												+ getUserIdByEmail(CONSTRUCTION_SERVANT_EMAIL),
+										"SELECT * FROM item_history WHERE item_id=1 AND type='UPDATED' AND data IS NULL AND user_id="
+												+ getUserIdByEmail(CONSTRUCTION_SERVANT_EMAIL),
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=4",
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_item_tag WHERE item_id=1)=2",
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_note WHERE item_id=1)=2"))
+								.build(),
+						UserTest.builder().emails(List.of(INVENTORY_MANAGER_EMAIL)).expectedHttpCode(HttpStatus.OK)
+								.expectedResponse(
+										"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"width\":3.0,\"height\":4.0,\"depth\":5.0,\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"pictureUrl\":\"pictureUrl\",\"technicalCrewId\":2,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								.validationQueries(List.of(
+										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='identifier' AND has_barcode=1 AND name='name' AND description='description' AND quantity=123.0 AND unit='unit' AND width=3.0 AND height=4.0 AND depth=5.0 AND outside_qualified=0 AND consumable=0 AND picture_url='pictureUrl' AND technical_crew_id=2",
+										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
+												+ getUserIdByEmail(INVENTORY_MANAGER_EMAIL),
+										"SELECT * FROM item_history WHERE item_id=1 AND type='MOVED' AND data = '{\"from\":\"Store: Slot\",\"to\":\"Store: Slot2\"}' AND user_id="
+												+ getUserIdByEmail(INVENTORY_MANAGER_EMAIL),
+										"SELECT * FROM item_history WHERE item_id=1 AND type='QUANTITY_CHANGED' AND data='{\"from\":\"1.0\",\"to\":\"123.0\"}' AND user_id="
+												+ getUserIdByEmail(INVENTORY_MANAGER_EMAIL),
+										"SELECT * FROM item_history WHERE item_id=1 AND type='UPDATED' AND data IS NULL AND user_id="
+												+ getUserIdByEmail(INVENTORY_MANAGER_EMAIL),
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=4",
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_item_tag WHERE item_id=1)=2",
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_note WHERE item_id=1)=2"))
+								.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of("SELECT * FROM item WHERE id=1 AND broken=1",
+						"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0"))
+				.build()));
+	}
+
+	@Test
+	public void testItemModificationMissingName() throws IOException {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `store` (`id`, `type`, `name`, `address`) VALUES ('1', 'STANDARD', 'Store', NULL)",
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `width`, `height`, `depth`, `outside`) VALUES (1, '1', 'Slot', NULL, NULL, NULL, NULL, '0')",
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `width`, `height`, `depth`, `outside`) VALUES (2, 1, 'Slot2', NULL, NULL, NULL, NULL, '0')",
+						"INSERT INTO `technical_crew` (`id`, `name`) VALUES ('1', 'Technical Crew'),(2, 'TK2')",
+						"INSERT INTO `item` (`id`, `slot_id`, `identifier`, `has_barcode`, `name`, `description`, `quantity`, `unit`, `width`, `height`, `depth`, `outside_qualified`, `consumable`, `broken`, `picture_url`, `technical_crew_id`) VALUES ('1', '1', 'Identifier1', '0', 'Item1', 'Description 1', '1', 'Stück', '12', '24', '48', '1', '1', '1', 'Url1', '1')",
+						"INSERT INTO `item_tag` (`id`, `name`) VALUES ('1', 'Tag1'), ('2', 'Tag2')",
+						"INSERT INTO `item_item_tag` (`id`, `item_id`, `item_tag_id`) VALUES ('1', '1', '1'), ('2', '1', '2')",
+						"INSERT INTO `item_note` (`id`, `item_id`, `user_id`, `note`, `timestamp`) VALUES ('1', '1', NULL, 'Test Notiz', '2020-07-22 11:37:34'), (2, '1', '2', 'Noch eine Notiz', '2020-07-23 14:37:34')"))
+				.url(REST_URL + "/items/1").method(Method.PUT)
+				.body(ItemDto.builder().broken(false).consumable(false).depth(5f).description("description")
+						.hasBarcode(true).height(4f).identifier("identifier").name(null).outsideQualified(false)
+						.pictureUrl("pictureUrl").quantity(123d).slotId(2l).technicalCrewId(2l).unit("unit").width(3f)
+						.build())
+				.userTests(List.of(UserTest.builder()
+						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
+						.expectedHttpCode(HttpStatus.BAD_REQUEST)
+						.expectedResponse(
+								"{\"key\":\"EX_ITEM_NO_NAME\",\"message\":\"The item has no name.\",\"httpCode\":400}")
+						.validationQueries(List.of(
+								"SELECT * FROM item WHERE id=1 AND broken=1 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND width=12.0 AND height=24.0 AND depth=48.0 AND outside_qualified=1 AND consumable=1 AND picture_url='Url1' AND technical_crew_id=1",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_item_tag WHERE item_id=1)=2",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_note WHERE item_id=1)=2"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of("SELECT * FROM item WHERE id=1 AND broken=1",
+						"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0"))
+				.build()));
+	}
+
+	@Test
+	public void testItemModificationMissingIdentifier() throws IOException {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `store` (`id`, `type`, `name`, `address`) VALUES ('1', 'STANDARD', 'Store', NULL)",
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `width`, `height`, `depth`, `outside`) VALUES (1, '1', 'Slot', NULL, NULL, NULL, NULL, '0')",
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `width`, `height`, `depth`, `outside`) VALUES (2, 1, 'Slot2', NULL, NULL, NULL, NULL, '0')",
+						"INSERT INTO `technical_crew` (`id`, `name`) VALUES ('1', 'Technical Crew'),(2, 'TK2')",
+						"INSERT INTO `item` (`id`, `slot_id`, `identifier`, `has_barcode`, `name`, `description`, `quantity`, `unit`, `width`, `height`, `depth`, `outside_qualified`, `consumable`, `broken`, `picture_url`, `technical_crew_id`) VALUES ('1', '1', 'Identifier1', '0', 'Item1', 'Description 1', '1', 'Stück', '12', '24', '48', '1', '1', '1', 'Url1', '1')",
+						"INSERT INTO `item_tag` (`id`, `name`) VALUES ('1', 'Tag1'), ('2', 'Tag2')",
+						"INSERT INTO `item_item_tag` (`id`, `item_id`, `item_tag_id`) VALUES ('1', '1', '1'), ('2', '1', '2')",
+						"INSERT INTO `item_note` (`id`, `item_id`, `user_id`, `note`, `timestamp`) VALUES ('1', '1', NULL, 'Test Notiz', '2020-07-22 11:37:34'), (2, '1', '2', 'Noch eine Notiz', '2020-07-23 14:37:34')"))
+				.url(REST_URL + "/items/1").method(Method.PUT)
+				.body(ItemDto.builder().broken(false).consumable(false).depth(5f).description("description")
+						.hasBarcode(true).height(4f).identifier(null).name("name").outsideQualified(false)
+						.pictureUrl("pictureUrl").quantity(123d).slotId(2l).technicalCrewId(2l).unit("unit").width(3f)
+						.build())
+				.userTests(List.of(UserTest.builder()
+						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
+						.expectedHttpCode(HttpStatus.BAD_REQUEST)
+						.expectedResponse(
+								"{\"key\":\"EX_ITEM_NO_IDENTIFIER\",\"message\":\"The item has no identifier.\",\"httpCode\":400}")
+						.validationQueries(List.of(
+								"SELECT * FROM item WHERE id=1 AND broken=1 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND width=12.0 AND height=24.0 AND depth=48.0 AND outside_qualified=1 AND consumable=1 AND picture_url='Url1' AND technical_crew_id=1",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_item_tag WHERE item_id=1)=2",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_note WHERE item_id=1)=2"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of("SELECT * FROM item WHERE id=1 AND broken=1",
+						"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0"))
+				.build()));
+	}
+
+	@Test
+	public void testItemModificationMissingSlot() throws IOException {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `store` (`id`, `type`, `name`, `address`) VALUES ('1', 'STANDARD', 'Store', NULL)",
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `width`, `height`, `depth`, `outside`) VALUES (1, '1', 'Slot', NULL, NULL, NULL, NULL, '0')",
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `width`, `height`, `depth`, `outside`) VALUES (2, 1, 'Slot2', NULL, NULL, NULL, NULL, '0')",
+						"INSERT INTO `technical_crew` (`id`, `name`) VALUES ('1', 'Technical Crew'),(2, 'TK2')",
+						"INSERT INTO `item` (`id`, `slot_id`, `identifier`, `has_barcode`, `name`, `description`, `quantity`, `unit`, `width`, `height`, `depth`, `outside_qualified`, `consumable`, `broken`, `picture_url`, `technical_crew_id`) VALUES ('1', '1', 'Identifier1', '0', 'Item1', 'Description 1', '1', 'Stück', '12', '24', '48', '1', '1', '1', 'Url1', '1')",
+						"INSERT INTO `item_tag` (`id`, `name`) VALUES ('1', 'Tag1'), ('2', 'Tag2')",
+						"INSERT INTO `item_item_tag` (`id`, `item_id`, `item_tag_id`) VALUES ('1', '1', '1'), ('2', '1', '2')",
+						"INSERT INTO `item_note` (`id`, `item_id`, `user_id`, `note`, `timestamp`) VALUES ('1', '1', NULL, 'Test Notiz', '2020-07-22 11:37:34'), (2, '1', '2', 'Noch eine Notiz', '2020-07-23 14:37:34')"))
+				.url(REST_URL + "/items/1").method(Method.PUT)
+				.body(ItemDto.builder().broken(false).consumable(false).depth(5f).description("description")
+						.hasBarcode(true).height(4f).identifier("identifier").name("name").outsideQualified(false)
+						.pictureUrl("pictureUrl").quantity(123d).slotId(null).technicalCrewId(2l).unit("unit").width(3f)
+						.build())
+				.userTests(List.of(UserTest.builder()
+						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
+						.expectedHttpCode(HttpStatus.BAD_REQUEST)
+						.expectedResponse(
+								"{\"key\":\"EX_ITEM_NO_SLOT\",\"message\":\"The item has no slot.\",\"httpCode\":400}")
+						.validationQueries(List.of(
+								"SELECT * FROM item WHERE id=1 AND broken=1 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND width=12.0 AND height=24.0 AND depth=48.0 AND outside_qualified=1 AND consumable=1 AND picture_url='Url1' AND technical_crew_id=1",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_item_tag WHERE item_id=1)=2",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_note WHERE item_id=1)=2"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of("SELECT * FROM item WHERE id=1 AND broken=1",
+						"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0"))
+				.build()));
+	}
+
+	@Test
+	public void testItemModificationMissingTechnicalCrew() throws IOException {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `store` (`id`, `type`, `name`, `address`) VALUES ('1', 'STANDARD', 'Store', NULL)",
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `width`, `height`, `depth`, `outside`) VALUES (1, '1', 'Slot', NULL, NULL, NULL, NULL, '0')",
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `width`, `height`, `depth`, `outside`) VALUES (2, 1, 'Slot2', NULL, NULL, NULL, NULL, '0')",
+						"INSERT INTO `technical_crew` (`id`, `name`) VALUES ('1', 'Technical Crew'),(2, 'TK2')",
+						"INSERT INTO `item` (`id`, `slot_id`, `identifier`, `has_barcode`, `name`, `description`, `quantity`, `unit`, `width`, `height`, `depth`, `outside_qualified`, `consumable`, `broken`, `picture_url`, `technical_crew_id`) VALUES ('1', '1', 'Identifier1', '0', 'Item1', 'Description 1', '1', 'Stück', '12', '24', '48', '1', '1', '1', 'Url1', '1')",
+						"INSERT INTO `item_tag` (`id`, `name`) VALUES ('1', 'Tag1'), ('2', 'Tag2')",
+						"INSERT INTO `item_item_tag` (`id`, `item_id`, `item_tag_id`) VALUES ('1', '1', '1'), ('2', '1', '2')",
+						"INSERT INTO `item_note` (`id`, `item_id`, `user_id`, `note`, `timestamp`) VALUES ('1', '1', NULL, 'Test Notiz', '2020-07-22 11:37:34'), (2, '1', '2', 'Noch eine Notiz', '2020-07-23 14:37:34')"))
+				.url(REST_URL + "/items/1").method(Method.PUT)
+				.body(ItemDto.builder().broken(false).consumable(false).depth(5f).description("description")
+						.hasBarcode(true).height(4f).identifier("identifier").name("name").outsideQualified(false)
+						.pictureUrl("pictureUrl").quantity(123d).slotId(2l).technicalCrewId(null).unit("unit").width(3f)
+						.build())
+				.userTests(List.of(UserTest.builder()
+						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
+						.expectedHttpCode(HttpStatus.BAD_REQUEST)
+						.expectedResponse(
+								"{\"key\":\"EX_ITEM_NO_TECHNICAL_CREW\",\"message\":\"The item has no technical crew.\",\"httpCode\":400}")
+						.validationQueries(List.of(
+								"SELECT * FROM item WHERE id=1 AND broken=1 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND width=12.0 AND height=24.0 AND depth=48.0 AND outside_qualified=1 AND consumable=1 AND picture_url='Url1' AND technical_crew_id=1",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_item_tag WHERE item_id=1)=2",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_note WHERE item_id=1)=2"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of("SELECT * FROM item WHERE id=1 AND broken=1",
+						"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0"))
+				.build()));
+	}
+
 //  ██████╗__█████╗_████████╗_██████╗██╗__██╗
 //  ██╔══██╗██╔══██╗╚══██╔══╝██╔════╝██║__██║
 //  ██████╔╝███████║___██║___██║_____███████║
@@ -81,7 +438,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 //  ╚═╝_____╚═╝__╚═╝___╚═╝____╚═════╝╚═╝__╚═╝
 
 	@Test
-	public void testItemBrokenOwn() throws IOException {
+	public void testItemPatchBrokenOwn() throws IOException {
 		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
@@ -135,7 +492,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 	}
 
 	@Test
-	public void testItemBrokenExpired() throws IOException {
+	public void testItemPatchBrokenExpired() throws IOException {
 		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
@@ -180,7 +537,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 	}
 
 	@Test
-	public void testItemBrokenForeign() throws IOException {
+	public void testItemPatchBrokenForeign() throws IOException {
 		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
@@ -223,7 +580,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 	}
 
 	@Test
-	public void testItemFixedOwn() throws IOException {
+	public void testItemPatchFixedOwn() throws IOException {
 		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
@@ -277,7 +634,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 	}
 
 	@Test
-	public void testItemFixedForeign() throws IOException {
+	public void testItemPatchFixedForeign() throws IOException {
 		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
@@ -320,7 +677,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 	}
 
 	@Test
-	public void testItemSameBrokenState() throws IOException {
+	public void testItemPatchSameBrokenState() throws IOException {
 		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
@@ -366,7 +723,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 	}
 
 	@Test
-	public void testItemBrokenAndSlot() throws IOException {
+	public void testItemPatchBrokenAndSlot() throws IOException {
 		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
@@ -420,6 +777,150 @@ public class ItemIT extends BasicRestIntegrationTest {
 										"SELECT * FROM item_history WHERE item_id=1 AND type='MOVED' AND data = '{\"from\":\"Store: Slot\",\"to\":\"Store: Slot2\"}' AND user_id="
 												+ getUserIdByEmail(INVENTORY_MANAGER_EMAIL),
 										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=2"))
+								.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of("SELECT * FROM item WHERE id=1 AND broken=1",
+						"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0"))
+				.build()));
+	}
+
+	@Test
+	public void testItemPatchQuantityOwn() throws IOException {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `store` (`id`, `type`, `name`, `address`) VALUES ('1', 'STANDARD', 'Store', NULL)",
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `width`, `height`, `depth`, `outside`) VALUES ('1', '1', 'Slot', NULL, NULL, NULL, NULL, '0')",
+						"INSERT INTO `technical_crew` (`id`, `name`) VALUES ('1', 'Technical Crew')",
+						"INSERT INTO `item` (`id`, `slot_id`, `identifier`, `has_barcode`, `name`, `description`, `quantity`, `unit`, `width`, `height`, `depth`, `outside_qualified`, `consumable`, `broken`, `picture_url`, `technical_crew_id`) VALUES ('1', '1', 'Identifier1', '0', 'Item1', 'Description 1', '1', 'Stück', '12', '24', '48', '1', '1', '0', 'Url1', '1')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO `store_project` (`id`, `store_id`, `project_id`, `start`, `end`) VALUES ('1', '1', '1', '2020-06-01', '2030-12-31');"))
+				.url(REST_URL + "/items/1").method(Method.PATCH).body(ItemDto.builder().quantity(123.0).build())
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":123.0,\"unit\":\"Stück\",\"width\":12.0,\"height\":24.0,\"depth\":48.0,\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"pictureUrl\":\"Url1\",\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.validationQueries(List.of(
+								"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=123.0 AND unit='Stück' AND width=12.0 AND height=24.0 AND depth=48.0 AND outside_qualified=1 AND consumable=1 AND picture_url='Url1' AND technical_crew_id=1",
+								"SELECT * FROM item_history WHERE item_id=1 AND type='QUANTITY_CHANGED' AND data ='{\"from\":\"1.0\",\"to\":\"123.0\"}' AND user_id="
+										+ getUserIdByEmail(ADMIN_EMAIL),
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=1"))
+						.build(),
+						UserTest.builder().emails(List.of(CONSTRUCTION_SERVANT_EMAIL)).expectedHttpCode(HttpStatus.OK)
+								.expectedResponse(
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":123.0,\"unit\":\"Stück\",\"width\":12.0,\"height\":24.0,\"depth\":48.0,\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"pictureUrl\":\"Url1\",\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								.validationQueries(List.of(
+										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=123.0 AND unit='Stück' AND width=12.0 AND height=24.0 AND depth=48.0 AND outside_qualified=1 AND consumable=1 AND picture_url='Url1' AND technical_crew_id=1",
+										"SELECT * FROM item_history WHERE item_id=1 AND type='QUANTITY_CHANGED' AND data='{\"from\":\"1.0\",\"to\":\"123.0\"}' AND user_id="
+												+ getUserIdByEmail(CONSTRUCTION_SERVANT_EMAIL),
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=1"))
+								.build(),
+						UserTest.builder().emails(List.of(STORE_KEEPER_EMAIL)).expectedHttpCode(HttpStatus.OK)
+								.expectedResponse(
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":123.0,\"unit\":\"Stück\",\"width\":12.0,\"height\":24.0,\"depth\":48.0,\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"pictureUrl\":\"Url1\",\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								.validationQueries(List.of(
+										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=123.0 AND unit='Stück' AND width=12.0 AND height=24.0 AND depth=48.0 AND outside_qualified=1 AND consumable=1 AND picture_url='Url1' AND technical_crew_id=1",
+										"SELECT * FROM item_history WHERE item_id=1 AND type='QUANTITY_CHANGED' AND data='{\"from\":\"1.0\",\"to\":\"123.0\"}' AND user_id="
+												+ getUserIdByEmail(STORE_KEEPER_EMAIL),
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=1"))
+								.build(),
+						UserTest.builder().emails(List.of(INVENTORY_MANAGER_EMAIL)).expectedHttpCode(HttpStatus.OK)
+								.expectedResponse(
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":123.0,\"unit\":\"Stück\",\"width\":12.0,\"height\":24.0,\"depth\":48.0,\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"pictureUrl\":\"Url1\",\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								.validationQueries(List.of(
+										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=123.0 AND unit='Stück' AND width=12.0 AND height=24.0 AND depth=48.0 AND outside_qualified=1 AND consumable=1 AND picture_url='Url1' AND technical_crew_id=1",
+										"SELECT * FROM item_history WHERE item_id=1 AND type='QUANTITY_CHANGED' AND data='{\"from\":\"1.0\",\"to\":\"123.0\"}' AND user_id="
+												+ getUserIdByEmail(INVENTORY_MANAGER_EMAIL),
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=1"))
+								.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of("SELECT * FROM item WHERE id=1 AND broken=0",
+						"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0"))
+				.build()));
+	}
+
+	@Test
+	public void testItemPatchAll() throws IOException {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `store` (`id`, `type`, `name`, `address`) VALUES ('1', 'STANDARD', 'Store', NULL)",
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `width`, `height`, `depth`, `outside`) VALUES (1, '1', 'Slot', NULL, NULL, NULL, NULL, '0')",
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `width`, `height`, `depth`, `outside`) VALUES (2, 1, 'Slot2', NULL, NULL, NULL, NULL, '0')",
+						"INSERT INTO `technical_crew` (`id`, `name`) VALUES ('1', 'Technical Crew'),(2, 'TK2')",
+						"INSERT INTO `item` (`id`, `slot_id`, `identifier`, `has_barcode`, `name`, `description`, `quantity`, `unit`, `width`, `height`, `depth`, `outside_qualified`, `consumable`, `broken`, `picture_url`, `technical_crew_id`) VALUES ('1', '1', 'Identifier1', '0', 'Item1', 'Description 1', '1', 'Stück', '12', '24', '48', '1', '1', '1', 'Url1', '1')",
+						"INSERT INTO `item_tag` (`id`, `name`) VALUES ('1', 'Tag1'), ('2', 'Tag2')",
+						"INSERT INTO `item_item_tag` (`id`, `item_id`, `item_tag_id`) VALUES ('1', '1', '1'), ('2', '1', '2')",
+						"INSERT INTO `item_note` (`id`, `item_id`, `user_id`, `note`, `timestamp`) VALUES ('1', '1', NULL, 'Test Notiz', '2020-07-22 11:37:34'), (2, '1', '2', 'Noch eine Notiz', '2020-07-23 14:37:34')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO `store_project` (`id`, `store_id`, `project_id`, `start`, `end`) VALUES ('1', '1', '1', '2020-06-01', '2030-12-31');"))
+				.url(REST_URL + "/items/1").method(Method.PATCH)
+				.body(ItemDto.builder().broken(false).consumable(false).depth(5f).description("description")
+						.hasBarcode(true).height(4f).identifier("identifier").name("name").outsideQualified(false)
+						.pictureUrl("pictureUrl").quantity(123d).slotId(2l).technicalCrewId(2l).unit("unit").width(3f)
+						.build())
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"width\":3.0,\"height\":4.0,\"depth\":5.0,\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"pictureUrl\":\"pictureUrl\",\"technicalCrewId\":2,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.validationQueries(List.of(
+								"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='identifier' AND has_barcode=1 AND name='name' AND description='description' AND quantity=123.0 AND unit='unit' AND width=3.0 AND height=4.0 AND depth=5.0 AND outside_qualified=0 AND consumable=0 AND picture_url='pictureUrl' AND technical_crew_id=2",
+								"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
+										+ getUserIdByEmail(ADMIN_EMAIL),
+								"SELECT * FROM item_history WHERE item_id=1 AND type='MOVED' AND data = '{\"from\":\"Store: Slot\",\"to\":\"Store: Slot2\"}' AND user_id="
+										+ getUserIdByEmail(ADMIN_EMAIL),
+								"SELECT * FROM item_history WHERE item_id=1 AND type='QUANTITY_CHANGED' AND data='{\"from\":\"1.0\",\"to\":\"123.0\"}' AND user_id="
+										+ getUserIdByEmail(ADMIN_EMAIL),
+								"SELECT * FROM item_history WHERE item_id=1 AND type='UPDATED' AND data IS NULL AND user_id="
+										+ getUserIdByEmail(ADMIN_EMAIL),
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=4",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_item_tag WHERE item_id=1)=2",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_note WHERE item_id=1)=2"))
+						.build(),
+						UserTest.builder().emails(List.of(CONSTRUCTION_SERVANT_EMAIL)).expectedHttpCode(HttpStatus.OK)
+								.expectedResponse(
+										"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"width\":3.0,\"height\":4.0,\"depth\":5.0,\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"pictureUrl\":\"pictureUrl\",\"technicalCrewId\":2,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								.validationQueries(List.of(
+										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='identifier' AND has_barcode=1 AND name='name' AND description='description' AND quantity=123.0 AND unit='unit' AND width=3.0 AND height=4.0 AND depth=5.0 AND outside_qualified=0 AND consumable=0 AND picture_url='pictureUrl' AND technical_crew_id=2",
+										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
+												+ getUserIdByEmail(CONSTRUCTION_SERVANT_EMAIL),
+										"SELECT * FROM item_history WHERE item_id=1 AND type='MOVED' AND data = '{\"from\":\"Store: Slot\",\"to\":\"Store: Slot2\"}' AND user_id="
+												+ getUserIdByEmail(CONSTRUCTION_SERVANT_EMAIL),
+										"SELECT * FROM item_history WHERE item_id=1 AND type='QUANTITY_CHANGED' AND data='{\"from\":\"1.0\",\"to\":\"123.0\"}' AND user_id="
+												+ getUserIdByEmail(CONSTRUCTION_SERVANT_EMAIL),
+										"SELECT * FROM item_history WHERE item_id=1 AND type='UPDATED' AND data IS NULL AND user_id="
+												+ getUserIdByEmail(CONSTRUCTION_SERVANT_EMAIL),
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=4",
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_item_tag WHERE item_id=1)=2",
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_note WHERE item_id=1)=2"))
+								.build(),
+						UserTest.builder().emails(List.of(STORE_KEEPER_EMAIL)).expectedHttpCode(HttpStatus.OK)
+								.expectedResponse(
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":123.0,\"unit\":\"Stück\",\"width\":12.0,\"height\":24.0,\"depth\":48.0,\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"pictureUrl\":\"Url1\",\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								.validationQueries(List.of(
+										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=123.0 AND unit='Stück' AND width=12.0 AND height=24.0 AND depth=48.0 AND outside_qualified=1 AND consumable=1 AND picture_url='Url1' AND technical_crew_id=1",
+										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
+												+ getUserIdByEmail(STORE_KEEPER_EMAIL),
+										"SELECT * FROM item_history WHERE item_id=1 AND type='QUANTITY_CHANGED' AND data='{\"from\":\"1.0\",\"to\":\"123.0\"}' AND user_id="
+												+ getUserIdByEmail(STORE_KEEPER_EMAIL),
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=2",
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_item_tag WHERE item_id=1)=2",
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_note WHERE item_id=1)=2"))
+								.build(),
+						UserTest.builder().emails(List.of(INVENTORY_MANAGER_EMAIL)).expectedHttpCode(HttpStatus.OK)
+								.expectedResponse(
+										"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"width\":3.0,\"height\":4.0,\"depth\":5.0,\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"pictureUrl\":\"pictureUrl\",\"technicalCrewId\":2,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								.validationQueries(List.of(
+										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='identifier' AND has_barcode=1 AND name='name' AND description='description' AND quantity=123.0 AND unit='unit' AND width=3.0 AND height=4.0 AND depth=5.0 AND outside_qualified=0 AND consumable=0 AND picture_url='pictureUrl' AND technical_crew_id=2",
+										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
+												+ getUserIdByEmail(INVENTORY_MANAGER_EMAIL),
+										"SELECT * FROM item_history WHERE item_id=1 AND type='MOVED' AND data = '{\"from\":\"Store: Slot\",\"to\":\"Store: Slot2\"}' AND user_id="
+												+ getUserIdByEmail(INVENTORY_MANAGER_EMAIL),
+										"SELECT * FROM item_history WHERE item_id=1 AND type='QUANTITY_CHANGED' AND data='{\"from\":\"1.0\",\"to\":\"123.0\"}' AND user_id="
+												+ getUserIdByEmail(INVENTORY_MANAGER_EMAIL),
+										"SELECT * FROM item_history WHERE item_id=1 AND type='UPDATED' AND data IS NULL AND user_id="
+												+ getUserIdByEmail(INVENTORY_MANAGER_EMAIL),
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=4",
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_item_tag WHERE item_id=1)=2",
+										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_note WHERE item_id=1)=2"))
 								.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
 				.validationQueriesForOthers(List.of("SELECT * FROM item WHERE id=1 AND broken=1",

@@ -1,5 +1,5 @@
 import React from 'react';
-import { fetchItems, fetchItemNotes, fetchItem, fetchItemTagsByItem, fetchItemHistory, createItemNote, deleteItemNote, fetchItemNotesUser, fetchItemHistoryUser, updateItemBrokenState, updateItemSlot, createItemTag, deleteItemTag } from '../actions/item';
+import { fetchItems, fetchItemNotes, fetchItem, fetchItemTagsByItem, fetchItemHistory, createItemNote, deleteItemNote, fetchItemNotesUser, fetchItemHistoryUser, updateItemBrokenState, updateItemSlot, createItemTag, deleteItemTag, updateItem } from '../actions/item';
 import { SessionContext } from './session-provider';
 import { convertToIdMap } from '../util';
 import { fetchStore, fetchOwnStores } from '../actions/store';
@@ -26,11 +26,15 @@ class StatefulItemsProvider extends React.Component {
             users: new Map(),
 
             selectedItem: null,
+            edit: false,
             note: '',
             tag: '',
 
             selectedStoreId: null,
             selectedSlotId: null,
+
+            copyIdentifier: '',
+            copyHasBarcode: false,
 
             actionsDisabled: false,
         };
@@ -264,9 +268,7 @@ class StatefulItemsProvider extends React.Component {
         }
         const parsedItemId = parseInt(itemId);
         if (this.state.items.has(parsedItemId)) {
-            this.setState({
-                selectedItem: this.state.items.get(parsedItemId),
-            });
+            this.handleUpdatedAndSelectedItem(this.state.items.get(parsedItemId));
         } else {
             fetchItem(this.props.sessionState.accessToken, parsedItemId)
                 .then(item => this.handleUpdatedAndSelectedItem(item))
@@ -274,10 +276,20 @@ class StatefulItemsProvider extends React.Component {
         }
     }
 
+    changeEdit(edit) {
+        this.setState({ edit });
+    }
+
     handleUpdatedAndSelectedItem(item) {
         this.setState(prevState => {
             const items = _.cloneDeep(prevState.items);
             items.set(item.id, item);
+
+            if (prevState.selectedItem) {
+                item.notes = item.notes || prevState.selectedItem.notes;
+                item.tags = item.tags || prevState.selectedItem.tags;
+                // history should get updated bc it maybe changed
+            }
 
             const selectedStoreId = prevState.slots && prevState.slots.get(item.slotId) && prevState.slots.get(item.slotId).storeId
             return {
@@ -285,6 +297,7 @@ class StatefulItemsProvider extends React.Component {
                 selectedItem: item,
                 selectedSlotId: item.slotId,
                 selectedStoreId,
+                edit: false,
             };
         });
     }
@@ -322,7 +335,7 @@ class StatefulItemsProvider extends React.Component {
             ...item,
             state,
             // popularity: item.rentals.length,
-            quantity: item.quantity + ' ' + item.unit,
+            quantityWithUnit: item.quantity + ' ' + item.unit,
             slotName: slot && slot.name,
             storeName: store && store.name,
             technicalCrewName: technicalCrew && technicalCrew.name,
@@ -330,6 +343,121 @@ class StatefulItemsProvider extends React.Component {
             notes,
         }
     }
+
+    changeItemIdentifier(identifier) {
+        this.setState(prevState => {
+            const selectedItem = _.cloneDeep(prevState.selectedItem);
+            selectedItem.identifier = identifier;
+            return { selectedItem };
+        });
+    }
+
+    changeItemHasBarcode(hasBarcode) {
+        this.setState(prevState => {
+            const selectedItem = _.cloneDeep(prevState.selectedItem);
+            selectedItem.hasBarcode = hasBarcode;
+            return { selectedItem };
+        });
+    }
+
+    changeItemName(name) {
+        this.setState(prevState => {
+            const selectedItem = _.cloneDeep(prevState.selectedItem);
+            selectedItem.name = name;
+            return { selectedItem };
+        });
+    }
+
+    changeItemDescription(description) {
+        this.setState(prevState => {
+            const selectedItem = _.cloneDeep(prevState.selectedItem);
+            selectedItem.description = description;
+            return { selectedItem };
+        });
+    }
+
+    changeItemQuantity(quantity) {
+        this.setState(prevState => {
+            const selectedItem = _.cloneDeep(prevState.selectedItem);
+            selectedItem.quantity = quantity;
+            return { selectedItem };
+        });
+    }
+
+    changeItemUnit(unit) {
+        this.setState(prevState => {
+            const selectedItem = _.cloneDeep(prevState.selectedItem);
+            selectedItem.unit = unit;
+            return { selectedItem };
+        });
+    }
+
+    changeItemWidth(width) {
+        this.setState(prevState => {
+            const selectedItem = _.cloneDeep(prevState.selectedItem);
+            selectedItem.width = width;
+            return { selectedItem };
+        });
+    }
+
+    changeItemHeight(height) {
+        this.setState(prevState => {
+            const selectedItem = _.cloneDeep(prevState.selectedItem);
+            selectedItem.height = height;
+            return { selectedItem };
+        });
+    }
+
+    changeItemDepth(depth) {
+        this.setState(prevState => {
+            const selectedItem = _.cloneDeep(prevState.selectedItem);
+            selectedItem.depth = depth;
+            return { selectedItem };
+        });
+    }
+
+    changeItemOutsideQualified(outsideQualified) {
+        this.setState(prevState => {
+            const selectedItem = _.cloneDeep(prevState.selectedItem);
+            selectedItem.outsideQualified = outsideQualified;
+            return { selectedItem };
+        });
+    }
+
+    changeItemConsumable(consumable) {
+        this.setState(prevState => {
+            const selectedItem = _.cloneDeep(prevState.selectedItem);
+            selectedItem.consumable = consumable;
+            return { selectedItem };
+        });
+    }
+
+    changeItemTechnicalCrewId(technicalCrewId) {
+        this.setState(prevState => {
+            const selectedItem = _.cloneDeep(prevState.selectedItem);
+            selectedItem.technicalCrewId = technicalCrewId;
+            return { selectedItem };
+        });
+    }
+
+    saveSelectedItem() {
+        const item = this.state.selectedItem;
+        if (this.state.selectedSlotId) {
+            item.slotId = this.state.selectedSlotId;
+        }
+        if (item.id) {
+            updateItem(this.props.sessionState.accessToken, item)
+                .then(savedItem => this.handleUpdatedAndSelectedItem(savedItem));
+        } else {
+
+        }
+    }
+
+    resetSelectedItem() {
+        this.selectItem(this.state.selectedItem.id);
+    }
+
+
 
     saveNote() {
         const { selectedItem, note } = this.state;
@@ -386,6 +514,8 @@ class StatefulItemsProvider extends React.Component {
                     const item = _.cloneDeep(prevState.selectedItem);
                     if (item.id === itemId) {
                         item.broken = savedBrokenState;
+                        //causes update of history
+                        delete item.history;
                     }
                     const items = _.cloneDeep(prevState.items);
                     items.get(itemId).broken = savedBrokenState;
@@ -396,7 +526,6 @@ class StatefulItemsProvider extends React.Component {
                         actionsDisabled: false,
                     };
                 }))
-                .then(() => this.loadHistory(this.state.selectedItem))
                 .catch(() => this.showErrorMessage('Fehler beim Ändern des Artikelzustands'))
         );
     }
@@ -485,6 +614,8 @@ class StatefulItemsProvider extends React.Component {
                     const item = _.cloneDeep(prevState.selectedItem);
                     if (item.id === itemId) {
                         item.slotId = slotId;
+                        //causes update of history
+                        delete item.history;
                     }
                     const items = _.cloneDeep(prevState.items);
                     items.get(itemId).slotId = slotId;
@@ -495,10 +626,18 @@ class StatefulItemsProvider extends React.Component {
                         actionsDisabled: false,
                     };
                 }))
-                    .then(() => this.loadHistory(this.state.selectedItem))
                     .catch(() => this.showErrorMessage('Fehler beim Ändern des Lagerplatzes'))
             );
         }
+    }
+
+
+    changeCopyIdentifier(copyIdentifier) {
+        this.setState({ copyIdentifier });
+    }
+
+    changeCopyHasBarcode(copyHasBarcode) {
+        this.setState({ copyHasBarcode });
     }
 
     render() {
@@ -509,6 +648,22 @@ class StatefulItemsProvider extends React.Component {
                     selectItem: this.selectItem.bind(this),
                     getAssembledItemList: this.getAssembledItemList.bind(this),
                     getSelectedItem: this.getSelectedItem.bind(this),
+                    saveSelectedItem: this.saveSelectedItem.bind(this),
+                    resetSelectedItem: this.resetSelectedItem.bind(this),
+                    changeEdit: this.changeEdit.bind(this),
+
+                    changeItemConsumable: this.changeItemConsumable.bind(this),
+                    changeItemDepth: this.changeItemDepth.bind(this),
+                    changeItemDescription: this.changeItemDescription.bind(this),
+                    changeItemHasBarcode: this.changeItemHasBarcode.bind(this),
+                    changeItemHeight: this.changeItemHeight.bind(this),
+                    changeItemIdentifier: this.changeItemIdentifier.bind(this),
+                    changeItemName: this.changeItemName.bind(this),
+                    changeItemOutsideQualified: this.changeItemOutsideQualified.bind(this),
+                    changeItemQuantity: this.changeItemQuantity.bind(this),
+                    changeItemTechnicalCrewId: this.changeItemTechnicalCrewId.bind(this),
+                    changeItemUnit: this.changeItemUnit.bind(this),
+                    changeItemWidth: this.changeItemWidth.bind(this),
 
                     saveNote: this.saveNote.bind(this),
                     deleteNote: this.deleteNote.bind(this),
@@ -524,6 +679,9 @@ class StatefulItemsProvider extends React.Component {
                     changeSelectedSlot: this.changeSelectedSlot.bind(this),
                     changeSelectedStore: this.changeSelectedStore.bind(this),
                     saveSlot: this.saveSlot.bind(this),
+
+                    changeCopyIdentifier: this.changeCopyIdentifier.bind(this),
+                    changeCopyHasBarcode: this.changeCopyHasBarcode.bind(this),
                 }}
             >
                 {this.props.children}

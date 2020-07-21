@@ -2,14 +2,17 @@ package de.lh.tool.service.entity.impl;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +28,7 @@ import de.lh.tool.service.entity.interfaces.ItemHistoryService;
 import de.lh.tool.service.entity.interfaces.ItemService;
 import de.lh.tool.service.entity.interfaces.ProjectService;
 import de.lh.tool.service.entity.interfaces.SlotService;
+import de.lh.tool.service.entity.interfaces.TechnicalCrewService;
 import de.lh.tool.service.entity.interfaces.UserRoleService;
 import de.lh.tool.util.DateUtil;
 import de.lh.tool.util.ValidationUtil;
@@ -44,6 +48,8 @@ public class ItemServiceImpl extends BasicMappableEntityServiceImpl<ItemReposito
 
 	@Autowired
 	private SlotService slotService;
+	@Autowired
+	private TechnicalCrewService technicalCrewService;
 
 	@Override
 	public boolean isViewAllowed(Item item) {
@@ -90,28 +96,50 @@ public class ItemServiceImpl extends BasicMappableEntityServiceImpl<ItemReposito
 	@Transactional
 	public ItemDto updateItemDto(ItemDto dto, Long id) throws DefaultException {
 		dto.setId(ObjectUtils.defaultIfNull(id, dto.getId()));
-		if (dto.getId() == null) {
-			throw new DefaultException(ExceptionEnum.EX_NO_ID_PROVIDED);
+		ValidationUtil.checkIdsNonNull(dto.getId());
+		ValidationUtil.checkAllNonNull(ExceptionEnum.EX_ITEM_NO_NAME, dto.getName());
+		ValidationUtil.checkAllNonNull(ExceptionEnum.EX_ITEM_NO_IDENTIFIER, dto.getIdentifier());
+		if (getRepository().findByIdentifier(dto.getIdentifier()).map(Item::getId).map(dto.getId()::equals)
+				.map(BooleanUtils::negate).orElse(false)) {
+			throw ExceptionEnum.EX_ITEM_IDENTIFIER_ALREADY_IN_USE.createDefaultException();
 		}
-		Item item = convertToEntity(dto);
-		Item old = findById(dto.getId()).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
-		if (old.getBroken() ^ item.getBroken()) {
-			itemHistoryService.logNewBrokenState(item);
-		} else {
-			itemHistoryService.logUpdated(item);
+		Item itemToCompare = convertToEntity(dto);
+		ValidationUtil.checkAllNonNull(ExceptionEnum.EX_ITEM_NO_SLOT, itemToCompare.getSlot());
+		ValidationUtil.checkAllNonNull(ExceptionEnum.EX_ITEM_NO_TECHNICAL_CREW, itemToCompare.getTechnicalCrew());
+
+		Item old = findById(dto.getId()).orElseThrow(ExceptionEnum.EX_INVALID_ITEM_ID::createDefaultException);
+		if (!isViewAllowed(old)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
 		}
-		// TODO hack, bc otherwise tags get deleted after changing broken
-		if (item.getTags() == null) {
-			item.setTags(old.getTags());
+
+		if (old.getBroken() ^ itemToCompare.getBroken()) {
+			itemHistoryService.logNewBrokenState(itemToCompare);
+			old.setBroken(itemToCompare.getBroken());
 		}
-		return convertToDto(save(item));
+		if (!Objects.equals(old.getSlot().getId(), itemToCompare.getSlot().getId())) {
+			itemHistoryService.logNewSlot(itemToCompare, old.getSlot());
+			old.setSlot(itemToCompare.getSlot());
+		}
+		if (!Objects.equals(old.getQuantity(), itemToCompare.getQuantity())) {
+			itemHistoryService.logNewQuantity(itemToCompare, old.getQuantity());
+			old.setQuantity(itemToCompare.getQuantity());
+		}
+		if (!old.equals(itemToCompare)) {
+			itemHistoryService.logUpdated(itemToCompare);
+		}
+
+		ModelMapper modelMapper = getCompleteMapper();
+		// if itemToCompare gets saved, dependend entities like ItemItemTags get deleted
+		// (bc item.getTags==null)
+		modelMapper.map(dto, old);
+		return convertToDto(save(old));
 	}
 
 	@Override
 	@Transactional
 	public ItemDto patchItemDto(ItemDto dto, Long id) throws DefaultException {
 		dto.setId(ObjectUtils.defaultIfNull(id, dto.getId()));
-		ValidationUtil.checkIdNull(dto.getId());
+		ValidationUtil.checkIdsNonNull(dto.getId());
 
 		Item item = findById(dto.getId()).orElseThrow(ExceptionEnum.EX_INVALID_ITEM_ID::createDefaultException);
 		if (!isViewAllowed(item)) {
@@ -145,8 +173,19 @@ public class ItemServiceImpl extends BasicMappableEntityServiceImpl<ItemReposito
 		}
 		dto.setSlotId(null);
 
+		boolean allowedToModifyQuantity = allowedToModify
+				|| userRoleService.hasCurrentUserRight(UserRole.RIGHT_ITEMS_PATCH_QUANTITY);
+		boolean modifiedQuantity = dto.getQuantity() != null && dto.getQuantity() != item.getQuantity();
+		if (modifiedQuantity && allowedToModifyQuantity) {
+			Double old = item.getQuantity();
+			item.setQuantity(dto.getQuantity());
+			itemHistoryService.logNewQuantity(item, old);
+			modified = true;
+		}
+		dto.setQuantity(null);
+
 		if (allowedToModify && dto.hasNonNullField()) {
-			ModelMapper modelMapper = new ModelMapper();
+			ModelMapper modelMapper = getNoSlotMapper();
 			modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
 			modelMapper.map(dto, item);
 			itemHistoryService.logUpdated(item);
@@ -157,6 +196,36 @@ public class ItemServiceImpl extends BasicMappableEntityServiceImpl<ItemReposito
 			return convertToDto(save(item));
 		}
 		return convertToDto(item);
+	}
+
+	@Override
+	public Item convertToEntity(ItemDto dto) {
+		ModelMapper modelMapper = getCompleteMapper();
+		return modelMapper.map(dto, Item.class);
+	}
+
+	private ModelMapper getCompleteMapper() {
+		ModelMapper modelMapper = getNoSlotMapper();
+		modelMapper.addMappings(new PropertyMap<ItemDto, Item>() {
+			@Override
+			protected void configure() {
+				using(c -> Optional.ofNullable(((ItemDto) c.getSource()).getSlotId()).flatMap(slotService::findById)
+						.orElse(null)).map(source).setSlot(null);
+			}
+		});
+		return modelMapper;
+	}
+
+	private ModelMapper getNoSlotMapper() {
+		ModelMapper modelMapper = new ModelMapper();
+		modelMapper.addMappings(new PropertyMap<ItemDto, Item>() {
+			@Override
+			protected void configure() {
+				using(c -> Optional.ofNullable(((ItemDto) c.getSource()).getTechnicalCrewId())
+						.flatMap(technicalCrewService::findById).orElse(null)).map(source).setTechnicalCrew(null);
+			}
+		});
+		return modelMapper;
 	}
 
 }

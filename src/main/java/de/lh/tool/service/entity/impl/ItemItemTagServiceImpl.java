@@ -24,7 +24,7 @@ public class ItemItemTagServiceImpl
 	@Override
 	@Transactional
 	public ItemItemTag createIfNotExists(@NonNull Item item, @NonNull ItemTag itemTag) throws DefaultException {
-		ValidationUtil.checkIdNull(item.getId(), itemTag.getId());
+		ValidationUtil.checkIdsNonNull(item.getId(), itemTag.getId());
 		return getRepository().findByItemAndItemTag(item, itemTag)
 				.orElseGet(() -> save(ItemItemTag.builder().item(item).itemTag(itemTag).build()));
 	}
@@ -32,7 +32,7 @@ public class ItemItemTagServiceImpl
 	@Override
 	@Transactional
 	public void deleteIfExists(@NonNull Item item, @NonNull ItemTag itemTag) throws DefaultException {
-		ValidationUtil.checkIdNull(item.getId(), itemTag.getId());
+		ValidationUtil.checkIdsNonNull(item.getId(), itemTag.getId());
 		getRepository().findByItemAndItemTag(item, itemTag).ifPresent(this::delete);
 	}
 

@@ -4,10 +4,6 @@ import { ItemsContext } from '../../providers/items-provider';
 import { withStyles, CircularProgress, Select, MenuItem } from '@material-ui/core';
 
 const styles = theme => ({
-    chip: {
-        marginRight: theme.spacing.unit,
-        marginTop: theme.spacing.unit,
-    },
 });
 
 const ItemSlotEditComponent = props => (

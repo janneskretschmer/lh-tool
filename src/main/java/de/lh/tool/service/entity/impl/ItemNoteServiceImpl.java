@@ -75,7 +75,7 @@ public class ItemNoteServiceImpl extends BasicMappableEntityServiceImpl<ItemNote
 	public ItemNoteDto updateItemNoteDto(ItemNoteDto dto, Long id) throws DefaultException {
 
 		dto.setId(ObjectUtils.defaultIfNull(id, dto.getId()));
-		ValidationUtil.checkIdNull(dto.getId());
+		ValidationUtil.checkIdsNonNull(dto.getId());
 
 		if (dto.getUserId() != userService.getCurrentUser().getId()) {
 			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
@@ -87,7 +87,7 @@ public class ItemNoteServiceImpl extends BasicMappableEntityServiceImpl<ItemNote
 	@Override
 	@Transactional
 	public void deleteItemNoteById(Long id) throws DefaultException {
-		ValidationUtil.checkIdNull(id);
+		ValidationUtil.checkIdsNonNull(id);
 
 		ItemNote itemNote = findById(id).orElseThrow(ExceptionEnum.EX_INVALID_NOTE_ID::createDefaultException);
 		if (!userService.getCurrentUser().getId().equals(itemNote.getUser().getId())
@@ -100,7 +100,7 @@ public class ItemNoteServiceImpl extends BasicMappableEntityServiceImpl<ItemNote
 	@Override
 	@Transactional
 	public UserDto getUserNameDto(Long itemId, Long noteId) throws DefaultException {
-		ValidationUtil.checkIdNull(itemId, noteId);
+		ValidationUtil.checkIdsNonNull(itemId, noteId);
 
 		ItemNote itemNote = findById(noteId).orElseThrow(ExceptionEnum.EX_INVALID_NOTE_ID::createDefaultException);
 

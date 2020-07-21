@@ -19,6 +19,7 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
@@ -27,6 +28,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "item")
+@EqualsAndHashCode
 public class Item {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,6 +60,7 @@ public class Item {
 	private Double height;
 	private Double depth;
 
+	// TODO: Default in DB
 	@Column(name = "outside_qualified", nullable = false)
 	private Boolean outsideQualified;
 
@@ -75,13 +78,16 @@ public class Item {
 	private TechnicalCrew technicalCrew;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "item")
+	@EqualsAndHashCode.Exclude
 	private List<ItemNote> itemNotes;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "item")
+	@EqualsAndHashCode.Exclude
 	private List<ItemHistory> history;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "item_item_tag", inverseJoinColumns = @JoinColumn(name = "item_tag_id"), joinColumns = @JoinColumn(name = "item_id"))
+	@EqualsAndHashCode.Exclude
 	private List<ItemTag> tags;
 
 }
