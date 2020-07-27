@@ -1,7 +1,7 @@
 import React from 'react';
-import { fetchItems, fetchItemNotes, fetchItem, fetchItemTagsByItem, fetchItemHistory, createItemNote, deleteItemNote, fetchItemNotesUser, fetchItemHistoryUser, updateItemBrokenState, updateItemSlot, createItemTag, deleteItemTag, updateItem } from '../actions/item';
+import { fetchItems, fetchItemNotes, fetchItem, fetchItemTagsByItem, fetchItemHistory, createItemNote, deleteItemNote, fetchItemNotesUser, fetchItemHistoryUser, updateItemBrokenState, updateItemSlot, createItemTag, deleteItemTag, updateItem, createItem, updateItemQuantity } from '../actions/item';
 import { SessionContext } from './session-provider';
-import { convertToIdMap } from '../util';
+import { convertToIdMap, generateUniqueId, isAnyStringBlank } from '../util';
 import { fetchStore, fetchOwnStores } from '../actions/store';
 import { fetchSlotsByStore } from '../actions/slot';
 import { fetchTechnicalCrews } from '../actions/technical-crew';
@@ -29,6 +29,7 @@ class StatefulItemsProvider extends React.Component {
             edit: false,
             note: '',
             tag: '',
+            modifiedQuantity: null,
 
             selectedStoreId: null,
             selectedSlotId: null,
@@ -46,6 +47,24 @@ class StatefulItemsProvider extends React.Component {
         });
     }
 
+    handleFailure(error) {
+        if (error && error.response && error.response.key) {
+            if (error.response.key === 'EX_ITEM_NO_SLOT') {
+                this.showErrorMessage('Es wurde kein gültiger Lagerplatz angegeben.');
+            } else if (error.response.key === 'EX_ITEM_NO_IDENTIFIER') {
+                this.showErrorMessage('Es wurde kein gültiger Bezeichner angegeben.');
+            } else if (error.response.key === 'EX_ITEM_IDENTIFIER_ALREADY_IN_USE') {
+                this.showErrorMessage('Der Bezeichner wird bereits verwendet');
+            } else if (error.response.key === 'EX_ITEM_NO_NAME') {
+                this.showErrorMessage('Es wurde kein gültiger Name angegeben.');
+            } else if (error.response.key === 'EX_ITEM_NO_TECHNICAL_CREW') {
+                this.showErrorMessage('Es wurde kein gültiges Gewerk angegeben.');
+            }
+        } else {
+            this.showErrorMessage('Fehler beim Aktualisieren des Artikels.');
+        }
+    }
+
     componentDidMount() {
         // FUTURE: don't load everything and only if allowed (store keeper)
         this.loadItems();
@@ -58,7 +77,7 @@ class StatefulItemsProvider extends React.Component {
     componentDidUpdate() {
         const item = this.state.selectedItem;
         const accessToken = this.props.sessionState.accessToken;
-        if (item) {
+        if (item && item.id) {
             const loadNotes = !item.hasOwnProperty('notes');
             const loadTags = !item.hasOwnProperty('tags');
             const loadHistory = !item.hasOwnProperty('history');
@@ -116,7 +135,7 @@ class StatefulItemsProvider extends React.Component {
             description: '',
             hasBarcode: false,
             height: '',
-            identifier: Date.now().toString(36),
+            identifier: generateUniqueId(),
             name: '',
             outsideQualified: false,
             pictureUrl: '',
@@ -124,6 +143,11 @@ class StatefulItemsProvider extends React.Component {
             unit: 'Stück',
             width: '',
         };
+    }
+
+    isItemValid() {
+        const item = this.state.selectedItem;
+        return !isAnyStringBlank([item.name, item.identifier]) && item.technicalCrewId && this.state.technicalCrews && this.state.technicalCrews.has(item.technicalCrewId) && this.state.selectedSlotId && this.state.slots && this.state.slots.has(this.state.selectedSlotId);
     }
 
     loadItems() {
@@ -262,7 +286,8 @@ class StatefulItemsProvider extends React.Component {
 
         if (itemId === NEW_ENTITY_ID_PLACEHOLDER) {
             this.setState({
-                selectedItem: this.createEmptyItem()
+                selectedItem: this.createEmptyItem(),
+                edit: true,
             });
             return;
         }
@@ -285,7 +310,7 @@ class StatefulItemsProvider extends React.Component {
             const items = _.cloneDeep(prevState.items);
             items.set(item.id, item);
 
-            if (prevState.selectedItem) {
+            if (prevState.selectedItem && prevState.selectedItem.id === item.id) {
                 item.notes = item.notes || prevState.selectedItem.notes;
                 item.tags = item.tags || prevState.selectedItem.tags;
                 // history should get updated bc it maybe changed
@@ -447,9 +472,12 @@ class StatefulItemsProvider extends React.Component {
         }
         if (item.id) {
             updateItem(this.props.sessionState.accessToken, item)
-                .then(savedItem => this.handleUpdatedAndSelectedItem(savedItem));
+                .then(savedItem => this.handleUpdatedAndSelectedItem(savedItem))
+                .catch(error => this.handleFailure(error));
         } else {
-
+            createItem(this.props.sessionState.accessToken, item)
+                .then(savedItem => this.handleUpdatedAndSelectedItem(savedItem))
+                .catch(error => this.handleFailure(error));
         }
     }
 
@@ -566,8 +594,12 @@ class StatefulItemsProvider extends React.Component {
                     const item = _.cloneDeep(prevState.selectedItem);
                     item.tags = item.tags.map(cachedTag => cachedTag.name === itemTag.name ? extendedItemTag : cachedTag);
 
+                    const items = _.cloneDeep(prevState.items);
+                    items.get(item.id).tags = item.tags;
+
                     const tags = _.cloneDeep(prevState.tags).map(cachedTag => cachedTag.name === itemTag.name ? extendedItemTag : cachedTag);
                     return {
+                        items,
                         selectedItem: item,
                         tags,
                     };
@@ -581,8 +613,12 @@ class StatefulItemsProvider extends React.Component {
                 const item = _.cloneDeep(prevState.selectedItem);
                 item.tags = item.tags.filter(tag => tag.id !== id);
 
+                const items = _.cloneDeep(prevState.items);
+                items.get(item.id).tags = item.tags;
+
                 return {
                     selectedItem: item,
+                    items,
                 };
             }, () => deleteItemTag(this.props.sessionState.accessToken, this.state.selectedItem.id, id)
                 .catch(error => this.showErrorMessage('Fehler beim Löschen des Schlagworts "' + name + '"')));
@@ -640,6 +676,49 @@ class StatefulItemsProvider extends React.Component {
         this.setState({ copyHasBarcode });
     }
 
+
+    editQuantity() {
+        this.changeModifiedQuantity(this.state.selectedItem.quantity);
+    }
+
+    resetQuantity() {
+        this.changeModifiedQuantity(null);
+    }
+
+    changeModifiedQuantity(modifiedQuantity) {
+        this.setState({ modifiedQuantity })
+    }
+
+    saveQuantity() {
+        const { modifiedQuantity, selectedItem } = this.state;
+        if (modifiedQuantity) {
+            if (modifiedQuantity === selectedItem.quantity) {
+                this.changeModifiedQuantity(null);
+            } else {
+                this.setState({ actionsDisabled: true }, () => {
+                    const itemId = selectedItem.id;
+                    updateItemQuantity(this.props.sessionState.accessToken, itemId, modifiedQuantity).then(quantity => this.setState(prevState => {
+                        const item = _.cloneDeep(prevState.selectedItem);
+                        if (item.id === itemId) {
+                            item.quantity = quantity;
+                            //causes update of history
+                            delete item.history;
+                        }
+                        const items = _.cloneDeep(prevState.items);
+                        items.get(itemId).quantity = quantity;
+
+                        return {
+                            items,
+                            selectedItem: item,
+                            actionsDisabled: false,
+                            modifiedQuantity: null,
+                        };
+                    }));
+                });
+            }
+        }
+    }
+
     render() {
         return (
             <ItemsContext.Provider
@@ -651,6 +730,7 @@ class StatefulItemsProvider extends React.Component {
                     saveSelectedItem: this.saveSelectedItem.bind(this),
                     resetSelectedItem: this.resetSelectedItem.bind(this),
                     changeEdit: this.changeEdit.bind(this),
+                    isItemValid: this.isItemValid.bind(this),
 
                     changeItemConsumable: this.changeItemConsumable.bind(this),
                     changeItemDepth: this.changeItemDepth.bind(this),
@@ -679,6 +759,11 @@ class StatefulItemsProvider extends React.Component {
                     changeSelectedSlot: this.changeSelectedSlot.bind(this),
                     changeSelectedStore: this.changeSelectedStore.bind(this),
                     saveSlot: this.saveSlot.bind(this),
+
+                    editQuantity: this.editQuantity.bind(this),
+                    changeModifiedQuantity: this.changeModifiedQuantity.bind(this),
+                    saveQuantity: this.saveQuantity.bind(this),
+                    resetQuantity: this.resetQuantity.bind(this),
 
                     changeCopyIdentifier: this.changeCopyIdentifier.bind(this),
                     changeCopyHasBarcode: this.changeCopyHasBarcode.bind(this),

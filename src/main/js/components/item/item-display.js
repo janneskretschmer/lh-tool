@@ -3,6 +3,9 @@ import Select, { components } from 'react-select';
 import Chip from '@material-ui/core/Chip';
 import { withStyles } from '@material-ui/core/styles';
 import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import CheckIcon from '@material-ui/icons/Check';
+import CloseIcon from '@material-ui/icons/Close';
 import React from 'react';
 import { createItemNote } from '../../actions/item';
 import { ItemsContext } from '../../providers/items-provider';
@@ -51,6 +54,13 @@ const styles = theme => ({
         fontWeight: '500',
         display: 'flex',
         justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    editQuantity: {
+        width: '115px',
+    },
+    editQuantityContainer: {
+        display: 'flex',
         alignItems: 'center',
     },
 });
@@ -117,21 +127,56 @@ class StatefulItemDisplayComponent extends React.Component {
                         <br />
                         <div className={classes.bold}>
                             Lagerplatz
-                    </div>
+                        </div>
                         {item.storeName}: {item.slotName}
                         <br />
                         <br />
                         <div className={classes.bold}>
-                            Menge + Einheit
-                    </div>
-                        {item.quantity} {item.unit}<br />
+                            Menge
+                        </div>
+                        <div className={classes.editQuantityContainer}>
+                            {itemsState.modifiedQuantity ? (<>
+                                <TextField
+                                    className={classes.editQuantity}
+                                    value={itemsState.modifiedQuantity}
+                                    onChange={event => itemsState.changeModifiedQuantity(event.target.value)}
+                                    margin="dense"
+                                    variant="outlined"
+                                    type="number"
+                                    inputProps={{ min: "1" }}
+                                />
+                                <IconButton
+                                    disabled={itemsState.actionsDisabled}
+                                    onClick={event => itemsState.saveQuantity()}
+                                >
+                                    <CheckIcon />
+                                </IconButton>
+                                <IconButton
+                                    disabled={itemsState.actionsDisabled}
+                                    onClick={event => itemsState.resetQuantity()}
+                                >
+                                    <CloseIcon />
+                                </IconButton>
+                            </>) : (<>
+                                {item.quantity} {item.unit}
+                                <WithPermission permission="ROLE_RIGHT_ITEMS_PATCH_QUANTITY">
+                                    <IconButton
+                                        disabled={itemsState.actionsDisabled}
+                                        onClick={event => itemsState.editQuantity()}
+                                    >
+                                        <EditIcon />
+                                    </IconButton>
+                                </WithPermission>
+                            </>)}
+                        </div>
+                        <br />
                         <br />
                         <div className={classes.bold}>
                             Maße
                     </div>
-                    Breite: {item.width} cm<br />
-                    Höhe: {item.height} cm<br />
-                    Tiefe: {item.depth} cm<br />
+                    Breite: {item.width && item.width + 'cm'}<br />
+                    Höhe: {item.height && item.height + 'cm'}<br />
+                    Tiefe: {item.depth && item.depth + 'cm'}<br />
                     </div>
                     <div className={classes.container}>
                         <div className={classes.bold}>

@@ -1,5 +1,6 @@
 package de.lh.tool.service.entity.impl;
 
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Comparator;
@@ -100,7 +101,9 @@ public class ItemHistoryServiceImpl
 	@Override
 	@Transactional
 	public void logNewQuantity(Item item, Double old) {
-		String data = new Gson().toJson(new FromToData(Double.toString(old), Double.toString(item.getQuantity())));
+		DecimalFormat decimalFormat = new DecimalFormat("##.###");
+		String data = new Gson()
+				.toJson(new FromToData(decimalFormat.format(old), decimalFormat.format(item.getQuantity())));
 		saveHistoryEntry(item, data, HistoryType.QUANTITY_CHANGED);
 	}
 

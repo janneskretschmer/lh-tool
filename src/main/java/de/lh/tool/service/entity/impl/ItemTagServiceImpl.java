@@ -76,7 +76,7 @@ public class ItemTagServiceImpl extends BasicMappableEntityServiceImpl<ItemTagRe
 
 		itemItemTagService.deleteIfExists(item, itemTag);
 
-		if (itemItemTagService.findByItemTag(itemTag).size() <= 0) {
+		if (itemItemTagService.findByItemTag(itemTag).isEmpty()) {
 			delete(itemTag);
 		}
 	}

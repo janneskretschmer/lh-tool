@@ -2,29 +2,33 @@ import React from 'react';
 import { SessionContext } from '../../providers/session-provider';
 import { ItemsContext } from '../../providers/items-provider';
 import { withStyles, CircularProgress, Select, MenuItem } from '@material-ui/core';
+import IdNameSelect from '../util/id-name-select';
 
 const styles = theme => ({
+    select: {
+        minWidth: '100px',
+    }
 });
 
 const ItemSlotEditComponent = props => (
     <>
         <ItemsContext.Consumer>
-            {itemsState => itemsState.stores && itemsState.selectedStoreId ? (<>
-                <Select
+            {itemsState => itemsState.stores ? (<>
+                <IdNameSelect
+                    className={props.classes.select}
+                    label="Lager"
                     value={itemsState.selectedStoreId}
-                    onChange={event => itemsState.changeSelectedStore(event.target.value)}>
-                    {[...itemsState.stores.values()].map(store => (
-                        <MenuItem key={store.id} value={store.id}>{store.name}</MenuItem>
-                    ))}
-                </Select>:&nbsp;
+                    onChange={value => itemsState.changeSelectedStore(value)}
+                    data={itemsState.stores}
+                />:&nbsp;
                 {itemsState.slots ? (<>
-                    <Select
+                    <IdNameSelect
+                        className={props.classes.select}
+                        label="Lagerplatz"
                         value={itemsState.selectedSlotId}
-                        onChange={event => itemsState.changeSelectedSlot(event.target.value)}>
-                        {itemsState.getSlotsBySelectedStore().map(slot => (
-                            <MenuItem key={slot.id} value={slot.id}>{slot.name}</MenuItem>
-                        ))}
-                    </Select>
+                        onChange={value => itemsState.changeSelectedSlot(value)}
+                        data={itemsState.getSlotsBySelectedStore()}
+                    />
                 </>) : (<CircularProgress size={15} />)}
             </>) : (<CircularProgress size={15} />)}
         </ItemsContext.Consumer>

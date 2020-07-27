@@ -84,9 +84,13 @@ public class ItemServiceImpl extends BasicMappableEntityServiceImpl<ItemReposito
 	@Transactional
 	public ItemDto createItemDto(ItemDto dto) throws DefaultException {
 		if (dto.getId() != null) {
-			throw new DefaultException(ExceptionEnum.EX_ID_PROVIDED);
+			throw ExceptionEnum.EX_ID_PROVIDED.createDefaultException();
 		}
-		Item item = save(convertToEntity(dto));
+		Item item = getValidatedItem(dto);
+		if (!isViewAllowed(item)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+		item = save(item);
 		itemHistoryService.logCreated(item);
 
 		return convertToDto(item);
@@ -97,15 +101,7 @@ public class ItemServiceImpl extends BasicMappableEntityServiceImpl<ItemReposito
 	public ItemDto updateItemDto(ItemDto dto, Long id) throws DefaultException {
 		dto.setId(ObjectUtils.defaultIfNull(id, dto.getId()));
 		ValidationUtil.checkIdsNonNull(dto.getId());
-		ValidationUtil.checkAllNonNull(ExceptionEnum.EX_ITEM_NO_NAME, dto.getName());
-		ValidationUtil.checkAllNonNull(ExceptionEnum.EX_ITEM_NO_IDENTIFIER, dto.getIdentifier());
-		if (getRepository().findByIdentifier(dto.getIdentifier()).map(Item::getId).map(dto.getId()::equals)
-				.map(BooleanUtils::negate).orElse(false)) {
-			throw ExceptionEnum.EX_ITEM_IDENTIFIER_ALREADY_IN_USE.createDefaultException();
-		}
-		Item itemToCompare = convertToEntity(dto);
-		ValidationUtil.checkAllNonNull(ExceptionEnum.EX_ITEM_NO_SLOT, itemToCompare.getSlot());
-		ValidationUtil.checkAllNonNull(ExceptionEnum.EX_ITEM_NO_TECHNICAL_CREW, itemToCompare.getTechnicalCrew());
+		Item itemToCompare = getValidatedItem(dto);
 
 		Item old = findById(dto.getId()).orElseThrow(ExceptionEnum.EX_INVALID_ITEM_ID::createDefaultException);
 		if (!isViewAllowed(old)) {
@@ -133,6 +129,20 @@ public class ItemServiceImpl extends BasicMappableEntityServiceImpl<ItemReposito
 		// (bc item.getTags==null)
 		modelMapper.map(dto, old);
 		return convertToDto(save(old));
+	}
+
+	private Item getValidatedItem(ItemDto dto) throws DefaultException {
+		ValidationUtil.checkAllNonNull(ExceptionEnum.EX_ITEM_NO_NAME, dto.getName());
+		ValidationUtil.checkAllNonNull(ExceptionEnum.EX_ITEM_NO_IDENTIFIER, dto.getIdentifier());
+		if (getRepository().findByIdentifier(dto.getIdentifier()).map(Item::getId).map(itemId -> Optional
+				.ofNullable(dto.getId()).map(itemId::equals).map(BooleanUtils::negate).orElse(Boolean.TRUE))
+				.orElse(false)) {
+			throw ExceptionEnum.EX_ITEM_IDENTIFIER_ALREADY_IN_USE.createDefaultException();
+		}
+		Item itemToCompare = convertToEntity(dto);
+		ValidationUtil.checkAllNonNull(ExceptionEnum.EX_ITEM_NO_SLOT, itemToCompare.getSlot());
+		ValidationUtil.checkAllNonNull(ExceptionEnum.EX_ITEM_NO_TECHNICAL_CREW, itemToCompare.getTechnicalCrew());
+		return itemToCompare;
 	}
 
 	@Override
@@ -196,6 +206,17 @@ public class ItemServiceImpl extends BasicMappableEntityServiceImpl<ItemReposito
 			return convertToDto(save(item));
 		}
 		return convertToDto(item);
+	}
+
+	@Override
+	@Transactional
+	public void deleteItemById(Long id) throws DefaultException {
+		ValidationUtil.checkIdsNonNull(id);
+		Item item = findById(id).orElseThrow(ExceptionEnum.EX_INVALID_ITEM_ID::createDefaultException);
+		if (!isViewAllowed(item)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+		delete(item);
 	}
 
 	@Override

@@ -99,6 +99,17 @@ public class ItemRestService {
 		return new Resource<>(itemDto, linkTo(methodOn(ItemRestService.class).patch(id, dto)).withSelfRel());
 	}
 
+	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
+	@ApiOperation(value = "Delete item")
+	@Secured(UserRole.RIGHT_ITEMS_DELETE)
+	public ResponseEntity<Void> delete(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
+			throws DefaultException {
+
+		itemService.deleteItemById(id);
+
+		return ResponseEntity.noContent().build();
+	}
+
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ITEM_NOTES)
 	@ApiOperation(value = "Get a list of notes for item")
 	@Secured(UserRole.RIGHT_ITEMS_NOTES_GET)

@@ -11,6 +11,8 @@ import React from 'react';
 import { SessionContext } from '../../providers/session-provider';
 import { ItemsContext } from '../../providers/items-provider';
 import ItemSlotEditComponent from './item-slot';
+import { isStringBlank } from '../../util';
+import IdNameSelect from '../util/id-name-select';
 
 const styles = theme => ({
     bold: {
@@ -39,6 +41,13 @@ const styles = theme => ({
     verticallyCenteredContainer: {
         display: 'flex',
         alignItems: 'center',
+    },
+    slotContainer: {
+        display: 'flex',
+        alignItems: 'baseline',
+    },
+    technicalCrew: {
+        minWidth: '100px',
     },
 });
 
@@ -89,8 +98,9 @@ class StatefulItemEditComponent extends React.Component {
                         label="ist Barcode"
                     />
                 </div>
-
-                Lagerplatz: <ItemSlotEditComponent />
+                <div className={classes.slotContainer}>
+                    <ItemSlotEditComponent />
+                </div>
                 <br />
                 <br />
                 <input
@@ -185,7 +195,6 @@ class StatefulItemEditComponent extends React.Component {
                 />
                 <br />
                 <br />
-                <br />
                 <TextField
                     id="description"
                     label="Beschreibung"
@@ -197,27 +206,17 @@ class StatefulItemEditComponent extends React.Component {
                     variant="outlined"
                 /><br />
                 <br />
-                <br />
                 {itemsState.technicalCrews ? (
-                    <FormControl className={classes.formControl}>
-                        <InputLabel htmlFor="technical-crew">Gewerk</InputLabel>
-                        <Select
-                            value={item.technicalCrewId}
-                            onChange={event => itemsState.changeItemTechnicalCrewId(event.target.value)}
-                            inputProps={{
-                                name: 'technical-crew',
-                                id: 'technical-crew',
-                            }}
-                        >
-                            {[...itemsState.technicalCrews.values()].map(crew => (
-                                <MenuItem key={crew.id} value={crew.id}>{crew.name}</MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
+                    <IdNameSelect
+                        label="Gewerk"
+                        className={classes.technicalCrew}
+                        value={item.technicalCrewId}
+                        onChange={value => itemsState.changeItemTechnicalCrewId(value)}
+                        data={itemsState.technicalCrews}
+                    />
                 ) : (
                         <CircularProgress />
                     )}
-
                 <br />
                 <br />
                 <br />

@@ -82,9 +82,10 @@ class StatefulItemListComponent extends React.Component {
     }
 
     render() {
-        const { classes, itemsState } = this.props;
+        const { classes, itemsState, sessionState } = this.props;
         const { } = this.state;
         const items = itemsState.getAssembledItemList();
+        const showAddButton = sessionState.hasPermission('ROLE_RIGHT_ITEMS_POST');
 
         if (this.state.redirect) {
             return (<Redirect to={fullPathOfItem(this.state.redirect)} />);
@@ -162,7 +163,8 @@ class StatefulItemListComponent extends React.Component {
 
                     ]}
                     rows={items}
-                    redirect={fullPathOfItem} />
+                    redirect={fullPathOfItem}
+                    showAddButton={showAddButton} />
             </>
         )
     }

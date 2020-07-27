@@ -23,19 +23,13 @@ export function fetchItem(accessToken, itemId) {
         .then(result => result.response);
 }
 
-export function createOrUpdateItem({ accessToken, item, handleFailure }) {
+export function createItem(accessToken, item) {
     return apiRequest({
-        apiEndpoint: item.id ? apiEndpoints.item.update : apiEndpoints.item.createNew,
+        apiEndpoint: apiEndpoints.item.createNew,
         authToken: accessToken,
         data: item,
-        parameters: item.id ? { [ID_VARIABLE]: item.id } : {},
     })
         .then(result => result.response)
-        .catch(err => {
-            if (handleFailure) {
-                handleFailure(err);
-            }
-        });
 }
 
 export function updateItem(accessToken, item) {
@@ -65,6 +59,16 @@ export function updateItemSlot(accessToken, itemId, slotId) {
         parameters: { [ID_VARIABLE]: itemId },
     })
         .then(result => result.response.slotId);
+}
+
+export function updateItemQuantity(accessToken, itemId, quantity) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.item.patch,
+        authToken: accessToken,
+        data: { quantity },
+        parameters: { [ID_VARIABLE]: itemId },
+    })
+        .then(result => result.response.quantity);
 }
 
 

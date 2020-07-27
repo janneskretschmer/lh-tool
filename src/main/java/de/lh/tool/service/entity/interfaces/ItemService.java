@@ -20,4 +20,6 @@ public interface ItemService extends BasicEntityService<Item, Long> {
 
 	ItemDto patchItemDto(ItemDto dto, Long id) throws DefaultException;
 
+	void deleteItemById(Long id) throws DefaultException;
+
 }

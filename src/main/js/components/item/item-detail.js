@@ -45,15 +45,16 @@ class StatefulItemDetailComponent extends React.Component {
         if (!item) {
             return (<CircularProgress />);
         }
+        const disabled = itemsState.actionsDisabled || !itemsState.isItemValid();
         return (
             <>
                 {itemsState.edit ? (
                     <>
                         <ItemEditComponent item={item}></ItemEditComponent>
-                        <Button variant="contained" className={classes.button} onClick={() => itemsState.saveSelectedItem()}>
+                        <Button variant="contained" disabled={disabled} className={classes.button} onClick={() => itemsState.saveSelectedItem()}>
                             Speichern
                         </Button>
-                        <Button variant="outlined" className={classes.button} onClick={() => itemsState.resetSelectedItem()}>
+                        <Button variant="outlined" disabled={itemsState.actionsDisabled} className={classes.button} onClick={() => itemsState.resetSelectedItem()}>
                             Abbrechen
                         </Button>
                     </>
