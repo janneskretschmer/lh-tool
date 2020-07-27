@@ -29,5 +29,11 @@
 			<AppenderRef ref="Console" />
 			<AppenderRef ref="File" />
 		</Logger>
+<!-- 		<Logger name="org.hibernate.SQL" level="debug" additivity="false"> -->
+<!-- 	      <AppenderRef ref="Console" />      -->
+<!-- 	    </Logger> -->
+<!-- 		<Logger name="log4j.logger.org.hibernate.type.descriptor.sql" level="trace" additivity="false"> -->
+<!-- 	      <AppenderRef ref="Console" />      -->
+<!-- 	    </Logger> -->
 	</Loggers>
 </Configuration>

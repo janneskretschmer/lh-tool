@@ -1,4 +1,4 @@
-import { fullPathOf, fullPathOfItems, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfSettings, fullPathOfStores, fullPathOfUsersSettings, fullPathOfUserSettings, fullPathOfStore, fullPathOfDataProtection, fullPathOfImprint } from './paths';
+import { fullPathOf, fullPathOfItems, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfSettings, fullPathOfStores, fullPathOfUsersSettings, fullPathOfUserSettings, fullPathOfStore, fullPathOfDataProtection, fullPathOfImprint, fullPathOfShiftsSettings, fullPathOfShiftSettings, fullPathOfProjectsSettings, fullPathOfProjectSettings } from './paths';
 
 const PAGES = {
     title: 'LH-Tool',
@@ -38,6 +38,7 @@ const PAGES = {
         {
             title: 'Einstellungen',
             path: fullPathOfSettings(),
+            tabs: true,
             subPages: [
                 {
                     title: 'Benutzer',
@@ -52,8 +53,15 @@ const PAGES = {
                 },
                 {
                     title: 'Projekte',
-                    path: fullPathOfProjects(),
-                }
+                    path: fullPathOfProjectsSettings(),
+                    permissions: ['ROLE_RIGHT_PROJECTS_POST'],
+                    subPages: [
+                        {
+                            path: fullPathOfProjectSettings(),
+                            permissions: ['ROLE_RIGHT_PROJECTS_POST'],
+                        }
+                    ]
+                },
             ],
         },
         {

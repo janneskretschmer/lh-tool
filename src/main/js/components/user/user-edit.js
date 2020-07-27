@@ -13,6 +13,7 @@ import { Typography, Checkbox, FormControlLabel, Tooltip } from '@material-ui/co
 import { Redirect } from 'react-router';
 import { fullPathOfUserSettings, fullPathOfUsersSettings } from '../../paths';
 import { NEW_ENTITY_ID_PLACEHOLDER } from '../../config';
+import LenientRedirect from '../util/lenient-redirect';
 
 const styles = theme => ({
     input: {
@@ -134,8 +135,8 @@ class StatefulUserEditComponent extends React.Component {
     render() {
         const { classes, usersState, pagesState } = this.props;
         const { passwordEmailSent, saving, redirectUrl } = this.state;
-        if (redirectUrl && redirectUrl !== pagesState.currentPath) {
-            return (<Redirect to={redirectUrl} />);
+        if (redirectUrl) {
+            return (<LenientRedirect to={redirectUrl} />);
         }
         const user = usersState.selectedUser;
         const isNewUser = usersState.selectedUser && !usersState.selectedUser.id;
@@ -147,7 +148,7 @@ class StatefulUserEditComponent extends React.Component {
                         <>
                             <TextField
                                 id="first_name"
-                                value={user.firstName}
+                                value={user.firstName || ''}
                                 label="Vorname"
                                 type="text"
                                 name="first_name"
@@ -160,7 +161,7 @@ class StatefulUserEditComponent extends React.Component {
                             />
                             <TextField
                                 id="last_name"
-                                value={user.lastName}
+                                value={user.lastName || ''}
                                 label="Nachname"
                                 type="text"
                                 name="last_name"
@@ -173,7 +174,7 @@ class StatefulUserEditComponent extends React.Component {
                             />
                             <TextField
                                 id="email"
-                                value={user.email}
+                                value={user.email || ''}
                                 label="Email"
                                 type="email"
                                 name="email"

@@ -34,20 +34,6 @@ const CurrentUserItem = props => (
   </ListItem>
 );
 
-const ProjectsItem = () => (
-  // TODO: pick better right
-  <WithPermission permission="ROLE_RIGHT_USERS_CREATE">
-    <Link to={fullPathOfProjects()} style={linkStyle}>
-      <ListItem button>
-        <ListItemIcon>
-          <GroupWorkIcon />
-        </ListItemIcon>
-        <ListItemText primary="Projekte" />
-      </ListItem>
-    </Link>
-  </WithPermission>
-);
-
 const NeedQuantitiesItem = () => (
   <WithPermission permission="ROLE_RIGHT_NEEDS_POST">
     <Link to={fullPathOfNeedQuantities()} style={linkStyle}>
@@ -190,7 +176,6 @@ export default function AppMenu() {
           </List>
           <Divider />
           <List>
-            <ProjectsItem />
             <NeedQuantitiesItem />
             <NeedApplyItem />
             <NeedApproveItem />

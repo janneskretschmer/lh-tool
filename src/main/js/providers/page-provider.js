@@ -14,6 +14,7 @@ class StatefulPageProvider extends React.Component {
         currentPage: null,
         currentTitleComponents: null,
         currentItemName: null,
+        tabParent: null,
     };
 
     componentDidMount() {
@@ -34,6 +35,7 @@ class StatefulPageProvider extends React.Component {
             currentPage: trace.currentPage,
             currentTitleComponents: trace.pageTrace,
             currentItemName: null,
+            tabParent: trace.tabParent,
         });
     }
 
@@ -50,6 +52,7 @@ class StatefulPageProvider extends React.Component {
         let matchedPage = PAGES;
         let currentPage = null;
         let pageTrace = [];
+        let tabParent = null;
         while (matchedPage) {
             // workaround for detail pages (e.g. /users/:id) with dynamic title
             if (!matchedPage.title && !matchedPage.subPages && currentItemName) {
@@ -61,6 +64,9 @@ class StatefulPageProvider extends React.Component {
             }
             pageTrace = [...pageTrace, matchedPage];
             currentPage = matchedPage;
+            if (matchedPage.tabs) {
+                tabParent = matchedPage;
+            }
             matchedPage = matchedPage.subPages && matchedPage.subPages.find(page => matchPath(path, {
                 path: page.path,
                 exact: false,
@@ -68,12 +74,28 @@ class StatefulPageProvider extends React.Component {
             }));
         }
 
-        return { currentPage, pageTrace };
+        return { currentPage, pageTrace, tabParent };
     }
 
     isUserAllowedToSeeCurrentPage() {
         const page = this.state.currentPage;
-        return !page || !page.permissions || !page.permissions.find(permission => !this.props.sessionsState.hasPermission(permission));
+        return this.isUserAllowedToSeePage(page);
+    }
+
+    isUserAllowedToSeePage(page) {
+        return !page || !page.permissions || page.permissions.every(permission => this.props.sessionsState.hasPermission(permission));
+    }
+
+    getTabValue() {
+        if (this.state.tabParent) {
+            const tabPage = this.state.tabParent.subPages.find(subPage => matchPath(this.state.currentPath, {
+                path: subPage.path,
+                exact: false,
+                strict: false,
+            }));
+            return tabPage && tabPage.path;
+        }
+        return null;
     }
 
     render() {
@@ -85,6 +107,8 @@ class StatefulPageProvider extends React.Component {
                 value={{
                     ...this.state,
                     setCurrentItemName: this.setCurrentItemName.bind(this),
+                    isUserAllowedToSeePage: this.isUserAllowedToSeePage.bind(this),
+                    getTabValue: this.getTabValue.bind(this),
                 }}
             >
                 {this.props.children}

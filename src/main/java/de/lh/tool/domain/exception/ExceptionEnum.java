@@ -15,6 +15,7 @@ public enum ExceptionEnum {
 	EX_INVALID_ID("The provided id is invalid.", HttpStatus.BAD_REQUEST),
 	EX_INVALID_USER_ID("The provided user id is invalid.", HttpStatus.BAD_REQUEST),
 	EX_INVALID_PROJECT_ID("The provided project id is invalid.", HttpStatus.BAD_REQUEST),
+	EX_INVALID_HELPER_TYPE_ID("The provided id is invalid.", HttpStatus.BAD_REQUEST),
 	EX_FORBIDDEN("You don't have the sufficient rights for this action.", HttpStatus.FORBIDDEN),
 
 	EX_USERS_NOT_FOUND("The users couldn't be found.", HttpStatus.NOT_FOUND),

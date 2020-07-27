@@ -170,7 +170,7 @@ public abstract class BasicRestIntegrationTest {
 	}
 
 	private String getAsssertFailedMessage(EndpointTest endpointTest, String email) {
-		return StringUtils.join(endpointTest.getMethod(), " ", endpointTest.getUrl(), " as ", email);
+		return StringUtils.join(endpointTest.getMethod(), " ", endpointTest.getUrl(), "\nas ", email);
 	}
 
 }

@@ -1,14 +1,11 @@
-import React from 'react';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
-import ProjectSelection from './project-selection';
-import { requiresLogin, getProjectMonth, getMonthOffsetWithinRange, isMonthOffsetWithinRange, getMonthNameForOffset, withContext } from '../../util';
-import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import IconButton from '@material-ui/core/IconButton';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { ProjectsContext } from '../../providers/projects-provider';
-import MonthSelection from './month-selection';
+import React from 'react';
+import { NeedsContext } from '../../providers/needs-provider';
+import { convertToMUIFormat, requiresLogin } from '../../util';
+import NeedMonthSelection from './need-month-selection';
+import NeedProjectSelection from './need-project-selection';
 
 const styles = theme => ({
     calendar: {
@@ -66,26 +63,26 @@ const styles = theme => ({
 });
 
 @withStyles(styles)
-class StatefulProjectCalendar extends React.Component {
+class StatefulNeedProjectCalendar extends React.Component {
 
-    setMonth(month) {
-        this.props.projectsState.setMonth(month);
+    setMonth(monthOffset) {
+        this.props.needsState.setMonth(monthOffset);
     }
 
 
     render() {
-        const { classes, sessionState } = this.props;
-        const data = this.props.projectsState.selectedMonthCalendarData;
-        const project = this.props.projectsState.getSelectedProject();
+        const { classes, sessionState, needsState, dateContentMap } = this.props;
+        const project = needsState.getSelectedProject();
+        const data = project && project.selectedMonthData;
 
         return (
             <>
                 <div className={classes.header}>
                     <div className={classes.projectWrapper}>
-                        <ProjectSelection />
+                        <NeedProjectSelection />
                     </div>
                     {data ? (
-                        <MonthSelection className={classes.month} />
+                        <NeedMonthSelection className={classes.month} />
                     ) : (
                             <CircularProgress size={15} />
                         )}
@@ -109,8 +106,7 @@ class StatefulProjectCalendar extends React.Component {
                                 <tr className={classes.calendarRow} key={i}>
                                     {Array.from(Array(7)).map((_, j) => {
                                         const day = data.days[i * 7 + j];
-                                        const contentWrapper = this.props.children && this.props.children.find(child => child.props.date.isSame(day.date, 'day'));
-                                        const content = contentWrapper && contentWrapper.props.children;
+                                        const content = dateContentMap && dateContentMap.get(convertToMUIFormat(day.date));
                                         return (
                                             <td className={classNames({
                                                 [classes.calendarCell]: true,
@@ -131,13 +127,13 @@ class StatefulProjectCalendar extends React.Component {
     }
 }
 
-const ProjectCalendar = props => (
+const NeedProjectCalendar = props => (
     <>
-        <ProjectsContext.Consumer>
-            {projectsState => (
-                (<StatefulProjectCalendar {...props} projectsState={projectsState} />)
+        <NeedsContext.Consumer>
+            {needsState => (
+                (<StatefulNeedProjectCalendar {...props} needsState={needsState} />)
             )}
-        </ProjectsContext.Consumer>
+        </NeedsContext.Consumer>
     </>
 );
-export default requiresLogin(ProjectCalendar);
+export default requiresLogin(NeedProjectCalendar);

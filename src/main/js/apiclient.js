@@ -46,6 +46,7 @@ import {
     USER_PROJECTS,
     ROLE_VARIABLE,
     FREE_TEXT_VARIABLE,
+    PROJECT_HELPER_TYPES_ID,
 
 } from './urlmappings';
 
@@ -176,13 +177,21 @@ export const apiEndpoints = {
     project: {
         getOwn: {
             method: 'GET',
-            // TODO Trailing '/' also necessary?
-            path: PROJECT_PREFIX + '/',
+            path: PROJECT_PREFIX,
         },
-        createNew: {
+        getById: {
+            method: 'GET',
+            path: PROJECT_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
+        create: {
             method: 'POST',
-            // TODO Trailing '/' also necessary?
-            path: PROJECT_PREFIX + '/',
+            path: PROJECT_PREFIX,
+        },
+        update: {
+            method: 'PUT',
+            path: PROJECT_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
         },
         delete: {
             method: 'DELETE',
@@ -202,9 +211,24 @@ export const apiEndpoints = {
         getHelperTypes: {
             method: 'GET',
             path: PROJECT_PREFIX + PROJECT_HELPER_TYPES,
-            parameters: [ID_VARIABLE, HELPER_TYPE_ID_VARIABLE],
-            queries: [WEEKDAY_VARIABLE]
-        }
+            parameters: [PROJECT_ID_VARIABLE],
+            queries: [WEEKDAY_VARIABLE, HELPER_TYPE_ID_VARIABLE]
+        },
+        addHelperType: {
+            method: 'POST',
+            path: PROJECT_PREFIX + PROJECT_HELPER_TYPES,
+            parameters: [PROJECT_ID_VARIABLE],
+        },
+        updateHelperType: {
+            method: 'PUT',
+            path: PROJECT_PREFIX + PROJECT_HELPER_TYPES_ID,
+            parameters: [PROJECT_ID_VARIABLE, ID_VARIABLE],
+        },
+        deleteHelperType: {
+            method: 'DELETE',
+            path: PROJECT_PREFIX + PROJECT_HELPER_TYPES_ID,
+            parameters: [PROJECT_ID_VARIABLE, ID_VARIABLE],
+        },
     },
     user: {
         current: {
@@ -269,7 +293,7 @@ export const apiEndpoints = {
     helperType: {
         get: {
             method: 'GET',
-            path: HELPER_TYPE_PREFIX + '/',
+            path: HELPER_TYPE_PREFIX,
             queries: [PROJECT_ID_VARIABLE, WEEKDAY_VARIABLE]
         },
         getById: {

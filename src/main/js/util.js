@@ -36,8 +36,16 @@ export function requiresLogin(Component) {
     );
 }
 
-export function setWaitingState(waiting) {
-    document.body.style.cursor = waiting ? 'wait' : 'default';
+export function isStringBlank(str) {
+    if (str) {
+        const trimmed = str.trim();
+        return !trimmed || trimmed.length === 0;
+    }
+    return true;
+}
+
+export function isAnyStringBlank(strings) {
+    return strings.some(isStringBlank);
 }
 
 export function getMonthArrayWithOffsets(start, end) {
@@ -80,19 +88,23 @@ export function getMonthNameForOffset(offset) {
 }
 
 
-export function getProjectMonth(monthOffset, startDate, endDate) {
-    var date = moment().utc().startOf('month').add(monthOffset, 'months');
+export function getClosestProjectMonth(monthOffset, startDate, endDate) {
+    const validOffset = getMonthOffsetWithinRange(monthOffset, startDate, endDate);
+
+    var date = moment().utc().startOf('month').add(validOffset, 'months');
     let month = date.clone().month();
     //necessary for december -> january 
     let continiousMonth = getMonthsSinceYear1AD(date.clone());
     let endOfMonth = date.clone().endOf('month');
     var result = {
-        monthOffset,
+        monthOffset: validOffset,
         month,
-        monthName: getMonthNameForOffset(monthOffset),
-        startDiff: (date.isAfter(startDate) ? date.clone() : startDate).diff(moment().utc().startOf('day'), 'days'),
-        endDiff: (endOfMonth.isBefore(endDate) ? endOfMonth : endDate).diff(moment().utc().startOf('day'), 'days'),
+        monthName: getMonthNameForOffset(validOffset),
         days: [],
+        firstValidDate: null,
+        lastValidDate: null,
+        isNextOffsetValid: isMonthOffsetWithinRange(validOffset + 1, startDate, endDate),
+        isPreviousOffsetValid: isMonthOffsetWithinRange(validOffset - 1, startDate, endDate),
     };
 
     // offset for Weekdays 1: 0;  2: -1;  3: -2;  4: -3;  5: -4;  6: -5;  7: -6
@@ -100,9 +112,16 @@ export function getProjectMonth(monthOffset, startDate, endDate) {
     date.add(offset, 'days');
 
     while (getMonthsSinceYear1AD(date) <= continiousMonth || (date.isoWeekday() > 1 && date.isoWeekday() <= 7)) {
+        const disabled = date.month() !== month || date.isBefore(startDate) || date.isAfter(endDate);
+        if (!disabled) {
+            if (!result.firstValidDate) {
+                result.firstValidDate = date.clone();
+            }
+            result.lastValidDate = date.clone();
+        }
         const day = {
             date: date.clone(),
-            disabled: date.month() !== month || date.isBefore(startDate) || date.isAfter(endDate),
+            disabled,
         };
         result.days.push(day);
         date = date.add(1, 'days');
@@ -121,22 +140,10 @@ export function convertToReadableFormatWithoutYear(moment) {
 
 const MUI_DATE_FORMAT = 'YYYY-MM-DD';
 export function convertToMUIFormat(moment) {
-    return moment.format(MUI_DATE_FORMAT);
+    return moment && moment.format(MUI_DATE_FORMAT);
 }
 export function convertFromMUIFormat(date) {
-    return moment(date, MUI_DATE_FORMAT);
-}
-
-export function isStringBlank(str) {
-    if (str) {
-        const trimmed = str.trim();
-        return !trimmed || trimmed.length === 0;
-    }
-    return true;
-}
-
-export function isAnyStringBlank(strings) {
-    return strings.some(isStringBlank);
+    return !isStringBlank(date) && moment(date, MUI_DATE_FORMAT);
 }
 
 const ROLE_NAMES = new Map();

@@ -13,11 +13,10 @@ import de.lh.tool.domain.dto.HelperTypeDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.HelperType;
-import de.lh.tool.domain.model.UserRole;
+import de.lh.tool.domain.model.Project;
 import de.lh.tool.repository.HelperTypeRepository;
 import de.lh.tool.service.entity.interfaces.HelperTypeService;
 import de.lh.tool.service.entity.interfaces.ProjectService;
-import de.lh.tool.service.entity.interfaces.UserRoleService;
 
 @Service
 public class HelperTypeServiceImpl
@@ -26,9 +25,6 @@ public class HelperTypeServiceImpl
 
 	@Autowired
 	private ProjectService projectService;
-
-	@Autowired
-	private UserRoleService userRoleService;
 
 	@Override
 	@Transactional
@@ -63,17 +59,17 @@ public class HelperTypeServiceImpl
 	@Override
 	@Transactional
 	public List<HelperTypeDto> findDtosByProjectIdAndWeekday(Long projectId, Integer weekday) throws DefaultException {
-		if (!ObjectUtils.anyNotNull(projectId, weekday)) {
-			return findAllDtos();
+		if (projectId != null) {
+			Project project = Optional.ofNullable(projectId).flatMap(projectService::findById)
+					.orElseThrow(ExceptionEnum.EX_HELPER_TYPE_WEEKDAY_WITHOUT_PROJECT::createDefaultException);
+			projectService.checkIfViewable(project);
+			return convertToDtoList(getRepository().findByProjectIdAndWeekday(projectId, weekday));
 		}
+		if (weekday != null) {
+			throw ExceptionEnum.EX_HELPER_TYPE_WEEKDAY_WITHOUT_PROJECT.createDefaultException();
+		}
+		return convertToDtoList(findAll());
 
-		boolean ownProject = projectService
-				.isOwnProject(Optional.ofNullable(projectId).flatMap(projectService::findById)
-						.orElseThrow(ExceptionEnum.EX_HELPER_TYPE_WEEKDAY_WITHOUT_PROJECT::createDefaultException));
-		if (!ownProject && !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_CHANGE_FOREIGN)) {
-			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
-		}
-		return convertToDtoList(getRepository().findByProjectIdAndWeekday(projectId, weekday));
 	}
 
 	@Override
