@@ -5,7 +5,7 @@ import { SessionContext } from './session-provider';
 import { fetchHelperTypes } from '../actions/helper-type';
 import moment, { weekdays } from 'moment';
 import { NEW_ENTITY_ID_PLACEHOLDER } from '../config';
-import _ from "lodash";
+import _ from 'lodash';
 
 export const ProjectsContext = React.createContext();
 

@@ -15,9 +15,6 @@ const styles = theme => ({
         minWidth: '1200px',
         marginBottom: theme.spacing.unit,
     },
-    calendarRow: {
-
-    },
     calendarCell: {
         width: '20%',
         border: '1px solid ' + theme.palette.primary.light,
@@ -99,7 +96,7 @@ class StatefulProjectShiftEditComponent extends React.Component {
                 </thead>
                 {shifts ? (
                     <tbody>
-                        <tr className={classes.calendarRow}>
+                        <tr>
                             {
                                 [...shifts.keys()].map(weekday => (
                                     <td key={weekday} className={classes.calendarCell}>
