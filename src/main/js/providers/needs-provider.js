@@ -210,7 +210,7 @@ class StatefulNeedsProvider extends React.Component {
                     return {
                         projects,
                         editedNeedUsers,
-                    }
+                    };
                 }
             )
         );
