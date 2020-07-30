@@ -111,12 +111,17 @@ public class MailServiceImpl implements MailService {
 			User user = needUser.getUser();
 			if (user.getEmail() != null) {
 				StringBuilder text = getGreeting(user).append("deine Schicht am ")
-						.append(DateUtil.getReadableFormat(needUser.getNeed().getDate())).append(" von ")
-						.append(needUser.getNeed().getProjectHelperType().getStartTime().toString()).append(" Uhr bis ")
-						.append(needUser.getNeed().getProjectHelperType().getEndTime().toString()).append(" Uhr als ")
-						.append(needUser.getNeed().getProjectHelperType().getHelperType().getName()).append(" wurde ")
-						.append(getNeedUserStateDescription(needUser.getState())).append(".\n\nViele Grüße\n")
-						.append(SENDER_NAME).append("\n\n").append(FOOTER);
+						.append(DateUtil.getReadableFormat(needUser.getNeed().getDate()));
+				if (needUser.getNeed().getProjectHelperType().getEndTime() == null) {
+					text.append(" ab ").append(needUser.getNeed().getProjectHelperType().getStartTime().toString());
+				} else {
+					text.append(" von ").append(needUser.getNeed().getProjectHelperType().getStartTime().toString())
+							.append(" Uhr bis ")
+							.append(needUser.getNeed().getProjectHelperType().getEndTime().toString());
+				}
+				text.append(" Uhr als ").append(needUser.getNeed().getProjectHelperType().getHelperType().getName())
+						.append(" wurde ").append(getNeedUserStateDescription(needUser.getState()))
+						.append(".\n\nViele Grüße\n").append(SENDER_NAME).append("\n\n").append(FOOTER);
 				sendMail(user.getEmail(), "Schicht am " + DateUtil.getReadableFormat(needUser.getNeed().getDate()) + " "
 						+ getNeedUserStateDescription(needUser.getState()), text.toString());
 				if (log.isInfoEnabled()) {

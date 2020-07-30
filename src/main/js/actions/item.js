@@ -173,3 +173,41 @@ export function fetchItemHistoryUser(accessToken, { itemId, id }) {
     })
         .then(result => result.response);
 }
+
+
+export function fetchItemImage(accessToken, itemId) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.item.getImage,
+        authToken: accessToken,
+        parameters: {
+            [ITEM_ID_VARIABLE]: itemId,
+        },
+    })
+        .then(result => result.response);
+}
+
+export function createItemImage(accessToken, itemImage) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.item.createImage,
+        authToken: accessToken,
+        data: itemImage,
+        parameters: {
+            [ITEM_ID_VARIABLE]: itemImage.itemId,
+        },
+    })
+        .then(result => result.response);
+}
+
+export function updateItemImage(accessToken, itemImage) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.item.updateImage,
+        authToken: accessToken,
+        data: itemImage,
+        parameters: {
+            [ITEM_ID_VARIABLE]: itemImage.itemId,
+            [ID_VARIABLE]: itemImage.id,
+        },
+    })
+        .then(result => result.response);
+}
+

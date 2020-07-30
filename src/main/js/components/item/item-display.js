@@ -30,7 +30,10 @@ const styles = theme => ({
         maxWidth: '100%',
         display: 'inline-block',
         verticalAlign: 'top',
-        marginRight: '30px',
+    },
+    longText: {
+        maxWidth: '450px',
+        textAlign: 'justify',
     },
     container: {
         display: 'inline-block',
@@ -75,24 +78,6 @@ class StatefulItemDisplayComponent extends React.Component {
         };
     }
 
-    getHistoryActionText(event) {
-        switch (event.type) {
-            case 'CREATED':
-                return 'Angelegt'
-            case 'UPDATED':
-                return 'Geändert'
-            case 'QUANTITY_CHANGED':
-                return 'Menge von ' + event.data.from + ' auf ' + event.data.to + ' geändert'
-            case 'MOVED':
-                return 'Von ' + event.data.from + ' nach ' + event.data.to + ' verschoben'
-            case 'BROKEN':
-                return 'Defekt gemeldet'
-            case 'FIXED':
-                return 'Reparatur gemeldet'
-        }
-        return '';
-    }
-
     getFirstAndLastName({ userId, user }) {
         if (!userId) {
             return '-';
@@ -116,7 +101,7 @@ class StatefulItemDisplayComponent extends React.Component {
         return (
             <div>
                 <div className={classes.title}>{item.name}</div>
-                <img className={classes.image} src={item.pictureUrl} />
+                {item.imageUrl && <img className={classes.image} src={item.imageUrl} />}
                 <div className={classes.container}>
                     <Typography variant="h6">Daten</Typography>
                     <div className={classes.container}>
@@ -192,43 +177,20 @@ class StatefulItemDisplayComponent extends React.Component {
                         <div className={classes.bold}>
                             Beschreibung
                         </div>
-                        {item.description}<br />
+                        <div className={classes.longText}>
+                            {item.description}
+                        </div>
                         <br />
                         <div className={classes.bold}>
                             Gewerk
+                        </div>
+                        {item.technicalCrewName}<br />
+                        <br />
+                        <div className={classes.bold}>
+                            Status
+                        </div>
+                        {item.state}
                     </div>
-                        {item.technicalCrewName}
-                    </div>
-                </div>
-                <div className={classes.container}>
-                    <Typography variant="h6">Protokoll</Typography>
-                    <Table size="small">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Datum</TableCell>
-                                <TableCell>Benutzer</TableCell>
-                                <TableCell>Aktion</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-
-                            {item.history ? item.history.map(event => (
-                                <TableRow key={event.id}>
-                                    <TableCell>{convertToReadableFormat(event.timestamp.local())}</TableCell>
-                                    <TableCell>
-                                        {this.getFirstAndLastName(event)}
-                                    </TableCell>
-                                    <TableCell>{this.getHistoryActionText(event)}</TableCell>
-                                </TableRow>
-                            )) : (
-                                    <TableRow>
-                                        <TableCell colSpan={3}>
-                                            <CircularProgress />
-                                        </TableCell>
-                                    </TableRow>
-                                )}
-                        </TableBody>
-                    </Table>
                 </div>
                 <div className={classes.container}>
                     <Typography variant="h6">Notizen</Typography>
@@ -250,7 +212,9 @@ class StatefulItemDisplayComponent extends React.Component {
                                     </IconButton>
                                 }
                             </div>
-                            {note.note}<br />
+                            <div className={classes.longText}>
+                                {note.note}
+                            </div>
                             <Divider className={classes.divider} />
                         </div>
                     )) : (<CircularProgress />)}

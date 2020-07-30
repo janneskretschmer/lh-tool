@@ -4,6 +4,7 @@ import { withRouter, matchPath } from 'react-router-dom';
 import PAGES from '../pages';
 import { SessionContext } from './session-provider';
 import NotFoundHandlerComponent from '../components/notfound';
+import _ from 'lodash';
 
 export const PageContext = React.createContext();
 
@@ -55,26 +56,54 @@ class StatefulPageProvider extends React.Component {
         let tabParent = null;
         while (matchedPage) {
             // workaround for detail pages (e.g. /users/:id) with dynamic title
-            if (!matchedPage.title && !matchedPage.subPages && currentItemName) {
-                matchedPage = {
-                    ...matchedPage,
-                    path,
-                    title: currentItemName,
-                };
+            if (!matchedPage.title && currentItemName) {
+                matchedPage.title = currentItemName;
             }
+
             pageTrace = [...pageTrace, matchedPage];
             currentPage = matchedPage;
+
             if (matchedPage.tabs) {
-                tabParent = matchedPage;
+                tabParent = _.cloneDeep(matchedPage);
+                tabParent.subPages = tabParent.subPages.map(page => {
+                    let path = page.path;
+                    // otherwise tabs would redirect to url/:id instead of url/1
+                    if (tabParent.params) {
+                        for (const param in tabParent.params) {
+                            path = path.replace(new RegExp(':' + param + '(\/|$)', 'g'), tabParent.params[param] + '$1');
+                        }
+                    }
+                    return {
+                        ...page,
+                        path,
+                    }
+                })
+
             }
-            matchedPage = matchedPage.subPages && matchedPage.subPages.find(page => matchPath(path, {
-                path: page.path,
-                exact: false,
-                strict: false,
-            }));
+            matchedPage = this.getMatchingSubPage(matchedPage, path);
         }
 
         return { currentPage, pageTrace, tabParent };
+    }
+
+    getMatchingSubPage(parentPage, path) {
+        if (parentPage.subPages) {
+            for (const page of parentPage.subPages) {
+                const match = matchPath(path, {
+                    path: page.path,
+                    exact: false,
+                    strict: false,
+                });
+                if (match) {
+                    return {
+                        ...page,
+                        path: match.url,
+                        params: match.params,
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     isUserAllowedToSeeCurrentPage() {
@@ -88,11 +117,7 @@ class StatefulPageProvider extends React.Component {
 
     getTabValue() {
         if (this.state.tabParent) {
-            const tabPage = this.state.tabParent.subPages.find(subPage => matchPath(this.state.currentPath, {
-                path: subPage.path,
-                exact: false,
-                strict: false,
-            }));
+            const tabPage = this.getMatchingSubPage(this.state.tabParent, this.state.currentPath);
             return tabPage && tabPage.path;
         }
         return null;

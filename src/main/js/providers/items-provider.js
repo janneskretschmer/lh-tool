@@ -1,7 +1,7 @@
 import React from 'react';
-import { fetchItems, fetchItemNotes, fetchItem, fetchItemTagsByItem, fetchItemHistory, createItemNote, deleteItemNote, fetchItemNotesUser, fetchItemHistoryUser, updateItemBrokenState, updateItemSlot, createItemTag, deleteItemTag, updateItem, createItem, updateItemQuantity } from '../actions/item';
+import { fetchItems, fetchItemNotes, fetchItem, fetchItemTagsByItem, fetchItemHistory, createItemNote, deleteItemNote, fetchItemNotesUser, fetchItemHistoryUser, updateItemBrokenState, updateItemSlot, createItemTag, deleteItemTag, updateItem, createItem, updateItemQuantity, fetchItemImage, createItemImage, updateItemImage } from '../actions/item';
 import { SessionContext } from './session-provider';
-import { convertToIdMap, generateUniqueId, isAnyStringBlank } from '../util';
+import { convertToIdMap, generateUniqueId, isAnyStringBlank, base64toBlob } from '../util';
 import { fetchStore, fetchOwnStores } from '../actions/store';
 import { fetchSlotsByStore } from '../actions/slot';
 import { fetchTechnicalCrews } from '../actions/technical-crew';
@@ -10,6 +10,8 @@ import { fetchUser } from '../actions/user';
 import { withSnackbar } from 'notistack';
 import _ from 'lodash';
 import { fetchItemTags } from '../actions/item-tags';
+import imageCompression from 'browser-image-compression';
+import { PageContext } from './page-provider';
 
 export const ItemsContext = React.createContext();
 
@@ -19,17 +21,19 @@ class StatefulItemsProvider extends React.Component {
         super(props);
         this.state = {
             items: new Map(),
-            stores: null,
-            slots: null,
-            technicalCrews: null,
-            tags: null,
             users: new Map(),
+            // state.hasOwnProperty needs to be false in the following cases
+            // stores: null,
+            // slots: null,
+            // technicalCrews: null,
+            // tags: null,
 
             selectedItem: null,
             edit: false,
             note: '',
             tag: '',
             modifiedQuantity: null,
+            modifiedImage: null,
 
             selectedStoreId: null,
             selectedSlotId: null,
@@ -65,23 +69,13 @@ class StatefulItemsProvider extends React.Component {
         }
     }
 
-    componentDidMount() {
-        // FUTURE: don't load everything and only if allowed (store keeper)
-        this.loadItems();
-        this.loadStores();
-        this.loadSlots();
-        this.loadTechnicalCrews();
-        this.loadItemTags();
-    }
-
     componentDidUpdate() {
         const item = this.state.selectedItem;
         const accessToken = this.props.sessionState.accessToken;
         if (item && item.id) {
             const loadNotes = !item.hasOwnProperty('notes');
             const loadTags = !item.hasOwnProperty('tags');
-            const loadHistory = !item.hasOwnProperty('history');
-            if (loadNotes || loadTags || loadHistory) {
+            if (loadNotes || loadTags) {
                 // if this setState gets split up, componentDidUpdate will be called multiple times 
                 // => the other setStates and its callbacks with api-calls will be called multiple times
                 this.setState(prevState => {
@@ -90,7 +84,6 @@ class StatefulItemsProvider extends React.Component {
                             ..._.cloneDeep(prevState.selectedItem),
                             notes: loadNotes ? null : prevState.selectedItem.notes,
                             tags: loadTags ? null : prevState.selectedItem.tags,
-                            history: loadHistory ? null : prevState.selectedItem.history,
                         }
                     };
                 }, () => {
@@ -118,9 +111,6 @@ class StatefulItemsProvider extends React.Component {
                                 };
                             }))
                             .catch(error => this.showErrorMessage('Fehler beim Laden der Schlagwörter'));
-                    }
-                    if (loadHistory) {
-                        this.loadHistory(item);
                     }
                 });
             }
@@ -154,49 +144,73 @@ class StatefulItemsProvider extends React.Component {
         fetchItems(this.props.sessionState.accessToken)
             .then(receivedItems => this.setState({
                 items: convertToIdMap(receivedItems),
+                selectedSlotId: null,
+                selectedStoreId: null,
             }));
+        this.loadItemTags();
+        this.loadTechnicalCrews();
+        this.loadStores();
+        this.loadSlots();
+
     }
 
     loadStores() {
-        fetchOwnStores(this.props.sessionState.accessToken)
-            .then(receivedStores => this.setState({
-                stores: convertToIdMap(receivedStores),
-            }));
+        if (!this.state.hasOwnProperty('stores')) {
+            this.setState({ stores: null }, () =>
+                fetchOwnStores(this.props.sessionState.accessToken)
+                    .then(receivedStores => this.setState({
+                        stores: convertToIdMap(receivedStores),
+                    }))
+            );
+        }
     }
 
     loadSlots() {
-        fetchSlotsByStore(this.props.sessionState.accessToken)
-            .then(receivedSlots => this.setState(prevState => {
-                const slots = convertToIdMap(receivedSlots);
-                const selectedSlotId = prevState.selectedItem && prevState.selectedItem.slotId;
-                const selectedStoreId = selectedSlotId && slots.has(selectedSlotId) && slots.get(selectedSlotId).storeId;
-                return {
-                    selectedSlotId,
-                    selectedStoreId,
-                    slots,
-                };
-            }));
+        if (!this.state.hasOwnProperty('slots')) {
+            this.setState({ slots: null }, () =>
+                // FUTURE: don't load everything and only if allowed (store keeper)
+                fetchSlotsByStore(this.props.sessionState.accessToken)
+                    .then(receivedSlots => this.setState(prevState => {
+                        const slots = convertToIdMap(receivedSlots);
+                        const selectedSlotId = prevState.selectedItem && prevState.selectedItem.slotId;
+                        const selectedStoreId = selectedSlotId && slots.has(selectedSlotId) && slots.get(selectedSlotId).storeId;
+                        return {
+                            selectedSlotId,
+                            selectedStoreId,
+                            slots,
+                        };
+                    }))
+            );
+        }
     }
 
     loadTechnicalCrews() {
-        fetchTechnicalCrews(this.props.sessionState.accessToken)
-            .then(receivedTechnicalCrews => this.setState({
-                technicalCrews: convertToIdMap(receivedTechnicalCrews),
-            }));
+        if (!this.state.hasOwnProperty('technicalCrews')) {
+            this.setState({ technicalCrews: null }, () =>
+                fetchTechnicalCrews(this.props.sessionState.accessToken)
+                    .then(receivedTechnicalCrews => this.setState({
+                        technicalCrews: convertToIdMap(receivedTechnicalCrews),
+                    }))
+            );
+        }
     }
 
     loadItemTags() {
-        fetchItemTags(this.props.sessionState.accessToken)
-            .then(tags => this.setState({
-                tags: tags.map(
-                    tag => ({
-                        ...tag,
-                        // necessary for react-select lib
-                        value: tag.name,
-                        label: tag.name,
-                    })
-                )
-            }));
+        if (!this.state.hasOwnProperty('tags') && this.props.sessionState.hasPermission('ROLE_RIGHT_ITEM_TAGS_GET')) {
+            this.setState({ tags: null }, () =>
+                fetchItemTags(this.props.sessionState.accessToken)
+                    .then(tags => this.setState({
+                        tags: tags.map(
+                            tag => ({
+                                ...tag,
+                                // necessary for react-select lib
+                                value: tag.name,
+                                label: tag.name,
+                            })
+                        )
+                    }))
+            );
+        }
     }
 
     loadNotes(item) {
@@ -240,49 +254,15 @@ class StatefulItemsProvider extends React.Component {
             .catch(error => this.showErrorMessage('Fehler beim Laden der Notizen'));
     }
 
-    loadHistory(item) {
-        const { accessToken } = this.props.sessionState;
-        fetchItemHistory(accessToken, item.id)
-            .then(history => {
-                // approaches to load users this without the callback directly in componentDidUpdate resulted in too many setState-calls
-                let eventsWithMissingUsers = history.filter(event => event.userId && !this.state.users.has(event.userId));
-                eventsWithMissingUsers = _.uniq(eventsWithMissingUsers, 'userId');
-
-                if (eventsWithMissingUsers.length > 0) {
-                    Promise.all(
-                        eventsWithMissingUsers.map(event => fetchItemHistoryUser(accessToken, event))
-                    ).then(receivedUsers =>
-                        this.setState(prevState => {
-                            const users = _.cloneDeep(prevState.users);
-                            receivedUsers.forEach(user => users.set(user.id, user));
-                            return { users };
-                        })
-                    )
-                        .catch(error => this.showErrorMessage('Fehler beim Laden der Historie'));
-                }
-                return history;
-            })
-            .then(history => this.setState(prevState => {
-                const updatedItem = _.cloneDeep(prevState.selectedItem);
-                if (updatedItem.id === item.id) {
-                    updatedItem.history = history;
-                }
-
-                const items = _.cloneDeep(prevState.items);
-                items.get(item.id).history = history;
-
-                return {
-                    items,
-                    selectedItem: updatedItem,
-                };
-            }))
-            .catch(error => this.showErrorMessage('Fehler beim Laden der Historie'));
-    }
-
-    selectItem(itemId, handleFailure) {
+    selectItem(itemId) {
         if (!itemId) {
             return;
         }
+
+        this.loadItemTags();
+        this.loadTechnicalCrews();
+        this.loadStores();
+        this.loadSlots();
 
         if (itemId === NEW_ENTITY_ID_PLACEHOLDER) {
             this.setState({
@@ -305,7 +285,7 @@ class StatefulItemsProvider extends React.Component {
         this.setState({ edit });
     }
 
-    handleUpdatedAndSelectedItem(item) {
+    handleUpdatedAndSelectedItem(item, image) {
         this.setState(prevState => {
             const items = _.cloneDeep(prevState.items);
             items.set(item.id, item);
@@ -315,6 +295,10 @@ class StatefulItemsProvider extends React.Component {
                 item.tags = item.tags || prevState.selectedItem.tags;
                 // history should get updated bc it maybe changed
             }
+            if (image) {
+                item.imageId = image.id;
+                item.imageUrl = URL.createObjectURL(base64toBlob(image.image, image.mediaType));
+            }
 
             const selectedStoreId = prevState.slots && prevState.slots.get(item.slotId) && prevState.slots.get(item.slotId).storeId
             return {
@@ -323,8 +307,103 @@ class StatefulItemsProvider extends React.Component {
                 selectedSlotId: item.slotId,
                 selectedStoreId,
                 edit: false,
+                modifiedImage: null,
             };
+        }, () => {
+            if (!this.state.selectedItem.hasOwnProperty('imageUrl')) {
+                fetchItemImage(this.props.sessionState.accessToken, this.state.selectedItem.id)
+                    .then(image => this.setState(prevState => {
+                        if (!image.image) {
+                            return {};
+                        }
+                        const selectedItem = _.cloneDeep(prevState.selectedItem);
+                        if (selectedItem.id === image.itemId) {
+                            selectedItem.imageId = image.id;
+                            selectedItem.imageUrl = URL.createObjectURL(base64toBlob(image.image, image.mediaType));
+                        }
+                        return {
+                            selectedItem,
+                        };
+                    }));
+            }
         });
+    }
+
+    selectItemHistory(itemId) {
+        if (!itemId || isNaN(itemId)) {
+            this.showErrorMessage("Artikel nicht gefunden");
+            return;
+        }
+
+
+        const parsedItemId = parseInt(itemId);
+        if (this.state.items.has(parsedItemId)) {
+            this.setState({ selectedItem: this.state.items.get(parsedItemId) },
+                () => this.loadHistory());
+        } else {
+            fetchItem(this.props.sessionState.accessToken, parsedItemId)
+                .then(item => this.setState(prevState => {
+                    const items = _.cloneDeep(prevState.items);
+                    items.set(item.id, item);
+                    return {
+                        items,
+                        selectedItem: item,
+                    };
+                }, () => this.loadHistory()))
+                .catch(error => this.showErrorMessage('Fehler beim Laden des Artikels'));
+        }
+    }
+
+    loadHistory() {
+        const item = this.state.selectedItem;
+        if (item.history) {
+            return;
+        }
+        if (this.state.items.has(item.id) && this.state.items.get(item.id).history) {
+            this.setState(prevState => {
+                const selectedItem = _.cloneDeep(prevState.selectedItem);
+                selectedItem.history = prevState.items.get(selectedItem.id).history;
+                return { selectedItem };
+            });
+            return;
+        }
+
+        const { accessToken } = this.props.sessionState;
+        fetchItemHistory(accessToken, item.id)
+            .then(history => {
+                // approaches to load users this without the callback directly in componentDidUpdate resulted in too many setState-calls
+                let eventsWithMissingUsers = history.filter(event => event.userId && !this.state.users.has(event.userId));
+                eventsWithMissingUsers = _.uniqWith(eventsWithMissingUsers, (a, b) => a.userId === b.userId);
+
+                if (eventsWithMissingUsers.length > 0) {
+                    Promise.all(
+                        eventsWithMissingUsers.map(event => fetchItemHistoryUser(accessToken, event))
+                    ).then(receivedUsers =>
+                        this.setState(prevState => {
+                            const users = _.cloneDeep(prevState.users);
+                            receivedUsers.forEach(user => users.set(user.id, user));
+                            return { users };
+                        })
+                    )
+                        .catch(error => this.showErrorMessage('Fehler beim Laden des Protokolls'));
+                }
+                return history;
+            })
+            .then(history => this.setState(prevState => {
+                const updatedItem = _.cloneDeep(prevState.selectedItem);
+                if (updatedItem.id === item.id) {
+                    updatedItem.history = history;
+                }
+
+                const items = _.cloneDeep(prevState.items);
+                items.get(updatedItem.id).history = history;
+
+                return {
+                    items,
+                    selectedItem: updatedItem,
+                };
+            }))
+            .catch(error => this.showErrorMessage('Fehler beim Laden des Protokolls'));
     }
 
     getSelectedItem() {
@@ -470,15 +549,28 @@ class StatefulItemsProvider extends React.Component {
         if (this.state.selectedSlotId) {
             item.slotId = this.state.selectedSlotId;
         }
+        let itemPromise;
         if (item.id) {
-            updateItem(this.props.sessionState.accessToken, item)
-                .then(savedItem => this.handleUpdatedAndSelectedItem(savedItem))
-                .catch(error => this.handleFailure(error));
+            itemPromise = updateItem(this.props.sessionState.accessToken, item)
         } else {
-            createItem(this.props.sessionState.accessToken, item)
-                .then(savedItem => this.handleUpdatedAndSelectedItem(savedItem))
-                .catch(error => this.handleFailure(error));
+            itemPromise = createItem(this.props.sessionState.accessToken, item)
         }
+        itemPromise
+            .then(savedItem => {
+                if (this.state.modifiedImage) {
+
+                    if (this.state.modifiedImage.id) {
+                        return updateItemImage(this.props.sessionState.accessToken, this.state.modifiedImage)
+                            .then(savedImage => this.handleUpdatedAndSelectedItem(savedItem, savedImage));
+                    }
+
+                    return createItemImage(this.props.sessionState.accessToken, { ...this.state.modifiedImage, itemId: savedItem.id })
+                        .then(savedImage => this.handleUpdatedAndSelectedItem(savedItem, savedImage));
+                } else {
+                    this.handleUpdatedAndSelectedItem(savedItem)
+                }
+            })
+            .catch(error => this.handleFailure(error));
     }
 
     resetSelectedItem() {
@@ -533,7 +625,6 @@ class StatefulItemsProvider extends React.Component {
             .catch(error => this.showErrorMessage('Fehler beim Löschen der Notiz'));
     }
 
-
     saveBrokenState(broken) {
         const itemId = this.state.selectedItem.id;
         this.setState({ actionsDisabled: true }, () =>
@@ -547,6 +638,7 @@ class StatefulItemsProvider extends React.Component {
                     }
                     const items = _.cloneDeep(prevState.items);
                     items.get(itemId).broken = savedBrokenState;
+                    delete items.get(itemId).history;
 
                     return {
                         items,
@@ -556,6 +648,36 @@ class StatefulItemsProvider extends React.Component {
                 }))
                 .catch(() => this.showErrorMessage('Fehler beim Ändern des Artikelzustands'))
         );
+    }
+
+    bulkUpdateBrokenState(itemIds, broken, finallyCallback) {
+        const promises = itemIds.filter(itemId => this.state.items.get(itemId).broken ^ broken)
+            .map(itemId => updateItemBrokenState(this.props.sessionState.accessToken, itemId, broken)
+                .then(savedBrokenState => ({
+                    ...this.state.items.get(itemId),
+                    broken: savedBrokenState,
+                }))
+            );
+        if (promises.length > 0) {
+            this.setState({ actionsDisabled: true }, () =>
+                Promise.all(promises)
+                    .then(updatedItems => this.setState(prevState => {
+                        const items = _.cloneDeep(prevState.items);
+                        updatedItems.forEach(item => {
+                            delete item.history;
+                            items.set(item.id, item);
+                        });
+                        return {
+                            items,
+                            actionsDisabled: false,
+                        };
+                    }))
+                    .catch(error => this.showErrorMessage("Fehler beim Ändern der Artikelzustände"))
+                    .finally(() => finallyCallback())
+            );
+        } else {
+            finallyCallback();
+        }
     }
 
 
@@ -655,6 +777,7 @@ class StatefulItemsProvider extends React.Component {
                     }
                     const items = _.cloneDeep(prevState.items);
                     items.get(itemId).slotId = slotId;
+                    delete items.get(itemId).history;
 
                     return {
                         items,
@@ -664,6 +787,40 @@ class StatefulItemsProvider extends React.Component {
                 }))
                     .catch(() => this.showErrorMessage('Fehler beim Ändern des Lagerplatzes'))
             );
+        }
+    }
+
+    bulkSaveSlot(itemIds, finallyCallback) {
+        const slotId = this.state.selectedSlotId;
+        if (!slotId) {
+            return;
+        }
+        const promises = itemIds.filter(itemId => this.state.items.get(itemId).slotId !== slotId)
+            .map(itemId => updateItemSlot(this.props.sessionState.accessToken, itemId, slotId)
+                .then(savedSlotId => ({
+                    ...this.state.items.get(itemId),
+                    slotId: savedSlotId,
+                }))
+            );
+        if (promises.length > 0) {
+            this.setState({ actionsDisabled: true }, () =>
+                Promise.all(promises)
+                    .then(updatedItems => this.setState(prevState => {
+                        const items = _.cloneDeep(prevState.items);
+                        updatedItems.forEach(item => {
+                            delete item.history;
+                            items.set(item.id, item);
+                        });
+                        return {
+                            items,
+                            actionsDisabled: false,
+                        };
+                    }))
+                    .catch(error => this.showErrorMessage("Fehler beim Verschieben der Artikel"))
+                    .finally(() => finallyCallback())
+            );
+        } else {
+            finallyCallback();
         }
     }
 
@@ -706,6 +863,7 @@ class StatefulItemsProvider extends React.Component {
                         }
                         const items = _.cloneDeep(prevState.items);
                         items.get(itemId).quantity = quantity;
+                        delete items.get(itemId).history;
 
                         return {
                             items,
@@ -719,12 +877,49 @@ class StatefulItemsProvider extends React.Component {
         }
     }
 
+    changeImage(uploadedFile) {
+        if (uploadedFile) {
+            if (uploadedFile.type === "image/jpeg" || uploadedFile.type === "image/png") {
+                imageCompression(uploadedFile, {
+                    maxSizeMB: 1, //max size 1MB
+                    quality: 0.75,
+                    maxWidthOrHeight: 512,
+                    resize: true,
+                }).then(resizedImage => {
+                    this.setState(prevState => {
+                        const item = _.cloneDeep(prevState.selectedItem);
+                        item.imageUrl = URL.createObjectURL(resizedImage);
+                        item.imageName = resizedImage.name;
+                        return {
+                            selectedItem: item,
+                        }
+                    })
+                    return imageCompression.getDataUrlFromFile(resizedImage);
+                }).then(base64 => this.setState(prevState => ({
+                    modifiedImage: {
+                        id: prevState.selectedItem.imageId,
+                        itemId: prevState.selectedItem.id,
+                        //base64 is an URL like data:image/...;base64,...
+                        image: base64.substr(base64.indexOf(';base64,') + 8),
+                        mediaType: uploadedFile.type,
+                    },
+                })));
+            } else {
+                this.showErrorMessage("Es können nur Bilder mit den Endungen .jpg und .png hochgeladen werden.")
+            }
+        }
+    }
+
     render() {
         return (
             <ItemsContext.Provider
                 value={{
                     ...this.state,
+
+                    loadItems: this.loadItems.bind(this),
+
                     selectItem: this.selectItem.bind(this),
+                    selectItemHistory: this.selectItemHistory.bind(this),
                     getAssembledItemList: this.getAssembledItemList.bind(this),
                     getSelectedItem: this.getSelectedItem.bind(this),
                     saveSelectedItem: this.saveSelectedItem.bind(this),
@@ -754,11 +949,13 @@ class StatefulItemsProvider extends React.Component {
                     deleteTag: this.deleteTag.bind(this),
 
                     saveBrokenState: this.saveBrokenState.bind(this),
+                    bulkUpdateBrokenState: this.bulkUpdateBrokenState.bind(this),
 
                     getSlotsBySelectedStore: this.getSlotsBySelectedStore.bind(this),
                     changeSelectedSlot: this.changeSelectedSlot.bind(this),
                     changeSelectedStore: this.changeSelectedStore.bind(this),
                     saveSlot: this.saveSlot.bind(this),
+                    bulkSaveSlot: this.bulkSaveSlot.bind(this),
 
                     editQuantity: this.editQuantity.bind(this),
                     changeModifiedQuantity: this.changeModifiedQuantity.bind(this),
@@ -767,6 +964,8 @@ class StatefulItemsProvider extends React.Component {
 
                     changeCopyIdentifier: this.changeCopyIdentifier.bind(this),
                     changeCopyHasBarcode: this.changeCopyHasBarcode.bind(this),
+
+                    changeImage: this.changeImage.bind(this),
                 }}
             >
                 {this.props.children}

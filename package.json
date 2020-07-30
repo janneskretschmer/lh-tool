@@ -16,6 +16,7 @@
 		"@babel/polyfill": "^7.7.0",
 		"@material-ui/core": "^3.9.2",
 		"@material-ui/icons": "^3.0.2",
+		"browser-image-compression": "^1.0.12",
 		"browserslist": "^4.8.0",
 		"caniuse-lite": "^1.0.30001015",
 		"classnames": "^2.2.6",

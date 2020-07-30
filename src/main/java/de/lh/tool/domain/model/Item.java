@@ -70,9 +70,6 @@ public class Item {
 	@Column(name = "broken", nullable = false)
 	private Boolean broken;
 
-	@Column(name = "picture_url", length = 255)
-	private String pictureUrl;
-
 	@OneToOne
 	@JoinColumn(insertable = true, name = "technical_crew_id", updatable = true)
 	private TechnicalCrew technicalCrew;

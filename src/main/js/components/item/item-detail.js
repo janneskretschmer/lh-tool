@@ -12,6 +12,7 @@ import ItemIdentifierEditComponent from './item-identifier';
 import ItemsProvider, { ItemsContext } from '../../providers/items-provider';
 import WithPermission from '../with-permission';
 import SimpleDialog from '../simple-dialog';
+import { PageContext } from '../../providers/page-provider';
 
 const styles = theme => ({
     bold: {
@@ -38,9 +39,14 @@ class StatefulItemDetailComponent extends React.Component {
         this.props.itemsState.selectItem(id);
     }
 
+    componentDidUpdate() {
+        if (this.props.itemsState.selectedItem && this.props.pageState.currentItemName !== this.props.itemsState.selectedItem.name) {
+            this.props.pageState.setCurrentItemName(this.props.itemsState.selectedItem);
+        }
+    }
+
     render() {
         const { classes, itemsState } = this.props;
-        const { savingIfBroken } = this.state;
         const item = itemsState.getSelectedItem();
         if (!item) {
             return (<CircularProgress />);
@@ -145,7 +151,11 @@ const ItemDetailComponent = props => (
             {sessionState => (
                 <ItemsContext.Consumer>
                     {itemsState => (
-                        <StatefulItemDetailComponent {...props} sessionState={sessionState} itemsState={itemsState} />
+                        <PageContext.Consumer>
+                            {pageState => (
+                                <StatefulItemDetailComponent {...props} sessionState={sessionState} itemsState={itemsState} pageState={pageState} />
+                            )}
+                        </PageContext.Consumer>
                     )}
                 </ItemsContext.Consumer>
             )}

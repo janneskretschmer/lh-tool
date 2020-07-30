@@ -68,6 +68,7 @@ const styles = theme => ({
         display: 'flex',
         justifyContent: 'space-between',
         flexWrap: 'wrap-reverse',
+        alignItems: 'baseline',
     },
     fitWidth: {
         width: 'initial',

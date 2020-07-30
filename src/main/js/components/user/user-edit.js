@@ -132,11 +132,15 @@ class StatefulUserEditComponent extends React.Component {
         });
     }
 
+    redirect(redirectUrl) {
+        this.setState({ redirectUrl });
+    }
+
     render() {
         const { classes, usersState, pagesState } = this.props;
         const { passwordEmailSent, saving, redirectUrl } = this.state;
         if (redirectUrl) {
-            return (<LenientRedirect to={redirectUrl} />);
+            return (<LenientRedirect to={redirectUrl} onSamePage={() => this.redirect(null)} />);
         }
         const user = usersState.selectedUser;
         const isNewUser = usersState.selectedUser && !usersState.selectedUser.id;

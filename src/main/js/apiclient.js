@@ -52,6 +52,8 @@ import {
     ITEM_NOTES_USER,
     ITEM_HISTORY_USER,
     ITEM_TAG_PREFIX,
+    ITEM_IMAGE,
+    ITEM_IMAGE_ID,
 
 } from './urlmappings';
 
@@ -466,6 +468,21 @@ export const apiEndpoints = {
         getHistoryUser: {
             method: 'GET',
             path: ITEM_PREFIX + ITEM_HISTORY_USER,
+            parameters: [ITEM_ID_VARIABLE, ID_VARIABLE],
+        },
+        getImage: {
+            method: 'GET',
+            path: ITEM_PREFIX + ITEM_IMAGE,
+            parameters: [ITEM_ID_VARIABLE],
+        },
+        createImage: {
+            method: 'POST',
+            path: ITEM_PREFIX + ITEM_IMAGE,
+            parameters: [ITEM_ID_VARIABLE],
+        },
+        updateImage: {
+            method: 'PUT',
+            path: ITEM_PREFIX + ITEM_IMAGE_ID,
             parameters: [ITEM_ID_VARIABLE, ID_VARIABLE],
         },
     },

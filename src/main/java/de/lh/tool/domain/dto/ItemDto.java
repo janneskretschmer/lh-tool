@@ -30,13 +30,12 @@ public class ItemDto implements Patchable {
 	private Boolean outsideQualified;
 	private Boolean consumable;
 	private Boolean broken;
-	private String pictureUrl;
 	private Long technicalCrewId;
 
 	@Override
 	public boolean hasNonNullField() {
-		// id not included, bc it shouldn't change in a patch
+		// id not included, because it shouldn't change in a patch
 		return ObjectUtils.anyNotNull(slotId, identifier, hasBarcode, name, description, quantity, unit, width, height,
-				depth, outsideQualified, consumable, broken, pictureUrl, technicalCrewId);
+				depth, outsideQualified, consumable, broken, technicalCrewId);
 	}
 }

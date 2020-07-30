@@ -13,12 +13,15 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import SearchIcon from '@material-ui/icons/Search';
 import React from 'react';
 import { Redirect } from 'react-router';
-import { fullPathOfItem } from '../../paths';
+import { fullPathOfItem, fullPathOfItemData } from '../../paths';
 import { SessionContext } from '../../providers/session-provider';
 import { withContext } from '../../util';
 import PagedTable from '../table';
 import { ItemsContext } from '../../providers/items-provider';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress, DialogActions, DialogContent, DialogTitle, Dialog } from '@material-ui/core';
+import WithPermission from '../with-permission';
+import SimpleDialog from '../simple-dialog';
+import ItemSlotEditComponent from './item-slot';
 
 
 const styles = theme => ({
@@ -58,7 +61,13 @@ class StatefulItemListComponent extends React.Component {
             searchTag: '',
             searchStore: '',
             searchSlot: '',
+
+            slotDialogOpen: false,
         };
+    }
+
+    componentDidMount() {
+        this.props.itemsState.loadItems();
     }
 
     handleToggleShowFilters = () => {
@@ -81,9 +90,13 @@ class StatefulItemListComponent extends React.Component {
         this.setState({ searchSlot: event.target.value });
     }
 
+    toggleSlotDialog() {
+        this.setState(prevState => ({ slotDialogOpen: !prevState.slotDialogOpen }));
+    }
+
     render() {
         const { classes, itemsState, sessionState } = this.props;
-        const { } = this.state;
+        const { slotDialogOpen } = this.state;
         const items = itemsState.getAssembledItemList();
         const showAddButton = sessionState.hasPermission('ROLE_RIGHT_ITEMS_POST');
 
@@ -98,26 +111,78 @@ class StatefulItemListComponent extends React.Component {
         return (
             <>
                 <PagedTable
-                    selectionHeader={(
+                    SelectionHeader={props => (
                         <>
-                            <Button variant="outlined" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
+                            <Button
+                                variant="outlined"
+                                className={classes.button}
+                                onClick={() => alert('TODO: implement "Zerstörung"')}
+                                disabled={itemsState.actionsDisabled}
+                            >
                                 Löschen
-                    </Button>
-                            <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Verschieben"')}>
-                                Verschieben
-                    </Button>
-                            <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
+                            </Button>
+                            <WithPermission permission="ROLE_RIGHT_ITEMS_PATCH_SLOT">
+                                <Button
+                                    variant="contained"
+                                    className={classes.button}
+                                    disabled={itemsState.actionsDisabled}
+                                    onClick={() => this.toggleSlotDialog()}
+                                >
+                                    Verschieben
+                                    </Button>
+                                <Dialog
+                                    open={slotDialogOpen}
+                                    transitionDuration={0}
+                                    keepMounted
+                                    onClose={() => this.toggleSlotDialog()}
+                                    aria-labelledby="alert-dialog-slide-title"
+                                    aria-describedby="alert-dialog-slide-description"
+                                >
+                                    <DialogTitle id="alert-dialog-slide-title">
+                                        Neuer Lagerplatz
+                                    </DialogTitle>
+                                    <DialogContent>
+                                        <ItemSlotEditComponent />
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button onClick={() => this.toggleSlotDialog()} color="secondary">
+                                            Abbrechen
+                                        </Button>
+                                        <Button color="primary" onClick={() => {
+                                            itemsState.bulkSaveSlot(props.selected, () => props.resetSelection());
+                                            this.toggleSlotDialog();
+                                        }}>
+                                            Speichern
+                                        </Button>
+                                    </DialogActions>
+                                </Dialog>
+                            </WithPermission>
+                            <Button
+                                variant="contained"
+                                className={classes.button}
+                                onClick={() => itemsState.bulkUpdateBrokenState(props.selected, true, () => props.resetSelection())}
+                                disabled={itemsState.actionsDisabled}
+                            >
                                 Defekt
-                     </Button>
-                            <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
+                            </Button>
+                            <Button
+                                variant="contained"
+                                className={classes.button}
+                                onClick={() => itemsState.bulkUpdateBrokenState(props.selected, false, () => props.resetSelection())}
+                                disabled={itemsState.actionsDisabled}
+                            >
                                 Repariert
-                    </Button>
-                            <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Ausleihen"')}>
+                            </Button>
+                            <Button
+                                disabled={itemsState.actionsDisabled}
+                                variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Ausleihen"')}>
                                 Ausleihen
-                    </Button>
-                            <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Zurückgeben"')}>
+                            </Button>
+                            <Button
+                                disabled={itemsState.actionsDisabled}
+                                variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Zurückgeben"')}>
                                 Zurückgeben
-                    </Button>
+                            </Button>
                         </>
                     )}
                     headers={[
@@ -163,7 +228,7 @@ class StatefulItemListComponent extends React.Component {
 
                     ]}
                     rows={items}
-                    redirect={fullPathOfItem}
+                    redirect={fullPathOfItemData}
                     showAddButton={showAddButton} />
             </>
         )

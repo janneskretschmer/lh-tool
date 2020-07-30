@@ -23,12 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import de.lh.tool.domain.dto.ItemDto;
 import de.lh.tool.domain.dto.ItemHistoryDto;
+import de.lh.tool.domain.dto.ItemImageDto;
 import de.lh.tool.domain.dto.ItemNoteDto;
 import de.lh.tool.domain.dto.ItemTagDto;
 import de.lh.tool.domain.dto.UserDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.service.entity.interfaces.ItemHistoryService;
+import de.lh.tool.service.entity.interfaces.ItemImageService;
 import de.lh.tool.service.entity.interfaces.ItemNoteService;
 import de.lh.tool.service.entity.interfaces.ItemService;
 import de.lh.tool.service.entity.interfaces.ItemTagService;
@@ -45,6 +47,8 @@ public class ItemRestService {
 	private ItemHistoryService itemHistoryService;
 	@Autowired
 	private ItemTagService itemTagService;
+	@Autowired
+	private ItemImageService itemImageService;
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of items")
@@ -218,6 +222,42 @@ public class ItemRestService {
 
 		return new Resource<>(userDto,
 				linkTo(methodOn(ItemRestService.class).getHistoryUser(itemId, id)).withSelfRel());
+	}
+
+	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ITEM_IMAGE)
+	@ApiOperation(value = "Add image to item")
+	@Secured(UserRole.RIGHT_ITEMS_POST)
+	public Resource<ItemImageDto> addItemImage(
+			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId,
+			@RequestBody(required = true) ItemImageDto dto) throws DefaultException {
+
+		ItemImageDto saved = itemImageService.createDto(itemId, dto);
+
+		return new Resource<>(saved, linkTo(methodOn(ItemRestService.class).addItemImage(itemId, dto)).withSelfRel());
+	}
+
+	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ITEM_IMAGE_ID)
+	@ApiOperation(value = "Update image of item")
+	@Secured(UserRole.RIGHT_ITEMS_PUT)
+	public Resource<ItemImageDto> updateItemImage(
+			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId,
+			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
+			@RequestBody(required = true) ItemImageDto dto) throws DefaultException {
+
+		ItemImageDto saved = itemImageService.updateDto(itemId, id, dto);
+
+		return new Resource<>(saved,
+				linkTo(methodOn(ItemRestService.class).updateItemImage(itemId, id, dto)).withSelfRel());
+	}
+
+	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ITEM_IMAGE)
+	@ApiOperation(value = "Get image of item")
+	@Secured(UserRole.RIGHT_ITEMS_GET)
+	public Resource<ItemImageDto> getItemImage(
+			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId) throws DefaultException {
+
+		ItemImageDto dto = itemImageService.findDtoByItemId(itemId);
+		return new Resource<>(dto, linkTo(methodOn(ItemRestService.class).getItemImage(itemId)).withSelfRel());
 	}
 
 }

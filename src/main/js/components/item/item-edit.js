@@ -42,10 +42,6 @@ const styles = theme => ({
         display: 'flex',
         alignItems: 'center',
     },
-    slotContainer: {
-        display: 'flex',
-        alignItems: 'baseline',
-    },
     technicalCrew: {
         minWidth: '100px',
     },
@@ -98,24 +94,23 @@ class StatefulItemEditComponent extends React.Component {
                         label="ist Barcode"
                     />
                 </div>
-                <div className={classes.slotContainer}>
-                    <ItemSlotEditComponent />
-                </div>
+                <ItemSlotEditComponent />
                 <br />
                 <br />
                 <input
-                    accept="image/*"
+                    accept="image/png,image/jpeg"
                     className={classes.imageInput}
                     id="image"
-                    multiple
                     type="file"
+                    onChange={event => itemsState.changeImage(event.target.files.length > 0 && event.target.files[0])}
                 />
                 <label htmlFor="image">
                     <Button variant="contained" component="span" className={classes.button}>
                         Bild auswählen
                     </Button>
                 </label>
-                <img className={classes.image} src="https://images-na.ssl-images-amazon.com/images/I/71tTWyypTKL._SX679_.jpg" />
+                <img className={classes.image} src={item.imageUrl} />&nbsp;
+                {item.imageName}
                 <br /><br />
                 <div className={classes.verticallyCenteredContainer}>
                     <TextField
