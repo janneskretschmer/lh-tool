@@ -1,13 +1,16 @@
 import { apiEndpoints, apiRequest } from '../apiclient';
-import { ID_VARIABLE, ITEM_ID_VARIABLE, NOTE_ID_VARIABLE } from '../urlmappings';
+import { ID_VARIABLE, ITEM_ID_VARIABLE, NOTE_ID_VARIABLE, FREE_TEXT_VARIABLE } from '../urlmappings';
 import moment from 'moment';
 import { result } from 'lodash';
 
-export function fetchItems(accessToken) {
+export function fetchItems(accessToken, freeText) {
     if (accessToken) {
         return apiRequest({
             apiEndpoint: apiEndpoints.item.get,
-            authToken: accessToken
+            authToken: accessToken,
+            queries: {
+                [FREE_TEXT_VARIABLE]: freeText,
+            },
         }).then(result => result.response.content);
     } else {
         return Promise.resolve([]);
@@ -39,6 +42,14 @@ export function updateItem(accessToken, item) {
         data: item,
         parameters: { [ID_VARIABLE]: item.id },
     }).then(result => result.response);
+}
+
+export function deleteItem(accessToken, id) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.item.delete,
+        authToken: accessToken,
+        parameters: { [ID_VARIABLE]: id },
+    });
 }
 
 export function updateItemBrokenState(accessToken, itemId, broken) {
@@ -211,3 +222,31 @@ export function updateItemImage(accessToken, itemImage) {
         .then(result => result.response);
 }
 
+export function fetchRelatedItems(accessToken, itemId) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.item.getRelatedItems,
+        authToken: accessToken,
+        parameters: { [ITEM_ID_VARIABLE]: itemId }
+    })
+        .then(result => result.response.content);
+}
+
+export function createItemRelation(accessToken, item1Id, item2Id) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.item.createItemRelation,
+        authToken: accessToken,
+        parameters: { [ITEM_ID_VARIABLE]: item1Id },
+        data: { item1Id, item2Id },
+    })
+        .then(result => result.response);
+}
+
+export function deleteItemRelation(accessToken, item1Id, item2Id) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.item.deleteItemRelation,
+        authToken: accessToken,
+        parameters: { [ITEM_ID_VARIABLE]: item1Id, [ID_VARIABLE]: item2Id },
+        data: { item1Id, item2Id },
+    })
+        .then(result => result.response);
+}

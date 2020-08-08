@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import de.lh.tool.domain.dto.ItemItemTagDto;
 import de.lh.tool.domain.exception.DefaultException;
+import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.Item;
 import de.lh.tool.domain.model.ItemItemTag;
 import de.lh.tool.domain.model.ItemTag;
@@ -23,10 +24,12 @@ public class ItemItemTagServiceImpl
 
 	@Override
 	@Transactional
-	public ItemItemTag createIfNotExists(@NonNull Item item, @NonNull ItemTag itemTag) throws DefaultException {
+	public ItemItemTag createItemItemTag(@NonNull Item item, @NonNull ItemTag itemTag) throws DefaultException {
 		ValidationUtil.checkIdsNonNull(item.getId(), itemTag.getId());
-		return getRepository().findByItemAndItemTag(item, itemTag)
-				.orElseGet(() -> save(ItemItemTag.builder().item(item).itemTag(itemTag).build()));
+		if (getRepository().findByItemAndItemTag(item, itemTag).isPresent()) {
+			throw ExceptionEnum.EX_ITEM_ITEM_TAG_ALREADY_EXISTS.createDefaultException();
+		}
+		return save(ItemItemTag.builder().item(item).itemTag(itemTag).build());
 	}
 
 	@Override

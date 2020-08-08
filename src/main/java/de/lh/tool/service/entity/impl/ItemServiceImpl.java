@@ -25,6 +25,7 @@ import de.lh.tool.domain.model.Store;
 import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.repository.ItemRepository;
 import de.lh.tool.service.entity.interfaces.ItemHistoryService;
+import de.lh.tool.service.entity.interfaces.ItemItemService;
 import de.lh.tool.service.entity.interfaces.ItemService;
 import de.lh.tool.service.entity.interfaces.ProjectService;
 import de.lh.tool.service.entity.interfaces.SlotService;
@@ -39,17 +40,16 @@ public class ItemServiceImpl extends BasicMappableEntityServiceImpl<ItemReposito
 
 	@Autowired
 	private ItemHistoryService itemHistoryService;
-
 	@Autowired
 	private UserRoleService userRoleService;
-
 	@Autowired
 	private ProjectService projectService;
-
 	@Autowired
 	private SlotService slotService;
 	@Autowired
 	private TechnicalCrewService technicalCrewService;
+	@Autowired
+	private ItemItemService itemItemService;
 
 	@Override
 	public boolean isViewAllowed(Item item) {
@@ -66,17 +66,15 @@ public class ItemServiceImpl extends BasicMappableEntityServiceImpl<ItemReposito
 
 	@Override
 	@Transactional
-	public List<ItemDto> getItemDtos() {
-		return convertToDtoList(findAll().stream().filter(this::isViewAllowed).collect(Collectors.toList()));
+	public List<ItemDto> findItemDtosByFilters(String freeText) {
+		return convertToDtoList(getRepository().findByFilters(freeText).stream().filter(this::isViewAllowed)
+				.collect(Collectors.toList()));
 	}
 
 	@Override
 	@Transactional
-	public ItemDto getItemDtoById(Long id) throws DefaultException {
-		Item item = findById(id).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
-		if (!isViewAllowed(item)) {
-			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
-		}
+	public ItemDto findItemDtoById(Long id) throws DefaultException {
+		Item item = findItemByIdIfAllowed(id);
 		return convertToDto(item);
 	}
 
@@ -103,10 +101,7 @@ public class ItemServiceImpl extends BasicMappableEntityServiceImpl<ItemReposito
 		ValidationUtil.checkIdsNonNull(dto.getId());
 		Item itemToCompare = getValidatedItem(dto);
 
-		Item old = findById(dto.getId()).orElseThrow(ExceptionEnum.EX_INVALID_ITEM_ID::createDefaultException);
-		if (!isViewAllowed(old)) {
-			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
-		}
+		Item old = findItemByIdIfAllowed(dto.getId());
 
 		if (old.getBroken() ^ itemToCompare.getBroken()) {
 			itemHistoryService.logNewBrokenState(itemToCompare);
@@ -149,12 +144,8 @@ public class ItemServiceImpl extends BasicMappableEntityServiceImpl<ItemReposito
 	@Transactional
 	public ItemDto patchItemDto(ItemDto dto, Long id) throws DefaultException {
 		dto.setId(ObjectUtils.defaultIfNull(id, dto.getId()));
-		ValidationUtil.checkIdsNonNull(dto.getId());
 
-		Item item = findById(dto.getId()).orElseThrow(ExceptionEnum.EX_INVALID_ITEM_ID::createDefaultException);
-		if (!isViewAllowed(item)) {
-			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
-		}
+		Item item = findItemByIdIfAllowed(dto.getId());
 
 		boolean allowedToModify = userRoleService.hasCurrentUserRight(UserRole.RIGHT_ITEMS_PUT);
 		boolean allowedToModifyBroken = allowedToModify
@@ -211,12 +202,24 @@ public class ItemServiceImpl extends BasicMappableEntityServiceImpl<ItemReposito
 	@Override
 	@Transactional
 	public void deleteItemById(Long id) throws DefaultException {
+		Item item = findItemByIdIfAllowed(id);
+		delete(item);
+	}
+
+	@Override
+	@Transactional
+	public List<ItemDto> findRelatedItemDtosByItemId(Long itemId) throws DefaultException {
+		Item item = findItemByIdIfAllowed(itemId);
+		return convertToDtoList(itemItemService.findRelatedItemsByItem(item));
+	}
+
+	private Item findItemByIdIfAllowed(Long id) throws DefaultException {
 		ValidationUtil.checkIdsNonNull(id);
 		Item item = findById(id).orElseThrow(ExceptionEnum.EX_INVALID_ITEM_ID::createDefaultException);
 		if (!isViewAllowed(item)) {
 			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
 		}
-		delete(item);
+		return item;
 	}
 
 	@Override

@@ -141,8 +141,13 @@ public abstract class BasicRestIntegrationTest {
 	}
 
 	private void validateResponse(UserTest userTest, String email, Response response, String message) {
-		Optional.ofNullable(userTest.getExpectedResponse())
-				.ifPresent(expected -> assertEquals(expected, response.asString(), message));
+		Optional.ofNullable(userTest.getExpectedResponse()).ifPresent(expected -> {
+			if (userTest.isExpectedResponseIsRegex()) {
+				assertTrue(response.asString().matches(expected), message);
+			} else {
+				assertEquals(expected, response.asString(), message);
+			}
+		});
 		assertEquals(userTest.getExpectedHttpCode().value(), response.getStatusCode(), message);
 		Optional.ofNullable(userTest.getValidationQueries())
 				.ifPresent(queries -> assertEquals(List.of(),

@@ -14,6 +14,7 @@ import classNames from 'classnames';
 import { NEW_ENTITY_ID_PLACEHOLDER } from '../config';
 import { Typography } from '@material-ui/core';
 import LenientRedirect from './util/lenient-redirect';
+import _ from 'lodash';
 
 
 const styles = theme => ({
@@ -87,16 +88,36 @@ export default class PagedTable extends React.Component {
         };
     }
 
+    static getDerivedStateFromProps(props, state) {
+        // componentDidUpdate didn't get called in some scenarios, even though props changed
+        if (props.selected && !_.isEqual(state.selected, props.selected)) {
+            return { selected: props.selected };
+        }
+        return null;
+    }
+
     handleSelection(index) {
-        this.setState({
-            selected: this.state.selected.includes(index) ? this.state.selected.filter(item => item !== index) : this.state.selected.concat(index),
-        });
+        if (this.props.onToggleSelect) {
+            this.props.onToggleSelect(index);
+        } else {
+            this.setState({
+                selected: this.state.selected.includes(index) ? this.state.selected.filter(item => item !== index) : this.state.selected.concat(index),
+            });
+        }
     }
 
     handleBulkCheckbox() {
-        this.setState(prevState => ({
-            selected: prevState.selected.length > 0 ? [] : this.props.rows.map(row => row.id),
-        }));
+        if (this.props.onToggleSelect) {
+            if (this.state.selected.length > 0) {
+                this.state.selected.forEach(id => this.props.onToggleSelect(id));
+            } else {
+                this.props.rows.forEach(row => this.props.onToggleSelect(row.id));
+            }
+        } else {
+            this.setState(prevState => ({
+                selected: prevState.selected.length > 0 ? [] : this.props.rows.map(row => row.id),
+            }));
+        }
     }
 
     resetSelection() {
@@ -114,7 +135,7 @@ export default class PagedTable extends React.Component {
     };
 
     handleRowClick(id) {
-        if (this.state.selected.length > 0) {
+        if (this.state.selected.length > 0 || !this.props.redirect) {
             this.handleSelection(id);
         } else {
             this.setState({ redirect: id });
@@ -123,7 +144,7 @@ export default class PagedTable extends React.Component {
 
 
     render() {
-        const { classes, rows, SelectionHeader, filter, headers, redirect, title, showAddButton, fitWidth } = this.props;
+        const { classes, rows, SelectionHeader, onToggleSelect, filter, headers, redirect, title, showAddButton, fitWidth } = this.props;
         const { rowsPerPage, page, selected } = this.state;
         const emptyRows = rowsPerPage >= rows.length ? 0 : rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
         const singlePage = emptyRows < rows.length;
@@ -137,7 +158,7 @@ export default class PagedTable extends React.Component {
                         <TableRow>
                             <TableCell align="left" colSpan={headers.length + 1}>
                                 <div className={classes.toolbar}>
-                                    {selected.length > 0 ? (
+                                    {SelectionHeader && selected.length > 0 ? (
                                         <div>
                                             <Typography variant="h6" className={classes.selectionText}>
                                                 Auswahl ({selected.length})
@@ -157,7 +178,7 @@ export default class PagedTable extends React.Component {
                 )}
                 <TableHead>
                     <TableRow>
-                        {SelectionHeader && (
+                        {(selected || SelectionHeader) && (
                             <TableCell align="left" className={classes.checkboxColumn} padding="checkbox">
                                 <Checkbox
                                     indeterminate={selected.length > 0 && selected.length < rows.length}
@@ -183,7 +204,7 @@ export default class PagedTable extends React.Component {
                             key={row.id}
                             className={classes.clickable}
                         >
-                            {SelectionHeader && (
+                            {(selected || SelectionHeader) && (
                                 <TableCell align="left" className={classes.checkboxColumn} padding="checkbox">
                                     <Checkbox
                                         checked={selected.includes(row.id)}

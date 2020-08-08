@@ -67,6 +67,8 @@ public abstract class UrlMappings {
 	public static final String ITEM_HISTORY_USER = ITEM_HISTORY + "/{" + ID_VARIABLE + "}/user";
 	public static final String ITEM_IMAGE = "/{" + ITEM_ID_VARIABLE + "}/image";
 	public static final String ITEM_IMAGE_ID = ITEM_IMAGE + ID_EXTENSION;
+	public static final String ITEM_ITEMS = "/{" + ITEM_ID_VARIABLE + "}/items";
+	public static final String ITEM_ITEMS_ID = ITEM_ITEMS + ID_EXTENSION;
 
 	public static final String ITEM_TAG_PREFIX = REST_PREFIX + "/item_tags";
 

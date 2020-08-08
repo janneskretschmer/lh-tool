@@ -9,7 +9,7 @@ import de.lh.tool.domain.model.ItemTag;
 
 public interface ItemTagService extends MappableEntityService<ItemTag, ItemTagDto, Long> {
 
-	List<ItemTagDto> getItemTagDtosByItemId(Long itemId) throws DefaultException;
+	List<ItemTagDto> findItemTagDtosByItemId(Long itemId) throws DefaultException;
 
 	Optional<ItemTag> findByName(String name);
 

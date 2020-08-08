@@ -1,7 +1,7 @@
 import React from 'react';
-import { fetchItems, fetchItemNotes, fetchItem, fetchItemTagsByItem, fetchItemHistory, createItemNote, deleteItemNote, fetchItemNotesUser, fetchItemHistoryUser, updateItemBrokenState, updateItemSlot, createItemTag, deleteItemTag, updateItem, createItem, updateItemQuantity, fetchItemImage, createItemImage, updateItemImage } from '../actions/item';
+import { fetchItems, fetchItemNotes, fetchItem, fetchItemTagsByItem, fetchItemHistory, createItemNote, deleteItemNote, fetchItemNotesUser, fetchItemHistoryUser, updateItemBrokenState, updateItemSlot, createItemTag, deleteItemTag, updateItem, createItem, updateItemQuantity, fetchItemImage, createItemImage, updateItemImage, deleteItem, fetchRelatedItems, createItemRelation, deleteItemRelation } from '../actions/item';
 import { SessionContext } from './session-provider';
-import { convertToIdMap, generateUniqueId, isAnyStringBlank, base64toBlob } from '../util';
+import { convertToIdMap, generateUniqueId, isAnyStringBlank, base64toBlob, isStringBlank } from '../util';
 import { fetchStore, fetchOwnStores } from '../actions/store';
 import { fetchSlotsByStore } from '../actions/slot';
 import { fetchTechnicalCrews } from '../actions/technical-crew';
@@ -42,6 +42,9 @@ class StatefulItemsProvider extends React.Component {
             copyHasBarcode: false,
 
             actionsDisabled: false,
+
+            loadedItemsForCurrentFilter: false,
+            filterFreeText: '',
         };
     }
 
@@ -75,7 +78,8 @@ class StatefulItemsProvider extends React.Component {
         if (item && item.id) {
             const loadNotes = !item.hasOwnProperty('notes');
             const loadTags = !item.hasOwnProperty('tags');
-            if (loadNotes || loadTags) {
+            const loadRelatedItems = !item.hasOwnProperty('items');
+            if (loadNotes || loadTags || loadRelatedItems) {
                 // if this setState gets split up, componentDidUpdate will be called multiple times 
                 // => the other setStates and its callbacks with api-calls will be called multiple times
                 this.setState(prevState => {
@@ -84,6 +88,7 @@ class StatefulItemsProvider extends React.Component {
                             ..._.cloneDeep(prevState.selectedItem),
                             notes: loadNotes ? null : prevState.selectedItem.notes,
                             tags: loadTags ? null : prevState.selectedItem.tags,
+                            items: loadRelatedItems ? null : prevState.selectedItem.items,
                         }
                     };
                 }, () => {
@@ -111,6 +116,25 @@ class StatefulItemsProvider extends React.Component {
                                 };
                             }))
                             .catch(error => this.showErrorMessage('Fehler beim Laden der Schlagwörter'));
+                    }
+                    if (loadRelatedItems) {
+                        fetchRelatedItems(accessToken, item.id)
+                            .then(relatedItems => this.setState(prevState => {
+
+                                const updatedItem = _.cloneDeep(prevState.selectedItem);
+                                if (updatedItem.id == item.id) {
+                                    updatedItem.items = relatedItems;
+                                }
+
+                                const items = _.cloneDeep(prevState.items);
+                                items.get(item.id).items = relatedItems;
+
+                                return {
+                                    items,
+                                    selectedItem: updatedItem,
+                                };
+                            }))
+                            .catch(error => this.showErrorMessage('Fehler beim Laden der zugehörigen Artikel'));
                     }
                 });
             }
@@ -140,17 +164,32 @@ class StatefulItemsProvider extends React.Component {
         return !isAnyStringBlank([item.name, item.identifier]) && item.technicalCrewId && this.state.technicalCrews && this.state.technicalCrews.has(item.technicalCrewId) && this.state.selectedSlotId && this.state.slots && this.state.slots.has(this.state.selectedSlotId);
     }
 
-    loadItems() {
-        fetchItems(this.props.sessionState.accessToken)
-            .then(receivedItems => this.setState({
-                items: convertToIdMap(receivedItems),
+    loadItems(keepSelection) {
+        if (!this.state.loadedItemsForCurrentFilter) {
+            fetchItems(this.props.sessionState.accessToken, this.state.filterFreeText)
+                .then(receivedItems => this.setState(prevState => {
+                    const items = convertToIdMap(receivedItems);
+                    // otherwise already loaded data of the selected item will be lost and saving deltas will result in problems 
+                    if (keepSelection && prevState.selectedItem && prevState.items.has(prevState.selectedItem.id)) {
+                        items.set(prevState.selectedItem.id, prevState.items.get(prevState.selectedItem.id));
+                    }
+                    return {
+                        items,
+                        loadedItemsForCurrentFilter: true,
+                    };
+                }));
+            this.loadItemTags();
+            this.loadTechnicalCrews();
+            this.loadStores();
+            this.loadSlots();
+        }
+        if (!keepSelection) {
+            this.setState({
                 selectedSlotId: null,
                 selectedStoreId: null,
-            }));
-        this.loadItemTags();
-        this.loadTechnicalCrews();
-        this.loadStores();
-        this.loadSlots();
+                edit: false,
+            });
+        }
 
     }
 
@@ -330,6 +369,9 @@ class StatefulItemsProvider extends React.Component {
     }
 
     selectItemHistory(itemId) {
+        if (itemId === NEW_ENTITY_ID_PLACEHOLDER) {
+            return;
+        }
         if (!itemId || isNaN(itemId)) {
             this.showErrorMessage("Artikel nicht gefunden");
             return;
@@ -445,7 +487,50 @@ class StatefulItemsProvider extends React.Component {
             technicalCrewName: technicalCrew && technicalCrew.name,
             history,
             notes,
+            depth: item.depth || '',
+            height: item.height || '',
+            width: item.width || '',
         }
+    }
+
+    deleteSelectedItem(callback) {
+        const item = this.state.selectedItem;
+        if (!item || !item.id) {
+            return;
+        }
+        this.setState({ actionsDisabled: true }, () => deleteItem(this.props.sessionState.accessToken, item.id)
+            .then(() => this.setState(prevState => {
+                const items = _.cloneDeep(prevState.items);
+                items.delete(item.id);
+                return {
+                    items,
+                    selectedItem: null,
+                    actionsDisabled: false,
+                };
+            }, () => callback()))
+            .catch(error => {
+                this.showErrorMessage('Fehler beim Löschen des Artikels');
+                this.setState({ actionsDisabled: false });
+            }));
+    }
+
+    bulkDeleteItems(itemIds) {
+        if (!itemIds || itemIds.length < 1) {
+            return;
+        }
+        this.setState({ actionsDisabled: true }, () => Promise.all(itemIds.map(itemId => deleteItem(this.props.sessionState.accessToken, itemId).then(() => itemId)))
+            .then(deletedIds => this.setState(prevState => {
+                const items = _.cloneDeep(prevState.items);
+                deletedIds.forEach(deletedId => items.delete(deletedId));
+                return ({
+                    items,
+                    actionsDisabled: false,
+                });
+            }))
+            .catch(error => {
+                this.showErrorMessage('Fehler beim Löschen der Artikel');
+                this.setState({ actionsDisabled: false });
+            }));
     }
 
     changeItemIdentifier(identifier) {
@@ -555,7 +640,16 @@ class StatefulItemsProvider extends React.Component {
         } else {
             itemPromise = createItem(this.props.sessionState.accessToken, item)
         }
-        itemPromise
+        return itemPromise
+            .then(savedItem => Promise.all([
+                ...item.items ? item.items.filter(item1 => !this.state.items.has(item.id) || !this.state.items.get(item.id).items.find(item2 => item1.id === item2.id))
+                    .map(relatedItem => createItemRelation(this.props.sessionState.accessToken, savedItem.id, relatedItem.id)) : [],
+                ...this.state.items.has(item.id) && this.state.items.get(item.id).items ? this.state.items.get(item.id).items.filter(item1 => !item.items || !item.items.find(item2 => item1.id === item2.id))
+                    .map(relatedItem => deleteItemRelation(this.props.sessionState.accessToken, savedItem.id, relatedItem.id)) : []
+            ]).then(() => ({
+                ...savedItem,
+                items: item.items || [],
+            })))
             .then(savedItem => {
                 if (this.state.modifiedImage) {
 
@@ -567,8 +661,9 @@ class StatefulItemsProvider extends React.Component {
                     return createItemImage(this.props.sessionState.accessToken, { ...this.state.modifiedImage, itemId: savedItem.id })
                         .then(savedImage => this.handleUpdatedAndSelectedItem(savedItem, savedImage));
                 } else {
-                    this.handleUpdatedAndSelectedItem(savedItem)
+                    this.handleUpdatedAndSelectedItem(savedItem);
                 }
+                return savedItem;
             })
             .catch(error => this.handleFailure(error));
     }
@@ -833,6 +928,22 @@ class StatefulItemsProvider extends React.Component {
         this.setState({ copyHasBarcode });
     }
 
+    copySelectedItem() {
+        if (!this.state.copyIdentifier || isStringBlank(this.state.copyIdentifier)) {
+            this.showErrorMessage('Der eindeutige Bezeichner darf nicht leer sein.');
+            return;
+        }
+        this.setState(prevState => ({
+            selectedItem: {
+                ...prevState.selectedItem,
+                id: null,
+                identifier: prevState.copyIdentifier,
+                hasBarcode: prevState.copyHasBarcode,
+                history: null,
+            }
+        }), () => this.saveSelectedItem());
+    }
+
 
     editQuantity() {
         this.changeModifiedQuantity(this.state.selectedItem.quantity);
@@ -910,6 +1021,28 @@ class StatefulItemsProvider extends React.Component {
         }
     }
 
+
+    changeFreeTextFilter(filterFreeText) {
+        this.setState({ filterFreeText, loadedItemsForCurrentFilter: false });
+    }
+
+
+    toggleItemRelation(itemId) {
+        this.setState(prevState => {
+            const selectedItem = _.cloneDeep(prevState.selectedItem);
+            if (!selectedItem.items) {
+                selectedItem.items = [prevState.items.get(itemId)];
+            } else if (selectedItem.items.find(item => item.id === itemId)) {
+                selectedItem.items = selectedItem.items.filter(item => item.id !== itemId);
+            } else {
+                selectedItem.items.push(prevState.items.get(itemId));
+            }
+            return {
+                selectedItem,
+            };
+        });
+    }
+
     render() {
         return (
             <ItemsContext.Provider
@@ -926,6 +1059,8 @@ class StatefulItemsProvider extends React.Component {
                     resetSelectedItem: this.resetSelectedItem.bind(this),
                     changeEdit: this.changeEdit.bind(this),
                     isItemValid: this.isItemValid.bind(this),
+                    deleteSelectedItem: this.deleteSelectedItem.bind(this),
+                    bulkDeleteItems: this.bulkDeleteItems.bind(this),
 
                     changeItemConsumable: this.changeItemConsumable.bind(this),
                     changeItemDepth: this.changeItemDepth.bind(this),
@@ -964,8 +1099,13 @@ class StatefulItemsProvider extends React.Component {
 
                     changeCopyIdentifier: this.changeCopyIdentifier.bind(this),
                     changeCopyHasBarcode: this.changeCopyHasBarcode.bind(this),
+                    copySelectedItem: this.copySelectedItem.bind(this),
 
                     changeImage: this.changeImage.bind(this),
+
+                    changeFreeTextFilter: this.changeFreeTextFilter.bind(this),
+
+                    toggleItemRelation: this.toggleItemRelation.bind(this),
                 }}
             >
                 {this.props.children}

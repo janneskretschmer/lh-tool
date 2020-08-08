@@ -10,7 +10,7 @@ import lombok.NonNull;
 
 public interface ItemItemTagService extends BasicEntityService<ItemItemTag, Long> {
 
-	ItemItemTag createIfNotExists(Item item, ItemTag itemTag) throws DefaultException;
+	ItemItemTag createItemItemTag(Item item, ItemTag itemTag) throws DefaultException;
 
 	void deleteIfExists(@NonNull Item item, @NonNull ItemTag itemTag) throws DefaultException;
 

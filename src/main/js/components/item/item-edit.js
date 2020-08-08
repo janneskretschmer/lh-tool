@@ -13,6 +13,7 @@ import { ItemsContext } from '../../providers/items-provider';
 import ItemSlotEditComponent from './item-slot';
 import { isStringBlank } from '../../util';
 import IdNameSelect from '../util/id-name-select';
+import ItemListComponent from './item-list';
 
 const styles = theme => ({
     bold: {
@@ -218,9 +219,14 @@ class StatefulItemEditComponent extends React.Component {
                 <div className={classes.bold}>
                     Zugehörig
                 </div>
-                TODO: übersichtliche Auswahlliste mit Namen+Id+Projekt+Lagerplatz von Artikeln
-                <br />
-                <br />
+                <ItemListComponent
+                    keepSelectedItem
+                    hideAdd
+                    hideHeader
+                    hiddenItemId={item.id}
+                    selected={item.items && item.items.map(relatedItem => relatedItem.id) || []}
+                    onToggleSelect={id => itemsState.toggleItemRelation(id)}
+                />
             </div>
         );
     }

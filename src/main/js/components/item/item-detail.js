@@ -13,6 +13,8 @@ import ItemsProvider, { ItemsContext } from '../../providers/items-provider';
 import WithPermission from '../with-permission';
 import SimpleDialog from '../simple-dialog';
 import { PageContext } from '../../providers/page-provider';
+import { fullPathOfItems, fullPathOfItemData } from '../../paths';
+import LenientRedirect from '../util/lenient-redirect';
 
 const styles = theme => ({
     bold: {
@@ -31,23 +33,48 @@ class StatefulItemDetailComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            redirectUrl: null,
+            currentId: null,
         };
     }
 
     componentDidMount() {
-        const id = this.props.match.params.id
-        this.props.itemsState.selectItem(id);
+
     }
 
     componentDidUpdate() {
+        const id = this.props.match.params.id;
+        if (id !== this.state.currentId) {
+            this.setState({ currentId: id }, () => this.props.itemsState.selectItem(id));
+        }
+
         if (this.props.itemsState.selectedItem && this.props.pageState.currentItemName !== this.props.itemsState.selectedItem.name) {
             this.props.pageState.setCurrentItemName(this.props.itemsState.selectedItem);
         }
     }
 
+    save() {
+        this.props.itemsState.saveSelectedItem().then(item => {
+            if (item && item.id) {
+                this.setState({ redirectUrl: fullPathOfItemData(item.id) });
+            }
+        });
+    }
+
+    delete() {
+        this.props.itemsState.deleteSelectedItem(
+            () => this.setState({ redirectUrl: fullPathOfItems() })
+        );
+    }
+
     render() {
         const { classes, itemsState } = this.props;
         const item = itemsState.getSelectedItem();
+
+        if (this.state.redirectUrl) {
+            return (<LenientRedirect to={this.state.redirectUrl} onSamePage={() => this.setState({ redirectUrl: null })} />);
+        }
+
         if (!item) {
             return (<CircularProgress />);
         }
@@ -57,7 +84,7 @@ class StatefulItemDetailComponent extends React.Component {
                 {itemsState.edit ? (
                     <>
                         <ItemEditComponent item={item}></ItemEditComponent>
-                        <Button variant="contained" disabled={disabled} className={classes.button} onClick={() => itemsState.saveSelectedItem()}>
+                        <Button variant="contained" disabled={disabled} className={classes.button} onClick={() => this.save()}>
                             Speichern
                         </Button>
                         <Button variant="outlined" disabled={itemsState.actionsDisabled} className={classes.button} onClick={() => itemsState.resetSelectedItem()}>
@@ -98,7 +125,7 @@ class StatefulItemDetailComponent extends React.Component {
                                 <SimpleDialog
                                     title={item.name + ' kopieren'}
                                     content={<ItemIdentifierEditComponent />}
-                                    onOK={() => itemsState.saveSlot()}
+                                    onOK={() => itemsState.copySelectedItem()}
                                     onOpen={() => itemsState.changeCopyIdentifier(generateUniqueId())}
                                     okText="Kopieren"
                                     cancelText="Abbrechen"
@@ -130,14 +157,21 @@ class StatefulItemDetailComponent extends React.Component {
                             >
                                 Ausleihen
                             </Button>
-                            <Button
-                                variant="outlined"
-                                className={classes.button}
-                                onClick={() => alert('TODO: implement "Zerstörung"')}
-                                disabled={itemsState.actionsDisabled}
+                            <SimpleDialog
+                                title="Löschen bestätigen"
+                                okText="Ja"
+                                cancelText="Nein"
+                                text={`Sollen der Artikel ${item.name} wirklich gelöscht werden?`}
+                                onOK={() => this.delete()}
                             >
-                                Löschen
-                            </Button>
+                                <Button
+                                    variant="outlined"
+                                    className={classes.button}
+                                    disabled={itemsState.actionsDisabled}
+                                >
+                                    Löschen
+                                </Button>
+                            </SimpleDialog>
                         </>
                     )}
             </>

@@ -30,7 +30,7 @@ class StatefulItemHistoryComponent extends React.Component {
     }
 
     componentDidMount() {
-        const id = this.props.match.params.id
+        const id = this.props.match.params.id;
         this.props.itemsState.selectItemHistory(id);
     }
 
@@ -73,6 +73,9 @@ class StatefulItemHistoryComponent extends React.Component {
         const item = itemsState.getSelectedItem();
         if (!item) {
             return (<CircularProgress />);
+        }
+        if (!item.id) {
+            return (<>Für diesen Artikel ist noch kein Protokoll verfügbar.</>);
         }
         return (
             <>

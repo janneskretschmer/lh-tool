@@ -63,6 +63,8 @@ export const ITEM_HISTORY = '/{' + ITEM_ID_VARIABLE + '}/history';
 export const ITEM_HISTORY_USER = ITEM_HISTORY + '/{' + ID_VARIABLE + '}/user';
 export const ITEM_IMAGE = '/{' + ITEM_ID_VARIABLE + '}/image';
 export const ITEM_IMAGE_ID = ITEM_IMAGE + ID_EXTENSION;
+export const ITEM_ITEMS = '/{' + ITEM_ID_VARIABLE + '}/items';
+export const ITEM_ITEMS_ID = ITEM_ITEMS + ID_EXTENSION;
 
 export const ITEM_TAG_PREFIX = REST_PREFIX + '/item_tags';
 

@@ -56,18 +56,18 @@ class StatefulItemListComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            showFilters: false,
-            searchTechnicalCrew: '',
-            searchTag: '',
-            searchStore: '',
-            searchSlot: '',
+            expandFilters: false,
 
             slotDialogOpen: false,
         };
     }
 
     componentDidMount() {
-        this.props.itemsState.loadItems();
+        this.loadItems();
+    }
+
+    loadItems() {
+        this.props.itemsState.loadItems(this.props.keepSelectedItem);
     }
 
     handleToggleShowFilters = () => {
@@ -94,10 +94,16 @@ class StatefulItemListComponent extends React.Component {
         this.setState(prevState => ({ slotDialogOpen: !prevState.slotDialogOpen }));
     }
 
+    toggleExpandFilters() {
+        this.setState(prevState => ({
+            expandFilters: !prevState.expandFilters,
+        }));
+    }
+
     render() {
-        const { classes, itemsState, sessionState } = this.props;
-        const { slotDialogOpen } = this.state;
-        const items = itemsState.getAssembledItemList();
+        const { classes, itemsState, sessionState, hideAdd, hideHeader, hiddenItemId, selected, onToggleSelect } = this.props;
+        const { slotDialogOpen, expandFilters } = this.state;
+        const items = itemsState.getAssembledItemList().filter(item => item.id !== hiddenItemId);
         const showAddButton = sessionState.hasPermission('ROLE_RIGHT_ITEMS_POST');
 
         if (this.state.redirect) {
@@ -111,16 +117,10 @@ class StatefulItemListComponent extends React.Component {
         return (
             <>
                 <PagedTable
-                    SelectionHeader={props => (
+                    selected={selected}
+                    onToggleSelect={onToggleSelect}
+                    SelectionHeader={!hideHeader && (props => (
                         <>
-                            <Button
-                                variant="outlined"
-                                className={classes.button}
-                                onClick={() => alert('TODO: implement "Zerstörung"')}
-                                disabled={itemsState.actionsDisabled}
-                            >
-                                Löschen
-                            </Button>
                             <WithPermission permission="ROLE_RIGHT_ITEMS_PATCH_SLOT">
                                 <Button
                                     variant="contained"
@@ -183,8 +183,45 @@ class StatefulItemListComponent extends React.Component {
                                 variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Zurückgeben"')}>
                                 Zurückgeben
                             </Button>
+                            <SimpleDialog
+                                title="Löschen bestätigen"
+                                okText="Ja"
+                                cancelText="Nein"
+                                text={`Sollen die ${props.selected.length} ausgewählten Artikel wirklich gelöscht werden?`}
+                                onOK={() => { itemsState.bulkDeleteItems(props.selected); props.resetSelection(); }}
+                            >
+                                <Button
+                                    variant="outlined"
+                                    className={classes.button}
+                                    onClick={() => { }}
+                                    disabled={itemsState.actionsDisabled}
+                                >
+                                    Löschen
+                                </Button>
+                            </SimpleDialog>
                         </>
-                    )}
+                    ))}
+
+                    filter={(<>
+                        <TextField
+                            id="free-search"
+                            value={itemsState.filterFreeText}
+                            onChange={event => itemsState.changeFreeTextFilter(event.target.value)}
+                            variant="outlined"
+                            label="Freitextsuche"
+                            margin="dense"
+                        />
+                        <IconButton className={classes.button} onClick={() => this.toggleExpandFilters()}>
+                            {expandFilters ? (<ExpandLessIcon />) : (<ExpandMoreIcon />)}
+                        </IconButton>
+                        <IconButton className={classes.button} onClick={() => this.loadItems()}>
+                            <SearchIcon />
+                        </IconButton>
+                        <br />
+                        {(expandFilters || itemsState.filterProjectId) && (<>
+                            TODO: Name, ID, Tag, Status (Verfügbar, Defekt, Ausgeliehen), Lager, Lagerplatz, Projekt, Menge (unter, gleich, über), Maße (unter, gleich, über), Gewerk, Verbrauchsgegenstand, Wetterbeständig
+                        </>)}
+                    </>)}
                     headers={[
                         {
                             key: 'name',
@@ -228,8 +265,8 @@ class StatefulItemListComponent extends React.Component {
 
                     ]}
                     rows={items}
-                    redirect={fullPathOfItemData}
-                    showAddButton={showAddButton} />
+                    redirect={!hideAdd && fullPathOfItemData}
+                    showAddButton={!hideAdd && showAddButton} />
             </>
         )
     }

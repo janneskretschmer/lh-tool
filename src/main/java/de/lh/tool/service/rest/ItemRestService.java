@@ -19,11 +19,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.lh.tool.domain.dto.ItemDto;
 import de.lh.tool.domain.dto.ItemHistoryDto;
 import de.lh.tool.domain.dto.ItemImageDto;
+import de.lh.tool.domain.dto.ItemItemDto;
 import de.lh.tool.domain.dto.ItemNoteDto;
 import de.lh.tool.domain.dto.ItemTagDto;
 import de.lh.tool.domain.dto.UserDto;
@@ -31,6 +33,7 @@ import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.service.entity.interfaces.ItemHistoryService;
 import de.lh.tool.service.entity.interfaces.ItemImageService;
+import de.lh.tool.service.entity.interfaces.ItemItemService;
 import de.lh.tool.service.entity.interfaces.ItemNoteService;
 import de.lh.tool.service.entity.interfaces.ItemService;
 import de.lh.tool.service.entity.interfaces.ItemTagService;
@@ -49,15 +52,19 @@ public class ItemRestService {
 	private ItemTagService itemTagService;
 	@Autowired
 	private ItemImageService itemImageService;
+	@Autowired
+	private ItemItemService itemItemService;
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of items")
 	@Secured(UserRole.RIGHT_ITEMS_GET)
-	public Resources<ItemDto> get() throws DefaultException {
+	public Resources<ItemDto> getByFilters(
+			@RequestParam(required = false, name = UrlMappings.FREE_TEXT_VARIABLE) String freeText)
+			throws DefaultException {
 
-		List<ItemDto> dtoList = itemService.getItemDtos();
+		List<ItemDto> dtoList = itemService.findItemDtosByFilters(freeText);
 
-		return new Resources<>(dtoList, linkTo(methodOn(ItemRestService.class).get()).withSelfRel());
+		return new Resources<>(dtoList, linkTo(methodOn(ItemRestService.class).getByFilters(freeText)).withSelfRel());
 	}
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
@@ -66,7 +73,7 @@ public class ItemRestService {
 	public Resource<ItemDto> getById(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 
-		ItemDto dto = itemService.getItemDtoById(id);
+		ItemDto dto = itemService.findItemDtoById(id);
 
 		return new Resource<>(dto, linkTo(methodOn(ItemRestService.class).getById(id)).withSelfRel());
 	}
@@ -140,7 +147,7 @@ public class ItemRestService {
 	}
 
 	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ITEM_NOTES_ID)
-	@ApiOperation(value = "Create a new note for an item")
+	@ApiOperation(value = "Delete note from item")
 	@Secured(UserRole.RIGHT_ITEMS_NOTES_POST)
 	public ResponseEntity<Void> deleteNote(
 			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId,
@@ -170,7 +177,7 @@ public class ItemRestService {
 	public Resources<ItemTagDto> getTags(
 			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId) throws DefaultException {
 
-		Collection<ItemTagDto> dtoList = itemTagService.getItemTagDtosByItemId(itemId);
+		Collection<ItemTagDto> dtoList = itemTagService.findItemTagDtosByItemId(itemId);
 
 		return new Resources<>(dtoList, linkTo(methodOn(ItemRestService.class).getTags(itemId)).withSelfRel());
 	}
@@ -258,6 +265,39 @@ public class ItemRestService {
 
 		ItemImageDto dto = itemImageService.findDtoByItemId(itemId);
 		return new Resource<>(dto, linkTo(methodOn(ItemRestService.class).getItemImage(itemId)).withSelfRel());
+	}
+
+	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ITEM_ITEMS)
+	@ApiOperation(value = "Get related items of item")
+	@Secured(UserRole.RIGHT_ITEMS_GET)
+	public Resources<ItemDto> getReltatedItems(
+			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId) throws DefaultException {
+
+		List<ItemDto> items = itemService.findRelatedItemDtosByItemId(itemId);
+		return new Resources<>(items, linkTo(methodOn(ItemRestService.class).getReltatedItems(itemId)).withSelfRel());
+	}
+
+	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ITEM_ITEMS)
+	@ApiOperation(value = "Add related item to item")
+	@Secured(UserRole.RIGHT_ITEMS_POST)
+	public Resource<ItemItemDto> addItemReltation(
+			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId,
+			@RequestBody(required = true) ItemItemDto dto) throws DefaultException {
+
+		ItemItemDto savedRelation = itemItemService.createDto(itemId, dto);
+		return new Resource<>(savedRelation,
+				linkTo(methodOn(ItemRestService.class).addItemReltation(itemId, dto)).withSelfRel());
+	}
+
+	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ITEM_ITEMS_ID)
+	@ApiOperation(value = "Delete relation between items")
+	@Secured(UserRole.RIGHT_ITEMS_POST)
+	public ResponseEntity<Void> deleteItemReltation(
+			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long item1Id,
+			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long item2Id) throws DefaultException {
+
+		itemItemService.deleteItemItem(item1Id, item2Id);
+		return ResponseEntity.noContent().build();
 	}
 
 }

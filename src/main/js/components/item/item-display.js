@@ -1,4 +1,4 @@
-import { Button, CircularProgress, Divider, IconButton, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from '@material-ui/core';
+import { Button, CircularProgress, Divider, IconButton, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography, Link as A } from '@material-ui/core';
 import Select, { components } from 'react-select';
 import Chip from '@material-ui/core/Chip';
 import { withStyles } from '@material-ui/core/styles';
@@ -14,6 +14,8 @@ import { convertToReadableFormat, convertToReadableFormatWithTime } from '../../
 import SimpleDialog from '../simple-dialog';
 import WithPermission from '../with-permission';
 import ItemTagsComponent from './item-tags';
+import { fullPathOfItemData } from '../../paths';
+import { Link } from 'react-router-dom';
 
 
 const styles = theme => ({
@@ -65,6 +67,11 @@ const styles = theme => ({
     editQuantityContainer: {
         display: 'flex',
         alignItems: 'center',
+    },
+    link: {
+        color: theme.palette.primary.main,
+        textDecoration: 'none',
+        cursor: 'pointer',
     },
 });
 
@@ -155,7 +162,6 @@ class StatefulItemDisplayComponent extends React.Component {
                             </>)}
                         </div>
                         <br />
-                        <br />
                         <div className={classes.bold}>
                             Maße
                     </div>
@@ -245,8 +251,11 @@ class StatefulItemDisplayComponent extends React.Component {
                 <br />
                 <div className={classes.container}>
                     <Typography variant="h6">Zugehörige Artikel</Typography>
-                    <a href="javascript:alert('Umleitung zum Nagel')">Nagel</a><br />
-                    <a href="javascript:alert('Umleitung zum Meißel')">Meißel</a><br />
+                    {item.items ? item.items.map(relatedItem => (
+                        <div key={relatedItem.id}>
+                            <Link className={classes.link} to={fullPathOfItemData(relatedItem.id)}>{relatedItem.name} ({relatedItem.identifier})</Link>
+                        </div>
+                    )) : (<CircularProgress />)}
                 </div>
             </div>
         );

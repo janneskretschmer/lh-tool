@@ -12,7 +12,6 @@ import de.lh.tool.domain.dto.ItemTagDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.Item;
-import de.lh.tool.domain.model.ItemItemTag;
 import de.lh.tool.domain.model.ItemTag;
 import de.lh.tool.repository.ItemTagRepository;
 import de.lh.tool.service.entity.interfaces.ItemItemTagService;
@@ -32,7 +31,7 @@ public class ItemTagServiceImpl extends BasicMappableEntityServiceImpl<ItemTagRe
 
 	@Override
 	@Transactional
-	public List<ItemTagDto> getItemTagDtosByItemId(Long itemId) throws DefaultException {
+	public List<ItemTagDto> findItemTagDtosByItemId(Long itemId) throws DefaultException {
 		return convertToDtoList(itemService.findById(itemId)
 				.orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException).getTags());
 	}
@@ -57,7 +56,7 @@ public class ItemTagServiceImpl extends BasicMappableEntityServiceImpl<ItemTagRe
 
 		ItemTag tag = findByName(tagName).orElseGet(() -> save(ItemTag.builder().name(tagName).build()));
 
-		itemItemTagService.save(ItemItemTag.builder().item(item).itemTag(tag).build());
+		itemItemTagService.createItemItemTag(item, tag);
 
 		return convertToDto(tag);
 	}

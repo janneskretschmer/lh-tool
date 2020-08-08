@@ -54,6 +54,8 @@ import {
     ITEM_TAG_PREFIX,
     ITEM_IMAGE,
     ITEM_IMAGE_ID,
+    ITEM_ITEMS,
+    ITEM_ITEMS_ID,
 
 } from './urlmappings';
 
@@ -404,6 +406,7 @@ export const apiEndpoints = {
         get: {
             method: 'GET',
             path: ITEM_PREFIX + '/',
+            queries: [FREE_TEXT_VARIABLE],
         },
         getById: {
             method: 'GET',
@@ -422,6 +425,11 @@ export const apiEndpoints = {
         },
         patch: {
             method: 'PATCH',
+            path: ITEM_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
+        delete: {
+            method: 'DELETE',
             path: ITEM_PREFIX + ID_EXTENSION,
             parameters: [ID_VARIABLE],
         },
@@ -483,6 +491,21 @@ export const apiEndpoints = {
         updateImage: {
             method: 'PUT',
             path: ITEM_PREFIX + ITEM_IMAGE_ID,
+            parameters: [ITEM_ID_VARIABLE, ID_VARIABLE],
+        },
+        getRelatedItems: {
+            method: 'GET',
+            path: ITEM_PREFIX + ITEM_ITEMS,
+            parameters: [ITEM_ID_VARIABLE],
+        },
+        createItemRelation: {
+            method: 'POST',
+            path: ITEM_PREFIX + ITEM_ITEMS,
+            parameters: [ITEM_ID_VARIABLE],
+        },
+        deleteItemRelation: {
+            method: 'DELETE',
+            path: ITEM_PREFIX + ITEM_ITEMS_ID,
             parameters: [ITEM_ID_VARIABLE, ID_VARIABLE],
         },
     },

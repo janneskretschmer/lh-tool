@@ -52,7 +52,7 @@ public class ItemHistoryServiceImpl
 		ValidationUtil.checkIdsNonNull(itemId);
 		Item item = itemService.findById(itemId).orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException);
 		if (!itemService.isViewAllowed(item)) {
-			ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
 		}
 		List<ItemHistory> history = item.getHistory().stream()
 				.sorted(Comparator.comparing(ItemHistory::getTimestamp).reversed()).collect(Collectors.toList());
@@ -66,7 +66,7 @@ public class ItemHistoryServiceImpl
 
 		ItemHistory event = findById(id).orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException);
 		if (!itemService.isViewAllowed(event.getItem())) {
-			ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
 		}
 
 		UserDto userDto = Optional.of(event).map(ItemHistory::getUser)

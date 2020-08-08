@@ -8,9 +8,7 @@ import de.lh.tool.domain.model.Item;
 
 public interface ItemService extends BasicEntityService<Item, Long> {
 
-	List<ItemDto> getItemDtos();
-
-	ItemDto getItemDtoById(Long id) throws DefaultException;
+	ItemDto findItemDtoById(Long id) throws DefaultException;
 
 	ItemDto createItemDto(ItemDto dto) throws DefaultException;
 
@@ -21,5 +19,9 @@ public interface ItemService extends BasicEntityService<Item, Long> {
 	ItemDto patchItemDto(ItemDto dto, Long id) throws DefaultException;
 
 	void deleteItemById(Long id) throws DefaultException;
+
+	List<ItemDto> findItemDtosByFilters(String freeText);
+
+	List<ItemDto> findRelatedItemDtosByItemId(Long itemId) throws DefaultException;
 
 }
