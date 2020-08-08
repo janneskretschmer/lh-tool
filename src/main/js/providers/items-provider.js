@@ -278,7 +278,7 @@ class StatefulItemsProvider extends React.Component {
             .then(notes => this.setState(prevState => {
 
                 const updatedItem = _.cloneDeep(prevState.selectedItem);
-                if (updatedItem.id == item.id) {
+                if (updatedItem.id === item.id) {
                     updatedItem.notes = notes;
                 }
 
@@ -378,7 +378,7 @@ class StatefulItemsProvider extends React.Component {
         }
 
 
-        const parsedItemId = parseInt(itemId);
+        const parsedItemId = parseInt(itemId, 10);
         if (this.state.items.has(parsedItemId)) {
             this.setState({ selectedItem: this.state.items.get(parsedItemId) },
                 () => this.loadHistory());
@@ -1003,7 +1003,7 @@ class StatefulItemsProvider extends React.Component {
                         item.imageName = resizedImage.name;
                         return {
                             selectedItem: item,
-                        }
+                        };
                     });
                     return imageCompression.getDataUrlFromFile(resizedImage);
                 }).then(base64 => this.setState(prevState => ({

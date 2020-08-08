@@ -72,7 +72,7 @@ class StatefulUsersProvider extends React.Component {
             });
             return;
         }
-        const parsedUserId = parseInt(userId);
+        const parsedUserId = parseInt(userId, 10);
         if (this.state.users.has(parsedUserId)) {
             const cachedUser = this.state.users.get(parsedUserId);
             if (cachedUser.projects && cachedUser.roles) {

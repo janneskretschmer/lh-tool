@@ -100,7 +100,7 @@ class StatefulPageProvider extends React.Component {
                         ...page,
                         path: match.url,
                         params: match.params,
-                    }
+                    };
                 }
             }
         }
