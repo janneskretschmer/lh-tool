@@ -5,9 +5,7 @@ import java.util.Objects;
 
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
-import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 public class ValidationUtil {
 	private ValidationUtil() {
 		throw new IllegalStateException("Utility class");

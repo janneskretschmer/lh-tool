@@ -268,7 +268,7 @@ class StatefulItemListComponent extends React.Component {
                     redirect={!hideAdd && fullPathOfItemData}
                     showAddButton={!hideAdd && showAddButton} />
             </>
-        )
+        );
     }
 }
 /* <TextField

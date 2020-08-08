@@ -213,7 +213,7 @@ public class ItemRestService {
 	public Resources<ItemHistoryDto> getHistory(
 			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId) throws DefaultException {
 
-		Collection<ItemHistoryDto> dtoList = itemHistoryService.getDtosByItemId(itemId);
+		Collection<ItemHistoryDto> dtoList = itemHistoryService.findDtosByItemId(itemId);
 
 		return new Resources<>(dtoList, linkTo(methodOn(ItemRestService.class).getHistory(itemId)).withSelfRel());
 	}
@@ -225,7 +225,7 @@ public class ItemRestService {
 			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId,
 			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id) throws DefaultException {
 
-		UserDto userDto = itemHistoryService.getUserNameDto(itemId, id);
+		UserDto userDto = itemHistoryService.findUserNameDto(itemId, id);
 
 		return new Resource<>(userDto,
 				linkTo(methodOn(ItemRestService.class).getHistoryUser(itemId, id)).withSelfRel());

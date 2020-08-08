@@ -43,17 +43,17 @@ class StatefulItemHistoryComponent extends React.Component {
     getHistoryActionText(event) {
         switch (event.type) {
             case 'CREATED':
-                return 'Angelegt'
+                return 'Angelegt';
             case 'UPDATED':
-                return 'Geändert'
+                return 'Geändert';
             case 'QUANTITY_CHANGED':
-                return 'Menge von ' + event.data.from + ' auf ' + event.data.to + ' geändert'
+                return 'Menge von ' + event.data.from + ' auf ' + event.data.to + ' geändert';
             case 'MOVED':
-                return 'Von ' + event.data.from + ' nach ' + event.data.to + ' verschoben'
+                return 'Von ' + event.data.from + ' nach ' + event.data.to + ' verschoben';
             case 'BROKEN':
-                return 'Defekt gemeldet'
+                return 'Defekt gemeldet';
             case 'FIXED':
-                return 'Reparatur gemeldet'
+                return 'Reparatur gemeldet';
         }
         return '';
     }

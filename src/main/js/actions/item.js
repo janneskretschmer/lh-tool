@@ -32,7 +32,7 @@ export function createItem(accessToken, item) {
         authToken: accessToken,
         data: item,
     })
-        .then(result => result.response)
+        .then(result => result.response);
 }
 
 export function updateItem(accessToken, item) {

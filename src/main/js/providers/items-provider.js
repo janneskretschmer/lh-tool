@@ -103,7 +103,7 @@ class StatefulItemsProvider extends React.Component {
                                     ...tag,
                                     value: tag.name,
                                     label: tag.name,
-                                }))
+                                }));
 
                                 const updatedItem = _.cloneDeep(prevState.selectedItem);
                                 updatedItem.tags = tags;
@@ -122,7 +122,7 @@ class StatefulItemsProvider extends React.Component {
                             .then(relatedItems => this.setState(prevState => {
 
                                 const updatedItem = _.cloneDeep(prevState.selectedItem);
-                                if (updatedItem.id == item.id) {
+                                if (updatedItem.id === item.id) {
                                     updatedItem.items = relatedItems;
                                 }
 
@@ -310,7 +310,7 @@ class StatefulItemsProvider extends React.Component {
             });
             return;
         }
-        const parsedItemId = parseInt(itemId);
+        const parsedItemId = parseInt(itemId, 10);
         if (this.state.items.has(parsedItemId)) {
             this.handleUpdatedAndSelectedItem(this.state.items.get(parsedItemId));
         } else {
@@ -339,7 +339,7 @@ class StatefulItemsProvider extends React.Component {
                 item.imageUrl = URL.createObjectURL(base64toBlob(image.image, image.mediaType));
             }
 
-            const selectedStoreId = prevState.slots && prevState.slots.get(item.slotId) && prevState.slots.get(item.slotId).storeId
+            const selectedStoreId = prevState.slots && prevState.slots.get(item.slotId) && prevState.slots.get(item.slotId).storeId;
             return {
                 items,
                 selectedItem: item,
@@ -373,7 +373,7 @@ class StatefulItemsProvider extends React.Component {
             return;
         }
         if (!itemId || isNaN(itemId)) {
-            this.showErrorMessage("Artikel nicht gefunden");
+            this.showErrorMessage('Artikel nicht gefunden');
             return;
         }
 
@@ -490,7 +490,7 @@ class StatefulItemsProvider extends React.Component {
             depth: item.depth || '',
             height: item.height || '',
             width: item.width || '',
-        }
+        };
     }
 
     deleteSelectedItem(callback) {
@@ -636,9 +636,9 @@ class StatefulItemsProvider extends React.Component {
         }
         let itemPromise;
         if (item.id) {
-            itemPromise = updateItem(this.props.sessionState.accessToken, item)
+            itemPromise = updateItem(this.props.sessionState.accessToken, item);
         } else {
-            itemPromise = createItem(this.props.sessionState.accessToken, item)
+            itemPromise = createItem(this.props.sessionState.accessToken, item);
         }
         return itemPromise
             .then(savedItem => Promise.all([
@@ -767,7 +767,7 @@ class StatefulItemsProvider extends React.Component {
                             actionsDisabled: false,
                         };
                     }))
-                    .catch(error => this.showErrorMessage("Fehler beim Ändern der Artikelzustände"))
+                    .catch(error => this.showErrorMessage('Fehler beim Ändern der Artikelzustände'))
                     .finally(() => finallyCallback())
             );
         } else {
@@ -860,7 +860,7 @@ class StatefulItemsProvider extends React.Component {
     }
 
     saveSlot() {
-        if (this.state.selectedSlotId && this.state.selectedSlotId != this.state.selectedItem.slotId) {
+        if (this.state.selectedSlotId && this.state.selectedSlotId !== this.state.selectedItem.slotId) {
             const itemId = this.state.selectedItem.id;
             this.setState({ actionsDisabled: true }, () =>
                 updateItemSlot(this.props.sessionState.accessToken, itemId, this.state.selectedSlotId).then(slotId => this.setState(prevState => {
@@ -911,7 +911,7 @@ class StatefulItemsProvider extends React.Component {
                             actionsDisabled: false,
                         };
                     }))
-                    .catch(error => this.showErrorMessage("Fehler beim Verschieben der Artikel"))
+                    .catch(error => this.showErrorMessage('Fehler beim Verschieben der Artikel'))
                     .finally(() => finallyCallback())
             );
         } else {
@@ -954,7 +954,7 @@ class StatefulItemsProvider extends React.Component {
     }
 
     changeModifiedQuantity(modifiedQuantity) {
-        this.setState({ modifiedQuantity })
+        this.setState({ modifiedQuantity });
     }
 
     saveQuantity() {
@@ -990,7 +990,7 @@ class StatefulItemsProvider extends React.Component {
 
     changeImage(uploadedFile) {
         if (uploadedFile) {
-            if (uploadedFile.type === "image/jpeg" || uploadedFile.type === "image/png") {
+            if (uploadedFile.type === 'image/jpeg' || uploadedFile.type === 'image/png') {
                 imageCompression(uploadedFile, {
                     maxSizeMB: 1, //max size 1MB
                     quality: 0.75,
@@ -1004,7 +1004,7 @@ class StatefulItemsProvider extends React.Component {
                         return {
                             selectedItem: item,
                         }
-                    })
+                    });
                     return imageCompression.getDataUrlFromFile(resizedImage);
                 }).then(base64 => this.setState(prevState => ({
                     modifiedImage: {
@@ -1016,7 +1016,7 @@ class StatefulItemsProvider extends React.Component {
                     },
                 })));
             } else {
-                this.showErrorMessage("Es können nur Bilder mit den Endungen .jpg und .png hochgeladen werden.")
+                this.showErrorMessage('Es können nur Bilder mit den Endungen .jpg und .png hochgeladen werden.');
             }
         }
     }

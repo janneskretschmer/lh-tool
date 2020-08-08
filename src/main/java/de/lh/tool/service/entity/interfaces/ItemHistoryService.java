@@ -10,13 +10,13 @@ import de.lh.tool.domain.model.ItemHistory;
 import de.lh.tool.domain.model.Slot;
 
 public interface ItemHistoryService extends BasicEntityService<ItemHistory, Long> {
-	Collection<ItemHistoryDto> getDtosByItemId(Long itemId) throws DefaultException;
+	Collection<ItemHistoryDto> findDtosByItemId(Long itemId) throws DefaultException;
 
 	void logNewBrokenState(Item item);
 
 	void logUpdated(Item item);
 
-	UserDto getUserNameDto(Long itemId, Long id) throws DefaultException;
+	UserDto findUserNameDto(Long itemId, Long id) throws DefaultException;
 
 	void logCreated(Item item);
 

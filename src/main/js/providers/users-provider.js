@@ -23,7 +23,7 @@ class StatefulUsersProvider extends React.Component {
             filterFreeText: '',
             filterProjectId: '',
             filterRole: '',
-        }
+        };
     }
 
     ///////////////////////////////////////////////////// Load & Store /////////////////////////////////////////////////////
@@ -105,7 +105,7 @@ class StatefulUsersProvider extends React.Component {
 
     resetSelectedUser() {
         if (this.state.selectedUser && this.state.selectedUser.id) {
-            this.setState({ selectedUser: this.state.users.get(this.state.selectedUser.id) })
+            this.setState({ selectedUser: this.state.users.get(this.state.selectedUser.id) });
         } else {
             this.setState({ selectedUser: this.createEmptyUser() });
         }
@@ -144,7 +144,7 @@ class StatefulUsersProvider extends React.Component {
                     )
                 ])
                     .then(() => savedUser)
-                    .then(savedUser => this.loadRolesAndProjects(savedUser))
+                    .then(savedUser => this.loadRolesAndProjects(savedUser));
             });
         } else {
             userPromise = createUser(this.props.sessionState.accessToken, user)
@@ -190,7 +190,7 @@ class StatefulUsersProvider extends React.Component {
         return Promise.all([
             this.findRolesForUser(user).then(roles => user = { ...user, roles }),
             this.findProjectsForUser(user).then(projects => user = { ...user, projects }),
-        ]).then(() => user)
+        ]).then(() => user);
     }
 
     ///////////////////////////////////////////////////// Roles /////////////////////////////////////////////////////
@@ -322,7 +322,7 @@ class StatefulUsersProvider extends React.Component {
     toggleRole(role) {
         const user = this.state.selectedUser;
         if (user && user.roles) {
-            const userRole = user.roles.find(userRole => userRole.role === role)
+            const userRole = user.roles.find(userRole => userRole.role === role);
             if (userRole) {
                 this.setState({
                     selectedUser: {
@@ -344,7 +344,7 @@ class StatefulUsersProvider extends React.Component {
     toggleProject(projectId) {
         const user = this.state.selectedUser;
         if (user && user.projects) {
-            const userProject = user.projects.find(userProject => userProject.projectId === projectId)
+            const userProject = user.projects.find(userProject => userProject.projectId === projectId);
             if (userProject) {
                 this.setState({
                     selectedUser: {

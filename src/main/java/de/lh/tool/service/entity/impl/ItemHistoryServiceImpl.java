@@ -48,7 +48,7 @@ public class ItemHistoryServiceImpl
 
 	@Override
 	@Transactional
-	public Collection<ItemHistoryDto> getDtosByItemId(Long itemId) throws DefaultException {
+	public Collection<ItemHistoryDto> findDtosByItemId(Long itemId) throws DefaultException {
 		ValidationUtil.checkIdsNonNull(itemId);
 		Item item = itemService.findById(itemId).orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException);
 		if (!itemService.isViewAllowed(item)) {
@@ -61,7 +61,7 @@ public class ItemHistoryServiceImpl
 
 	@Override
 	@Transactional
-	public UserDto getUserNameDto(Long itemId, Long id) throws DefaultException {
+	public UserDto findUserNameDto(Long itemId, Long id) throws DefaultException {
 		ValidationUtil.checkIdsNonNull(itemId, id);
 
 		ItemHistory event = findById(id).orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException);

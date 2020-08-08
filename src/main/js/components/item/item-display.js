@@ -135,7 +135,7 @@ class StatefulItemDisplayComponent extends React.Component {
                                     margin="dense"
                                     variant="outlined"
                                     type="number"
-                                    inputProps={{ min: "1" }}
+                                    inputProps={{ min: '1' }}
                                 />
                                 <IconButton
                                     disabled={itemsState.actionsDisabled}

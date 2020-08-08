@@ -1,4 +1,4 @@
-import { apiEndpoints, apiRequest } from "../apiclient";
+import { apiEndpoints, apiRequest } from '../apiclient';
 
 export function fetchItemTags(accessToken) {
     if (accessToken) {

@@ -5,12 +5,12 @@ PROPERTY_FILE=src/main/resources/credentials.properties
 
 function getProperty {
     PROPERTY_KEY=$1
-    PROPERTY_VALUE=`cat $PROPERTY_FILE | grep "$PROPERTY_KEY" | cut -d'=' -f2`
+    PROPERTY_VALUE=$(grep "$PROPERTY_KEY" $PROPERTY_FILE | cut -d'=' -f2)
     echo $PROPERTY_VALUE
 }
 
-DB_URL=$(getProperty "jdbc.url")
 #TODO: get database from url
+#DB_URL=$(getProperty "jdbc.url")
 DB="lhtool"
 DB_USER=$(getProperty "jdbc.username")
 export MYSQL_PWD=$(getProperty "jdbc.password")

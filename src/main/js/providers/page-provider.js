@@ -65,19 +65,20 @@ class StatefulPageProvider extends React.Component {
 
             if (matchedPage.tabs) {
                 tabParent = _.cloneDeep(matchedPage);
+                const params = tabParent.params;
                 tabParent.subPages = tabParent.subPages.map(page => {
                     let path = page.path;
                     // otherwise tabs would redirect to url/:id instead of url/1
-                    if (tabParent.params) {
-                        for (const param in tabParent.params) {
-                            path = path.replace(new RegExp(':' + param + '(\/|$)', 'g'), tabParent.params[param] + '$1');
+                    if (params) {
+                        for (const param in params) {
+                            path = path.replace(new RegExp(':' + param + '(\/|$)', 'g'), params[param] + '$1');
                         }
                     }
                     return {
                         ...page,
                         path,
-                    }
-                })
+                    };
+                });
 
             }
             matchedPage = this.getMatchingSubPage(matchedPage, path);

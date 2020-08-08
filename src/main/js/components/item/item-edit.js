@@ -123,7 +123,7 @@ class StatefulItemEditComponent extends React.Component {
                         margin="dense"
                         variant="outlined"
                         type="number"
-                        inputProps={{ min: "1" }}
+                        inputProps={{ min: '1' }}
                     />
                     <TextField
                         id="unit"
@@ -154,7 +154,7 @@ class StatefulItemEditComponent extends React.Component {
                     margin="dense"
                     variant="outlined"
                     type="number"
-                    inputProps={{ min: "0" }}
+                    inputProps={{ min: '0' }}
                 />
                 <TextField
                     id="height"
@@ -165,7 +165,7 @@ class StatefulItemEditComponent extends React.Component {
                     margin="dense"
                     variant="outlined"
                     type="number"
-                    inputProps={{ min: "0" }}
+                    inputProps={{ min: '0' }}
                 />
                 <TextField
                     id="depth"
@@ -176,7 +176,7 @@ class StatefulItemEditComponent extends React.Component {
                     margin="dense"
                     variant="outlined"
                     type="number"
-                    inputProps={{ min: "0" }}
+                    inputProps={{ min: '0' }}
                 />
                 <br />
                 <FormControlLabel
