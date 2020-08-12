@@ -170,7 +170,6 @@ export function convertToIdMap(idObjectList) {
     return idMap;
 }
 
-
 export function encodeNumber(number) {
     let rest;
     let divisable = number;
