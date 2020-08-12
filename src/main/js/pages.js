@@ -1,4 +1,4 @@
-import { fullPathOf, fullPathOfItems, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfSettings, fullPathOfStores, fullPathOfUsersSettings, fullPathOfUserSettings, fullPathOfStore, fullPathOfDataProtection, fullPathOfImprint, fullPathOfShiftsSettings, fullPathOfShiftSettings, fullPathOfProjectsSettings, fullPathOfProjectSettings, fullPathOfItem, fullPathOfItemData, fullPathOfItemHistory } from './paths';
+import { fullPathOf, fullPathOfItems, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfSettings, fullPathOfStores, fullPathOfUsersSettings, fullPathOfUserSettings, fullPathOfStore, fullPathOfDataProtection, fullPathOfImprint, fullPathOfShiftsSettings, fullPathOfShiftSettings, fullPathOfProjectsSettings, fullPathOfProjectSettings, fullPathOfItem, fullPathOfItemData, fullPathOfItemHistory, fullPathOfStoresSettings, fullPathOfStoreSettings } from './paths';
 
 const PAGES = {
     title: 'LH-Tool',
@@ -77,6 +77,17 @@ const PAGES = {
                         {
                             path: fullPathOfProjectSettings(),
                             permissions: ['ROLE_RIGHT_PROJECTS_POST'],
+                        }
+                    ]
+                },
+                {
+                    title: 'Lager',
+                    path: fullPathOfStoresSettings(),
+                    permissions: ['ROLE_RIGHT_STORES_POST'],
+                    subPages: [
+                        {
+                            path: fullPathOfStoreSettings(),
+                            permissions: ['ROLE_RIGHT_STORES_POST'],
                         }
                     ]
                 },

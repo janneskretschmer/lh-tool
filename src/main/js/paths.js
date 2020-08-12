@@ -10,7 +10,8 @@ export const fullPathOfNeedQuantities = () => fullPathOf('/needs/quantities/');
 export const fullPathOfNeedApply = () => fullPathOf('/needs/apply/');
 export const fullPathOfNeedApprove = () => fullPathOf('/needs/approve/');
 
-export const fullPathOfStores = () => fullPathOf('/stores/');
+//TODO delete old paths:
+export const fullPathOfStores = () => fullPathOf('/stores');
 export const fullPathOfStore = (id) => fullPathOf('/stores/' + (id ? id : ':id'));
 
 export const fullPathOfSlots = () => fullPathOf('/slots');
@@ -32,3 +33,6 @@ export const fullPathOfUserSettings = (id) => fullPathOf('/settings/users/' + (i
 
 export const fullPathOfProjectsSettings = () => fullPathOf('/settings/projects');
 export const fullPathOfProjectSettings = (id) => fullPathOf('/settings/projects/' + (id ? id : ':projectId'));
+
+export const fullPathOfStoresSettings = () => fullPathOf('/settings/stores');
+export const fullPathOfStoreSettings = (id) => fullPathOf('/settings/stores/' + (id ? id : ':id'));
