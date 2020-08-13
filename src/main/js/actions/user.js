@@ -87,7 +87,7 @@ export function fetchUserRoles(accessToken, { id }) {
         parameters: {
             [ID_VARIABLE]: id,
         }
-    }).then(result => result.response.content)
+    }).then(result => result.response.content);
 }
 
 export function createUserRole(accessToken, userRole) {

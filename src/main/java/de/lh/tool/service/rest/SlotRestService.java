@@ -33,8 +33,8 @@ public class SlotRestService {
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of own slots")
 	@Secured(UserRole.RIGHT_SLOTS_GET)
-	public Resources<SlotDto> getByStore(@RequestParam(name = UrlMappings.STORE_VARIABLE) Long storeId)
-			throws DefaultException {
+	public Resources<SlotDto> getByStore(
+			@RequestParam(name = UrlMappings.STORE_VARIABLE, required = false) Long storeId) throws DefaultException {
 
 		List<SlotDto> dtoList = slotService.getSlotDtosByStore(storeId);
 

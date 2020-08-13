@@ -17,6 +17,7 @@ public class UserTest {
 	private List<String> emails;
 	private HttpStatus expectedHttpCode;
 	private String expectedResponse;
+	private boolean expectedResponseIsRegex;
 	private List<String> validationQueries;
 	private List<EmailTest> expectedEmails;
 }

@@ -13,10 +13,15 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import SearchIcon from '@material-ui/icons/Search';
 import React from 'react';
 import { Redirect } from 'react-router';
-import { fullPathOfItem } from '../../paths';
+import { fullPathOfItem, fullPathOfItemData } from '../../paths';
 import { SessionContext } from '../../providers/session-provider';
 import { withContext } from '../../util';
 import PagedTable from '../table';
+import { ItemsContext } from '../../providers/items-provider';
+import { CircularProgress, DialogActions, DialogContent, DialogTitle, Dialog } from '@material-ui/core';
+import WithPermission from '../with-permission';
+import SimpleDialog from '../simple-dialog';
+import ItemSlotEditComponent from './item-slot';
 
 
 const styles = theme => ({
@@ -46,146 +51,23 @@ const styles = theme => ({
 });
 
 @withStyles(styles)
-@withContext('sessionState', SessionContext)
-export default class ItemListComponent extends React.Component {
+class StatefulItemListComponent extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            // TODO remove dummy data
-            rows: [
-                {
-                    id: 1235, name: 'Hammer', store: 1, slot: 1, quantity: 3, unit: 'Stueck', broken: false, rentals: [
-                        { id: 1, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                        { id: 2, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
-                        { id: 3, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
-                        { id: 4, userName: "Bauhelfer 34", timestamp: null, givenBack: true },
-                        { id: 5, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
-                        { id: 6, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                        { id: 7, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                        { id: 8, userName: "Bauhelfer 4", timestamp: null, givenBack: true },
-                        { id: 9, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
-                        { id: 10, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                        { id: 11, userName: "Bauhelfer 5", timestamp: null, givenBack: false },
-                    ]
-                },
-                {
-                    id: 2623, name: 'Hammer', store: 2, slot: 2, quantity: 3, unit: 'Stueck', broken: false, rentals: [
-                        { id: 1, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                        { id: 2, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
-                        { id: 3, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
-                        { id: 4, userName: "Bauhelfer 34", timestamp: null, givenBack: true },
-                        { id: 5, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
-                        { id: 6, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                    ]
-                },
-                {
-                    id: 302934, name: 'Meissel', store: 1, slot: 3, quantity: 4, unit: 'Stueck', broken: false, rentals: [
-                        { id: 1, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                        { id: 2, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
-                        { id: 3, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
-                        { id: 4, userName: "Bauhelfer 34", timestamp: null, givenBack: true },
-                        { id: 5, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
-                        { id: 6, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                        { id: 7, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                        { id: 8, userName: "Bauhelfer 4", timestamp: null, givenBack: true },
-                    ]
-                },
-                {
-                    id: 423562, name: 'Presslufthammer', slot: 4, store: 1, quantity: 5, unit: 'Stueck', broken: false, rentals: [
-                        { id: 1, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                        { id: 2, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
-                        { id: 3, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
-                        { id: 4, userName: "Bauhelfer 34", timestamp: null, givenBack: true },
-                        { id: 5, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
-                        { id: 6, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                        { id: 7, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                        { id: 8, userName: "Bauhelfer 4", timestamp: null, givenBack: true },
-                        { id: 9, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
-                        { id: 10, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                        { id: 11, userName: "Bauhelfer 5", timestamp: null, givenBack: false },
-                    ]
-                },
-                {
-                    id: 594346, name: 'Schlauch dick', slot: 5, store: 2, quantity: 2, unit: 'm', broken: false, rentals: [
-                        { id: 1, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                        { id: 2, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
-                        { id: 3, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
-                        { id: 4, userName: "Bauhelfer 34", timestamp: null, givenBack: true },
-                        { id: 5, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
-                    ]
-                },
-                {
-                    id: 623843, name: 'Schlauch duenn', slot: 1, store: 2, quantity: 2, unit: 'm', broken: true, rentals: [
-                        { id: 1, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                    ]
-                },
-                {
-                    id: 712582, name: 'Schlauch dick', slot: 2, store: 1, quantity: 4, unit: 'm', broken: true, rentals: [
-                        { id: 1, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                        { id: 2, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
-                    ]
-                },
-                {
-                    id: 85124, name: 'Silikon', store: 2, slot: 3, quantity: 2, unit: 'Stueck', broken: false, rentals: [
-                        { id: 1, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                        { id: 2, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
-                        { id: 3, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
-                        { id: 4, userName: "Bauhelfer 34", timestamp: null, givenBack: true },
-                        { id: 5, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
-                        { id: 11, userName: "Bauhelfer 5", timestamp: null, givenBack: false },
-                    ]
-                },
-                {
-                    id: 91252, name: 'Zange', store: 2, slot: 4, quantity: 3, unit: 'Stueck', broken: false, rentals: [
-                        { id: 1, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                        { id: 2, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
-                    ]
-                },
-                {
-                    id: 102512, name: 'Zange', store: 3, slot: 5, quantity: 2, unit: 'Stueck', broken: false, rentals: [
-                        { id: 1, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                        { id: 2, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
-                        { id: 3, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
-                        { id: 4, userName: "Bauhelfer 34", timestamp: null, givenBack: true },
-                        { id: 5, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
-                    ]
-                },
-                {
-                    id: 1132891, name: 'Zollstock', store: 2, slot: 1, quantity: 2, unit: 'Stueck', broken: true, rentals: [
-                        { id: 1, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                        { id: 2, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
-                        { id: 3, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
-                        { id: 4, userName: "Bauhelfer 34", timestamp: null, givenBack: true },
-                        { id: 5, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
-                        { id: 6, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                        { id: 9, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
-                        { id: 10, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                    ]
-                },
-                {
-                    id: 1228129, name: 'Zollstock', store: 1, slot: 3, quantity: 7, unit: 'Stueck', broken: false, rentals: [
-                        { id: 1, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                        { id: 2, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
-                        { id: 3, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
-                        { id: 4, userName: "Bauhelfer 34", timestamp: null, givenBack: true },
-                        { id: 5, userName: "Bauhelfer 2", timestamp: null, givenBack: true },
-                        { id: 6, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                        { id: 7, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                        { id: 8, userName: "Bauhelfer 4", timestamp: null, givenBack: true },
-                        { id: 9, userName: "Bauhelfer 5", timestamp: null, givenBack: true },
-                        { id: 10, userName: "Bauhelfer 1", timestamp: null, givenBack: true },
-                        { id: 11, userName: "Bauhelfer 5", timestamp: null, givenBack: false },
-                    ]
-                },
-            ].filter(v => !props.storeId || v.store === props.storeId && !props.slotId || v.slot == props.slotId),//.sort((a, b) => (a.name < b.name ? -1 : 1)),
+            expandFilters: false,
 
-            showFilters: false,
-            searchTechnicalCrew: '',
-            searchTag: '',
-            searchStore: '',
-            searchSlot: '',
+            slotDialogOpen: false,
         };
+    }
+
+    componentDidMount() {
+        this.loadItems();
+    }
+
+    loadItems() {
+        this.props.itemsState.loadItems(this.props.keepSelectedItem);
     }
 
     handleToggleShowFilters = () => {
@@ -208,204 +90,371 @@ export default class ItemListComponent extends React.Component {
         this.setState({ searchSlot: event.target.value });
     }
 
-    getState(item) {
-        if (item.broken) {
-            return "Defekt";
-        }
-        let lastRental = item.rentals[item.rentals.length - 1];
-        if (!lastRental.givenBack) {
-            return "Ausgeliehen an " + lastRental.userName;
-        }
-        return "Verfügbar";
+    toggleSlotDialog() {
+        this.setState(prevState => ({ slotDialogOpen: !prevState.slotDialogOpen }));
+    }
+
+    toggleExpandFilters() {
+        this.setState(prevState => ({
+            expandFilters: !prevState.expandFilters,
+        }));
     }
 
     render() {
-        const { classes, storeId, slotId } = this.props;
-        const { rows, rowsPerPage, page, showFilters, searchTechnicalCrew, searchTag, searchStore, searchSlot, selected } = this.state;
-        const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
-        const singlePage = emptyRows < rows.length;
+        const { classes, itemsState, sessionState, hideAdd, hideHeader, hiddenItemId, selected, onToggleSelect } = this.props;
+        const { slotDialogOpen, expandFilters } = this.state;
+        const items = itemsState.getAssembledItemList().filter(item => item.id !== hiddenItemId);
+        const showAddButton = sessionState.hasPermission('ROLE_RIGHT_ITEMS_POST');
+
         if (this.state.redirect) {
             return (<Redirect to={fullPathOfItem(this.state.redirect)} />);
         }
+
+        if (!items) {
+            return (<CircularProgress />);
+        }
+
         return (
-            <SessionContext.Consumer>
-                {sessionState => (
-                    <>
+            <>
+                <PagedTable
+                    selected={selected}
+                    onToggleSelect={onToggleSelect}
+                    SelectionHeader={!hideHeader && (props => (
+                        <>
+                            <WithPermission permission="ROLE_RIGHT_ITEMS_PATCH_SLOT">
+                                <Button
+                                    variant="contained"
+                                    className={classes.button}
+                                    disabled={itemsState.actionsDisabled}
+                                    onClick={() => this.toggleSlotDialog()}
+                                >
+                                    Verschieben
+                                    </Button>
+                                <Dialog
+                                    open={slotDialogOpen}
+                                    transitionDuration={0}
+                                    keepMounted
+                                    onClose={() => this.toggleSlotDialog()}
+                                    aria-labelledby="alert-dialog-slide-title"
+                                    aria-describedby="alert-dialog-slide-description"
+                                >
+                                    <DialogTitle id="alert-dialog-slide-title">
+                                        Neuer Lagerplatz
+                                    </DialogTitle>
+                                    <DialogContent>
+                                        <ItemSlotEditComponent />
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button onClick={() => this.toggleSlotDialog()} color="secondary">
+                                            Abbrechen
+                                        </Button>
+                                        <Button color="primary" onClick={() => {
+                                            itemsState.bulkSaveSlot(props.selected, () => props.resetSelection());
+                                            this.toggleSlotDialog();
+                                        }}>
+                                            Speichern
+                                        </Button>
+                                    </DialogActions>
+                                </Dialog>
+                            </WithPermission>
+                            <Button
+                                variant="contained"
+                                className={classes.button}
+                                onClick={() => itemsState.bulkUpdateBrokenState(props.selected, true, () => props.resetSelection())}
+                                disabled={itemsState.actionsDisabled}
+                            >
+                                Defekt
+                            </Button>
+                            <Button
+                                variant="contained"
+                                className={classes.button}
+                                onClick={() => itemsState.bulkUpdateBrokenState(props.selected, false, () => props.resetSelection())}
+                                disabled={itemsState.actionsDisabled}
+                            >
+                                Repariert
+                            </Button>
+                            <Button
+                                disabled={itemsState.actionsDisabled}
+                                variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Ausleihen"')}>
+                                Ausleihen
+                            </Button>
+                            <Button
+                                disabled={itemsState.actionsDisabled}
+                                variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Zurückgeben"')}>
+                                Zurückgeben
+                            </Button>
+                            <SimpleDialog
+                                title="Löschen bestätigen"
+                                okText="Ja"
+                                cancelText="Nein"
+                                text={`Sollen die ${props.selected.length} ausgewählten Artikel wirklich gelöscht werden?`}
+                                onOK={() => { itemsState.bulkDeleteItems(props.selected); props.resetSelection(); }}
+                            >
+                                <Button
+                                    variant="outlined"
+                                    className={classes.button}
+                                    onClick={() => { }}
+                                    disabled={itemsState.actionsDisabled}
+                                >
+                                    Löschen
+                                </Button>
+                            </SimpleDialog>
+                        </>
+                    ))}
+
+                    filter={(<>
                         <TextField
                             id="free-search"
+                            value={itemsState.filterFreeText}
+                            onChange={event => itemsState.changeFreeTextFilter(event.target.value)}
                             variant="outlined"
                             label="Freitextsuche"
                             margin="dense"
-                            InputProps={{
-                                startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
-                            }}
                         />
-                        <IconButton className={classes.button} variant="outlined" onClick={this.handleToggleShowFilters.bind(this)}>
-                            {showFilters ? (<ExpandLessIcon />) : (<ExpandMoreIcon />)}
+                        <IconButton className={classes.button} onClick={() => this.toggleExpandFilters()}>
+                            {expandFilters ? (<ExpandLessIcon />) : (<ExpandMoreIcon />)}
                         </IconButton>
-                        {showFilters ? (
-                            <>
-                                <br />
-                                <TextField
-                                    className={classes.searchInput}
-                                    id="name-search"
-                                    variant="outlined"
-                                    label="Bezeichnung"
-                                    margin="dense"
-                                />
-                                <TextField
-                                    className={classes.searchInput}
-                                    id="description-search"
-                                    variant="outlined"
-                                    label="Beschreibung"
-                                    margin="dense"
-                                />
-                                <br />
-                                <FormControl className={classes.formControl}>
-                                    <InputLabel htmlFor="technical-crew">Gewerk</InputLabel>
-                                    <Select
-                                        value={searchTechnicalCrew}
-                                        onChange={this.handleChangeSearchTechnicalCrew.bind(this)}
-                                        inputProps={{
-                                            name: 'technical-crew',
-                                            id: 'technical-crew',
-                                        }}
-                                    >
-                                        <MenuItem value=""></MenuItem>
-                                        <MenuItem value={1}>Maler</MenuItem>
-                                        <MenuItem value={2}>Elektriker</MenuItem>
-                                        <MenuItem value={3}>Zimmerer</MenuItem>
-                                    </Select>
-                                </FormControl>
-                                <FormControl className={classes.formControl}>
-                                    <InputLabel htmlFor="tag">Tag</InputLabel>
-                                    <Select
-                                        value={searchTag}
-                                        onChange={this.handleChangeSearchTag.bind(this)}
-                                        inputProps={{
-                                            name: 'tag',
-                                            id: 'tag',
-                                        }}
-                                    >
-                                        <MenuItem value=""></MenuItem>
-                                        <MenuItem value={1}>Hammer</MenuItem>
-                                        <MenuItem value={2}>Absolut</MenuItem>
-                                        <MenuItem value={3}>Schlagen</MenuItem>
-                                    </Select>
-                                </FormControl>
-                                <FormControl className={classes.formControl}>
-                                    <InputLabel htmlFor="store">Lager</InputLabel>
-                                    <Select
-                                        value={searchStore}
-                                        onChange={this.handleChangeSearchStore.bind(this)}
-                                        inputProps={{
-                                            name: 'store',
-                                            id: 'store',
-                                        }}
-                                    >
-                                        <MenuItem value=""></MenuItem>
-                                        <MenuItem value={1}>Kehlheim</MenuItem>
-                                        <MenuItem value={2}>Stuttgart</MenuItem>
-                                        <MenuItem value={3}>Vöhringen</MenuItem>
-                                    </Select>
-                                </FormControl>
-                                <FormControl className={classes.formControl}>
-                                    <InputLabel htmlFor="slot">Platz</InputLabel>
-                                    <Select
-                                        value={searchSlot}
-                                        onChange={this.handleChangeSearchSlot.bind(this)}
-                                        inputProps={{
-                                            name: 'slot',
-                                            id: 'slot',
-                                        }}
-                                    >
-                                        <MenuItem value=""></MenuItem>
-                                        <MenuItem value={1}>A1</MenuItem>
-                                        <MenuItem value={2}>B1</MenuItem>
-                                        <MenuItem value={3}>B2</MenuItem>
-                                    </Select>
-                                </FormControl>
-                                <br />
-                            </>
-                        ) : null}
-                        <Button variant="contained" onClick={() => alert('Vergeblich nach der Search-Funktion gesucht ;(')}>
-                            Suchen
-                        </Button>
+                        <IconButton className={classes.button} onClick={() => this.loadItems()}>
+                            <SearchIcon />
+                        </IconButton>
+                        <br />
+                        {(expandFilters || itemsState.filterProjectId) && (<>
+                            TODO: Name, ID, Tag, Status (Verfügbar, Defekt, Ausgeliehen), Lager, Lagerplatz, Projekt, Menge (unter, gleich, über), Maße (unter, gleich, über), Gewerk, Verbrauchsgegenstand, Wetterbeständig
+                        </>)}
+                    </>)}
+                    headers={[
+                        {
+                            key: 'name',
+                            name: 'Bezeichnung',
+                        },
+                        {
+                            key: 'identifier',
+                            name: 'ID',
+                        },
+                        {
+                            key: 'state',
+                            name: 'Status',
+                        },
+                        {
+                            key: 'storeName',
+                            name: 'Lager',
+                            // hidden: !!storeId,
+                            align: 'right',
+                        },
+                        {
+                            key: 'slotName',
+                            name: 'Platz',
+                            // hidden: !!slotId,
+                            align: 'right',
+                        },
+                        {
+                            key: 'quantityWithUnit',
+                            name: 'Menge',
+                            align: 'right',
+                        },
+                        {
+                            key: 'technicalCrewName',
+                            name: 'Gewerk',
+                            align: 'right',
+                        },
+                        // {
+                        //     key: 'popularity',
+                        //     name: 'Beliebtheit',
+                        //     align: 'right',
+                        // },
 
-
-
-                        <PagedTable
-                            selectionHeader={(
-                                <>
-                                    <Button variant="outlined" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
-                                        Löschen
-                                    </Button>
-                                    <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Verschieben"')}>
-                                        Verschieben
-                                    </Button>
-                                    <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
-                                        Defekt
-                                     </Button>
-                                    <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
-                                        Repariert
-                                    </Button>
-                                    <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Ausleihen"')}>
-                                        Ausleihen
-                                    </Button>
-                                    <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Zurückgeben"')}>
-                                        Zurückgeben
-                                    </Button>
-                                </>
-                            )}
-                            headers={[
-                                {
-                                    key: 'name',
-                                    name: 'Bezeichnung',
-                                },
-                                {
-                                    key: 'identifier',
-                                    name: 'ID',
-                                },
-                                {
-                                    key: 'state',
-                                    name: 'Status',
-                                },
-                                {
-                                    key: 'store',
-                                    name: 'Lager',
-                                    hidden: !!storeId,
-                                    align: 'right',
-                                },
-                                {
-                                    key: 'slot',
-                                    name: 'Platz',
-                                    hidden: !!slotId,
-                                    align: 'right',
-                                },
-                                {
-                                    key: 'quantity',
-                                    name: 'Menge',
-                                    align: 'right',
-                                },
-                                {
-                                    key: 'popularity',
-                                    name: 'Beliebtheit',
-                                    align: 'right',
-                                },
-
-                            ]}
-                            rows={rows.map(row => {
-                                return {
-                                    ...row,
-                                    state: this.getState(row),
-                                    popularity: row.rentals.length,
-                                    quantity: row.quantity + ' ' + row.unit,
-                                }
-                            })}
-                            redirect={fullPathOfItem} />
-                    </>
-                )}
-            </SessionContext.Consumer>
+                    ]}
+                    rows={items}
+                    redirect={!hideAdd && fullPathOfItemData}
+                    showAddButton={!hideAdd && showAddButton} />
+            </>
         );
     }
 }
+/* <TextField
+    id="free-search"
+    variant="outlined"
+    label="Freitextsuche"
+    margin="dense"
+    InputProps={{
+        startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
+    }}
+/>
+<IconButton className={classes.button} variant="outlined" onClick={this.handleToggleShowFilters.bind(this)}>
+    {showFilters ? (<ExpandLessIcon />) : (<ExpandMoreIcon />)}
+</IconButton>
+{showFilters ? (
+    <>
+        <br />
+        <TextField
+            className={classes.searchInput}
+            id="name-search"
+            variant="outlined"
+            label="Bezeichnung"
+            margin="dense"
+        />
+        <TextField
+            className={classes.searchInput}
+            id="description-search"
+            variant="outlined"
+            label="Beschreibung"
+            margin="dense"
+        />
+        <br />
+        <FormControl className={classes.formControl}>
+            <InputLabel htmlFor="technical-crew">Gewerk</InputLabel>
+            <Select
+                value={searchTechnicalCrew}
+                onChange={this.handleChangeSearchTechnicalCrew.bind(this)}
+                inputProps={{
+                    name: 'technical-crew',
+                    id: 'technical-crew',
+                }}
+            >
+                <MenuItem value=""></MenuItem>
+                <MenuItem value={1}>Maler</MenuItem>
+                <MenuItem value={2}>Elektriker</MenuItem>
+                <MenuItem value={3}>Zimmerer</MenuItem>
+            </Select>
+        </FormControl>
+        <FormControl className={classes.formControl}>
+            <InputLabel htmlFor="tag">Tag</InputLabel>
+            <Select
+                value={searchTag}
+                onChange={this.handleChangeSearchTag.bind(this)}
+                inputProps={{
+                    name: 'tag',
+                    id: 'tag',
+                }}
+            >
+                <MenuItem value=""></MenuItem>
+                <MenuItem value={1}>Hammer</MenuItem>
+                <MenuItem value={2}>Absolut</MenuItem>
+                <MenuItem value={3}>Schlagen</MenuItem>
+            </Select>
+        </FormControl>
+        <FormControl className={classes.formControl}>
+            <InputLabel htmlFor="store">Lager</InputLabel>
+            <Select
+                value={searchStore}
+                onChange={this.handleChangeSearchStore.bind(this)}
+                inputProps={{
+                    name: 'store',
+                    id: 'store',
+                }}
+            >
+                <MenuItem value=""></MenuItem>
+                <MenuItem value={1}>Kehlheim</MenuItem>
+                <MenuItem value={2}>Stuttgart</MenuItem>
+                <MenuItem value={3}>Vöhringen</MenuItem>
+            </Select>
+        </FormControl>
+        <FormControl className={classes.formControl}>
+            <InputLabel htmlFor="slot">Platz</InputLabel>
+            <Select
+                value={searchSlot}
+                onChange={this.handleChangeSearchSlot.bind(this)}
+                inputProps={{
+                    name: 'slot',
+                    id: 'slot',
+                }}
+            >
+                <MenuItem value=""></MenuItem>
+                <MenuItem value={1}>A1</MenuItem>
+                <MenuItem value={2}>B1</MenuItem>
+                <MenuItem value={3}>B2</MenuItem>
+            </Select>
+        </FormControl>
+        <br />
+    </>
+) : null}
+<Button variant="contained" onClick={() => alert('Vergeblich nach der Search-Funktion gesucht ;(')}>
+    Suchen
+        </Button> 
+        
+<PagedTable
+    selectionHeader={(
+        <>
+            <Button variant="outlined" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
+                Löschen
+                    </Button>
+            <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Verschieben"')}>
+                Verschieben
+                    </Button>
+            <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
+                Defekt
+                     </Button>
+            <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
+                Repariert
+                    </Button>
+            <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Ausleihen"')}>
+                Ausleihen
+                    </Button>
+            <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Zurückgeben"')}>
+                Zurückgeben
+                    </Button>
+        </>
+    )}
+    headers={[
+        {
+            key: 'name',
+            name: 'Bezeichnung',
+        },
+        {
+            key: 'identifier',
+            name: 'ID',
+        },
+        {
+            key: 'state',
+            name: 'Status',
+        },
+        {
+            key: 'store',
+            name: 'Lager',
+            hidden: !!storeId,
+            align: 'right',
+        },
+        {
+            key: 'slot',
+            name: 'Platz',
+            hidden: !!slotId,
+            align: 'right',
+        },
+        {
+            key: 'quantity',
+            name: 'Menge',
+            align: 'right',
+        },
+        {
+            key: 'popularity',
+            name: 'Beliebtheit',
+            align: 'right',
+        },
+
+    ]}
+    rows={rows.map(row => {
+        return {
+            ...row,
+            state: this.getState(row),
+            popularity: row.rentals.length,
+            quantity: row.quantity + ' ' + row.unit,
+        }
+    })}
+    redirect={fullPathOfItem} />
+</> */
+
+
+const ItemListComponent = props => (
+    <>
+        <SessionContext.Consumer>
+            {sessionState => (
+                <ItemsContext.Consumer>
+                    {itemsState => (
+                        <StatefulItemListComponent {...props} sessionState={sessionState} itemsState={itemsState} />
+                    )}
+                </ItemsContext.Consumer>
+            )}
+        </SessionContext.Consumer>
+    </>
+);
+export default ItemListComponent;

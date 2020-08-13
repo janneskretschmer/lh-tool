@@ -1,19 +1,20 @@
 package de.lh.tool.service.entity.interfaces;
 
 import java.util.List;
+import java.util.Optional;
 
 import de.lh.tool.domain.dto.ItemTagDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.model.ItemTag;
 
-public interface ItemTagService extends BasicEntityService<ItemTag, Long> {
+public interface ItemTagService extends MappableEntityService<ItemTag, ItemTagDto, Long> {
 
-	ItemTagDto getItemTagDtoById(Long id) throws DefaultException;
+	List<ItemTagDto> findItemTagDtosByItemId(Long itemId) throws DefaultException;
 
-	ItemTagDto createItemTagDto(ItemTagDto dto) throws DefaultException;
+	Optional<ItemTag> findByName(String name);
 
-	ItemTagDto updateItemTagDto(ItemTagDto dto, Long id) throws DefaultException;
+	ItemTagDto createItemTagForItem(Long itemId, ItemTagDto dto) throws DefaultException;
 
-	List<ItemTagDto> getItemTagDtosByItemId(Long itemId) throws DefaultException;
+	void deleteItemTagFromItem(Long itemId, Long itemTagId) throws DefaultException;
 
 }

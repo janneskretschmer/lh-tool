@@ -7,6 +7,8 @@ export const USER_ID_VARIABLE = 'user_id';
 export const PROJECT_ID_VARIABLE = 'project_id';
 export const HELPER_TYPE_ID_VARIABLE = 'helper_type_id';
 export const PROJECT_HELPER_TYPE_ID_VARIABLE = 'project_helper_type_id';
+export const ITEM_ID_VARIABLE = 'item_id';
+export const NOTE_ID_VARIABLE = 'note_id';
 
 export const DATE_VARIABLE = 'date';
 export const ROLE_VARIABLE = 'role';
@@ -52,9 +54,19 @@ export const STORE_PROJECTS = ID_EXTENSION + '/projects';
 export const SLOT_PREFIX = REST_PREFIX + '/slots';
 
 export const ITEM_PREFIX = REST_PREFIX + '/items';
-export const ITEM_NOTES = ID_EXTENSION + '/notes';
-export const ITEM_TAGS = ID_EXTENSION + '/tags';
-export const ITEM_HISTORY = ID_EXTENSION + '/history';
+export const ITEM_NOTES = '/{' + ITEM_ID_VARIABLE + '}/notes';
+export const ITEM_NOTES_ID = ITEM_NOTES + '/{' + NOTE_ID_VARIABLE + '}';
+export const ITEM_NOTES_USER = ITEM_NOTES_ID + '/user';
+export const ITEM_TAGS = '/{' + ITEM_ID_VARIABLE + '}/tags';
+export const ITEM_TAGS_ID = ITEM_TAGS + ID_EXTENSION;
+export const ITEM_HISTORY = '/{' + ITEM_ID_VARIABLE + '}/history';
+export const ITEM_HISTORY_USER = ITEM_HISTORY + '/{' + ID_VARIABLE + '}/user';
+export const ITEM_IMAGE = '/{' + ITEM_ID_VARIABLE + '}/image';
+export const ITEM_IMAGE_ID = ITEM_IMAGE + ID_EXTENSION;
+export const ITEM_ITEMS = '/{' + ITEM_ID_VARIABLE + '}/items';
+export const ITEM_ITEMS_ID = ITEM_ITEMS + ID_EXTENSION;
+
+export const ITEM_TAG_PREFIX = REST_PREFIX + '/item_tags';
 
 export const TECHNICAL_CREW_PREFIX = REST_PREFIX + '/technical_crews';
 

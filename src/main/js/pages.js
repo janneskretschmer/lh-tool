@@ -1,4 +1,4 @@
-import { fullPathOf, fullPathOfItems, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfSettings, fullPathOfStores, fullPathOfUsersSettings, fullPathOfUserSettings, fullPathOfStore, fullPathOfDataProtection, fullPathOfImprint, fullPathOfShiftsSettings, fullPathOfShiftSettings, fullPathOfProjectsSettings, fullPathOfProjectSettings } from './paths';
+import { fullPathOf, fullPathOfItems, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfSettings, fullPathOfStores, fullPathOfUsersSettings, fullPathOfUserSettings, fullPathOfStore, fullPathOfDataProtection, fullPathOfImprint, fullPathOfShiftsSettings, fullPathOfShiftSettings, fullPathOfProjectsSettings, fullPathOfProjectSettings, fullPathOfItem, fullPathOfItemData, fullPathOfItemHistory } from './paths';
 
 const PAGES = {
     title: 'LH-Tool',
@@ -34,6 +34,25 @@ const PAGES = {
             title: 'Artikel',
             path: fullPathOfItems(),
             permissions: ['ROLE_RIGHT_ITEMS_GET'],
+            subPages: [
+                {
+                    path: fullPathOfItem(),
+                    permissions: ['ROLE_RIGHT_ITEMS_GET_BY_ID'],
+                    tabs: true,
+                    subPages: [
+                        {
+                            title: 'Daten',
+                            path: fullPathOfItemData(),
+                            permissions: ['ROLE_RIGHT_ITEMS_GET_BY_ID'],
+                        },
+                        {
+                            title: 'Protokoll',
+                            path: fullPathOfItemHistory(),
+                            permissions: ['ROLE_RIGHT_ITEMS_GET_BY_ID'],
+                        },
+                    ],
+                },
+            ]
         },
         {
             title: 'Einstellungen',
@@ -43,7 +62,6 @@ const PAGES = {
                 {
                     title: 'Benutzer',
                     path: fullPathOfUsersSettings(),
-                    permissions: ['ROLE_RIGHT_USERS_GET'],
                     subPages: [
                         {
                             path: fullPathOfUserSettings(),

@@ -7,15 +7,14 @@ import { withStyles } from '@material-ui/core/styles';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import classNames from 'classnames';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItem, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfSlot, fullPathOfStore, fullPathOfStores, partialPathOfNeed, fullPathOfSettings } from '../paths';
+import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItem, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfSlot, fullPathOfStore, fullPathOfStores, partialPathOfNeed, fullPathOfSettings, fullPathOfItemData } from '../paths';
 import SessionProvider from '../providers/session-provider';
 import ChangePasswordComponent from './changepw';
 import AppHeader from './header';
 import LoginComponent from './login';
 import AppMenu from './menu';
 import NeedWrapperComponent from './need/need-wrapper';
-import ItemListComponent from './item/item-list';
-import ItemDetailComponent from './item/item-detail';
+import ItemWrapperComponent from './item/item-wrapper';
 import NotFoundHandlerComponent from './notfound';
 import SlotDetailComponent from './slot/slot-detail';
 import StoreDetailComponent from './store/store-detail';
@@ -24,6 +23,7 @@ import DataProtection from './util/data-protection';
 import Imprint from './util/imprint';
 import SettingsComponent from './settings';
 import PageProvider from '../providers/page-provider';
+import ItemsProvider from '../providers/items-provider';
 
 const drawerWidth = 240;
 
@@ -132,8 +132,7 @@ export default class LHToolRoot extends React.Component {
                                         <Route path={fullPathOfStore()} component={StoreDetailComponent} />
                                         <Route path={fullPathOfStores()} component={StoreListComponent} />
                                         <Route path={fullPathOfSlot()} component={SlotDetailComponent} />
-                                        <Route path={fullPathOfItem()} component={ItemDetailComponent} />
-                                        <Route path={fullPathOfItems()} component={ItemListComponent} />
+                                        <Route path={fullPathOfItems()} component={ItemWrapperComponent} exact={false} />
                                         <Route path={fullPathOfSettings()} component={SettingsComponent} exact={false} />
                                         <Route path={fullPathOfChangePw()} component={ChangePasswordComponent} />
                                         <Route path={fullPathOfImprint()} component={Imprint} />

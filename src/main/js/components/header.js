@@ -78,6 +78,7 @@ class StatefulAppHeader extends React.Component {
     render() {
         const { classes, drawerOpen, pagesState, match } = this.props;
         const { height, redirectToUrl } = this.state;
+        const tabValue = pagesState.tabParent && pagesState.getTabValue();
         return (
             <>
                 <AppBar
@@ -116,20 +117,26 @@ class StatefulAppHeader extends React.Component {
                             </Typography>
                         </Toolbar>
                         {pagesState.tabParent && (
-                            <Tabs
-                                value={pagesState.getTabValue()}
-                                onChange={(event, value) => this.redirect(value)}
-                            >
-                                {pagesState.tabParent.subPages
-                                    .filter(subPage => pagesState.isUserAllowedToSeePage(subPage))
-                                    .map(subPage => (
-                                        <Tab
-                                            key={subPage.path}
-                                            value={subPage.path}
-                                            label={subPage.title}
-                                        />
-                                    ))}
-                            </Tabs>
+                            <>
+                                {tabValue ? (
+                                    <Tabs
+                                        value={tabValue}
+                                        onChange={(event, value) => this.redirect(value)}
+                                    >
+                                        {pagesState.tabParent.subPages
+                                            .filter(subPage => pagesState.isUserAllowedToSeePage(subPage))
+                                            .map(subPage => (
+                                                <Tab
+                                                    key={subPage.path}
+                                                    value={subPage.path}
+                                                    label={subPage.title}
+                                                />
+                                            ))}
+                                    </Tabs>
+                                ) : (
+                                        <LenientRedirect to={pagesState.tabParent.subPages[0].path} />
+                                    )}
+                            </>
                         )}
                     </div>
                 </AppBar>

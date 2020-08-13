@@ -10,6 +10,9 @@ import UserListComponent from './user/user-list';
 import ProjectsProvider from '../providers/projects-provider';
 import ProjectEditComponent from './project/project-edit';
 import ProjectListComponent from './project/project-list';
+import WithPermission from './with-permission';
+import WithoutPermission from './without-permission';
+import LenientRedirect from './util/lenient-redirect';
 
 class SettingsComponent extends React.Component {
     constructor(props) {
@@ -31,14 +34,13 @@ class SettingsComponent extends React.Component {
                         it's necessary for the generation of the title breadcrump
                     */}
                     <Route path={fullPathOfUserSettings()} component={UserEditComponent} />
-                    <Route path={fullPathOfUsersSettings()} component={UserListComponent} />
-                    <Route path={fullPathOfSettings()} exact={true} component={props => (
-                        <SessionContext.Consumer>
-                            {sessionsState => (
-                                <Redirect to={sessionsState.hasPermission('ROLE_RIGHT_USERS_GET') ? fullPathOfUsersSettings() : fullPathOfUserSettings(sessionsState.currentUser.id)} />
+                    <SessionContext.Consumer>
+                        {sessionsState => sessionsState.hasPermission('ROLE_RIGHT_USERS_GET') ? (
+                            <Route path={fullPathOfUsersSettings()} component={UserListComponent} />
+                        ) : (
+                                <Route path={fullPathOfUsersSettings()} component={props => (<LenientRedirect to={fullPathOfUserSettings(sessionsState.currentUser.id)} />)} />
                             )}
-                        </SessionContext.Consumer>
-                    )} />
+                    </SessionContext.Consumer>
                 </Switch>
             </UsersProvider>
         </>);

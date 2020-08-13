@@ -4,9 +4,17 @@ import { withStyles } from '@material-ui/core/styles';
 import React from 'react';
 import { createOrUpdateItem, fetchItem } from '../../actions/item';
 import { SessionContext } from '../../providers/session-provider';
-import { withContext } from '../../util';
+import { withContext, generateUniqueId } from '../../util';
 import ItemDisplayComponent from './item-display';
 import ItemEditComponent from './item-edit';
+import ItemSlotEditComponent from './item-slot';
+import ItemIdentifierEditComponent from './item-identifier';
+import ItemsProvider, { ItemsContext } from '../../providers/items-provider';
+import WithPermission from '../with-permission';
+import SimpleDialog from '../simple-dialog';
+import { PageContext } from '../../providers/page-provider';
+import { fullPathOfItems, fullPathOfItemData } from '../../paths';
+import LenientRedirect from '../util/lenient-redirect';
 
 const styles = theme => ({
     bold: {
@@ -14,113 +22,178 @@ const styles = theme => ({
     },
     button: {
         marginRight: theme.spacing.unit,
+        marginTop: theme.spacing.unit,
     },
 
 });
 
 @withStyles(styles)
-@withContext('sessionState', SessionContext)
-export default class ItemDetailComponent extends React.Component {
+class StatefulItemDetailComponent extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            edit: false,
+            redirectUrl: null,
+            currentId: null,
         };
     }
 
-    changeEditState(edit) {
-        this.setState({
-            edit
+    componentDidMount() {
+
+    }
+
+    componentDidUpdate() {
+        const id = this.props.match.params.id;
+        if (id !== this.state.currentId) {
+            this.setState({ currentId: id }, () => this.props.itemsState.selectItem(id));
+        }
+
+        if (this.props.itemsState.selectedItem && this.props.pageState.currentItemName !== this.props.itemsState.selectedItem.name) {
+            this.props.pageState.setCurrentItemName(this.props.itemsState.selectedItem);
+        }
+    }
+
+    save() {
+        this.props.itemsState.saveSelectedItem().then(item => {
+            if (item && item.id) {
+                this.setState({ redirectUrl: fullPathOfItemData(item.id) });
+            }
         });
     }
 
-    loadItem() {
-        const id = this.props.match.params.id
-        if (id === 'new') {
-            this.setState({
-                edit: true,
-                item: {
-                    broken: false,
-                    consumable: false,
-                    depth: '',
-                    description: '',
-                    hasBarcode: false,
-                    height: '',
-                    identifier: Date.now().toString(36),
-                    name: '',
-                    outsideQualified: false,
-                    pictureUrl: '',
-                    quantity: 1,
-                    unit: 'Stück',
-                    width: '',
-                },
-            });
-        } else {
-            fetchItem({ accessToken: this.props.sessionState.accessToken, itemId: id }).then(item => this.setState({ item }));
-        }
-    }
-
-    saveIfBroken(broken) {
-        this.setState(prevState => ({
-            savingIfBroken: true,
-            item: {
-                ...prevState.item,
-                broken,
-            }
-        }), () => createOrUpdateItem({
-            accessToken: this.props.sessionState.accessToken,
-            item: this.state.item,
-        }).then(item => this.setState({
-            savingIfBroken: false,
-        })));
-
-    }
-
-    componentDidMount() {
-        this.loadItem();
+    delete() {
+        this.props.itemsState.deleteSelectedItem(
+            () => this.setState({ redirectUrl: fullPathOfItems() })
+        );
     }
 
     render() {
-        const { classes } = this.props;
-        const { item, savingIfBroken } = this.state;
+        const { classes, itemsState } = this.props;
+        const item = itemsState.getSelectedItem();
+
+        if (this.state.redirectUrl) {
+            return (<LenientRedirect to={this.state.redirectUrl} onSamePage={() => this.setState({ redirectUrl: null })} />);
+        }
+
         if (!item) {
             return (<CircularProgress />);
         }
+        const disabled = itemsState.actionsDisabled || !itemsState.isItemValid();
         return (
             <>
-                [Detail-Ansicht für {this.props.match.params.id}]
-                {this.state.edit ? (
+                {itemsState.edit ? (
                     <>
                         <ItemEditComponent item={item}></ItemEditComponent>
-                        <Button variant="contained" className={classes.button} type="submit" onClick={() => this.changeEditState(false)}>
+                        <Button variant="contained" disabled={disabled} className={classes.button} onClick={() => this.save()}>
                             Speichern
+                        </Button>
+                        <Button variant="outlined" disabled={itemsState.actionsDisabled} className={classes.button} onClick={() => itemsState.resetSelectedItem()}>
+                            Abbrechen
                         </Button>
                     </>
                 ) : (
                         <>
                             <ItemDisplayComponent item={item}></ItemDisplayComponent>
-                            <Button variant="contained" className={classes.button} onClick={() => this.changeEditState(true)}>
-                                Bearbeiten
-                        </Button>
-                            <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Verschieben"')}>
-                                Verschieben
-                        </Button>
-                            <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Kopieren"')}>
-                                Kopieren
-                        </Button>
-                            <Button variant="contained" className={classes.button} onClick={() => this.saveIfBroken(!item.broken)}>
-                                {savingIfBroken ? (<CircularProgress size="12" />) : item.broken ? 'Repariert' : 'Defekt'}
+                            <WithPermission permission="ROLE_RIGHT_ITEMS_PUT">
+                                <Button
+                                    variant="contained"
+                                    className={classes.button}
+                                    onClick={() => itemsState.changeEdit(true)}
+                                    disabled={itemsState.actionsDisabled}
+                                >
+                                    Bearbeiten
                             </Button>
-                            <Button variant="contained" className={classes.button} onClick={() => alert('TODO: implement "Ausleihen"')}>
+                            </WithPermission>
+                            <WithPermission permission="ROLE_RIGHT_ITEMS_PATCH_SLOT">
+                                <SimpleDialog
+                                    title="Neuer Lagerplatz"
+                                    content={<ItemSlotEditComponent />}
+                                    onOK={() => itemsState.saveSlot()}
+                                    okText="Speichern"
+                                    cancelText="Abbrechen"
+                                >
+                                    <Button
+                                        variant="contained"
+                                        className={classes.button}
+                                        disabled={itemsState.actionsDisabled}
+                                    >
+                                        Verschieben
+                                    </Button>
+                                </SimpleDialog>
+                            </WithPermission>
+                            <WithPermission permission="ROLE_RIGHT_ITEMS_POST">
+                                <SimpleDialog
+                                    title={item.name + ' kopieren'}
+                                    content={<ItemIdentifierEditComponent />}
+                                    onOK={() => itemsState.copySelectedItem()}
+                                    onOpen={() => itemsState.changeCopyIdentifier(generateUniqueId())}
+                                    okText="Kopieren"
+                                    cancelText="Abbrechen"
+                                >
+                                    <Button
+                                        variant="contained"
+                                        className={classes.button}
+                                        disabled={itemsState.actionsDisabled}
+                                    >
+                                        Kopieren
+                                </Button>
+                                </SimpleDialog>
+                            </WithPermission>
+                            <WithPermission permission="ROLE_RIGHT_ITEMS_PATCH_BROKEN">
+                                <Button
+                                    variant="contained"
+                                    className={classes.button}
+                                    onClick={() => itemsState.saveBrokenState(!item.broken)}
+                                    disabled={itemsState.actionsDisabled}
+                                >
+                                    {item.broken ? 'Repariert' : 'Defekt'}
+                                </Button>
+                            </WithPermission>
+                            <Button
+                                variant="contained"
+                                className={classes.button}
+                                onClick={() => alert('TODO: implement "Ausleihen"')}
+                                disabled={itemsState.actionsDisabled}
+                            >
                                 Ausleihen
-                        </Button>
-                            <Button variant="outlined" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
-                                Löschen
-                        </Button>
+                            </Button>
+                            <SimpleDialog
+                                title="Löschen bestätigen"
+                                okText="Ja"
+                                cancelText="Nein"
+                                text={`Sollen der Artikel ${item.name} wirklich gelöscht werden?`}
+                                onOK={() => this.delete()}
+                            >
+                                <Button
+                                    variant="outlined"
+                                    className={classes.button}
+                                    disabled={itemsState.actionsDisabled}
+                                >
+                                    Löschen
+                                </Button>
+                            </SimpleDialog>
                         </>
                     )}
             </>
         );
     }
 }
+
+const ItemDetailComponent = props => (
+    <>
+        <SessionContext.Consumer>
+            {sessionState => (
+                <ItemsContext.Consumer>
+                    {itemsState => (
+                        <PageContext.Consumer>
+                            {pageState => (
+                                <StatefulItemDetailComponent {...props} sessionState={sessionState} itemsState={itemsState} pageState={pageState} />
+                            )}
+                        </PageContext.Consumer>
+                    )}
+                </ItemsContext.Consumer>
+            )}
+        </SessionContext.Consumer>
+    </>
+);
+export default ItemDetailComponent;

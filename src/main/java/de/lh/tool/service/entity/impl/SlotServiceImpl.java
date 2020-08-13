@@ -88,4 +88,9 @@ public class SlotServiceImpl extends BasicMappableEntityServiceImpl<SlotReposito
 		return convertToDto(slot);
 	}
 
+	@Override
+	public String getSlotNameWithStore(Slot slot) {
+		return new StringBuilder(slot.getStore().getName()).append(": ").append(slot.getName()).toString();
+	}
+
 }

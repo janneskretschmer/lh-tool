@@ -137,7 +137,19 @@ public class UserRole implements GrantedAuthority {
 	public static final String RIGHT_ITEMS_GET_BY_ID = "ROLE_RIGHT_ITEMS_GET_BY_ID";
 	public static final String RIGHT_ITEMS_POST = "ROLE_RIGHT_ITEMS_POST";
 	public static final String RIGHT_ITEMS_PUT = "ROLE_RIGHT_ITEMS_PUT";
+	public static final String RIGHT_ITEMS_PATCH = "ROLE_RIGHT_ITEMS_PATCH";
+	public static final String RIGHT_ITEMS_PATCH_BROKEN = "ROLE_RIGHT_ITEMS_PATCH_BROKEN";
+	public static final String RIGHT_ITEMS_PATCH_SLOT = "ROLE_RIGHT_ITEMS_PATCH_SLOT";
+	public static final String RIGHT_ITEMS_PATCH_QUANTITY = "ROLE_RIGHT_ITEMS_PATCH_QUANTITY";
+	public static final String RIGHT_ITEMS_DELETE = "ROLE_RIGHT_ITEMS_DELETE";
 	public static final String RIGHT_ITEMS_GET_FOREIGN_PROJECT = "ROLE_RIGHT_ITEMS_GET_FOREIGN_PROJECT";
+
+	public static final String RIGHT_ITEMS_NOTES_GET = "ROLE_RIGHT_ITEMS_NOTES_GET";
+	public static final String RIGHT_ITEMS_NOTES_POST = "ROLE_RIGHT_ITEMS_NOTES_POST";
+	public static final String RIGHT_ITEMS_NOTES_DELETE = "ROLE_RIGHT_ITEMS_NOTES_DELETE";
+	public static final String RIGHT_ITEMS_NOTES_DELETE_FOREIGN = "ROLE_RIGHT_ITEMS_NOTES_DELETE_FOREIGN";
+
+	public static final String RIGHT_ITEM_TAGS_GET = "ROLE_RIGHT_ITEM_TAGS_GET";
 
 	public static final String RIGHT_SLOTS_GET = "ROLE_RIGHT_SLOTS_GET";
 	public static final String RIGHT_SLOTS_GET_BY_ID = "ROLE_RIGHT_SLOTS_GET_BY_ID";
@@ -192,7 +204,11 @@ public class UserRole implements GrantedAuthority {
 					RIGHT_NEEDS_VIEW_APPROVED,
 					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
 					RIGHT_ITEMS_GET, RIGHT_ITEMS_GET_BY_ID, RIGHT_ITEMS_GET_FOREIGN_PROJECT, RIGHT_ITEMS_POST,
-					RIGHT_ITEMS_PUT,
+					RIGHT_ITEMS_PUT, RIGHT_ITEMS_PATCH, RIGHT_ITEMS_PATCH_BROKEN, RIGHT_ITEMS_PATCH_SLOT,
+					RIGHT_ITEMS_PATCH_QUANTITY, RIGHT_ITEM_TAGS_GET, RIGHT_ITEMS_DELETE,
+					// \\ // \\ // \\ // \\ // \\ // \\ // \\
+					RIGHT_ITEMS_NOTES_GET, RIGHT_ITEMS_NOTES_POST, RIGHT_ITEMS_NOTES_DELETE,
+					RIGHT_ITEMS_NOTES_DELETE_FOREIGN,
 					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
 					RIGHT_SLOTS_GET, RIGHT_SLOTS_GET_BY_ID, RIGHT_SLOTS_POST, RIGHT_SLOTS_PUT,
 					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
@@ -220,12 +236,15 @@ public class UserRole implements GrantedAuthority {
 					RIGHT_NEEDS_USERS_GET, RIGHT_NEEDS_APPROVE, RIGHT_NEEDS_VIEW_APPROVED,
 					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
 					RIGHT_ITEMS_GET, RIGHT_ITEMS_GET_BY_ID, RIGHT_ITEMS_GET_FOREIGN_PROJECT, RIGHT_ITEMS_POST,
-					RIGHT_ITEMS_PUT,
+					RIGHT_ITEMS_PUT, RIGHT_ITEMS_PATCH, RIGHT_ITEMS_PATCH_BROKEN, RIGHT_ITEMS_PATCH_SLOT,
+					RIGHT_ITEMS_PATCH_QUANTITY, RIGHT_ITEM_TAGS_GET, RIGHT_ITEMS_DELETE,
+					// \\ // \\ // \\ // \\ // \\ // \\ // \\
+					RIGHT_ITEMS_NOTES_GET, RIGHT_ITEMS_NOTES_POST, RIGHT_ITEMS_NOTES_DELETE,
 					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
 					RIGHT_SLOTS_GET, RIGHT_SLOTS_GET_BY_ID, RIGHT_SLOTS_POST, RIGHT_SLOTS_PUT,
 					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
-					RIGHT_STORES_GET, RIGHT_STORES_GET_BY_ID, RIGHT_STORES_GET_FOREIGN_PROJECT, RIGHT_STORES_POST,
-					RIGHT_STORES_PUT,
+					RIGHT_STORES_GET, RIGHT_STORES_GET_BY_ID, RIGHT_STORES_GET_FOREIGN_PROJECT,
+					RIGHT_STORES_POST, RIGHT_STORES_PUT,
 					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
 					RIGHT_TECHNICAL_CREWS_GET, RIGHT_TECHNICAL_CREWS_GET_BY_ID));
 
@@ -252,9 +271,31 @@ public class UserRole implements GrantedAuthority {
 					List.of(RIGHT_USERS_GET_BY_ID, RIGHT_USERS_PUT, RIGHT_PROJECTS_GET, RIGHT_PROJECTS_HELPER_TYPES_GET,
 							RIGHT_HELPER_TYPES_GET, RIGHT_HELPER_TYPES_GET_BY_ID, RIGHT_NEEDS_USERS_GET,
 							RIGHT_NEEDS_USERS_PUT, RIGHT_NEEDS_APPLY, RIGHT_NEEDS_GET, RIGHT_NEEDS_GET_BY_ID));
-			roleRights.put(ROLE_STORE_KEEPER, List.of(RIGHT_USERS_GET_BY_ID, RIGHT_USERS_PUT, RIGHT_ITEMS_GET,
-					RIGHT_ITEMS_GET_BY_ID, RIGHT_ITEMS_PUT));
-			roleRights.put(ROLE_INVENTORY_MANAGER, List.of(RIGHT_USERS_GET_BY_ID, RIGHT_USERS_PUT));
+			roleRights.put(ROLE_STORE_KEEPER, List.of(RIGHT_USERS_GET_BY_ID, RIGHT_USERS_PUT,
+					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+					RIGHT_SLOTS_GET, RIGHT_SLOTS_GET_BY_ID,
+					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+					RIGHT_STORES_GET, RIGHT_STORES_GET_BY_ID,
+					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+					RIGHT_ITEMS_GET, RIGHT_ITEMS_GET_BY_ID, RIGHT_ITEMS_NOTES_GET, RIGHT_ITEMS_PATCH,
+					RIGHT_ITEMS_PATCH_BROKEN, RIGHT_ITEMS_PATCH_QUANTITY, RIGHT_ITEMS_NOTES_POST,
+					RIGHT_ITEMS_NOTES_DELETE,
+					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+					RIGHT_TECHNICAL_CREWS_GET));
+			roleRights.put(ROLE_INVENTORY_MANAGER, List.of(RIGHT_USERS_GET_BY_ID, RIGHT_USERS_PUT,
+					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+					RIGHT_ITEMS_GET, RIGHT_ITEMS_GET_BY_ID, RIGHT_ITEMS_GET_FOREIGN_PROJECT, RIGHT_ITEMS_POST,
+					RIGHT_ITEMS_PUT, RIGHT_ITEMS_PATCH, RIGHT_ITEMS_PATCH_BROKEN, RIGHT_ITEMS_PATCH_SLOT,
+					RIGHT_ITEMS_PATCH_QUANTITY, RIGHT_ITEM_TAGS_GET, RIGHT_ITEMS_DELETE,
+					// \\ // \\ // \\ // \\ // \\ // \\ // \\
+					RIGHT_ITEMS_NOTES_GET, RIGHT_ITEMS_NOTES_POST, RIGHT_ITEMS_NOTES_DELETE,
+					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+					RIGHT_SLOTS_GET, RIGHT_SLOTS_GET_BY_ID, RIGHT_SLOTS_POST, RIGHT_SLOTS_PUT,
+					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+					RIGHT_STORES_GET, RIGHT_STORES_GET_BY_ID, RIGHT_STORES_GET_FOREIGN_PROJECT, RIGHT_STORES_POST,
+					RIGHT_STORES_PUT,
+					// \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\ // \\
+					RIGHT_TECHNICAL_CREWS_GET, RIGHT_TECHNICAL_CREWS_GET_BY_ID));
 		}
 
 		public static RoleRightManager getInstance() {

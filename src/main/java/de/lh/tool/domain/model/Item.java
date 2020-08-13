@@ -1,6 +1,6 @@
 package de.lh.tool.domain.model;
 
-import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -19,6 +19,7 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
@@ -27,6 +28,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "item")
+@EqualsAndHashCode
 public class Item {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,6 +60,7 @@ public class Item {
 	private Double height;
 	private Double depth;
 
+	// TODO: Default in DB
 	@Column(name = "outside_qualified", nullable = false)
 	private Boolean outsideQualified;
 
@@ -67,21 +70,21 @@ public class Item {
 	@Column(name = "broken", nullable = false)
 	private Boolean broken;
 
-	@Column(name = "picture_url", length = 255)
-	private String pictureUrl;
-
 	@OneToOne
 	@JoinColumn(insertable = true, name = "technical_crew_id", updatable = true)
 	private TechnicalCrew technicalCrew;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "item")
-	private Collection<ItemNote> itemNotes;
+	@EqualsAndHashCode.Exclude
+	private List<ItemNote> itemNotes;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "item")
-	private Collection<ItemHistory> history;
+	@EqualsAndHashCode.Exclude
+	private List<ItemHistory> history;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinTable(name = "item_tag", inverseJoinColumns = @JoinColumn(name = "tag_id"), joinColumns = @JoinColumn(name = "item_id"))
-	private Collection<ItemTag> tags;
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "item_item_tag", inverseJoinColumns = @JoinColumn(name = "item_tag_id"), joinColumns = @JoinColumn(name = "item_id"))
+	@EqualsAndHashCode.Exclude
+	private List<ItemTag> tags;
 
 }

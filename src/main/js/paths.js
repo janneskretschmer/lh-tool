@@ -18,6 +18,8 @@ export const fullPathOfSlot = (id) => fullPathOf('/slots/' + (id ? id : ':id'));
 
 export const fullPathOfItems = () => fullPathOf('/items');
 export const fullPathOfItem = (id) => fullPathOf('/items/' + (id ? id : ':id'));
+export const fullPathOfItemData = (id) => fullPathOfItem(id) + '/data';
+export const fullPathOfItemHistory = (id) => fullPathOfItem(id) + '/history';
 
 export const fullPathOfChangePw = () => fullPathOf('/changepw/');
 

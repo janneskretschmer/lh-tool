@@ -1,6 +1,7 @@
 package de.lh.tool.service.entity.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -10,10 +11,13 @@ import org.springframework.stereotype.Service;
 import de.lh.tool.domain.dto.ItemTagDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
+import de.lh.tool.domain.model.Item;
 import de.lh.tool.domain.model.ItemTag;
 import de.lh.tool.repository.ItemTagRepository;
+import de.lh.tool.service.entity.interfaces.ItemItemTagService;
 import de.lh.tool.service.entity.interfaces.ItemService;
 import de.lh.tool.service.entity.interfaces.ItemTagService;
+import de.lh.tool.util.ValidationUtil;
 
 @Service
 public class ItemTagServiceImpl extends BasicMappableEntityServiceImpl<ItemTagRepository, ItemTag, ItemTagDto, Long>
@@ -22,44 +26,58 @@ public class ItemTagServiceImpl extends BasicMappableEntityServiceImpl<ItemTagRe
 	@Autowired
 	private ItemService itemService;
 
+	@Autowired
+	private ItemItemTagService itemItemTagService;
+
 	@Override
 	@Transactional
-	public List<ItemTagDto> getItemTagDtosByItemId(Long itemId) throws DefaultException {
+	public List<ItemTagDto> findItemTagDtosByItemId(Long itemId) throws DefaultException {
 		return convertToDtoList(itemService.findById(itemId)
-				.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID)).getTags());
+				.orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException).getTags());
 	}
 
 	@Override
 	@Transactional
-	public ItemTagDto getItemTagDtoById(Long id) throws DefaultException {
-		// TODO add implementation
-		// Tag tag = findById(id).orElseThrow(() -> new
-		// DefaultException(ExceptionEnum.EX_INVALID_ID));
-
-		return convertToDto(null);
+	public Optional<ItemTag> findByName(String name) {
+		return getRepository().findByName(name);
 	}
 
 	@Override
 	@Transactional
-	public ItemTagDto createItemTagDto(ItemTagDto dto) throws DefaultException {
-		if (dto.getId() != null) {
-			throw new DefaultException(ExceptionEnum.EX_ID_PROVIDED);
+	public ItemTagDto createItemTagForItem(Long itemId, ItemTagDto dto) throws DefaultException {
+		ValidationUtil.checkIdsNonNull(itemId);
+		Item item = itemService.findById(itemId).orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException);
+		if (!itemService.isViewAllowed(item)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
 		}
-		ItemTag tag = save(convertToEntity(dto));
+
+		String tagName = Optional.ofNullable(dto).map(ItemTagDto::getName)
+				.orElseThrow(ExceptionEnum.EX_ITEM_NO_TAG::createDefaultException);
+
+		ItemTag tag = findByName(tagName).orElseGet(() -> save(ItemTag.builder().name(tagName).build()));
+
+		itemItemTagService.createItemItemTag(item, tag);
+
 		return convertToDto(tag);
 	}
 
 	@Override
 	@Transactional
-	public ItemTagDto updateItemTagDto(ItemTagDto dto, Long id) throws DefaultException {
-		// TODO add implementation
-//		dto.setId(ObjectUtils.defaultIfNull(id, dto.getId()));
-//		if (dto.getId() == null) {
-//			throw new DefaultException(ExceptionEnum.EX_NO_ID_PROVIDED);
-//		}
-//		Tag tag = save(convertToEntity(dto));
-//		return convertToDto(tag);
-		return null;
+	public void deleteItemTagFromItem(Long itemId, Long itemTagId) throws DefaultException {
+		ValidationUtil.checkIdsNonNull(itemId, itemTagId);
+
+		Item item = itemService.findById(itemId).orElseThrow(ExceptionEnum.EX_INVALID_ITEM_ID::createDefaultException);
+
+		if (!itemService.isViewAllowed(item)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+		ItemTag itemTag = findById(itemTagId).orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException);
+
+		itemItemTagService.deleteIfExists(item, itemTag);
+
+		if (itemItemTagService.findByItemTag(itemTag).isEmpty()) {
+			delete(itemTag);
+		}
 	}
 
 }

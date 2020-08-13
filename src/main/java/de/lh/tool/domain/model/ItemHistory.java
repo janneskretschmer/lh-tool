@@ -1,6 +1,6 @@
 package de.lh.tool.domain.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,8 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,9 +37,8 @@ public class ItemHistory {
 	@JoinColumn(insertable = true, name = "user_id", updatable = true)
 	private User user;
 
-	@Column(name = "timestamp", nullable = false)
-	@Temporal(TemporalType.DATE)
-	private Date timestamp;
+	@Column(nullable = false)
+	private LocalDateTime timestamp;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "type", length = 20, nullable = false)

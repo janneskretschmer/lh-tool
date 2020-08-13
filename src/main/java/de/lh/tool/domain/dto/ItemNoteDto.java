@@ -1,6 +1,6 @@
 package de.lh.tool.domain.dto;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -19,5 +19,5 @@ public class ItemNoteDto {
 	private Long itemId;
 	private Long userId;
 	private String note;
-	private Date timestamp;
+	private LocalDateTime timestamp;
 }

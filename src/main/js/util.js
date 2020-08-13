@@ -137,6 +137,10 @@ const READABLE_DATE_FORMAT_WITHOUT_YEAR = 'DD.MM.';
 export function convertToReadableFormatWithoutYear(moment) {
     return moment.format(READABLE_DATE_FORMAT_WITHOUT_YEAR);
 }
+const READABLE_DATE_FORMAT_WITH_TIME = 'DD.MM.YYYY HH:mm';
+export function convertToReadableFormatWithTime(moment) {
+    return moment.format(READABLE_DATE_FORMAT_WITH_TIME);
+}
 
 const MUI_DATE_FORMAT = 'YYYY-MM-DD';
 export function convertToMUIFormat(moment) {
@@ -156,4 +160,71 @@ ROLE_NAMES.set('ROLE_ADMIN', 'Administrator');
 ROLE_NAMES.set('ROLE_PUBLISHER', 'Verkündiger');
 export function getRoleName(role) {
     return ROLE_NAMES.get(role);
+}
+
+export function convertToIdMap(idObjectList) {
+    const idMap = new Map();
+    idObjectList.forEach(idObject => {
+        idMap.set(idObject.id, idObject);
+    });
+    return idMap;
+}
+
+
+export function encodeNumber(number) {
+    let rest;
+    let divisable = number;
+    let encoded = '';
+    while (divisable > 0) {
+        rest = divisable % 62;
+        if (rest > 35) {
+            // small character: a=97, z=122
+            encoded += String.fromCharCode(rest + 61);
+        } else if (rest > 9) {
+            // big character: A=65, Z=90
+            encoded += String.fromCharCode(rest + 55);
+        } else {
+            // number: 0=48, 9=57
+            encoded += String.fromCharCode(rest + 48);
+        }
+        divisable = (divisable - rest) / 62;
+    }
+    return encoded;
+}
+
+export function cyrb53(str, seed = 0) {
+    let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+    for (let i = 0, ch; i < str.length; i++) {
+        ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ h1 >>> 16, 2246822507) ^ Math.imul(h2 ^ h2 >>> 13, 3266489909);
+    h2 = Math.imul(h2 ^ h2 >>> 16, 2246822507) ^ Math.imul(h1 ^ h1 >>> 13, 3266489909);
+    return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+};
+
+export function generateUniqueId() {
+    return encodeNumber(cyrb53(Date.now() + '' + window.performance.now()));
+}
+
+//https://stackoverflow.com/a/16245768/6527256
+export function base64toBlob(base64Data, contentType = '', sliceSize = 512) {
+    const byteCharacters = atob(base64Data);
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+        const byteNumbers = new Array(slice.length);
+        for (let i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+        }
+
+        const byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+    }
+
+    const blob = new Blob(byteArrays, { type: contentType });
+    return blob;
 }
