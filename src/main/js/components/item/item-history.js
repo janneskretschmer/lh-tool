@@ -47,9 +47,9 @@ class StatefulItemHistoryComponent extends React.Component {
             case 'UPDATED':
                 return 'Geändert';
             case 'QUANTITY_CHANGED':
-                return 'Menge von ' + event.data.from + ' auf ' + event.data.to + ' geändert';
+                return `Menge von ${event.data.from} auf ${event.data.to} geändert`;
             case 'MOVED':
-                return 'Von ' + event.data.from + ' nach ' + event.data.to + ' verschoben';
+                return `Von ${event.data.from} nach ${event.data.to} verschoben`;
             case 'BROKEN':
                 return 'Defekt gemeldet';
             case 'FIXED':
