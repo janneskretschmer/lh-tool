@@ -33,6 +33,7 @@ import de.lh.tool.service.entity.interfaces.TechnicalCrewService;
 import de.lh.tool.service.entity.interfaces.UserRoleService;
 import de.lh.tool.util.DateUtil;
 import de.lh.tool.util.ValidationUtil;
+import lombok.NonNull;
 
 @Service
 public class ItemServiceImpl extends BasicMappableEntityServiceImpl<ItemRepository, Item, ItemDto, Long>
@@ -213,7 +214,7 @@ public class ItemServiceImpl extends BasicMappableEntityServiceImpl<ItemReposito
 		return convertToDtoList(itemItemService.findRelatedItemsByItem(item));
 	}
 
-	private Item findItemByIdIfAllowed(Long id) throws DefaultException {
+	private @NonNull Item findItemByIdIfAllowed(Long id) throws DefaultException {
 		ValidationUtil.checkIdsNonNull(id);
 		Item item = findById(id).orElseThrow(ExceptionEnum.EX_INVALID_ITEM_ID::createDefaultException);
 		if (!isViewAllowed(item)) {

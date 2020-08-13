@@ -1,6 +1,7 @@
 package de.lh.tool.domain.model;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "item_note")
-public class ItemNote {
+public class ItemNote implements Comparable<ItemNote> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -40,4 +41,9 @@ public class ItemNote {
 
 	@Column(name = "timestamp", nullable = false)
 	private LocalDateTime timestamp;
+
+	@Override
+	public int compareTo(ItemNote other) {
+		return Optional.ofNullable(other).map(note -> -timestamp.compareTo(note.getTimestamp())).orElse(1);
+	}
 }

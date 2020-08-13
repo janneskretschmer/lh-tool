@@ -2,7 +2,6 @@ package de.lh.tool.service.entity.impl;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -47,8 +46,7 @@ public class ItemNoteServiceImpl extends BasicMappableEntityServiceImpl<ItemNote
 		if (!itemService.isViewAllowed(item)) {
 			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
 		}
-		List<ItemNote> notes = item.getItemNotes().stream()
-				.sorted(Comparator.comparing(ItemNote::getTimestamp).reversed()).collect(Collectors.toList());
+		List<ItemNote> notes = item.getItemNotes().stream().sorted().collect(Collectors.toList());
 		return convertToDtoList(notes);
 	}
 

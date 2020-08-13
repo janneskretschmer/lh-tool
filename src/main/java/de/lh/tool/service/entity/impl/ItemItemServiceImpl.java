@@ -23,7 +23,7 @@ public class ItemItemServiceImpl extends BasicMappableEntityServiceImpl<ItemItem
 		implements ItemItemService {
 
 	@Autowired
-	ItemService itemService;
+	private ItemService itemService;
 
 	@Override
 	@Transactional
