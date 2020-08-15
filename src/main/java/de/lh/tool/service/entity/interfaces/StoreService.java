@@ -18,4 +18,6 @@ public interface StoreService extends BasicEntityService<Store, Long> {
 
 	Iterable<Store> getOwnStores();
 
+	void deleteStoreById(Long id) throws DefaultException;
+
 }

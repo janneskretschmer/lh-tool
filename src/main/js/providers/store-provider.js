@@ -1,6 +1,6 @@
 import React from 'react';
 import { SessionContext } from './session-provider';
-import { fetchOwnStores, fetchStore, createStore, updateStore } from '../actions/store';
+import { fetchOwnStores, fetchStore, createStore, updateStore, deleteStore } from '../actions/store';
 import { convertToIdMap, isAnyStringBlank } from '../util';
 import { NEW_ENTITY_ID_PLACEHOLDER } from '../config';
 import _ from 'lodash';
@@ -102,6 +102,12 @@ class StatefulStoresProvider extends React.Component {
         });
     }
 
+    resetSelectedStore() {
+        if (this.state.selectedStore) {
+            this.selectStore(this.state.selectedStore.id);
+        }
+    }
+
     getAssembledStoreList() {
         return [...this.state.stores.values()].map(store => this.getAssembledStore(store));
     }
@@ -155,6 +161,27 @@ class StatefulStoresProvider extends React.Component {
         }));
     }
 
+
+
+    bulkDeleteStores(storeIds) {
+        if (!storeIds || storeIds.length < 1) {
+            return;
+        }
+        this.setState({ actionsDisabled: true }, () => Promise.all(storeIds.map(storeId => deleteStore(this.props.sessionState.accessToken, storeId).then(() => storeId)))
+            .then(deletedIds => this.setState(prevState => {
+                const stores = _.cloneDeep(prevState.stores);
+                deletedIds.forEach(deletedId => stores.delete(deletedId));
+                return ({
+                    stores,
+                    actionsDisabled: false,
+                });
+            }))
+            .catch(error => {
+                this.showErrorMessage('Fehler beim Löschen der Lager');
+                this.setState({ actionsDisabled: false });
+            }));
+    }
+
     render() {
         return (
             <StoresContext.Provider
@@ -164,6 +191,8 @@ class StatefulStoresProvider extends React.Component {
                     getAssembledStoreList: this.getAssembledStoreList.bind(this),
                     isStoreValid: this.isStoreValid.bind(this),
                     saveSelectedStore: this.saveSelectedStore.bind(this),
+                    resetSelectedStore: this.resetSelectedStore.bind(this),
+                    bulkDeleteStores: this.bulkDeleteStores.bind(this),
 
                     selectStore: this.selectStore.bind(this),
                     getSelectedStoreAssembled: this.getSelectedStoreAssembled.bind(this),

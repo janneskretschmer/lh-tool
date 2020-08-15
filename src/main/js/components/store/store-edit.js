@@ -5,7 +5,7 @@ import { requiresLogin } from '../../util';
 import { PageContext } from '../../providers/page-provider';
 import { NEW_ENTITY_ID_PLACEHOLDER } from '../../config';
 import LenientRedirect from '../util/lenient-redirect';
-import { fullPathOfStoreSettings } from '../../paths';
+import { fullPathOfStoreSettings, fullPathOfStoresSettings } from '../../paths';
 
 
 const styles = theme => ({
@@ -53,8 +53,11 @@ class StatefulStoreEditComponent extends React.Component {
 
     componentDidUpdate() {
         const store = this.props.storesState.selectedStore;
-        if (!this.state.redirect && store && store.id && (!isNaN(this.props.match.params.id) || parseInt(this.props.match.params.id, 10) !== store.id)) {
-            this.setState({ redirect: fullPathOfStoreSettings(store.id) });
+        // if (!this.state.redirect && store && store.id && parseInt(this.props.match.params.projectId, 10) !== store.id) {
+        //     this.setState({ redirect: fullPathOfStoreSettings(store.id) });
+        // }
+        if (store && this.props.pagesState.currentItemName !== store.name) {
+            this.props.pagesState.setCurrentItemName(store);
         }
     }
 
@@ -117,6 +120,7 @@ class StatefulStoreEditComponent extends React.Component {
             <Button
                 disabled={storesState.actionsDisabled}
                 variant="outlined"
+                onClick={() => storesState.resetSelectedStore()}
             >
                 Abbrechen
             </Button>

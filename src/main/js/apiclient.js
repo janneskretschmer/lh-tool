@@ -352,7 +352,7 @@ export const apiEndpoints = {
     store: {
         get: {
             method: 'GET',
-            path: STORE_PREFIX + '/',
+            path: STORE_PREFIX,
         },
         getById: {
             method: 'GET',
@@ -371,11 +371,15 @@ export const apiEndpoints = {
         },
         createNew: {
             method: 'POST',
-            // TODO Trailing '/' also necessary?
-            path: STORE_PREFIX + '/',
+            path: STORE_PREFIX,
         },
         update: {
             method: 'PUT',
+            path: STORE_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
+        delete: {
+            method: 'DELETE',
             path: STORE_PREFIX + ID_EXTENSION,
             parameters: [ID_VARIABLE],
         },

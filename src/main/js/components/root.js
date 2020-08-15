@@ -17,7 +17,6 @@ import NeedWrapperComponent from './need/need-wrapper';
 import ItemWrapperComponent from './item/item-wrapper';
 import NotFoundHandlerComponent from './notfound';
 import SlotDetailComponent from './slot/slot-detail';
-import StoreDetailComponent from './store/store-detail';
 import StoreListComponent from './store/store-list';
 import DataProtection from './util/data-protection';
 import Imprint from './util/imprint';
@@ -129,8 +128,6 @@ export default class LHToolRoot extends React.Component {
                                         */}
                                         <Route path={fullPathOfLogin()} component={LoginComponent} />
                                         <Route path={partialPathOfNeed()} component={NeedWrapperComponent} exact={false} />
-                                        <Route path={fullPathOfStore()} component={StoreDetailComponent} />
-                                        <Route path={fullPathOfStores()} component={StoreListComponent} />
                                         <Route path={fullPathOfSlot()} component={SlotDetailComponent} />
                                         <Route path={fullPathOfItems()} component={ItemWrapperComponent} exact={false} />
                                         <Route path={fullPathOfSettings()} component={SettingsComponent} exact={false} />
