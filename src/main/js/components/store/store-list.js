@@ -5,6 +5,9 @@ import { SessionContext } from '../../providers/session-provider';
 import { StoresContext } from '../../providers/store-provider';
 import { withContext } from '../../util';
 import PagedTable from '../table';
+import { Button } from '@material-ui/core';
+import WithPermission from '../with-permission';
+import SimpleDialog from '../simple-dialog';
 
 const styles = theme => ({
     noDecoration: {
@@ -25,6 +28,25 @@ class StatefulStoreListComponent extends React.Component {
         return (
             <PagedTable
                 title="Lager"
+                SelectionHeader={props => (
+                    <WithPermission permission="ROLE_RIGHT_STORES_DELETE">
+                        <SimpleDialog
+                            title="Löschen bestätigen"
+                            okText="Ja"
+                            cancelText="Nein"
+                            text={`Sollen die ${props.selected.length} ausgewählten Lager wirklich gelöscht werden?`}
+                            onOK={() => { storesState.bulkDeleteStores(props.selected); props.resetSelection(); }}
+                        >
+                            <Button
+                                variant="outlined"
+                                onClick={() => { }}
+                                disabled={storesState.actionsDisabled}
+                            >
+                                Löschen
+                                </Button>
+                        </SimpleDialog>
+                    </WithPermission>
+                )}
                 headers={[
                     {
                         key: 'name',

@@ -83,3 +83,11 @@ export function updateStore(accessToken, store) {
     })
         .then(result => result.response);
 }
+
+export function deleteStore(accessToken, storeId) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.store.delete,
+        authToken: accessToken,
+        parameters: { [ID_VARIABLE]: storeId },
+    })
+}
