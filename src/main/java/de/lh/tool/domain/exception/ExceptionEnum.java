@@ -62,6 +62,8 @@ public enum ExceptionEnum {
 	EX_ITEM_RELATION_ALREADY_EXISTS("The items are already related.", HttpStatus.CONFLICT),
 
 	EX_STORE_NOT_EMPTY("The store is not empty.", HttpStatus.BAD_REQUEST),
+
+	EX_SLOT_NOT_EMPTY("The slot is not empty.", HttpStatus.BAD_REQUEST),
 	//
 	;
 

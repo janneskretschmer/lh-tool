@@ -9,13 +9,15 @@ export const HELPER_TYPE_ID_VARIABLE = 'helper_type_id';
 export const PROJECT_HELPER_TYPE_ID_VARIABLE = 'project_helper_type_id';
 export const ITEM_ID_VARIABLE = 'item_id';
 export const NOTE_ID_VARIABLE = 'note_id';
+export const STORE_ID_VARIABLE = 'store_id';
 
 export const DATE_VARIABLE = 'date';
 export const ROLE_VARIABLE = 'role';
-export const STORE_VARIABLE = 'store';
 export const WEEKDAY_VARIABLE = 'weekday';
 export const START_DATE_VARIABLE = 'start_date';
 export const END_DATE_VARIABLE = 'end_date';
+export const NAME_VARIABLE = 'name';
+export const DESCRIPTION_VARIABLE = 'description';
 export const FREE_TEXT_VARIABLE = 'free_text';
 
 export const NO_EXTENSION = '';

@@ -1,10 +1,11 @@
 import React from 'react';
 import { SessionContext } from './session-provider';
 import { fetchOwnStores, fetchStore, createStore, updateStore, deleteStore } from '../actions/store';
-import { convertToIdMap, isAnyStringBlank } from '../util';
+import { convertToIdMap, isAnyStringBlank, wrapSetStateInPromise } from '../util';
 import { NEW_ENTITY_ID_PLACEHOLDER } from '../config';
 import _ from 'lodash';
 import { withSnackbar } from 'notistack';
+import { fetchSlotsByStore } from '../actions/slot';
 
 export const StoresContext = React.createContext();
 
@@ -16,7 +17,8 @@ class StatefulStoresProvider extends React.Component {
         this.state = {
             stores: new Map(),
             loadedForCurrentFilter: false,
-            actionsDisabled: false,
+            actionInProgress: false,
+            changed: false,
             selectedStore: null,
         }
     }
@@ -45,6 +47,7 @@ class StatefulStoresProvider extends React.Component {
             name: '',
             address: '',
             type: 'STANDARD',
+            slots: [],
         }
     }
 
@@ -53,14 +56,13 @@ class StatefulStoresProvider extends React.Component {
             return null;
         }
         if (id === NEW_ENTITY_ID_PLACEHOLDER) {
-            this.setState({ selectedStore: this.createEmptyStore() });
-            return;
+            return wrapSetStateInPromise(this, prevState => ({ selectedStore: this.createEmptyStore() }));
         }
         const parsedId = parseInt(id, 10);
         if (this.state.stores.has(parsedId)) {
-            this.handleStoreUpdatedOrSelected(this.state.stores.get(parsedId));
+            return this.handleStoreUpdatedOrSelected(this.state.stores.get(parsedId));
         } else {
-            fetchStore(this.props.sessionState.accessToken, parsedId).then(store =>
+            return fetchStore(this.props.sessionState.accessToken, parsedId).then(store =>
                 this.handleStoreUpdatedOrSelected(store)
             )
                 .catch(error => this.showErrorMessage('Fehler beim Laden des Lagers'));
@@ -68,7 +70,7 @@ class StatefulStoresProvider extends React.Component {
     }
 
     handleStoreUpdatedOrSelected(store) {
-        this.setState(prevState => {
+        return wrapSetStateInPromise(this, prevState => {
             const stores = _.cloneDeep(prevState.stores);
             stores.set(store.id, store);
 
@@ -77,9 +79,10 @@ class StatefulStoresProvider extends React.Component {
             return {
                 stores,
                 selectedStore,
-                actionsDisabled: false,
+                actionInProgress: false,
+                changed: false,
             };
-        })
+        });
     }
 
     isStoreValid() {
@@ -88,23 +91,18 @@ class StatefulStoresProvider extends React.Component {
     }
 
     saveSelectedStore() {
-        this.setState({ actionsDisabled: true }, () => {
+        return wrapSetStateInPromise(this, prevState => ({ actionInProgress: true })).then(() => {
             const store = this.state.selectedStore;
-            let storePromise;
             if (store.id) {
-                storePromise = updateStore(this.props.sessionState.accessToken, store);
-            } else {
-                storePromise = createStore(this.props.sessionState.accessToken, store);
+                return updateStore(this.props.sessionState.accessToken, store);
             }
-            storePromise.then(savedStore => this.handleStoreUpdatedOrSelected(savedStore))
-                .then(() => this.props.enqueueSnackbar('Lager erfolgreich gespeichert', { variant: 'success' }))
-                .catch(error => this.handleError(error));
-        });
+            return createStore(this.props.sessionState.accessToken, store);
+        }).then(savedStore => this.handleStoreUpdatedOrSelected(savedStore));
     }
 
     resetSelectedStore() {
         if (this.state.selectedStore) {
-            this.selectStore(this.state.selectedStore.id);
+            return this.selectStore(this.state.selectedStore.id);
         }
     }
 
@@ -139,6 +137,7 @@ class StatefulStoresProvider extends React.Component {
             selectedStore: {
                 ...prevState.selectedStore,
                 name,
+                changed: prevState.selectedStore.name !== prevState.stores.get(prevState.selectedStore.id).name,
             }
         }));
     }
@@ -148,6 +147,7 @@ class StatefulStoresProvider extends React.Component {
             selectedStore: {
                 ...prevState.selectedStore,
                 address,
+                changed: prevState.selectedStore.address !== prevState.stores.get(prevState.selectedStore.id).address,
             }
         }));
     }
@@ -157,6 +157,7 @@ class StatefulStoresProvider extends React.Component {
             selectedStore: {
                 ...prevState.selectedStore,
                 type,
+                changed: prevState.selectedStore.type !== prevState.stores.get(prevState.selectedStore.id).type,
             }
         }));
     }
@@ -167,18 +168,22 @@ class StatefulStoresProvider extends React.Component {
         if (!storeIds || storeIds.length < 1) {
             return;
         }
-        this.setState({ actionsDisabled: true }, () => Promise.all(storeIds.map(storeId => deleteStore(this.props.sessionState.accessToken, storeId).then(() => storeId)))
+        this.setState({ actionInProgress: true }, () => Promise.all(storeIds.map(storeId => deleteStore(this.props.sessionState.accessToken, storeId).then(() => storeId)))
             .then(deletedIds => this.setState(prevState => {
                 const stores = _.cloneDeep(prevState.stores);
                 deletedIds.forEach(deletedId => stores.delete(deletedId));
                 return ({
                     stores,
-                    actionsDisabled: false,
+                    actionInProgress: false,
                 });
             }))
             .catch(error => {
-                this.showErrorMessage('Fehler beim Löschen der Lager');
-                this.setState({ actionsDisabled: false });
+                if (error.response && error.response.key && error.response.key === 'EX_STORE_NOT_EMPTY') {
+                    this.showErrorMessage('Mindestens eines der Lager ist nicht leer');
+                } else {
+                    this.showErrorMessage('Fehler beim Löschen der Lager');
+                }
+                this.setState({ actionInProgress: false });
             }));
     }
 

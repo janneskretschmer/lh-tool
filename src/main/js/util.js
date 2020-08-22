@@ -170,6 +170,10 @@ export function convertToIdMap(idObjectList) {
     return idMap;
 }
 
+export function getIdMapValues(idMap) {
+    return idMap && [...idMap.values()];
+}
+
 export function encodeNumber(number) {
     let rest;
     let divisable = number;
@@ -226,4 +230,23 @@ export function base64toBlob(base64Data, contentType = '', sliceSize = 512) {
 
     const blob = new Blob(byteArrays, { type: contentType });
     return blob;
+}
+
+export function wrapSetStateInPromise(context, setterFunction) {
+    return new Promise((resolve, reject) => {
+        context.setState(prevState => setterFunction(prevState),
+            () => resolve());
+    });
+}
+
+export function getQueryParams() {
+    const urlParts = window.location.href.split('#')[0].split('?');
+    const params = new Map();
+    if (urlParts.length > 1) {
+        urlParts[1].split('&').forEach(keyValuePair => {
+            const parts = keyValuePair.split('=');
+            params.set(parts[0], parts.length > 1 ? decodeURI(parts[1]) : '');
+        });
+    }
+    return params;
 }

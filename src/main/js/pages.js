@@ -1,4 +1,4 @@
-import { fullPathOf, fullPathOfItems, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfSettings, fullPathOfStores, fullPathOfUsersSettings, fullPathOfUserSettings, fullPathOfStore, fullPathOfDataProtection, fullPathOfImprint, fullPathOfShiftsSettings, fullPathOfShiftSettings, fullPathOfProjectsSettings, fullPathOfProjectSettings, fullPathOfItem, fullPathOfItemData, fullPathOfItemHistory, fullPathOfStoresSettings, fullPathOfStoreSettings } from './paths';
+import { fullPathOf, fullPathOfItems, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfSettings, fullPathOfStores, fullPathOfUsersSettings, fullPathOfUserSettings, fullPathOfStore, fullPathOfDataProtection, fullPathOfImprint, fullPathOfShiftsSettings, fullPathOfShiftSettings, fullPathOfProjectsSettings, fullPathOfProjectSettings, fullPathOfItem, fullPathOfItemData, fullPathOfItemHistory, fullPathOfStoresSettings, fullPathOfStoreSettings, fullPathOfSlots, fullPathOfSlot } from './paths';
 
 const PAGES = {
     title: 'LH-Tool',
@@ -21,12 +21,12 @@ const PAGES = {
 
         },
         {
-            title: 'Lager',
-            path: fullPathOfStores(),
-            permissions: ['ROLE_RIGHT_STORES_GET'],
+            title: 'Lagerplätze',
+            path: fullPathOfSlots(),
+            permissions: ['ROLE_RIGHT_SLOTS_GET'],
             subPages: [
                 {
-                    path: fullPathOfStore(),
+                    path: fullPathOfSlot(),
                 },
             ],
         },

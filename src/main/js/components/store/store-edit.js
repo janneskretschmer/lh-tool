@@ -1,43 +1,26 @@
 import React from 'react';
-import { withStyles, CircularProgress, TextField, FormControl, InputLabel, Select, MenuItem, Button } from '@material-ui/core';
+import { withStyles, CircularProgress, TextField, FormControl, InputLabel, Select, MenuItem, Button, Typography, Link } from '@material-ui/core';
 import StoresProvider, { StoresContext } from '../../providers/store-provider';
 import { requiresLogin } from '../../util';
 import { PageContext } from '../../providers/page-provider';
 import { NEW_ENTITY_ID_PLACEHOLDER } from '../../config';
 import LenientRedirect from '../util/lenient-redirect';
-import { fullPathOfStoreSettings, fullPathOfStoresSettings } from '../../paths';
+import { fullPathOfStoreSettings, fullPathOfStoresSettings, fullPathOf, fullPathOfSlots } from '../../paths';
+import { withSnackbar } from 'notistack';
+import PagedTable from '../table';
 
 
 const styles = theme => ({
-    button: {
-        marginRight: theme.spacing.unit,
-    },
-    bold: {
-        fontWeight: '500',
-    },
-    title: {
-        fontSize: '30px',
-        marginBottom: '10px',
-    },
-    container: {
-        display: 'inline-block',
-        verticalAlign: 'top',
+    input: {
         marginRight: theme.spacing.unit,
         marginBottom: theme.spacing.unit,
-        marginTop: theme.spacing.unit,
     },
-    verticalCenteredContainer: {
-        display: 'flex',
-        alignItems: 'baseline',
-    },
-    margin: {
-        margin: theme.spacing.unit,
-    }
 
 });
 
 
 @withStyles(styles)
+@withSnackbar
 class StatefulStoreEditComponent extends React.Component {
 
     constructor(props) {
@@ -53,18 +36,32 @@ class StatefulStoreEditComponent extends React.Component {
 
     componentDidUpdate() {
         const store = this.props.storesState.selectedStore;
-        // if (!this.state.redirect && store && store.id && parseInt(this.props.match.params.projectId, 10) !== store.id) {
-        //     this.setState({ redirect: fullPathOfStoreSettings(store.id) });
-        // }
         if (store && this.props.pagesState.currentItemName !== store.name) {
             this.props.pagesState.setCurrentItemName(store);
         }
+    }
+
+    save() {
+        this.props.storesState.saveSelectedStore()
+            .then(() => this.setState({ redirect: fullPathOfStoresSettings() }))
+            .then(() => this.props.enqueueSnackbar('Lager erfolgreich gespeichert', { variant: 'success' }))
+            .catch(() => this.props.enqueueSnackbar('Fehler beim Speichern des Lagers', { variant: 'error' }));
+    }
+
+    cancel() {
+        this.props.storesState.resetSelectedStore()
+            .then(() => this.setState({ redirect: fullPathOfStoresSettings() }));
+    }
+
+    redirectToSlots() {
+        this.setState({ redirect: fullPathOfSlots() })
     }
 
     render() {
         const { storesState } = this.props;
         const store = storesState.getSelectedStoreAssembled();
         const disabled = !storesState.isStoreValid();
+        const { classes } = this.props;
 
         if (this.state.redirect) {
             return (<LenientRedirect to={this.state.redirect} onSamePage={() => this.setState({ redirect: null })} />);
@@ -76,14 +73,16 @@ class StatefulStoreEditComponent extends React.Component {
 
         return (<>
             <TextField
+                className={classes.input}
                 id="name"
                 label="Name"
                 value={store.name}
                 onChange={event => storesState.changeName(event.target.value)}
                 margin="dense"
                 variant="outlined"
-            />&nbsp;
+            />
             <FormControl
+                className={classes.input}
                 variant="outlined"
             >
                 <InputLabel htmlFor="type">Typ</InputLabel>
@@ -100,8 +99,9 @@ class StatefulStoreEditComponent extends React.Component {
                     <MenuItem value={'MOBILE'}>Magazin</MenuItem>
                     <MenuItem value={'MAIN'}>Hauptlager</MenuItem>
                 </Select>
-            </FormControl><br />
+            </FormControl>
             <TextField
+                className={classes.input}
                 id="address"
                 label="Adresse"
                 multiline
@@ -110,23 +110,83 @@ class StatefulStoreEditComponent extends React.Component {
                 margin="dense"
                 variant="outlined"
             /><br />
-            <Button
-                disabled={disabled || storesState.actionsDisabled}
-                variant="contained"
-                onClick={() => storesState.saveSelectedStore()}
-            >
-                Speichern
-            </Button>
-            <Button
-                disabled={storesState.actionsDisabled}
-                variant="outlined"
-                onClick={() => storesState.resetSelectedStore()}
-            >
-                Abbrechen
-            </Button>
+            {storesState.changed ? (
+                storesState.actionInProgress ? (<CircularProgress />) : (<>
+                    <Button
+                        className={classes.input}
+                        disabled={disabled || storesState.actionInProgress}
+                        variant="contained"
+                        onClick={() => this.save()}
+                    >
+                        Speichern
+                    </Button>
+                    <Button
+                        className={classes.input}
+                        disabled={storesState.actionInProgress}
+                        variant="outlined"
+                        onClick={() => this.cancel()}
+                    >
+                        Abbrechen
+                    </Button>
+                </>)
+            ) : (<>
+                <Button
+                    className={classes.input}
+                    disabled={storesState.actionInProgress}
+                    variant="contained"
+                    onClick={() => this.cancel()}
+                >
+                    Übersicht
+                </Button>
+                <Button
+                    className={classes.input}
+                    disabled={storesState.actionInProgress}
+                    variant="contained"
+                    onClick={() => this.redirectToSlots()}
+                >
+                    Lagerplätze
+                </Button>
+            </>)}
+            <br />
+            {store.slots && (
+                <PagedTable
+                    title="Lagerplätze"
+                    SelectionHeader={props => (<>hi</>)}
+                    headers={[
+                        {
+                            key: 'name',
+                            name: 'Name',
+                        },
+                        {
+                            key: 'width',
+                            name: 'Breite (cm)',
+                            unimportant: true,
+                        },
+                        {
+                            key: 'height',
+                            name: 'Höhe (cm)',
+                            unimportant: true,
+                        },
+                        {
+                            key: 'depth',
+                            name: 'Tiefe (cm)',
+                            unimportant: true,
+                        },
+                        {
+                            key: 'outside',
+                            name: 'Draußen',
+                            converter: outside => outside ? 'Ja' : 'Nein'
+                        },
+                    ]}
+                    rows={store.slots}
+                    showAddButton={true}
+                />
+            )}
         </>)
     }
 }
+
+// TODO: Project selection for rentals
 
 const StoreEditComponent = props => (
     <PageContext.Consumer>
