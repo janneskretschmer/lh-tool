@@ -7,7 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import classNames from 'classnames';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItem, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfSlot, fullPathOfStore, fullPathOfStores, partialPathOfNeed, fullPathOfSettings, fullPathOfItemData } from '../paths';
+import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItem, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfSlot, fullPathOfStore, fullPathOfStores, partialPathOfNeed, fullPathOfSettings, fullPathOfItemData, fullPathOfSlots } from '../paths';
 import SessionProvider from '../providers/session-provider';
 import ChangePasswordComponent from './changepw';
 import AppHeader from './header';
@@ -18,6 +18,8 @@ import ItemWrapperComponent from './item/item-wrapper';
 import NotFoundHandlerComponent from './notfound';
 import SlotDetailComponent from './slot/slot-detail';
 import StoreListComponent from './store/store-list';
+import SlotListComponent from './slot/slot-list';
+import SlotWrapperComponent from './slot/slot-wrapper';
 import DataProtection from './util/data-protection';
 import Imprint from './util/imprint';
 import SettingsComponent from './settings';
@@ -128,7 +130,7 @@ export default class LHToolRoot extends React.Component {
                                         */}
                                         <Route path={fullPathOfLogin()} component={LoginComponent} />
                                         <Route path={partialPathOfNeed()} component={NeedWrapperComponent} exact={false} />
-                                        <Route path={fullPathOfSlot()} component={SlotDetailComponent} />
+                                        <Route path={fullPathOfSlots()} component={SlotWrapperComponent} exact={false} />
                                         <Route path={fullPathOfItems()} component={ItemWrapperComponent} exact={false} />
                                         <Route path={fullPathOfSettings()} component={SettingsComponent} exact={false} />
                                         <Route path={fullPathOfChangePw()} component={ChangePasswordComponent} />

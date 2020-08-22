@@ -1,14 +1,17 @@
 import { apiEndpoints, apiRequest } from '../apiclient';
-import { ID_VARIABLE, SLOT_STORE_VARIABLE } from '../urlmappings';
+import { ID_VARIABLE, STORE_ID_VARIABLE, FREE_TEXT_VARIABLE, NAME_VARIABLE, DESCRIPTION_VARIABLE } from '../urlmappings';
 import moment from 'moment';
 
-export function fetchSlotsByStore(accessToken, storeId) {
+export function fetchSlotsByStore(accessToken, freeText, name, description, storeId) {
     if (accessToken) {
         return apiRequest({
             apiEndpoint: apiEndpoints.slot.getByStore,
             authToken: accessToken,
             queries: {
-                [SLOT_STORE_VARIABLE]: storeId,
+                [FREE_TEXT_VARIABLE]: freeText,
+                [NAME_VARIABLE]: name,
+                [DESCRIPTION_VARIABLE]: description,
+                [STORE_ID_VARIABLE]: storeId,
             }
         }).then(result => result.response.content);
     } else {
@@ -16,32 +19,42 @@ export function fetchSlotsByStore(accessToken, storeId) {
     }
 }
 
-export function fetchSlot({ accessToken, slotId }) {
+export function fetchSlot(accessToken, slotId) {
     if (accessToken) {
         return apiRequest({
             apiEndpoint: apiEndpoints.slot.getById,
             authToken: accessToken,
             parameters: { [ID_VARIABLE]: slotId }
         })
-            .then(result => result.response)
-            // TODO Proper error message
-            .catch(e => console.log(e));
+            .then(result => result.response);
     } else {
         return Promise.resolve(null);
     }
 }
 
-export function createOrUpdateSlot({ accessToken, slot, handleFailure }) {
+export function createSlot(accessToken, slot) {
     return apiRequest({
-        apiEndpoint: slot.id ? apiEndpoints.slot.update : apiEndpoints.slot.createNew,
+        apiEndpoint: apiEndpoints.slot.createNew,
         authToken: accessToken,
         data: slot,
-        parameters: slot.id ? { [ID_VARIABLE]: slot.id } : {},
     })
-        .then(result => result.response)
-        .catch(err => {
-            if (handleFailure) {
-                handleFailure(err);
-            }
-        });
+        .then(result => result.response);
+}
+
+export function updateSlot(accessToken, slot) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.slot.update,
+        authToken: accessToken,
+        data: slot,
+        parameters: { [ID_VARIABLE]: slot.id },
+    })
+        .then(result => result.response);
+}
+
+export function deleteSlot(accessToken, slotId) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.slot.delete,
+        authToken: accessToken,
+        parameters: { [ID_VARIABLE]: slotId },
+    });
 }

@@ -15,7 +15,7 @@ const IdNameSelect = props => (
                     id: 'select',
                 }}
             >
-                {!props.value && (<MenuItem value=""></MenuItem>)}
+                {(!props.value || props.nullable) && (<MenuItem value=""></MenuItem>)}
                 {(props.data instanceof Map ? [...props.data.values()] : props.data).map(idName => (
                     <MenuItem key={idName.id} value={idName.id}>{idName.name}</MenuItem>
                 ))}

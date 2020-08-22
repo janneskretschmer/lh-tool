@@ -18,7 +18,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { logout } from '../actions/login';
-import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfStores, fullPathOfUsersSettings, fullPathOfUserSettings } from '../paths';
+import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfStores, fullPathOfUsersSettings, fullPathOfUserSettings, fullPathOfSlots } from '../paths';
 import { SessionContext } from '../providers/session-provider';
 import WithPermission from './with-permission';
 
@@ -74,13 +74,13 @@ const NeedApproveItem = () => (
 );
 
 const StoresItem = () => (
-  <WithPermission permission="ROLE_RIGHT_STORES_GET">
-    <Link to={fullPathOfStores()} style={linkStyle}>
+  <WithPermission permission="ROLE_RIGHT_SLOTS_GET">
+    <Link to={fullPathOfSlots()} style={linkStyle}>
       <ListItem button>
         <ListItemIcon>
           <HomeIcon />
         </ListItemIcon>
-        <ListItemText primary="Lager" />
+        <ListItemText primary="Lagerplätze" />
       </ListItem>
     </Link>
   </WithPermission>

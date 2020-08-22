@@ -74,6 +74,9 @@ const styles = theme => ({
     fitWidth: {
         width: 'initial',
     },
+    alignRight: {
+        textAlign: 'right',
+    },
 });
 
 @withStyles(styles)
@@ -168,7 +171,7 @@ export default class PagedTable extends React.Component {
                                     ) : (
                                             <Typography variant="h6">{title}</Typography>
                                         )}
-                                    <div>
+                                    <div className={classes.alignRight}>
                                         {filter}
                                     </div>
                                 </div>

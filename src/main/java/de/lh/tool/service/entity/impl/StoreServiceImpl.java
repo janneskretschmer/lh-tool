@@ -49,12 +49,19 @@ public class StoreServiceImpl extends BasicMappableEntityServiceImpl<StoreReposi
 
 	private @NonNull Store findStoreByIdIfAllowed(Long id) throws DefaultException {
 		Store store = findById(id).orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException);
-		if (!userRoleService.hasCurrentUserRight(UserRole.RIGHT_STORES_GET_FOREIGN_PROJECT) && !store.getStoreProjects()
-				.stream().anyMatch(sp -> DateUtil.isDateWithinRange(LocalDate.now(), sp.getStart(), sp.getEnd())
-						&& projectService.isOwnProject(sp.getProject()))) {
+		if (!isViewAllowed(store)) {
 			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
 		}
 		return store;
+	}
+
+	@Override
+	@Transactional
+	public boolean isViewAllowed(Store store) {
+		return userRoleService.hasCurrentUserRight(UserRole.RIGHT_STORES_GET_FOREIGN_PROJECT)
+				|| (store != null && store.getStoreProjects().stream()
+						.anyMatch(sp -> DateUtil.isDateWithinRange(LocalDate.now(), sp.getStart(), sp.getEnd())
+								&& projectService.isOwnProject(sp.getProject())));
 	}
 
 	@Override
@@ -81,7 +88,7 @@ public class StoreServiceImpl extends BasicMappableEntityServiceImpl<StoreReposi
 
 	@Override
 	@Transactional
-	public Iterable<Store> getOwnStores() {
+	public List<Store> getOwnStores() {
 		return userRoleService.hasCurrentUserRight(UserRole.RIGHT_STORES_GET_FOREIGN_PROJECT) ? findAll()
 				: getRepository().findByCurrentProjectMembership(userService.getCurrentUser().getId());
 	}

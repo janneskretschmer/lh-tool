@@ -10,10 +10,6 @@ export const fullPathOfNeedQuantities = () => fullPathOf('/needs/quantities/');
 export const fullPathOfNeedApply = () => fullPathOf('/needs/apply/');
 export const fullPathOfNeedApprove = () => fullPathOf('/needs/approve/');
 
-//TODO delete old paths:
-export const fullPathOfStores = () => fullPathOf('/stores');
-export const fullPathOfStore = (id) => fullPathOf('/stores/' + (id ? id : ':id'));
-
 export const fullPathOfSlots = () => fullPathOf('/slots');
 export const fullPathOfSlot = (id) => fullPathOf('/slots/' + (id ? id : ':id'));
 
