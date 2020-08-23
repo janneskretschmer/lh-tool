@@ -36,25 +36,28 @@ class StatefulStoreEditComponent extends React.Component {
 
     componentDidUpdate() {
         const store = this.props.storesState.selectedStore;
+        if (!this.state.redirect && store && store.id && parseInt(this.props.match.params.id, 10) !== store.id) {
+            this.setState({ redirect: fullPathOfStoreSettings(store.id) });
+        }
         if (store && this.props.pagesState.currentItemName !== store.name) {
             this.props.pagesState.setCurrentItemName(store);
         }
     }
 
     save() {
-        this.props.storesState.saveSelectedStore()
-            .then(() => this.setState({ redirect: fullPathOfStoresSettings() }))
-            .then(() => this.props.enqueueSnackbar('Lager erfolgreich gespeichert', { variant: 'success' }))
-            .catch(() => this.props.enqueueSnackbar('Fehler beim Speichern des Lagers', { variant: 'error' }));
+        this.props.storesState.saveSelectedStore();
     }
 
     cancel() {
-        this.props.storesState.resetSelectedStore()
-            .then(() => this.setState({ redirect: fullPathOfStoresSettings() }));
+        this.props.storesState.resetSelectedStore();
     }
 
     redirectToSlots() {
-        this.setState({ redirect: fullPathOfSlots() })
+        this.setState({ redirect: fullPathOfSlots(this.props.storesState.selectedStore.id) });
+    }
+
+    redirectToStores() {
+        this.setState({ redirect: fullPathOfStoresSettings() });
     }
 
     render() {
@@ -100,6 +103,7 @@ class StatefulStoreEditComponent extends React.Component {
                     <MenuItem value={'MAIN'}>Hauptlager</MenuItem>
                 </Select>
             </FormControl>
+            <br />
             <TextField
                 className={classes.input}
                 id="address"
@@ -134,54 +138,21 @@ class StatefulStoreEditComponent extends React.Component {
                     className={classes.input}
                     disabled={storesState.actionInProgress}
                     variant="contained"
-                    onClick={() => this.cancel()}
+                    onClick={() => this.redirectToStores()}
                 >
                     Übersicht
                 </Button>
-                <Button
-                    className={classes.input}
-                    disabled={storesState.actionInProgress}
-                    variant="contained"
-                    onClick={() => this.redirectToSlots()}
-                >
-                    Lagerplätze
-                </Button>
+                {store.id && (
+                    <Button
+                        className={classes.input}
+                        disabled={storesState.actionInProgress}
+                        variant="contained"
+                        onClick={() => this.redirectToSlots()}
+                    >
+                        Lagerplätze
+                    </Button>
+                )}
             </>)}
-            <br />
-            {store.slots && (
-                <PagedTable
-                    title="Lagerplätze"
-                    SelectionHeader={props => (<>hi</>)}
-                    headers={[
-                        {
-                            key: 'name',
-                            name: 'Name',
-                        },
-                        {
-                            key: 'width',
-                            name: 'Breite (cm)',
-                            unimportant: true,
-                        },
-                        {
-                            key: 'height',
-                            name: 'Höhe (cm)',
-                            unimportant: true,
-                        },
-                        {
-                            key: 'depth',
-                            name: 'Tiefe (cm)',
-                            unimportant: true,
-                        },
-                        {
-                            key: 'outside',
-                            name: 'Draußen',
-                            converter: outside => outside ? 'Ja' : 'Nein'
-                        },
-                    ]}
-                    rows={store.slots}
-                    showAddButton={true}
-                />
-            )}
         </>)
     }
 }
