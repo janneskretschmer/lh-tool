@@ -19,7 +19,7 @@ import ItemListComponent from '../item/item-list';
 import { SlotsContext } from '../../providers/slots-provider';
 import IdNameSelect from '../util/id-name-select';
 import { PageContext } from '../../providers/page-provider';
-import { fullPathOfSlot } from '../../paths';
+import { fullPathOfSlot, fullPathOfSlots } from '../../paths';
 import LenientRedirect from '../util/lenient-redirect';
 
 const styles = theme => ({
@@ -76,6 +76,10 @@ class StatefulSlotDetailComponent extends React.Component {
         if (slot && this.props.pageState.currentItemName !== slot.name) {
             this.props.pageState.setCurrentItemName(slot);
         }
+    }
+
+    redirectToSlots() {
+        this.setState({ redirectToUrl: fullPathOfSlots() });
     }
 
     render() {
@@ -249,14 +253,24 @@ class StatefulSlotDetailComponent extends React.Component {
                         </>
                     )
                     : (
-                        <Button
-                            variant="contained"
-                            className={classes.button}
-                            onClick={() => slotsState.changeEdit(true)}
-                            disabled={slotsState.actionInProgress}
-                        >
-                            Bearbeiten
-                        </Button>
+                        <>
+                            <Button
+                                variant="contained"
+                                className={classes.button}
+                                onClick={() => this.redirectToSlots()}
+                                disabled={slotsState.actionInProgress}
+                            >
+                                Übersicht
+                            </Button>
+                            <Button
+                                variant="contained"
+                                className={classes.button}
+                                onClick={() => slotsState.changeEdit(true)}
+                                disabled={slotsState.actionInProgress}
+                            >
+                                Bearbeiten
+                            </Button>
+                        </>
                     )}
             </>
         ) : (<CircularProgress />);

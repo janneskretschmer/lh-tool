@@ -97,7 +97,10 @@ class StatefulStoresProvider extends React.Component {
                 return updateStore(this.props.sessionState.accessToken, store);
             }
             return createStore(this.props.sessionState.accessToken, store);
-        }).then(savedStore => this.handleStoreUpdatedOrSelected(savedStore));
+        })
+            .then(savedStore => this.handleStoreUpdatedOrSelected(savedStore))
+            .then(() => this.props.enqueueSnackbar('Lager erfolgreich gespeichert', { variant: 'success' }))
+            .catch(() => this.showErrorMessage('Fehler beim Speichern des Lagers'));
     }
 
     resetSelectedStore() {
@@ -133,33 +136,36 @@ class StatefulStoresProvider extends React.Component {
     }
 
     changeName(name) {
-        this.setState(prevState => ({
-            selectedStore: {
-                ...prevState.selectedStore,
-                name,
-                changed: prevState.selectedStore.name !== prevState.stores.get(prevState.selectedStore.id).name,
-            }
-        }));
+        this.setState(prevState => {
+            const selectedStore = _.cloneDeep(prevState.selectedStore);
+            selectedStore.name = name;
+            return {
+                selectedStore,
+                changed: !_.isEqual(selectedStore, prevState.stores.get(prevState.selectedStore.id)),
+            };
+        });
     }
 
     changeAddress(address) {
-        this.setState(prevState => ({
-            selectedStore: {
-                ...prevState.selectedStore,
-                address,
-                changed: prevState.selectedStore.address !== prevState.stores.get(prevState.selectedStore.id).address,
-            }
-        }));
+        this.setState(prevState => {
+            const selectedStore = _.cloneDeep(prevState.selectedStore);
+            selectedStore.address = address;
+            return {
+                selectedStore,
+                changed: !_.isEqual(selectedStore, prevState.stores.get(prevState.selectedStore.id)),
+            };
+        });
     }
 
     changeType(type) {
-        this.setState(prevState => ({
-            selectedStore: {
-                ...prevState.selectedStore,
-                type,
-                changed: prevState.selectedStore.type !== prevState.stores.get(prevState.selectedStore.id).type,
-            }
-        }));
+        this.setState(prevState => {
+            const selectedStore = _.cloneDeep(prevState.selectedStore);
+            selectedStore.type = type;
+            return {
+                selectedStore,
+                changed: !_.isEqual(selectedStore, prevState.stores.get(prevState.selectedStore.id)),
+            };
+        });
     }
 
 

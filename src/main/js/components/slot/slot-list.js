@@ -147,6 +147,11 @@ class StatefulSlotListComponent extends React.Component {
                                 name: 'Name',
                             },
                             {
+                                key: 'storeId',
+                                name: 'Lager',
+                                converter: storeId => slotsState.stores && slotsState.stores.has(storeId) && slotsState.stores.get(storeId).name,
+                            },
+                            {
                                 key: 'width',
                                 name: 'Breite (cm)',
                                 unimportant: true,
