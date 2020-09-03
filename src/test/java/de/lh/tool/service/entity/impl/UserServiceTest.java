@@ -256,7 +256,9 @@ public class UserServiceTest {
 
 	@Test
 	public void testChangePasswordValidToken() throws DefaultException {
-		mockCurrentUser();
+		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+		Mockito.when(securityContext.getAuthentication()).thenReturn(null);
+		SecurityContextHolder.setContext(securityContext);
 
 		PasswordChangeToken token = PasswordChangeToken.builder().token("abcdef").updated(Calendar.getInstance())
 				.build();
