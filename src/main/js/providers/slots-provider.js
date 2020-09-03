@@ -30,7 +30,7 @@ class StatefulSlotsProvider extends React.Component {
             filterName: queryParams.get(NAME_VARIABLE) || '',
             filterDescription: queryParams.get(DESCRIPTION_VARIABLE) || '',
             filterStoreId: queryParams.get(STORE_ID_VARIABLE),
-        }
+        };
     }
 
     componentDidMount() {
@@ -122,10 +122,10 @@ class StatefulSlotsProvider extends React.Component {
         });
     }
 
-    // isSlotValid() {
-    //     const slot = this.state.selectedSlot;
-    //     //return slot && !isAnyStringBlank([slot.name, store.address, store.type])
-    // }
+    isSlotValid() {
+        const slot = this.state.selectedSlot;
+        return slot && slot.storeId && !isAnyStringBlank([slot.name])
+    }
 
     saveSelectedSlot() {
         return wrapSetStateInPromise(this, prevState => ({ actionInProgress: true })).then(() => {
@@ -273,6 +273,7 @@ class StatefulSlotsProvider extends React.Component {
                     loadSlots: this.loadSlots.bind(this),
                     selectSlot: this.selectSlot.bind(this),
                     changeEdit: this.changeEdit.bind(this),
+                    isSlotValid: this.isSlotValid.bind(this),
                     saveSelectedSlot: this.saveSelectedSlot.bind(this),
                     resetSelectedSlot: this.resetSelectedSlot.bind(this),
                     bulkDeleteSlots: this.bulkDeleteSlots.bind(this),

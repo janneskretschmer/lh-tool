@@ -20,7 +20,7 @@ export function fetchStore(accessToken, storeId) {
             authToken: accessToken,
             parameters: { [ID_VARIABLE]: storeId }
         })
-            .then(result => result.response)
+            .then(result => result.response);
     } else {
         return Promise.resolve(null);
     }
@@ -37,9 +37,7 @@ export function fetchStoreProjects({ accessToken, storeId }) {
                 ...storeProject,
                 start: moment(storeProject.start, 'x'),
                 end: moment(storeProject.end, 'x'),
-            })))
-            // TODO Proper error message
-            .catch(e => console.log(e));
+            })));
     } else {
         return Promise.resolve([]);
     }
@@ -89,5 +87,5 @@ export function deleteStore(accessToken, storeId) {
         apiEndpoint: apiEndpoints.store.delete,
         authToken: accessToken,
         parameters: { [ID_VARIABLE]: storeId },
-    })
+    });
 }

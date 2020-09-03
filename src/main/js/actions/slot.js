@@ -1,6 +1,5 @@
 import { apiEndpoints, apiRequest } from '../apiclient';
-import { ID_VARIABLE, STORE_ID_VARIABLE, FREE_TEXT_VARIABLE, NAME_VARIABLE, DESCRIPTION_VARIABLE } from '../urlmappings';
-import moment from 'moment';
+import { DESCRIPTION_VARIABLE, FREE_TEXT_VARIABLE, ID_VARIABLE, NAME_VARIABLE, STORE_ID_VARIABLE } from '../urlmappings';
 
 export function fetchSlotsByStore(accessToken, freeText, name, description, storeId) {
     if (accessToken) {

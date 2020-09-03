@@ -20,7 +20,7 @@ class StatefulStoresProvider extends React.Component {
             actionInProgress: false,
             changed: false,
             selectedStore: null,
-        }
+        };
     }
 
     showErrorMessage(message) {
@@ -87,7 +87,7 @@ class StatefulStoresProvider extends React.Component {
 
     isStoreValid() {
         const store = this.state.selectedStore;
-        return store && !isAnyStringBlank([store.name, store.address, store.type])
+        return store && !isAnyStringBlank([store.name, store.address, store.type]);
     }
 
     saveSelectedStore() {
@@ -132,7 +132,7 @@ class StatefulStoresProvider extends React.Component {
         return {
             ...store,
             typeName,
-        }
+        };
     }
 
     changeName(name) {

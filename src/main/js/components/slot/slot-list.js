@@ -1,26 +1,16 @@
+import { CircularProgress } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
 import IconButton from '@material-ui/core/IconButton';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
 import { withStyles } from '@material-ui/core/styles';
-import TableCell from '@material-ui/core/TableCell';
 import TextField from '@material-ui/core/TextField';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import SearchIcon from '@material-ui/icons/Search';
 import React from 'react';
-import { Redirect } from 'react-router';
 import { fullPathOfSlot } from '../../paths';
 import { SessionContext } from '../../providers/session-provider';
-import { withContext } from '../../util';
-import PagedTable from '../table';
-import { fetchSlotsByStore } from '../../actions/slot';
-import { CircularProgress } from '@material-ui/core';
 import { SlotsContext } from '../../providers/slots-provider';
-import slotWrapper from './slot-wrapper';
+import PagedTable from '../table';
 import IdNameSelect from '../util/id-name-select';
 
 
