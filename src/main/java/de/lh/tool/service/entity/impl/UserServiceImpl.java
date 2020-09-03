@@ -210,14 +210,17 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 		User user = findById(userId).orElseThrow(ExceptionEnum.EX_INVALID_USER_ID::createDefaultException);
 
 		if (!userRoleService.hasCurrentUserRight(UserRole.RIGHT_USERS_CHANGE_FOREIGN_PASSWORD)) {
+			// check might be senseless, because sb. who knows somebody's password could
+			// just sign in and change the password...
+			Long currentUserId = Optional.ofNullable(getCurrentUser()).map(User::getId).orElse(null);
+			if (currentUserId != null
+					&& !Optional.ofNullable(user.getId()).map(id -> id.equals(currentUserId)).orElse(false)) {
+				throw ExceptionEnum.EX_INVALID_USER_ID.createDefaultException();
+			}
+
 			if (oldPassword == null) {
 				validateToken(token, user);
 			} else {
-				// check might be senseless, because sb. who knows somebody's password could
-				// just sign in and change the password...
-				if (!Optional.ofNullable(user.getId()).map(id -> id.equals(getCurrentUser().getId())).orElse(false)) {
-					throw ExceptionEnum.EX_INVALID_USER_ID.createDefaultException();
-				}
 				try {
 					authenticationManager
 							.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), oldPassword));
