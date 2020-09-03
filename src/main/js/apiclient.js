@@ -21,7 +21,6 @@ import {
     STORE_PREFIX,
     STORE_PROJECTS,
     SLOT_PREFIX,
-    SLOT_STORE_VARIABLE,
     ITEM_PREFIX,
     ITEM_NOTES,
     ITEM_TAGS,
@@ -56,6 +55,9 @@ import {
     ITEM_IMAGE_ID,
     ITEM_ITEMS,
     ITEM_ITEMS_ID,
+    NAME_VARIABLE,
+    DESCRIPTION_VARIABLE,
+    STORE_ID_VARIABLE,
 
 } from './urlmappings';
 
@@ -386,7 +388,7 @@ export const apiEndpoints = {
         getByStore: {
             method: 'GET',
             path: SLOT_PREFIX,
-            queries: [SLOT_STORE_VARIABLE],
+            queries: [FREE_TEXT_VARIABLE, NAME_VARIABLE, DESCRIPTION_VARIABLE, STORE_ID_VARIABLE],
         },
         getById: {
             method: 'GET',

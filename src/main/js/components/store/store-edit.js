@@ -153,7 +153,7 @@ class StatefulStoreEditComponent extends React.Component {
                     </Button>
                 )}
             </>)}
-        </>)
+        </>);
     }
 }
 

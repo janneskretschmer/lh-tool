@@ -23,7 +23,7 @@ import io.swagger.annotations.ApiOperation;
 public class RoleRestService {
 
 	@Autowired
-	RoleService roleService;
+	private RoleService roleService;
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of all roles that the user can grant")

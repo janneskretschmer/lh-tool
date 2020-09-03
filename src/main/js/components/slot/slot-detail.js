@@ -1,25 +1,17 @@
-import { Checkbox, Button, FormControlLabel } from '@material-ui/core';
+import { Button, Checkbox, FormControlLabel } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import FormControl from '@material-ui/core/FormControl';
 import IconButton from '@material-ui/core/IconButton';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import SaveIcon from '@material-ui/icons/Save';
 import React from 'react';
-import { createOrUpdateSlot, fetchSlot } from '../../actions/slot';
-import { fetchOwnStores } from '../../actions/store';
-import { SessionContext } from '../../providers/session-provider';
-import { withContext, getIdMapValues } from '../../util';
-import ItemListComponent from '../item/item-list';
-import { SlotsContext } from '../../providers/slots-provider';
-import IdNameSelect from '../util/id-name-select';
-import { PageContext } from '../../providers/page-provider';
 import { fullPathOfSlot, fullPathOfSlots } from '../../paths';
+import { PageContext } from '../../providers/page-provider';
+import { SlotsContext } from '../../providers/slots-provider';
+import { getIdMapValues } from '../../util';
+import IdNameSelect from '../util/id-name-select';
 import LenientRedirect from '../util/lenient-redirect';
 
 const styles = theme => ({
@@ -88,6 +80,7 @@ class StatefulSlotDetailComponent extends React.Component {
         const slot = slotsState.selectedSlot;
         const edit = slotsState.edit;
         const stores = getIdMapValues(slotsState.stores);
+        const saveDisabled = !slotsState.isSlotValid();
 
         if (redirectToUrl) {
             return (<LenientRedirect to={redirectToUrl} onSamePage={() => this.setState({ redirectToUrl: null })} />);
@@ -185,7 +178,7 @@ class StatefulSlotDetailComponent extends React.Component {
                                 margin="dense"
                                 variant="outlined"
                                 type="number"
-                                inputProps={{ min: "0" }}
+                                inputProps={{ min: '0' }}
                             />
                             <TextField
                                 id="height"
@@ -196,7 +189,7 @@ class StatefulSlotDetailComponent extends React.Component {
                                 margin="dense"
                                 variant="outlined"
                                 type="number"
-                                inputProps={{ min: "0" }}
+                                inputProps={{ min: '0' }}
                             />
                             <TextField
                                 id="depth"
@@ -244,7 +237,12 @@ class StatefulSlotDetailComponent extends React.Component {
                 {edit ?
                     slotsState.actionInProgress ? (<>&nbsp;<CircularProgress /></>) : (
                         <>
-                            <Button variant="contained" className={classes.button} type="submit" onClick={() => slotsState.saveSelectedSlot()}>
+                            <Button
+                                disabled={saveDisabled}
+                                variant="contained"
+                                className={classes.button}
+                                type="submit"
+                                onClick={() => slotsState.saveSelectedSlot()}>
                                 Speichern
                             </Button>
                             <Button variant="outlined" className={classes.button} type="submit" onClick={() => slotsState.resetSelectedSlot()}>
