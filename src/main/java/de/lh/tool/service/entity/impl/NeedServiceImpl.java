@@ -106,7 +106,7 @@ public class NeedServiceImpl extends BasicMappableEntityServiceImpl<NeedReposito
 			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
 		}
 		if (getRepository().findByProjectHelperType_IdAndDate(needDto.getProjectHelperTypeId(), need.getDate())
-				.map(existingNeed -> existingNeed.getId() != id).orElse(false)) {
+				.map(Need::getId).map(existingId -> !existingId.equals(id)).orElse(false)) {
 			throw ExceptionEnum.EX_NEED_ALREADY_EXISTS.createDefaultException();
 		}
 		need = save(need);
