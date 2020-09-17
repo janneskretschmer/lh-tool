@@ -1,6 +1,7 @@
 package de.lh.tool.service.entity.impl;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -167,9 +168,22 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 		}
 
 		List<NeedUser> needUserList = getRepository().findByNeedOrderByUser_LastNameAscUser_FirstNameAsc(need);
-		needUserList = needUserList.stream().filter(this::isViewAllowed).collect(Collectors.toList());
+		needUserList = needUserList.stream().map(this::anonymizeOrFilterNeedUserIfNecessary).filter(Objects::nonNull)
+				.collect(Collectors.toList());
 
 		return convertToDtoList(needUserList);
+	}
+
+	private NeedUser anonymizeOrFilterNeedUserIfNecessary(NeedUser needUser) {
+		if (isViewAllowed(needUser)) {
+			return needUser;
+		}
+		// necessary for getting correct approved count if user isn't allowed to see
+		// whole user list
+		if (userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_GET_ANONYMIZED_USER_LIST)) {
+			return new NeedUser(needUser.getId(), needUser.getNeed(), new User(), needUser.getState());
+		}
+		return null;
 	}
 
 }
