@@ -16,9 +16,6 @@ public interface SlotRepository extends BasicEntityRepository<Slot, Long> {
 			//
 			+ "s.name) LIKE CONCAT('%',LOWER(:freeText),'%') OR LOWER("
 			+ "s.description) LIKE CONCAT('%',LOWER(:freeText),'%') OR LOWER("
-			+ "s.width) LIKE CONCAT('%',LOWER(:freeText),'%') OR LOWER("
-			+ "s.height) LIKE CONCAT('%',LOWER(:freeText),'%') OR LOWER("
-			+ "s.depth) LIKE CONCAT('%',LOWER(:freeText),'%') OR LOWER("
 			+ "s.store.name) LIKE CONCAT('%',LOWER(:freeText),'%')) " + "ORDER BY s.name ASC, s.store.name ASC ")
 	List<Slot> findByNameAndDescriptionAndStoreIdAndFreeTextIgnoreCase(@Param("freeText") String freeText,
 			@Param("name") String name, @Param("description") String description, @Param("storeId") Long storeId);

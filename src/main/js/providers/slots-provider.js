@@ -77,7 +77,6 @@ class StatefulSlotsProvider extends React.Component {
             description: '',
             width: '',
             height: '',
-            depth: '',
             outside: false,
         };
     }
@@ -162,33 +161,6 @@ class StatefulSlotsProvider extends React.Component {
             selectedSlot: {
                 ...prevState.selectedSlot,
                 description,
-            }
-        }));
-    }
-
-    changeWidth(width) {
-        this.setState(prevState => ({
-            selectedSlot: {
-                ...prevState.selectedSlot,
-                width,
-            }
-        }));
-    }
-
-    changeHeight(height) {
-        this.setState(prevState => ({
-            selectedSlot: {
-                ...prevState.selectedSlot,
-                height,
-            }
-        }));
-    }
-
-    changeDepth(depth) {
-        this.setState(prevState => ({
-            selectedSlot: {
-                ...prevState.selectedSlot,
-                depth,
             }
         }));
     }
@@ -278,13 +250,10 @@ class StatefulSlotsProvider extends React.Component {
                     resetSelectedSlot: this.resetSelectedSlot.bind(this),
                     bulkDeleteSlots: this.bulkDeleteSlots.bind(this),
 
-                    changeDepth: this.changeDepth.bind(this),
                     changeDescription: this.changeDescription.bind(this),
-                    changeHeight: this.changeHeight.bind(this),
                     changeName: this.changeName.bind(this),
                     changeOutside: this.changeOutside.bind(this),
                     changeStoreId: this.changeStoreId.bind(this),
-                    changeWidth: this.changeWidth.bind(this),
 
                     changeFilterDescription: this.changeFilterDescription.bind(this),
                     changeFilterFreeText: this.changeFilterFreeText.bind(this),

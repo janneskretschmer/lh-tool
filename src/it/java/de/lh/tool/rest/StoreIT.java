@@ -58,7 +58,7 @@ public class StoreIT extends BasicRestIntegrationTest {
 						"INSERT INTO `store_project` (`id`, `store_id`, `project_id`, `start`, `end`) VALUES ('1', '2', '1', '"
 								+ LocalDate.now().minusDays(1) + "', '" + LocalDate.now().minusDays(1)
 								+ "'),('2', '3', '1', '" + LocalDate.now() + "', '" + LocalDate.now() + "');",
-						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `width`, `height`, `depth`, `outside`) VALUES ('1', '1', 'Slot1', 'Description1', '10', '20', '30', '0'), ('2', '1', 'Slot2', 'Description2', NULL, NULL, NULL, '1'), ('3', '3', 'Slot3', 'Description3', '1', '2', '3', '0'), ('4', '3', 'Slot4', 'Description4', '0.5', '0.6', '0.7', '1')"))
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `outside`) VALUES ('1', '1', 'Slot1', 'Description1', '0'), ('2', '1', 'Slot2', 'Description2', '1'), ('3', '3', 'Slot3', 'Description3', '0'), ('4', '3', 'Slot4', 'Description4', '1')"))
 				.url(REST_URL + "/stores/3").method(Method.PUT)
 				.body(StoreDto.builder().id(3l).name("changed").type(StoreType.MAIN).address("changed address").build())
 				.userTests(List.of(UserTest.builder()
@@ -90,7 +90,7 @@ public class StoreIT extends BasicRestIntegrationTest {
 						"INSERT INTO `store_project` (`id`, `store_id`, `project_id`, `start`, `end`) VALUES ('1', '2', '1', '"
 								+ LocalDate.now().minusDays(1) + "', '" + LocalDate.now().minusDays(1)
 								+ "'),('2', '3', '1', '" + LocalDate.now() + "', '" + LocalDate.now() + "');",
-						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `width`, `height`, `depth`, `outside`) VALUES ('1', '1', 'Slot1', 'Description1', '10', '20', '30', '0'), ('2', '1', 'Slot2', 'Description2', NULL, NULL, NULL, '1'), ('3', '3', 'Slot3', 'Description3', '1', '2', '3', '0'), ('4', '3', 'Slot4', 'Description4', '0.5', '0.6', '0.7', '1')"))
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `outside`) VALUES ('1', '1', 'Slot1', 'Description1', '0'), ('2', '1', 'Slot2', 'Description2', '1'), ('3', '3', 'Slot3', 'Description3', '0'), ('4', '3', 'Slot4', 'Description4', '1')"))
 				.url(REST_URL + "/stores/1").method(Method.PUT)
 				.body(StoreDto.builder().id(1l).name("changed").type(StoreType.MAIN).address("changed address").build())
 				.userTests(List.of(UserTest.builder()
@@ -122,7 +122,7 @@ public class StoreIT extends BasicRestIntegrationTest {
 						"INSERT INTO `store_project` (`id`, `store_id`, `project_id`, `start`, `end`) VALUES ('1', '2', '1', '"
 								+ LocalDate.now().minusDays(1) + "', '" + LocalDate.now().minusDays(1)
 								+ "'),('2', '3', '1', '" + LocalDate.now() + "', '" + LocalDate.now() + "');",
-						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `width`, `height`, `depth`, `outside`) VALUES ('1', '1', 'Slot1', 'Description1', '10', '20', '30', '0'), ('2', '1', 'Slot2', 'Description2', NULL, NULL, NULL, '1'), ('3', '3', 'Slot3', 'Description3', '1', '2', '3', '0'), ('4', '3', 'Slot4', 'Description4', '0.5', '0.6', '0.7', '1')"))
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `outside`) VALUES ('1', '1', 'Slot1', 'Description1', '0'), ('2', '1', 'Slot2', 'Description2', '1'), ('3', '3', 'Slot3', 'Description3', '0'), ('4', '3', 'Slot4', 'Description4', '1')"))
 				.url(REST_URL + "/stores/4").method(Method.PUT)
 				.body(StoreDto.builder().id(4l).name("changed").type(StoreType.MAIN).address("changed address").build())
 				.userTests(List.of(UserTest.builder()
@@ -164,7 +164,7 @@ public class StoreIT extends BasicRestIntegrationTest {
 						"INSERT INTO `store_project` (`id`, `store_id`, `project_id`, `start`, `end`) VALUES ('1', '2', '1', '"
 								+ LocalDate.now().minusDays(1) + "', '" + LocalDate.now().minusDays(1)
 								+ "'),('2', '3', '1', '" + LocalDate.now() + "', '" + LocalDate.now() + "');",
-						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `width`, `height`, `depth`, `outside`) VALUES ('1', '1', 'Slot1', 'Description1', '10', '20', '30', '0'), ('2', '1', 'Slot2', 'Description2', NULL, NULL, NULL, '1'), ('3', '2', 'Slot3', 'Description3', '1', '2', '3', '0'), ('4', '2', 'Slot4', 'Description4', '0.5', '0.6', '0.7', '1')"))
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `outside`) VALUES ('1', '1', 'Slot1', 'Description1', '0'), ('2', '1', 'Slot2', 'Description2', '1'), ('3', '2', 'Slot3', 'Description3', '0'), ('4', '2', 'Slot4', 'Description4', '1')"))
 				.url(REST_URL + "/stores/1").method(Method.DELETE)
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
@@ -192,7 +192,7 @@ public class StoreIT extends BasicRestIntegrationTest {
 						"INSERT INTO `store_project` (`id`, `store_id`, `project_id`, `start`, `end`) VALUES ('1', '2', '1', '"
 								+ LocalDate.now().minusDays(1) + "', '" + LocalDate.now().minusDays(1)
 								+ "'),('2', '3', '1', '" + LocalDate.now() + "', '" + LocalDate.now() + "');",
-						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `width`, `height`, `depth`, `outside`) VALUES ('1', '1', 'Slot1', 'Description1', '10', '20', '30', '0'), ('2', '1', 'Slot2', 'Description2', NULL, NULL, NULL, '1'), ('3', '3', 'Slot3', 'Description3', '1', '2', '3', '0'), ('4', '3', 'Slot4', 'Description4', '0.5', '0.6', '0.7', '1')"))
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `outside`) VALUES ('1', '1', 'Slot1', 'Description1', '0'), ('2', '1', 'Slot2', 'Description2', '1'), ('3', '3', 'Slot3', 'Description3', '0'), ('4', '3', 'Slot4', 'Description4', '1')"))
 				.url(REST_URL + "/stores/3").method(Method.DELETE)
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
@@ -220,7 +220,7 @@ public class StoreIT extends BasicRestIntegrationTest {
 						"INSERT INTO `store_project` (`id`, `store_id`, `project_id`, `start`, `end`) VALUES ('1', '2', '1', '"
 								+ LocalDate.now().minusDays(1) + "', '" + LocalDate.now().minusDays(1)
 								+ "'),('2', '3', '1', '" + LocalDate.now() + "', '" + LocalDate.now() + "');",
-						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `width`, `height`, `depth`, `outside`) VALUES ('1', '1', 'Slot1', 'Description1', '10', '20', '30', '0'), ('2', '1', 'Slot2', 'Description2', NULL, NULL, NULL, '1'), ('3', '3', 'Slot3', 'Description3', '1', '2', '3', '0'), ('4', '3', 'Slot4', 'Description4', '0.5', '0.6', '0.7', '1')"))
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `outside`) VALUES ('1', '1', 'Slot1', 'Description1', '0'), ('2', '1', 'Slot2', 'Description2', '1'), ('3', '3', 'Slot3', 'Description3', '0'), ('4', '3', 'Slot4', 'Description4', '1')"))
 				.url(REST_URL + "/stores/4").method(Method.DELETE)
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
@@ -250,9 +250,9 @@ public class StoreIT extends BasicRestIntegrationTest {
 						"INSERT INTO `store_project` (`id`, `store_id`, `project_id`, `start`, `end`) VALUES ('1', '2', '1', '"
 								+ LocalDate.now().minusDays(1) + "', '" + LocalDate.now().minusDays(1)
 								+ "'),('2', '3', '1', '" + LocalDate.now() + "', '" + LocalDate.now() + "');",
-						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `width`, `height`, `depth`, `outside`) VALUES ('1', '1', 'Slot1', 'Description1', '10', '20', '30', '0'), ('2', '1', 'Slot2', 'Description2', NULL, NULL, NULL, '1'), ('3', '3', 'Slot3', 'Description3', '1', '2', '3', '0'), ('4', '3', 'Slot4', 'Description4', '0.5', '0.6', '0.7', '1')",
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `outside`) VALUES ('1', '1', 'Slot1', 'Description1', '0'), ('2', '1', 'Slot2', 'Description2', '1'), ('3', '3', 'Slot3', 'Description3', '0'), ('4', '3', 'Slot4', 'Description4', '1')",
 						"INSERT INTO `technical_crew` (`id`, `name`) VALUES ('1', 'Technical Crew')",
-						"INSERT INTO `item` (`id`, `slot_id`, `identifier`, `has_barcode`, `name`, `description`, `quantity`, `unit`, `width`, `height`, `depth`, `outside_qualified`, `consumable`, `broken`, `technical_crew_id`) VALUES ('1', '1', 'id', '0', 'name', NULL, '1', 'Stück', NULL, NULL, NULL, '0', '0', '0', '1')"))
+						"INSERT INTO `item` (`id`, `slot_id`, `identifier`, `has_barcode`, `name`, `description`, `quantity`, `unit`, `outside_qualified`, `consumable`, `broken`, `technical_crew_id`) VALUES ('1', '1', 'id', '0', 'name', NULL, '1', 'Stück', '0', '0', '0', '1')"))
 				.url(REST_URL + "/stores/1").method(Method.DELETE)
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))

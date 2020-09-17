@@ -142,21 +142,6 @@ class StatefulSlotListComponent extends React.Component {
                                 converter: storeId => slotsState.stores && slotsState.stores.has(storeId) && slotsState.stores.get(storeId).name,
                             },
                             {
-                                key: 'width',
-                                name: 'Breite (cm)',
-                                unimportant: true,
-                            },
-                            {
-                                key: 'height',
-                                name: 'Höhe (cm)',
-                                unimportant: true,
-                            },
-                            {
-                                key: 'depth',
-                                name: 'Tiefe (cm)',
-                                unimportant: true,
-                            },
-                            {
                                 key: 'outside',
                                 name: 'Draußen',
                                 converter: outside => outside ? 'Ja' : 'Nein'

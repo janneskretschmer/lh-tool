@@ -162,57 +162,9 @@ class StatefulSlotDetailComponent extends React.Component {
                             </>
                         )}
                 </div>
-                {edit && (<br />)}
-                <div className={classes.container}>
-                    <div className={classes.bold}>
-                        Maße
-                    </div>
-                    {edit ? (
-                        <>
-                            <TextField
-                                id="width"
-                                label="Breite in cm"
-                                className={classes.textField}
-                                value={slot.width ? slot.width : ''}
-                                onChange={event => slotsState.changeWidth(event.target.value)}
-                                margin="dense"
-                                variant="outlined"
-                                type="number"
-                                inputProps={{ min: '0' }}
-                            />
-                            <TextField
-                                id="height"
-                                label="Höhe in cm"
-                                className={classes.textField}
-                                value={slot.height ? slot.height : ''}
-                                onChange={event => slotsState.changeHeight(event.target.value)}
-                                margin="dense"
-                                variant="outlined"
-                                type="number"
-                                inputProps={{ min: '0' }}
-                            />
-                            <TextField
-                                id="depth"
-                                label="Tiefe in cm"
-                                className={classes.textField}
-                                value={slot.depth ? slot.depth : ''}
-                                onChange={event => slotsState.changeDepth(event.target.value)}
-                                margin="dense"
-                                variant="outlined"
-                                type="number"
-                                inputProps={{ min: "0" }}
-                            />
-                        </>
-                    ) : (
-                            <>
-                                Breite: {slot.width && slot.width + 'cm'}<br />
-                            Höhe: {slot.height && slot.height + 'cm'}<br />
-                            Tiefe: {slot.depth && slot.depth + 'cm'}<br />
-                            </>
-                        )}
-                </div>
                 {edit ? (
                     <>
+                        <br />
                         <br />
                         <TextField
                             id="description"
