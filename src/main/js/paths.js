@@ -1,7 +1,17 @@
 import { getBasePath } from './config';
+import { STORE_ID_VARIABLE } from './urlmappings';
 
-export const fullPathOf = (subPath) => (getBasePath() || '/') + (subPath || '');
-
+export function fullPathOf(subPath, queryMap) {
+    let path = (getBasePath() || '/') + (subPath || '');
+    const queryString = queryMap && [...queryMap.entries()]
+        .filter(query => query[1])
+        .map(query => `${query[0]}=${query[1]}`)
+        .join('&');
+    if (queryString) {
+        path += '?' + queryString;
+    }
+    return path;
+}
 
 export const fullPathOfLogin = () => fullPathOf('/login/');
 
@@ -10,10 +20,7 @@ export const fullPathOfNeedQuantities = () => fullPathOf('/needs/quantities/');
 export const fullPathOfNeedApply = () => fullPathOf('/needs/apply/');
 export const fullPathOfNeedApprove = () => fullPathOf('/needs/approve/');
 
-export const fullPathOfStores = () => fullPathOf('/stores/');
-export const fullPathOfStore = (id) => fullPathOf('/stores/' + (id ? id : ':id'));
-
-export const fullPathOfSlots = () => fullPathOf('/slots');
+export const fullPathOfSlots = (filterStoreId) => fullPathOf('/slots', new Map([[STORE_ID_VARIABLE, filterStoreId]]));
 export const fullPathOfSlot = (id) => fullPathOf('/slots/' + (id ? id : ':id'));
 
 export const fullPathOfItems = () => fullPathOf('/items');
@@ -32,3 +39,6 @@ export const fullPathOfUserSettings = (id) => fullPathOf('/settings/users/' + (i
 
 export const fullPathOfProjectsSettings = () => fullPathOf('/settings/projects');
 export const fullPathOfProjectSettings = (id) => fullPathOf('/settings/projects/' + (id ? id : ':projectId'));
+
+export const fullPathOfStoresSettings = () => fullPathOf('/settings/stores');
+export const fullPathOfStoreSettings = (id) => fullPathOf('/settings/stores/' + (id ? id : ':id'));

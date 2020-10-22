@@ -14,8 +14,10 @@ public interface SlotService extends BasicEntityService<Slot, Long> {
 
 	SlotDto updateSlotDto(SlotDto dto, Long id) throws DefaultException;
 
-	List<SlotDto> getSlotDtosByStore(Long storeId);
+	List<SlotDto> getSlotDtosByFilters(String freeText, String name, String description, Long storeId);
 
 	String getSlotNameWithStore(Slot slot);
+
+	void deleteSlotById(Long slotId) throws DefaultException;
 
 }

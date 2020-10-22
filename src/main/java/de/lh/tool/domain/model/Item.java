@@ -56,10 +56,6 @@ public class Item {
 	@Column(name = "unit", length = 50, nullable = false)
 	private String unit;
 
-	private Double width;
-	private Double height;
-	private Double depth;
-
 	// TODO: Default in DB
 	@Column(name = "outside_qualified", nullable = false)
 	private Boolean outsideQualified;

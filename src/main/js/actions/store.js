@@ -13,16 +13,14 @@ export function fetchOwnStores(accessToken) {
     }
 }
 
-export function fetchStore({ accessToken, storeId }) {
+export function fetchStore(accessToken, storeId) {
     if (accessToken) {
         return apiRequest({
             apiEndpoint: apiEndpoints.store.getById,
             authToken: accessToken,
             parameters: { [ID_VARIABLE]: storeId }
         })
-            .then(result => result.response)
-            // TODO Proper error message
-            .catch(e => console.log(e));
+            .then(result => result.response);
     } else {
         return Promise.resolve(null);
     }
@@ -39,9 +37,7 @@ export function fetchStoreProjects({ accessToken, storeId }) {
                 ...storeProject,
                 start: moment(storeProject.start, 'x'),
                 end: moment(storeProject.end, 'x'),
-            })))
-            // TODO Proper error message
-            .catch(e => console.log(e));
+            })));
     } else {
         return Promise.resolve([]);
     }
@@ -67,17 +63,29 @@ export function deleteAndCreateStoreProjects({ accessToken, storeId, storeProjec
     }
 }
 
-export function createOrUpdateStore({ accessToken, store, handleFailure }) {
+export function createStore(accessToken, store) {
     return apiRequest({
-        apiEndpoint: store.id ? apiEndpoints.store.update : apiEndpoints.store.createNew,
+        apiEndpoint: apiEndpoints.store.createNew,
         authToken: accessToken,
         data: store,
-        parameters: store.id ? { [ID_VARIABLE]: store.id } : {},
     })
-        .then(result => result.response)
-        .catch(err => {
-            if (handleFailure) {
-                handleFailure(err);
-            }
-        });
+        .then(result => result.response);
+}
+
+export function updateStore(accessToken, store) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.store.update,
+        authToken: accessToken,
+        data: store,
+        parameters: { [ID_VARIABLE]: store.id },
+    })
+        .then(result => result.response);
+}
+
+export function deleteStore(accessToken, storeId) {
+    return apiRequest({
+        apiEndpoint: apiEndpoints.store.delete,
+        authToken: accessToken,
+        parameters: { [ID_VARIABLE]: storeId },
+    });
 }

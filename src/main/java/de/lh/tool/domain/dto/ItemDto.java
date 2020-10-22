@@ -24,9 +24,6 @@ public class ItemDto implements Patchable {
 	private String description;
 	private Double quantity;
 	private String unit;
-	private Float width;
-	private Float height;
-	private Float depth;
 	private Boolean outsideQualified;
 	private Boolean consumable;
 	private Boolean broken;
@@ -35,7 +32,7 @@ public class ItemDto implements Patchable {
 	@Override
 	public boolean hasNonNullField() {
 		// id not included, because it shouldn't change in a patch
-		return ObjectUtils.anyNotNull(slotId, identifier, hasBarcode, name, description, quantity, unit, width, height,
-				depth, outsideQualified, consumable, broken, technicalCrewId);
+		return ObjectUtils.anyNotNull(slotId, identifier, hasBarcode, name, description, quantity, unit,
+				outsideQualified, consumable, broken, technicalCrewId);
 	}
 }

@@ -13,13 +13,15 @@ public abstract class UrlMappings {
 	public static final String PROJECT_HELPER_TYPE_ID_VARIABLE = "project_helper_type_id";
 	public static final String ITEM_ID_VARIABLE = "item_id";
 	public static final String NOTE_ID_VARIABLE = "note_id";
+	public static final String STORE_ID_VARIABLE = "store_id";
 
 	public static final String DATE_VARIABLE = "date";
 	public static final String ROLE_VARIABLE = "role";
-	public static final String STORE_VARIABLE = "store";
 	public static final String WEEKDAY_VARIABLE = "weekday";
 	public static final String START_DATE_VARIABLE = "start_date";
 	public static final String END_DATE_VARIABLE = "end_date";
+	public static final String NAME_VARIABLE = "name";
+	public static final String DESCRIPTION_VARIABLE = "description";
 	public static final String FREE_TEXT_VARIABLE = "free_text";
 
 	public static final String NO_EXTENSION = "";

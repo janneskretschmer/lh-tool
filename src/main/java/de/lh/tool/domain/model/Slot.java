@@ -40,15 +40,6 @@ public class Slot {
 	@Column(name = "description", length = 1000, nullable = true)
 	private String description;
 
-	@Column(name = "width", nullable = true)
-	private Float width;
-
-	@Column(name = "height", nullable = true)
-	private Float height;
-
-	@Column(name = "depth", nullable = true)
-	private Float depth;
-
 	@Column(name = "outside", nullable = false)
 	private Boolean outside;
 

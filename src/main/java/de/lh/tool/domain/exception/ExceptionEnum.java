@@ -60,6 +60,10 @@ public enum ExceptionEnum {
 	EX_ITEM_IDENTIFIER_ALREADY_IN_USE("The identifier is already in use.", HttpStatus.CONFLICT),
 	EX_ITEM_SELF_RELATION("An item can't be related to itself.", HttpStatus.BAD_REQUEST),
 	EX_ITEM_RELATION_ALREADY_EXISTS("The items are already related.", HttpStatus.CONFLICT),
+
+	EX_STORE_NOT_EMPTY("The store is not empty.", HttpStatus.BAD_REQUEST),
+
+	EX_SLOT_NOT_EMPTY("The slot is not empty.", HttpStatus.BAD_REQUEST),
 	//
 	;
 

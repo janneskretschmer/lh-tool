@@ -748,11 +748,17 @@ public class NeedIT extends BasicRestIntegrationTest {
 						.build(),
 						UserTest.builder().emails(List.of("test@lh-tool.de")).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPROVED\"}]}")
+										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":["
+												+ "{\"id\":2,\"needId\":1,\"userId\":null,\"state\":\"APPLIED\"},"
+												+ "{\"id\":3,\"needId\":1,\"userId\":null,\"state\":\"REJECTED\"},"
+												+ "{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPROVED\"}]}")
 								.build(),
 						UserTest.builder().emails(List.of(PUBLISHER_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[]}")
+										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":["
+												+ "{\"id\":2,\"needId\":1,\"userId\":null,\"state\":\"APPLIED\"},"
+												+ "{\"id\":3,\"needId\":1,\"userId\":null,\"state\":\"REJECTED\"},"
+												+ "{\"id\":1,\"needId\":1,\"userId\":null,\"state\":\"APPROVED\"}]}")
 								.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}

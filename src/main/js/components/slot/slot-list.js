@@ -1,24 +1,17 @@
+import { CircularProgress } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
 import IconButton from '@material-ui/core/IconButton';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
 import { withStyles } from '@material-ui/core/styles';
-import TableCell from '@material-ui/core/TableCell';
 import TextField from '@material-ui/core/TextField';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import SearchIcon from '@material-ui/icons/Search';
 import React from 'react';
-import { Redirect } from 'react-router';
 import { fullPathOfSlot } from '../../paths';
 import { SessionContext } from '../../providers/session-provider';
-import { withContext } from '../../util';
+import { SlotsContext } from '../../providers/slots-provider';
 import PagedTable from '../table';
-import { fetchSlotsByStore } from '../../actions/slot';
-import { CircularProgress } from '@material-ui/core';
+import IdNameSelect from '../util/id-name-select';
 
 
 const styles = theme => ({
@@ -48,13 +41,12 @@ const styles = theme => ({
 });
 
 @withStyles(styles)
-@withContext('sessionState', SessionContext)
-export default class SlotListComponent extends React.Component {
+class StatefulSlotListComponent extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            showFilters: false,
+            expandFilters: false,
         };
     }
 
@@ -63,37 +55,62 @@ export default class SlotListComponent extends React.Component {
     }
 
     componentDidMount() {
-        fetchSlotsByStore({ accessToken: this.props.sessionState.accessToken, storeId: this.props.storeId }).then(slots => this.setState({ slots }));
+        this.props.slotsState.loadSlots();
+    }
+
+
+    toggleExpandFilters() {
+        this.setState(prevState => ({
+            expandFilters: !prevState.expandFilters,
+        }));
     }
 
     render() {
-        const { classes, store } = this.props;
-        const { slots, showFilters } = this.state;
+        const { classes, store, sessionState, slotsState } = this.props;
+        const { expandFilters } = this.state;
+        const expandedFilterSet = !!(slotsState.filterName || slotsState.filterDescription || slotsState.filterStoreId);
+        const slots = slotsState && slotsState.slots && [...slotsState.slots.values()];
+        const showAddButton = sessionState.hasPermission('ROLE_RIGHT_SLOTS_PUT');
         return (
-            <SessionContext.Consumer>
-                {sessionState => (
-                    <>
-                        <TextField
-                            id="free-store-search"
-                            variant="outlined"
-                            label="Freitextsuche"
-                            margin="dense"
-                            InputProps={{
-                                startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
-                            }}
-                        />
-                        <IconButton className={classes.button} variant="outlined" onClick={this.handleToggleShowFilters.bind(this)}>
-                            {showFilters ? (<ExpandLessIcon />) : (<ExpandMoreIcon />)}
-                        </IconButton>
-                        {showFilters && (
+            <>
+                {slots ? (
+                    <PagedTable
+                        SelectionHeader={props => (
                             <>
-                                <br />
+                                <Button variant="outlined" className={classes.button} onClick={() => { slotsState.bulkDeleteSlots(props.selected); props.resetSelection(); }}>
+                                    Löschen
+                                </Button>
+                            </>
+                        )}
+                        filter={(<>
+                            <TextField
+                                id="free-search"
+                                value={slotsState.filterFreeText}
+                                onChange={event => slotsState.changeFilterFreeText(event.target.value)}
+                                variant="outlined"
+                                label="Freitextsuche"
+                                margin="dense"
+                            />
+                            <IconButton
+                                className={classes.button}
+                                onClick={() => this.toggleExpandFilters()}
+                                disabled={expandedFilterSet}
+                            >
+                                {expandFilters || expandedFilterSet ? (<ExpandLessIcon />) : (<ExpandMoreIcon />)}
+                            </IconButton>
+                            <IconButton className={classes.button} onClick={() => slotsState.loadSlots()}>
+                                <SearchIcon />
+                            </IconButton>
+                            <br />
+                            {(expandFilters || expandedFilterSet) && (<>
                                 <TextField
                                     className={classes.searchInput}
                                     id="name-search"
                                     variant="outlined"
-                                    label="Bezeichnung"
+                                    label="Name"
                                     margin="dense"
+                                    value={slotsState.filterName}
+                                    onChange={event => slotsState.changeFilterName(event.target.value)}
                                 />
                                 <TextField
                                     className={classes.searchInput}
@@ -101,64 +118,56 @@ export default class SlotListComponent extends React.Component {
                                     variant="outlined"
                                     label="Beschreibung"
                                     margin="dense"
+                                    value={slotsState.filterDescription}
+                                    onChange={event => slotsState.changeFilterDescription(event.target.value)}
                                 />
-                                <br />
-                                TODO: Größensuche
-                                <br />
-                            </>
-                        )}
-                        <Button variant="contained" onClick={() => alert('Vergeblich nach der Search-Funktion gesucht ;(')}>
-                            Suchen
-                        </Button>
+                                <IdNameSelect
+                                    label="Lager"
+                                    value={slotsState.filterStoreId}
+                                    onChange={value => slotsState.changeFilterStoreId(value)}
+                                    data={slotsState.stores}
+                                    nullable
+                                />
+                                {/* TODO: Größensuche, Drinnen/Draußen */}
+                            </>)}
+                        </>)}
+                        headers={[
+                            {
+                                key: 'name',
+                                name: 'Name',
+                            },
+                            {
+                                key: 'storeId',
+                                name: 'Lager',
+                                converter: storeId => slotsState.stores && slotsState.stores.has(storeId) && slotsState.stores.get(storeId).name,
+                            },
+                            {
+                                key: 'outside',
+                                name: 'Draußen',
+                                converter: outside => outside ? 'Ja' : 'Nein'
+                            },
 
-
-                        {slots ? (
-                            <PagedTable
-                                selectionHeader={(
-                                    <>
-                                        <Button variant="outlined" className={classes.button} onClick={() => alert('TODO: implement "Zerstörung"')}>
-                                            Löschen
-                                    </Button>
-                                    </>
-                                )}
-                                headers={[
-                                    {
-                                        key: 'id',
-                                        name: 'ID',
-                                    },
-                                    {
-                                        key: 'name',
-                                        name: 'Bezeichnung',
-                                    },
-                                    {
-                                        key: 'size',
-                                        name: 'Größe',
-                                    },
-                                    {
-                                        key: 'outside',
-                                        name: 'Draußen',
-                                    },
-                                    {
-                                        key: 'itemCount',
-                                        name: '#Artikel',
-                                        align: 'right',
-                                    },
-
-                                ]}
-                                rows={slots.map(slot => {
-                                    return {
-                                        ...slot,
-                                        size: slot.width && slot.height && slot.depth ? slot.width + ' x ' + slot.height + ' x ' + slot.depth : '',
-                                        outside: slot.outside ? 'Ja' : 'Nein',
-                                        itemCount: 'TODO',
-                                    }
-                                })}
-                                redirect={fullPathOfSlot} />
-                        ) : (<CircularProgress />)
-                        }
-                    </>
-                )}
-            </SessionContext.Consumer>
+                        ]}
+                        rows={slots}
+                        redirect={fullPathOfSlot}
+                        showAddButton={showAddButton} />
+                ) : (<CircularProgress />)
+                }
+            </>
         );
     }
 }
+
+
+const SlotListComponent = props => (
+    <>
+        <SessionContext.Consumer>
+            {sessionState => (
+                <SlotsContext.Consumer>
+                    {slotsState => (<StatefulSlotListComponent {...props} sessionState={sessionState} slotsState={slotsState} />)}
+                </SlotsContext.Consumer>
+            )}
+        </SessionContext.Consumer>
+    </>
+);
+export default SlotListComponent;

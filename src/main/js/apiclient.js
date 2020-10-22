@@ -21,7 +21,6 @@ import {
     STORE_PREFIX,
     STORE_PROJECTS,
     SLOT_PREFIX,
-    SLOT_STORE_VARIABLE,
     ITEM_PREFIX,
     ITEM_NOTES,
     ITEM_TAGS,
@@ -56,6 +55,9 @@ import {
     ITEM_IMAGE_ID,
     ITEM_ITEMS,
     ITEM_ITEMS_ID,
+    NAME_VARIABLE,
+    DESCRIPTION_VARIABLE,
+    STORE_ID_VARIABLE,
 
 } from './urlmappings';
 
@@ -314,8 +316,7 @@ export const apiEndpoints = {
     need: {
         getByProjectHelperTypeAndDate: {
             method: 'GET',
-            // TODO Trailing '/' also necessary?
-            path: NEED_PREFIX + '/',
+            path: NEED_PREFIX,
             queries: [PROJECT_HELPER_TYPE_ID_VARIABLE, DATE_VARIABLE],
         },
         get: {
@@ -325,8 +326,7 @@ export const apiEndpoints = {
         },
         createNew: {
             method: 'POST',
-            // TODO Trailing '/' also necessary?
-            path: NEED_PREFIX + '/',
+            path: NEED_PREFIX,
         },
         update: {
             method: 'PUT',
@@ -352,7 +352,7 @@ export const apiEndpoints = {
     store: {
         get: {
             method: 'GET',
-            path: STORE_PREFIX + '/',
+            path: STORE_PREFIX,
         },
         getById: {
             method: 'GET',
@@ -371,11 +371,15 @@ export const apiEndpoints = {
         },
         createNew: {
             method: 'POST',
-            // TODO Trailing '/' also necessary?
-            path: STORE_PREFIX + '/',
+            path: STORE_PREFIX,
         },
         update: {
             method: 'PUT',
+            path: STORE_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
+        delete: {
+            method: 'DELETE',
             path: STORE_PREFIX + ID_EXTENSION,
             parameters: [ID_VARIABLE],
         },
@@ -383,8 +387,8 @@ export const apiEndpoints = {
     slot: {
         getByStore: {
             method: 'GET',
-            path: SLOT_PREFIX + '/',
-            queries: [SLOT_STORE_VARIABLE],
+            path: SLOT_PREFIX,
+            queries: [FREE_TEXT_VARIABLE, NAME_VARIABLE, DESCRIPTION_VARIABLE, STORE_ID_VARIABLE],
         },
         getById: {
             method: 'GET',
@@ -393,11 +397,15 @@ export const apiEndpoints = {
         },
         createNew: {
             method: 'POST',
-            // TODO Trailing '/' also necessary?
-            path: SLOT_PREFIX + '/',
+            path: SLOT_PREFIX,
         },
         update: {
             method: 'PUT',
+            path: SLOT_PREFIX + ID_EXTENSION,
+            parameters: [ID_VARIABLE],
+        },
+        delete: {
+            method: 'DELETE',
             path: SLOT_PREFIX + ID_EXTENSION,
             parameters: [ID_VARIABLE],
         },
@@ -405,7 +413,7 @@ export const apiEndpoints = {
     item: {
         get: {
             method: 'GET',
-            path: ITEM_PREFIX + '/',
+            path: ITEM_PREFIX,
             queries: [FREE_TEXT_VARIABLE],
         },
         getById: {
@@ -415,8 +423,7 @@ export const apiEndpoints = {
         },
         createNew: {
             method: 'POST',
-            // TODO Trailing '/' also necessary?
-            path: ITEM_PREFIX + '/',
+            path: ITEM_PREFIX,
         },
         update: {
             method: 'PUT',
@@ -512,13 +519,13 @@ export const apiEndpoints = {
     itemTag: {
         get: {
             method: 'GET',
-            path: ITEM_TAG_PREFIX + '/',
+            path: ITEM_TAG_PREFIX,
         },
     },
     technicalCrew: {
         get: {
             method: 'GET',
-            path: TECHNICAL_CREW_PREFIX + '/',
+            path: TECHNICAL_CREW_PREFIX,
         },
         getById: {
             method: 'GET',

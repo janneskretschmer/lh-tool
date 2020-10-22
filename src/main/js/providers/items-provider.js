@@ -3,7 +3,7 @@ import { fetchItems, fetchItemNotes, fetchItem, fetchItemTagsByItem, fetchItemHi
 import { SessionContext } from './session-provider';
 import { convertToIdMap, generateUniqueId, isAnyStringBlank, base64toBlob, isStringBlank } from '../util';
 import { fetchStore, fetchOwnStores } from '../actions/store';
-import { fetchSlotsByStore } from '../actions/slot';
+import { fetchSlotsByFreeTextAndNameAndDescriptionAndStore } from '../actions/slot';
 import { fetchTechnicalCrews } from '../actions/technical-crew';
 import { NEW_ENTITY_ID_PLACEHOLDER } from '../config';
 import { fetchUser } from '../actions/user';
@@ -145,17 +145,14 @@ class StatefulItemsProvider extends React.Component {
         return {
             broken: false,
             consumable: false,
-            depth: '',
             description: '',
             hasBarcode: false,
-            height: '',
             identifier: generateUniqueId(),
             name: '',
             outsideQualified: false,
             pictureUrl: '',
             quantity: 1,
             unit: 'Stück',
-            width: '',
         };
     }
 
@@ -208,7 +205,7 @@ class StatefulItemsProvider extends React.Component {
         if (!this.state.hasOwnProperty('slots')) {
             this.setState({ slots: null }, () =>
                 // FUTURE: don't load everything and only if allowed (store keeper)
-                fetchSlotsByStore(this.props.sessionState.accessToken)
+                fetchSlotsByFreeTextAndNameAndDescriptionAndStore(this.props.sessionState.accessToken)
                     .then(receivedSlots => this.setState(prevState => {
                         const slots = convertToIdMap(receivedSlots);
                         const selectedSlotId = prevState.selectedItem && prevState.selectedItem.slotId;
@@ -487,9 +484,6 @@ class StatefulItemsProvider extends React.Component {
             technicalCrewName: technicalCrew && technicalCrew.name,
             history,
             notes,
-            depth: item.depth || '',
-            height: item.height || '',
-            width: item.width || '',
         };
     }
 
@@ -577,30 +571,6 @@ class StatefulItemsProvider extends React.Component {
         this.setState(prevState => {
             const selectedItem = _.cloneDeep(prevState.selectedItem);
             selectedItem.unit = unit;
-            return { selectedItem };
-        });
-    }
-
-    changeItemWidth(width) {
-        this.setState(prevState => {
-            const selectedItem = _.cloneDeep(prevState.selectedItem);
-            selectedItem.width = width;
-            return { selectedItem };
-        });
-    }
-
-    changeItemHeight(height) {
-        this.setState(prevState => {
-            const selectedItem = _.cloneDeep(prevState.selectedItem);
-            selectedItem.height = height;
-            return { selectedItem };
-        });
-    }
-
-    changeItemDepth(depth) {
-        this.setState(prevState => {
-            const selectedItem = _.cloneDeep(prevState.selectedItem);
-            selectedItem.depth = depth;
             return { selectedItem };
         });
     }
@@ -1063,17 +1033,14 @@ class StatefulItemsProvider extends React.Component {
                     bulkDeleteItems: this.bulkDeleteItems.bind(this),
 
                     changeItemConsumable: this.changeItemConsumable.bind(this),
-                    changeItemDepth: this.changeItemDepth.bind(this),
                     changeItemDescription: this.changeItemDescription.bind(this),
                     changeItemHasBarcode: this.changeItemHasBarcode.bind(this),
-                    changeItemHeight: this.changeItemHeight.bind(this),
                     changeItemIdentifier: this.changeItemIdentifier.bind(this),
                     changeItemName: this.changeItemName.bind(this),
                     changeItemOutsideQualified: this.changeItemOutsideQualified.bind(this),
                     changeItemQuantity: this.changeItemQuantity.bind(this),
                     changeItemTechnicalCrewId: this.changeItemTechnicalCrewId.bind(this),
                     changeItemUnit: this.changeItemUnit.bind(this),
-                    changeItemWidth: this.changeItemWidth.bind(this),
 
                     saveNote: this.saveNote.bind(this),
                     deleteNote: this.deleteNote.bind(this),

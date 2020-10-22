@@ -161,13 +161,11 @@ class StatefulItemDisplayComponent extends React.Component {
                                 </WithPermission>
                             </>)}
                         </div>
-                        <br />
                         <div className={classes.bold}>
-                            Maße
-                    </div>
-                    Breite: {item.width && item.width + 'cm'}<br />
-                    Höhe: {item.height && item.height + 'cm'}<br />
-                    Tiefe: {item.depth && item.depth + 'cm'}<br />
+                            Gewerk
+                        </div>
+                        {item.technicalCrewName}<br />
+                        <br />
                     </div>
                     <div className={classes.container}>
                         <div className={classes.bold}>
@@ -186,11 +184,6 @@ class StatefulItemDisplayComponent extends React.Component {
                         <div className={classes.longText}>
                             {item.description}
                         </div>
-                        <br />
-                        <div className={classes.bold}>
-                            Gewerk
-                        </div>
-                        {item.technicalCrewName}<br />
                         <br />
                         <div className={classes.bold}>
                             Status

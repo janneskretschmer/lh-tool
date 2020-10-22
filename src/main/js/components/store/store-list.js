@@ -1,25 +1,13 @@
-import React from 'react';
-import { SessionContext } from '../../providers/session-provider';
-import { withContext } from '../../util';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableFooter from '@material-ui/core/TableFooter';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import { Link } from 'react-router-dom';
-import { fullPathOfStore } from '../../paths';
-import LocalShippingIcon from '@material-ui/icons/LocalShipping';
-import HomeIcon from '@material-ui/icons/Home';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import { fetchOwnStores } from '../../actions/store';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import React from 'react';
+import { fullPathOfStoreSettings } from '../../paths';
+import { SessionContext } from '../../providers/session-provider';
+import { StoresContext } from '../../providers/store-provider';
+import { withContext } from '../../util';
+import PagedTable from '../table';
+import { Button, CircularProgress } from '@material-ui/core';
+import WithPermission from '../with-permission';
+import SimpleDialog from '../simple-dialog';
 
 const styles = theme => ({
     noDecoration: {
@@ -28,56 +16,71 @@ const styles = theme => ({
 });
 
 @withStyles(styles)
-@withContext('sessionState', SessionContext)
-export default class StoreListComponent extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            stores: null
-        };
-    }
-
-    redirect(id) {
-        this.setState({ redirect: id });
-    }
+class StatefulStoreListComponent extends React.Component {
 
     componentDidMount() {
-        fetchOwnStores(this.props.sessionState.accessToken).then(stores => this.setState({
-            stores
-        }));
+        this.props.storesState.loadStores();
     }
 
     render() {
-        const { stores } = this.state;
-        const { classes } = this.props;
+        const { storesState } = this.props;
+        const stores = storesState.getAssembledStoreList();
         return (
-            <SessionContext.Consumer>
-                {sessionState => (
-                    <>
-                        <List>
-                            {stores ? stores.map(store => (
-                                <div key={store.id}>
-                                    <Link to={fullPathOfStore(store.id)} className={classes.noDecoration} key={store.id}>
-                                        <ListItem button>
-                                            <ListItemIcon>
-                                                {store.type === 'MOBIL' ? (<LocalShippingIcon />) : (<HomeIcon />)}
-                                            </ListItemIcon>
-                                            <ListItemText primary={store.name} secondary={store.address} />
-                                        </ListItem>
-                                    </Link>
-                                    <Divider />
-                                </div>
-                            )) : (<CircularProgress />)}
-                        </List>
-                        <Link to={fullPathOfStore('new')} className={classes.noDecoration}>
-                            <Button variant="contained" className={classes.new}>
-                                Hinzufügen
-                            </Button>
-                        </Link>
-                    </>
+            <PagedTable
+                title="Lager"
+                SelectionHeader={props => (
+                    <WithPermission permission="ROLE_RIGHT_STORES_DELETE">
+                        {storesState.actionInProgress ? (<CircularProgress />) : (<>
+                            <SimpleDialog
+                                title="Löschen bestätigen"
+                                okText="Ja"
+                                cancelText="Nein"
+                                text={`Sollen die ${props.selected.length} ausgewählten Lager wirklich gelöscht werden?`}
+                                onOK={() => { storesState.bulkDeleteStores(props.selected); props.resetSelection(); }}
+                            >
+                                <Button
+                                    variant="outlined"
+                                    onClick={() => { }}
+                                    disabled={storesState.actionInProgress}
+                                >
+                                    Löschen
+                                </Button>
+                            </SimpleDialog>
+                        </>)}
+                    </WithPermission>
                 )}
-            </SessionContext.Consumer>
+                headers={[
+                    {
+                        key: 'name',
+                        name: 'Name',
+                    },
+                    {
+                        key: 'typeName',
+                        name: 'Typ',
+                    },
+                    {
+                        key: 'address',
+                        name: 'Adresse',
+                    }
+                ]}
+                rows={stores}
+                redirect={fullPathOfStoreSettings}
+                showAddButton={!storesState.actionInProgress}
+            />
         );
     }
 }
+
+
+const StoreListComponent = props => (
+    <>
+        <SessionContext.Consumer>
+            {sessionState => (
+                <StoresContext.Consumer>
+                    {storesState => (<StatefulStoreListComponent {...props} sessionState={sessionState} storesState={storesState} />)}
+                </StoresContext.Consumer>
+            )}
+        </SessionContext.Consumer>
+    </>
+);
+export default StoreListComponent;

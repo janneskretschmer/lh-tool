@@ -145,40 +145,6 @@ class StatefulItemEditComponent extends React.Component {
                         label="Verbrauchsgegenstand"
                     />
                 </div>
-                <TextField
-                    id="width"
-                    label="Breite in cm"
-                    className={classes.textField}
-                    value={item.width}
-                    onChange={event => itemsState.changeItemWidth(event.target.value)}
-                    margin="dense"
-                    variant="outlined"
-                    type="number"
-                    inputProps={{ min: '0' }}
-                />
-                <TextField
-                    id="height"
-                    label="Höhe in cm"
-                    className={classes.textField}
-                    value={item.height}
-                    onChange={event => itemsState.changeItemHeight(event.target.value)}
-                    margin="dense"
-                    variant="outlined"
-                    type="number"
-                    inputProps={{ min: '0' }}
-                />
-                <TextField
-                    id="depth"
-                    label="Tiefe in cm"
-                    className={classes.textField}
-                    value={item.depth}
-                    onChange={event => itemsState.changeItemDepth(event.target.value)}
-                    margin="dense"
-                    variant="outlined"
-                    type="number"
-                    inputProps={{ min: '0' }}
-                />
-                <br />
                 <FormControlLabel
                     control={
                         <Checkbox

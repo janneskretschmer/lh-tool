@@ -17,8 +17,5 @@ public class SlotDto {
 	private Long storeId;
 	private String name;
 	private String description;
-	private Float width;
-	private Float height;
-	private Float depth;
 	private Boolean outside;
 }

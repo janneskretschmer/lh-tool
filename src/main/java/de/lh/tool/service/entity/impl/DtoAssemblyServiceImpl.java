@@ -3,6 +3,7 @@ package de.lh.tool.service.entity.impl;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -24,6 +25,7 @@ import de.lh.tool.domain.dto.assembled.AssembledProjectHelperTypeDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.DefaultRuntimeException;
 import de.lh.tool.domain.exception.ExceptionEnum;
+import de.lh.tool.domain.model.User;
 import de.lh.tool.service.entity.interfaces.DtoAssemblyService;
 import de.lh.tool.service.entity.interfaces.HelperTypeService;
 import de.lh.tool.service.entity.interfaces.NeedService;
@@ -108,8 +110,12 @@ public class DtoAssemblyServiceImpl implements DtoAssemblyService {
 
 	private AssembledNeedUserDto assembleNeedUser(NeedUserDto needUser) {
 		AssembledNeedUserDto assembled = modelMapper.map(needUser, AssembledNeedUserDto.class);
-		assembled.setUser(modelMapper.map(userService.findById(needUser.getUserId())
-				.orElseThrow(() -> (new DefaultRuntimeException(ExceptionEnum.EX_INVALID_ID))), UserDto.class));
+		// user id is null for anonymized data sets
+		Optional.ofNullable(needUser.getUserId()).ifPresent(userId -> {
+			User user = userService.findById(userId)
+					.orElseThrow(() -> (new DefaultRuntimeException(ExceptionEnum.EX_INVALID_ID)));
+			assembled.setUser(modelMapper.map(user, UserDto.class));
+		});
 		return assembled;
 	}
 }
