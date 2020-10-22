@@ -4,7 +4,7 @@ import { convertToIdMap, isAnyStringBlank, wrapSetStateInPromise, getQueryParams
 import { NEW_ENTITY_ID_PLACEHOLDER } from '../config';
 import _ from 'lodash';
 import { withSnackbar } from 'notistack';
-import { fetchSlotsByStore, fetchSlot, updateSlot, createSlot, deleteSlot } from '../actions/slot';
+import { fetchSlotsByFreeTextAndNameAndDescriptionAndStore, fetchSlot, updateSlot, createSlot, deleteSlot } from '../actions/slot';
 import { fetchOwnStores } from '../actions/store';
 import { FREE_TEXT_VARIABLE, STORE_ID_VARIABLE, DESCRIPTION_VARIABLE, NAME_VARIABLE } from '../urlmappings';
 
@@ -63,7 +63,7 @@ class StatefulSlotsProvider extends React.Component {
     loadSlots() {
         if (!this.state.loadedForCurrentFilter) {
             const { filterFreeText, filterName, filterDescription, filterStoreId } = this.state;
-            return fetchSlotsByStore(this.props.sessionState.accessToken, filterFreeText, filterName, filterDescription, filterStoreId).then(receivedSlots => this.setState({
+            return fetchSlotsByFreeTextAndNameAndDescriptionAndStore(this.props.sessionState.accessToken, filterFreeText, filterName, filterDescription, filterStoreId).then(receivedSlots => this.setState({
                 slots: convertToIdMap(receivedSlots),
                 loadedForCurrentFilter: true,
             }))

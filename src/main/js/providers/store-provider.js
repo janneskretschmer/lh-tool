@@ -1,11 +1,10 @@
-import React from 'react';
-import { SessionContext } from './session-provider';
-import { fetchOwnStores, fetchStore, createStore, updateStore, deleteStore } from '../actions/store';
-import { convertToIdMap, isAnyStringBlank, wrapSetStateInPromise } from '../util';
-import { NEW_ENTITY_ID_PLACEHOLDER } from '../config';
 import _ from 'lodash';
 import { withSnackbar } from 'notistack';
-import { fetchSlotsByStore } from '../actions/slot';
+import React from 'react';
+import { createStore, deleteStore, fetchOwnStores, fetchStore, updateStore } from '../actions/store';
+import { NEW_ENTITY_ID_PLACEHOLDER } from '../config';
+import { convertToIdMap, isAnyStringBlank, wrapSetStateInPromise } from '../util';
+import { SessionContext } from './session-provider';
 
 export const StoresContext = React.createContext();
 

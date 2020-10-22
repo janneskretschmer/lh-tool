@@ -240,10 +240,10 @@ export function wrapSetStateInPromise(context, setterFunction) {
 }
 
 export function getQueryParams() {
-    const urlParts = window.location.href.split('#')[0].split('?');
+    const search = window.location.search;
     const params = new Map();
-    if (urlParts.length > 1) {
-        urlParts[1].split('&').forEach(keyValuePair => {
+    if (search.length > 1) {
+        search.slice(search.indexOf('?') + 1).split('&').forEach(keyValuePair => {
             const parts = keyValuePair.split('=');
             params.set(parts[0], parts.length > 1 ? decodeURI(parts[1]) : '');
         });

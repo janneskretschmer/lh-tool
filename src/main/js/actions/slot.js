@@ -1,7 +1,7 @@
 import { apiEndpoints, apiRequest } from '../apiclient';
 import { DESCRIPTION_VARIABLE, FREE_TEXT_VARIABLE, ID_VARIABLE, NAME_VARIABLE, STORE_ID_VARIABLE } from '../urlmappings';
 
-export function fetchSlotsByStore(accessToken, freeText, name, description, storeId) {
+export function fetchSlotsByFreeTextAndNameAndDescriptionAndStore(accessToken, freeText, name, description, storeId) {
     if (accessToken) {
         return apiRequest({
             apiEndpoint: apiEndpoints.slot.getByStore,
