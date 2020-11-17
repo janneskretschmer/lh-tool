@@ -50,7 +50,38 @@ public class HelperTypeIT extends BasicRestIntegrationTest {
 				.build()));
 	}
 
-	// TODO test missing values
+	@Test
+	public void testHelperTypeCreationMissingName() throws Exception {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.url(REST_URL + "/helper_types/").method(Method.POST).body(HelperTypeDto.builder().build())
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL))
+						.expectedHttpCode(HttpStatus.BAD_REQUEST)
+						.expectedResponse(
+								"{\"key\":\"EX_NO_NAME\",\"message\":\"The provided name is empty.\",\"httpCode\":400}")
+						.validationQueries(
+								List.of("SELECT 1 WHERE NOT EXISTS(SELECT * FROM helper_type WHERE name='Test')"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(
+						List.of("SELECT 1 WHERE NOT EXISTS(SELECT * FROM helper_type WHERE name='Test')"))
+				.build()));
+	}
+
+	@Test
+	public void testHelperTypeCreationWithId() throws Exception {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.url(REST_URL + "/helper_types/").method(Method.POST)
+				.body(HelperTypeDto.builder().id(1l).name("Test").build())
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL))
+						.expectedHttpCode(HttpStatus.BAD_REQUEST)
+						.expectedResponse(
+								"{\"key\":\"EX_ILLEGAL_ID\",\"message\":\"Please don't provide an id for new entities.\",\"httpCode\":400}")
+						.validationQueries(
+								List.of("SELECT 1 WHERE NOT EXISTS(SELECT * FROM helper_type WHERE name='Test')"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(
+						List.of("SELECT 1 WHERE NOT EXISTS(SELECT * FROM helper_type WHERE name='Test')"))
+				.build()));
+	}
 
 //  ██████╗_██╗___██╗████████╗
 //  ██╔══██╗██║___██║╚══██╔══╝

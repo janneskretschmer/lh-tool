@@ -7,15 +7,22 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 public class CodeGenUtil {
-	private final static String JS_BASE_PATH = "src/main/js/";
+	private static final String JS_BASE_PATH = "src/main/js/";
+
+	private CodeGenUtil() {
+		throw new IllegalStateException("Utility class");
+	}
 
 	public static <T> void generateJavascriptWithConstants(Class<T> javaClass, String fileName) {
 		try {
 			Files.writeString(Paths.get(JS_BASE_PATH, fileName), getJavascriptConstantsDeclarations(javaClass));
 		} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException | NoSuchMethodException
 				| SecurityException | IOException e) {
-			e.printStackTrace();
+			log.error("fail :(", e);
 		}
 	}
 
