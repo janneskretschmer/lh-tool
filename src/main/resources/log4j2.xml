@@ -8,8 +8,8 @@
 		</Console>
 		<!-- File Appender -->
 		<RollingFile name="File">
-			<FileName>${sys:catalina.base}/logs/lh-tool.log</FileName>
-			<FilePattern>${sys:catalina.base}/logs/lh-tool_%d{yyyy-MM-dd}.log.gz</FilePattern>
+			<FileName>$${sys:catalina.base}/logs/lh-tool.log</FileName>
+			<FilePattern>$${sys:catalina.base}/logs/lh-tool_%d{yyyy-MM-dd}.log.gz</FilePattern>
 			<PatternLayout>
 				<Pattern>%d{yyyy-MMM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n</Pattern>
 			</PatternLayout>

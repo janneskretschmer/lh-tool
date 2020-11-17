@@ -16,6 +16,41 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
+
+DELIMITER $$
+CREATE PROCEDURE `truncate_all`()
+    MODIFIES SQL DATA
+    DETERMINISTIC
+    SQL SECURITY INVOKER
+BEGIN
+	DECLARE finished INTEGER DEFAULT 0;
+    DECLARE tableName VARCHAR(255);
+	DEClARE tableCursor 
+		CURSOR FOR SELECT table_name FROM information_schema.tables WHERE table_schema='lhtool' AND table_name != 'schema_version' AND auto_increment > 1;
+	DECLARE CONTINUE HANDLER 
+        FOR NOT FOUND SET finished = 1;
+    
+    SET FOREIGN_KEY_CHECKS=0;
+    
+    OPEN tableCursor;
+    trunc: LOOP
+    	FETCH tableCursor INTO tableName;
+        IF finished=1 THEN 
+        	LEAVE trunc;
+        END IF;
+        SET @query=CONCAT('TRUNCATE TABLE ',tableName);
+        PREPARE statement FROM @query;
+        EXECUTE statement;
+    END LOOP trunc;
+	CLOSE tableCursor;
+    
+    SET FOREIGN_KEY_CHECKS=0;
+    
+END$$
+DELIMITER ;
+
+
+
 --
 -- Datenbank: `lhtool`
 --
