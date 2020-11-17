@@ -4,6 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ldc</groupId>
 	<artifactId>lh-tool</artifactId>
+	<!-- needs to be in sync with sonar-project.properties -->
 	<version>0.0.1-SNAPSHOT</version>
 	<name>LH-Tool</name>
 	<packaging>war</packaging>
