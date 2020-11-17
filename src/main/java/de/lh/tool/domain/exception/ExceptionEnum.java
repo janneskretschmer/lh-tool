@@ -3,6 +3,7 @@ package de.lh.tool.domain.exception;
 import org.springframework.http.HttpStatus;
 
 import de.lh.tool.domain.model.PasswordChangeToken;
+import de.lh.tool.util.CodeGenUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -94,10 +95,6 @@ public enum ExceptionEnum {
 	//
 	;
 
-	public interface ExceptionEnumWrapper {
-		ExceptionEnum getException();
-	}
-
 	@Getter
 	private String message;
 	@Getter
@@ -113,5 +110,13 @@ public enum ExceptionEnum {
 
 	public DefaultException createDefaultException(Throwable cause) {
 		return new DefaultException(this, cause);
+	}
+
+	public interface ExceptionEnumWrapper {
+		ExceptionEnum getException();
+	}
+
+	public static void main(String... options) {
+		CodeGenUtil.generateJavascriptWithConstants(ExceptionEnum.class, "exceptions.js");
 	}
 }

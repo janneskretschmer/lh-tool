@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 
 import de.lh.tool.domain.Identifiable;
+import de.lh.tool.util.CodeGenUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -84,14 +85,15 @@ public class UserRole implements GrantedAuthority, Identifiable<Long> {
 	public static final String POST_SUFFIX = "_POST";
 	public static final String PUT_SUFFIX = "_PUT";
 	public static final String DELETE_SUFFIX = "_DELETE";
+	public static final String CHANGE_FOREIGN_SUFFIX = "_CHANGE_FOREIGN";
 
 	public static final String USERS_PREFIX = "ROLE_RIGHT_USERS";
 	public static final String RIGHT_USERS_GET = USERS_PREFIX + GET_SUFFIX;
 	public static final String RIGHT_USERS_POST = USERS_PREFIX + POST_SUFFIX;
 	public static final String RIGHT_USERS_PUT = USERS_PREFIX + PUT_SUFFIX;
 	public static final String RIGHT_USERS_DELETE = USERS_PREFIX + DELETE_SUFFIX;
-	public static final String RIGHT_USERS_CHANGE_FOREIGN = USERS_PREFIX + "_CHANGE_FOREIGN";
-	public static final String RIGHT_USERS_CHANGE_FOREIGN_PASSWORD = USERS_PREFIX + "_CHANGE_FOREIGN_PASSWORD";
+	public static final String RIGHT_USERS_CHANGE_FOREIGN = USERS_PREFIX + CHANGE_FOREIGN_SUFFIX;
+	public static final String RIGHT_USERS_CHANGE_FOREIGN_PASSWORD = RIGHT_USERS_CHANGE_FOREIGN + "_PASSWORD";
 
 	public static final String USERS_ROLES_PREFIX = "ROLE_RIGHT_USERS_ROLES";
 	public static final String RIGHT_USERS_ROLES_GET = USERS_ROLES_PREFIX + GET_SUFFIX;
@@ -116,13 +118,13 @@ public class UserRole implements GrantedAuthority, Identifiable<Long> {
 	public static final String RIGHT_PROJECTS_POST = PROJECTS_PREFIX + POST_SUFFIX;
 	public static final String RIGHT_PROJECTS_PUT = PROJECTS_PREFIX + PUT_SUFFIX;
 	public static final String RIGHT_PROJECTS_DELETE = PROJECTS_PREFIX + DELETE_SUFFIX;
-	public static final String RIGHT_PROJECTS_CHANGE_FOREIGN = PROJECTS_PREFIX + "_CHANGE_FOREIGN";
+	public static final String RIGHT_PROJECTS_CHANGE_FOREIGN = PROJECTS_PREFIX + CHANGE_FOREIGN_SUFFIX;
 
 	public static final String PROJECTS_USERS_PREFIX = "ROLE_RIGHT_PROJECTS_USERS";
 	public static final String RIGHT_PROJECTS_USERS_GET = PROJECTS_USERS_PREFIX + GET_SUFFIX;
 	public static final String RIGHT_PROJECTS_USERS_POST = PROJECTS_USERS_PREFIX + POST_SUFFIX;
 	public static final String RIGHT_PROJECTS_USERS_DELETE = PROJECTS_USERS_PREFIX + DELETE_SUFFIX;
-	public static final String RIGHT_PROJECTS_USERS_CHANGE_FOREIGN = PROJECTS_USERS_PREFIX + "_CHANGE_FOREIGN";
+	public static final String RIGHT_PROJECTS_USERS_CHANGE_FOREIGN = PROJECTS_USERS_PREFIX + CHANGE_FOREIGN_SUFFIX;
 
 	public static final String PROJECTS_HELPER_TYPES_PREFIX = "ROLE_RIGHT_PROJECTS_HELPER_TYPES";
 	public static final String RIGHT_PROJECTS_HELPER_TYPES_GET = PROJECTS_HELPER_TYPES_PREFIX + GET_SUFFIX;
@@ -141,8 +143,8 @@ public class UserRole implements GrantedAuthority, Identifiable<Long> {
 	public static final String RIGHT_NEEDS_POST = NEEDS_PREFIX + POST_SUFFIX;
 	public static final String RIGHT_NEEDS_PUT = NEEDS_PREFIX + PUT_SUFFIX;
 	public static final String RIGHT_NEEDS_DELETE = NEEDS_PREFIX + DELETE_SUFFIX;
-	public static final String RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT = NEEDS_PREFIX + "_CHANGE_FOREIGN_PROJECT";
-	public static final String RIGHT_NEEDS_CHANGE_FOREIGN_USER = NEEDS_PREFIX + "_CHANGE_FOREIGN_USER";
+	public static final String RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT = NEEDS_PREFIX + CHANGE_FOREIGN_SUFFIX + "_PROJECT";
+	public static final String RIGHT_NEEDS_CHANGE_FOREIGN_USER = NEEDS_PREFIX + CHANGE_FOREIGN_SUFFIX + "_USER";
 	public static final String RIGHT_NEEDS_GET_FOREIGN_USER = NEEDS_PREFIX + GET_SUFFIX + "_FOREIGN_USER";
 	public static final String RIGHT_NEEDS_GET_ANONYMIZED_USER_LIST = NEEDS_PREFIX + GET_SUFFIX
 			+ "_ANONYMIZED_USER_LIST";
@@ -377,6 +379,11 @@ public class UserRole implements GrantedAuthority, Identifiable<Long> {
 
 	public static Set<String> getRoles() {
 		return RoleRightManager.getInstance().getRoles();
+	}
+
+	// needs to be executed after rights or roles have changed
+	public static void main(String... options) {
+		CodeGenUtil.generateJavascriptWithConstants(UserRole.class, "permissions.js");
 	}
 
 }

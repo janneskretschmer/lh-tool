@@ -94,7 +94,7 @@ public abstract class BasicEntityServiceImpl<R extends BasicEntityRepository<E, 
 	// R/W permissions
 
 	@Override
-	abstract public boolean hasReadPermission(@NonNull E entity);
+	public abstract boolean hasReadPermission(@NonNull E entity);
 
 	@Override
 	@Transactional
@@ -118,7 +118,7 @@ public abstract class BasicEntityServiceImpl<R extends BasicEntityRepository<E, 
 	}
 
 	@Override
-	abstract public boolean hasWritePermission(@NonNull E entity);
+	public abstract boolean hasWritePermission(@NonNull E entity);
 
 	@Override
 	@Transactional

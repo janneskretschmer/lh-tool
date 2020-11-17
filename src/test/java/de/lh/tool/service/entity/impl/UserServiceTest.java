@@ -21,7 +21,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
@@ -30,8 +29,6 @@ import de.lh.tool.domain.model.User;
 import de.lh.tool.domain.model.User.Gender;
 import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.repository.UserRepository;
-import de.lh.tool.service.entity.interfaces.MailService;
-import de.lh.tool.service.entity.interfaces.PasswordChangeTokenService;
 import de.lh.tool.service.entity.interfaces.UserRoleService;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,19 +37,10 @@ public class UserServiceTest {
 	private UserRepository userRepository;
 
 	@Mock
-	private PasswordChangeTokenService passwordChangeTokenService;
-
-	@Mock
 	private UserRoleService userRoleService;
 
 	@Mock
 	private AuthenticationManager authenticationManager;
-
-	@Mock
-	private PasswordEncoder passwordEncoder;
-
-	@Mock
-	private MailService mailService;
 
 	@InjectMocks
 	private UserServiceImpl userService;

@@ -36,7 +36,6 @@ import de.lh.tool.service.entity.interfaces.MailService;
 import de.lh.tool.service.entity.interfaces.PasswordChangeTokenService;
 import de.lh.tool.service.entity.interfaces.ProjectService;
 import de.lh.tool.service.entity.interfaces.ProjectUserService;
-import de.lh.tool.service.entity.interfaces.UserRoleService;
 import de.lh.tool.service.entity.interfaces.UserService;
 import de.lh.tool.service.entity.interfaces.crud.UserCrudService;
 import de.lh.tool.util.StringUtil;
@@ -51,9 +50,6 @@ public class UserServiceImpl extends BasicEntityCrudServiceImpl<UserRepository, 
 
 	@Autowired
 	private PasswordChangeTokenService passwordChangeTokenService;
-
-	@Autowired
-	private UserRoleService userRoleService;
 
 	@Autowired
 	private ProjectService projectService;

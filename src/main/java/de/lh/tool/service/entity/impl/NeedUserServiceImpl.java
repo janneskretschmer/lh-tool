@@ -61,7 +61,8 @@ public class NeedUserServiceImpl extends BasicEntityCrudServiceImpl<NeedUserRepo
 	public NeedUserDto saveOrUpdateDto(Long needId, Long userId, NeedUserDto dto) throws DefaultException {
 		NeedUser needUser = findByNeedIdAndUserId(needId, userId);
 
-		boolean noPermissionOnProject = !projectService.hasReadPermission(getProject(needUser))
+		Project project = getProject(needUser);
+		boolean noPermissionOnProject = !(project != null && projectService.hasReadPermission(project))
 				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT);
 		boolean noPermissionOnUser = !userService.isCurrentUser(needUser.getUser())
 				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_USER);
@@ -109,8 +110,10 @@ public class NeedUserServiceImpl extends BasicEntityCrudServiceImpl<NeedUserRepo
 			// 7: APPROVED -> NONE
 			userRoleService.checkCurrentUserRight(UserRole.RIGHT_NEEDS_APPLY);
 			needUser.setState(NeedUserState.NONE);
-			userService.findByProjectIdAndRoleIgnoreCase(getProject(needUser).getId(), UserRole.ROLE_LOCAL_COORDINATOR)
-					.stream().forEach(u -> mailService.sendNeedUserStateChangedMailToCoordinator(needUser, u));
+			Optional.ofNullable(project).map(Project::getId)
+					.ifPresent(projectId -> userService
+							.findByProjectIdAndRoleIgnoreCase(projectId, UserRole.ROLE_LOCAL_COORDINATOR).stream()
+							.forEach(user -> mailService.sendNeedUserStateChangedMailToCoordinator(needUser, user)));
 			delete(needUser);
 			dto.setId(null);
 			return dto;
@@ -187,7 +190,8 @@ public class NeedUserServiceImpl extends BasicEntityCrudServiceImpl<NeedUserRepo
 
 	@Override
 	public boolean hasReadPermission(@NonNull NeedUser needUser) {
-		boolean permissionOnProject = projectService.hasReadPermission(getProject(needUser))
+		boolean permissionOnProject = Optional.ofNullable(getProject(needUser)).map(projectService::hasReadPermission)
+				.orElse(Boolean.FALSE)
 				|| userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT);
 		boolean permissionOnUser = userService.isCurrentUser(needUser.getUser())
 				|| userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_GET_FOREIGN_USER);
@@ -196,7 +200,8 @@ public class NeedUserServiceImpl extends BasicEntityCrudServiceImpl<NeedUserRepo
 
 	@Override
 	public boolean hasWritePermission(@NonNull NeedUser needUser) {
-		boolean permissionOnProject = projectService.hasReadPermission(getProject(needUser))
+		boolean permissionOnProject = Optional.ofNullable(getProject(needUser)).map(projectService::hasReadPermission)
+				.orElse(Boolean.FALSE)
 				|| userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT);
 		boolean permissionOnUser = userService.isCurrentUser(needUser.getUser())
 				|| userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_USER);

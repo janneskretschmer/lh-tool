@@ -1,7 +1,18 @@
-// Needs to be kept in sync with ExceptionEnum.java
+/////////////////////////////////////////////////////////////////////////////////////////////////
+//                                                                                             //
+//   ██████╗__██████╗_███╗___██╗_█╗_████████╗____████████╗_██████╗_██╗___██╗_██████╗██╗__██╗   //
+//   ██╔══██╗██╔═══██╗████╗__██║_╚╝_╚══██╔══╝____╚══██╔══╝██╔═══██╗██║___██║██╔════╝██║__██║   //
+//   ██║__██║██║___██║██╔██╗_██║_______██║__________██║___██║___██║██║___██║██║_____███████║   //
+//   ██║__██║██║___██║██║╚██╗██║_______██║__________██║___██║___██║██║___██║██║_____██╔══██║   //
+//   ██████╔╝╚██████╔╝██║_╚████║_______██║__________██║___╚██████╔╝╚██████╔╝╚██████╗██║__██║   //
+//   ╚═════╝__╚═════╝_╚═╝__╚═══╝_______╚═╝__________╚═╝____╚═════╝__╚═════╝__╚═════╝╚═╝__╚═╝   //
+//                                                                                             //
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// This file got generated from ExceptionEnum.java
+
 export const EX_ILLEGAL_ID = 'EX_ILLEGAL_ID';
 export const EX_FORBIDDEN = 'EX_FORBIDDEN';
-
 export const EX_INVALID_ID = 'EX_INVALID_ID';
 export const EX_INVALID_USER_ID = 'EX_INVALID_USER_ID';
 export const EX_INVALID_PROJECT_ID = 'EX_INVALID_PROJECT_ID';
@@ -11,7 +22,6 @@ export const EX_INVALID_SLOT_ID = 'EX_INVALID_SLOT_ID';
 export const EX_INVALID_ITEM_ID = 'EX_INVALID_ITEM_ID';
 export const EX_INVALID_NOTE_ID = 'EX_INVALID_NOTE_ID';
 export const EX_INVALID_TECHNICAL_CREW_ID = 'EX_INVALID_TECHNICAL_CREW_ID';
-
 export const EX_NO_BROKEN = 'EX_NO_BROKEN';
 export const EX_NO_CONSUMABLE = 'EX_NO_CONSUMABLE';
 export const EX_NO_DATE = 'EX_NO_DATE';
@@ -49,34 +59,24 @@ export const EX_NO_TYPE = 'EX_NO_TYPE';
 export const EX_NO_UNIT = 'EX_NO_UNIT';
 export const EX_NO_USER_ID = 'EX_NO_USER_ID';
 export const EX_NO_WEEKDAY = 'EX_NO_WEEKDAY';
-
 export const EX_USER_EMAIL_ALREADY_IN_USE = 'EX_USER_EMAIL_ALREADY_IN_USE';
 export const EX_USER_ROLE_ALREADY_EXISTS = 'EX_USER_ROLE_ALREADY_EXISTS';
 export const EX_USER_SUICIDE = 'EX_USER_SUICIDE';
-
 export const EX_PASSWORDS_DO_NOT_MATCH = 'EX_PASSWORDS_DO_NOT_MATCH';
 export const EX_PASSWORDS_NO_TOKEN_OR_OLD_PASSWORD = 'EX_PASSWORDS_NO_TOKEN_OR_OLD_PASSWORD';
 export const EX_PASSWORDS_INVALID_TOKEN = 'EX_PASSWORDS_INVALID_TOKEN';
 export const EX_PASSWORDS_EXPIRED_TOKEN = 'EX_PASSWORDS_EXPIRED_TOKEN';
 export const EX_PASSWORDS_INVALID_PASSWORD = 'EX_PASSWORDS_INVALID_PASSWORD';
 export const EX_PASSWORDS_SHORT_PASSWORD = 'EX_PASSWORDS_SHORT_PASSWORD';
-
 export const EX_PROJECT_NAME_ALREADY_EXISTS = 'EX_PROJECT_NAME_ALREADY_EXISTS';
-
 export const EX_NEED_ALREADY_EXISTS = 'EX_NEED_ALREADY_EXISTS';
 export const EX_NEED_USER_INVALID_STATE = 'EX_NEED_USER_INVALID_STATE';
-
 export const EX_HELPER_TYPE_ALREADY_EXISTS = 'EX_HELPER_TYPE_ALREADY_EXISTS';
 export const EX_HELPER_TYPE_WEEKDAY_WITHOUT_PROJECT = 'EX_HELPER_TYPE_WEEKDAY_WITHOUT_PROJECT';
-
 export const EX_ITEM_ITEM_TAG_ALREADY_EXISTS = 'EX_ITEM_ITEM_TAG_ALREADY_EXISTS';
 export const EX_ITEM_IDENTIFIER_ALREADY_IN_USE = 'EX_ITEM_IDENTIFIER_ALREADY_IN_USE';
 export const EX_ITEM_SELF_RELATION = 'EX_ITEM_SELF_RELATION';
 export const EX_ITEM_RELATION_ALREADY_EXISTS = 'EX_ITEM_RELATION_ALREADY_EXISTS';
-
 export const EX_STORE_NOT_EMPTY = 'EX_STORE_NOT_EMPTY';
-
 export const EX_SLOT_NOT_EMPTY = 'EX_SLOT_NOT_EMPTY';
-
-
 

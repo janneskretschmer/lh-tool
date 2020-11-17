@@ -28,7 +28,7 @@ public class ItemItemTagServiceImpl
 		implements ItemItemTagService, ItemItemTagCrudService {
 
 	@Autowired
-	ItemService itemService;
+	private ItemService itemService;
 
 	@Override
 	protected void checkValidity(@NonNull ItemItemTag itemItemTag) throws DefaultException {

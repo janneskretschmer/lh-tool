@@ -61,7 +61,6 @@ public abstract class BasicEntityCrudServiceImpl<R extends BasicEntityRepository
 	}
 
 	protected List<E> filterFindResult(@NonNull List<E> entityList) {
-		// TODO sorted?
 		return entityList.stream().filter(this::hasReadPermission).collect(Collectors.toList());
 	}
 
@@ -80,7 +79,14 @@ public abstract class BasicEntityCrudServiceImpl<R extends BasicEntityRepository
 		return convertToDto(entity);
 	}
 
+	/**
+	 * override for actions after entity got saved, e.g. logging, notifications or
+	 * save dependent entities
+	 * 
+	 * @param entity
+	 */
 	protected void postCreate(@NonNull E entity) {
+		// default: no action
 	}
 
 	@Override
@@ -107,10 +113,24 @@ public abstract class BasicEntityCrudServiceImpl<R extends BasicEntityRepository
 		return convertToDto(entity);
 	}
 
+	/**
+	 * override for actions before entity gets updated
+	 * 
+	 * @param oldEntity
+	 * @param newEntity
+	 */
 	protected void preUpdate(@NonNull E oldEntity, @NonNull E newEntity) {
+		// default: no action
 	}
 
+	/**
+	 * override for action after entity got updated, e.g. logging or notifications
+	 * 
+	 * @param oldEntity
+	 * @param newEntity
+	 */
 	protected void postUpdate(@NonNull E oldEntity, @NonNull E newEntity) {
+		// default: no action
 	}
 
 	@Override
@@ -123,7 +143,13 @@ public abstract class BasicEntityCrudServiceImpl<R extends BasicEntityRepository
 		postDelete(entity);
 	}
 
+	/**
+	 * override for action after entity got deleted, e.g. logging or notifications
+	 * 
+	 * @param deletedEntity
+	 */
 	protected void postDelete(@NonNull E deletedEntity) {
+		// default: no action
 	}
 
 	/**
@@ -133,9 +159,11 @@ public abstract class BasicEntityCrudServiceImpl<R extends BasicEntityRepository
 	 * @throws DefaultException
 	 */
 	protected void checkValidity(@NonNull E entity) throws DefaultException {
+		// default: no action
 	}
 
 	protected void checkDeletable(@NonNull E entity) throws DefaultException {
+		// default: no action
 	}
 
 	// conversion

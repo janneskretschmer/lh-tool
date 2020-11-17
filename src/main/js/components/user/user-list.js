@@ -10,6 +10,7 @@ import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import SearchIcon from '@material-ui/icons/Search';
 import WithPermission from '../with-permission';
+import { RIGHT_USERS_DELETE } from '../../permissions';
 
 const styles = theme => ({
     button: {
@@ -65,7 +66,7 @@ export class StatefulUserListComponent extends React.Component {
                 title="Benutzer"
                 SelectionHeader={props => (
                     <>
-                        <WithPermission permission="ROLE_RIGHT_USERS_DELETE">
+                        <WithPermission permission={RIGHT_USERS_DELETE}>
                             <Button variant="outlined" onClick={() => this.bulkDelete(props.selected).finally(() => props.resetSelection())}>
                                 Löschen
                             </Button>

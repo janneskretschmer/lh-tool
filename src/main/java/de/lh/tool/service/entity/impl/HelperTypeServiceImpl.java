@@ -46,7 +46,7 @@ public class HelperTypeServiceImpl
 		} else {
 			if (projectId != null) {
 				projectService.checkReadPermission(projectId);
-			} else if (weekday != null) {
+			} else {
 				throw ExceptionEnum.EX_HELPER_TYPE_WEEKDAY_WITHOUT_PROJECT.createDefaultException();
 			}
 			helperTypes = getRepository().findByProjectIdAndWeekday(projectId, weekday);
