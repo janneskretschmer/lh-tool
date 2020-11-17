@@ -129,7 +129,7 @@ public class StoreIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.BAD_REQUEST)
 						.expectedResponse(
-								"{\"key\":\"EX_INVALID_ID\",\"message\":\"The provided id is invalid.\",\"httpCode\":400}")
+								"{\"key\":\"EX_INVALID_STORE_ID\",\"message\":\"The provided store id is invalid.\",\"httpCode\":400}")
 						.validationQueries(List.of("SELECT * FROM store WHERE id = 1 AND name='NoProject'",
 								"SELECT * FROM store WHERE id = 2 AND name='Expired'",
 								"SELECT * FROM store WHERE id = 3 AND name='InRange'",
@@ -226,7 +226,7 @@ public class StoreIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.BAD_REQUEST)
 						.expectedResponse(
-								"{\"key\":\"EX_INVALID_ID\",\"message\":\"The provided id is invalid.\",\"httpCode\":400}")
+								"{\"key\":\"EX_INVALID_STORE_ID\",\"message\":\"The provided store id is invalid.\",\"httpCode\":400}")
 						.validationQueries(List.of("SELECT * FROM store WHERE id = 3 AND name='InRange'",
 								"SELECT 1 WHERE (SELECT COuNT(*) FROM store) = 3",
 								"SELECT 1 WHERE (SELECT COuNT(*) FROM slot WHERE store_id=3) = 2",
@@ -390,7 +390,7 @@ public class StoreIT extends BasicRestIntegrationTest {
 								STORE_KEEPER_EMAIL))
 						.expectedHttpCode(HttpStatus.BAD_REQUEST)
 						.expectedResponse(
-								"{\"key\":\"EX_INVALID_ID\",\"message\":\"The provided id is invalid.\",\"httpCode\":400}")
+								"{\"key\":\"EX_INVALID_STORE_ID\",\"message\":\"The provided store id is invalid.\",\"httpCode\":400}")
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}

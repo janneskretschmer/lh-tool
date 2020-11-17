@@ -16,6 +16,7 @@ import LenientRedirect from './util/lenient-redirect';
 import StoresProvider from '../providers/store-provider';
 import StoreListComponent from './store/store-list';
 import StoreEditComponent from './store/store-edit';
+import { RIGHT_USERS_GET } from '../permissions';
 
 class SettingsComponent extends React.Component {
     constructor(props) {
@@ -44,7 +45,7 @@ class SettingsComponent extends React.Component {
                     */}
                     <Route path={fullPathOfUserSettings()} component={UserEditComponent} />
                     <SessionContext.Consumer>
-                        {sessionsState => sessionsState.hasPermission('ROLE_RIGHT_USERS_GET') ? (
+                        {sessionsState => sessionsState.hasPermission(RIGHT_USERS_GET) ? (
                             <Route path={fullPathOfUsersSettings()} component={UserListComponent} />
                         ) : (
                                 <Route path={fullPathOfUsersSettings()} component={props => (<LenientRedirect to={fullPathOfUserSettings(sessionsState.currentUser.id)} />)} />

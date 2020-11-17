@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import de.lh.tool.domain.dto.HelperTypeDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.model.UserRole;
-import de.lh.tool.service.entity.interfaces.HelperTypeService;
+import de.lh.tool.service.entity.interfaces.crud.HelperTypeCrudService;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
@@ -31,7 +31,7 @@ import io.swagger.annotations.ApiOperation;
 public class HelperTypeRestService {
 
 	@Autowired
-	private HelperTypeService helperTypeService;
+	private HelperTypeCrudService helperTypeService;
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of helper types by projectId and weekday")
@@ -50,7 +50,7 @@ public class HelperTypeRestService {
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
 	@ApiOperation(value = "Get a single helper type by id")
-	@Secured(UserRole.RIGHT_HELPER_TYPES_GET_BY_ID)
+	@Secured(UserRole.RIGHT_HELPER_TYPES_GET)
 	public Resource<HelperTypeDto> getById(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 
@@ -89,7 +89,7 @@ public class HelperTypeRestService {
 	public ResponseEntity<Void> delete(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 
-		helperTypeService.deleteHelperTypeById(id);
+		helperTypeService.deleteDtoById(id);
 
 		return ResponseEntity.noContent().build();
 	}

@@ -105,7 +105,7 @@ public class HelperTypeIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL))
 						.expectedHttpCode(HttpStatus.BAD_REQUEST)
 						.expectedResponse(
-								"{\"key\":\"EX_INVALID_ID\",\"message\":\"The provided id is invalid.\",\"httpCode\":400}")
+								"{\"key\":\"EX_INVALID_HELPER_TYPE_ID\",\"message\":\"The provided id is invalid.\",\"httpCode\":400}")
 						.validationQueries(List.of("SELECT * FROM helper_type WHERE name='Test'",
 								"SELECT 1 WHERE (SELECT COUNT(*) FROM helper_type)=1"))
 						.build()))
@@ -155,7 +155,7 @@ public class HelperTypeIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL))
 						.expectedHttpCode(HttpStatus.BAD_REQUEST)
 						.expectedResponse(
-								"{\"key\":\"EX_INVALID_ID\",\"message\":\"The provided id is invalid.\",\"httpCode\":400}")
+								"{\"key\":\"EX_INVALID_HELPER_TYPE_ID\",\"message\":\"The provided id is invalid.\",\"httpCode\":400}")
 						.validationQueries(List.of("SELECT * FROM helper_type WHERE name='Test1'",
 								"SELECT 1 WHERE (SELECT COUNT(*) FROM helper_type)=2"))
 						.build()))
@@ -283,7 +283,7 @@ public class HelperTypeIT extends BasicRestIntegrationTest {
 								ATTENDANCE_EMAIL, PUBLISHER_EMAIL))
 						.expectedHttpCode(HttpStatus.BAD_REQUEST)
 						.expectedResponse(
-								"{\"key\":\"EX_INVALID_ID\",\"message\":\"The provided id is invalid.\",\"httpCode\":400}")
+								"{\"key\":\"EX_INVALID_HELPER_TYPE_ID\",\"message\":\"The provided id is invalid.\",\"httpCode\":400}")
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}

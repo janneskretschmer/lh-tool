@@ -1,4 +1,5 @@
 import { fullPathOf, fullPathOfItems, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfSettings, fullPathOfStores, fullPathOfUsersSettings, fullPathOfUserSettings, fullPathOfStore, fullPathOfDataProtection, fullPathOfImprint, fullPathOfShiftsSettings, fullPathOfShiftSettings, fullPathOfProjectsSettings, fullPathOfProjectSettings, fullPathOfItem, fullPathOfItemData, fullPathOfItemHistory, fullPathOfStoresSettings, fullPathOfStoreSettings, fullPathOfSlots, fullPathOfSlot } from './paths';
+import { RIGHT_ITEMS_GET, RIGHT_NEEDS_APPLY, RIGHT_NEEDS_POST, RIGHT_NEEDS_VIEW_APPROVED, RIGHT_PROJECTS_POST, RIGHT_SLOTS_GET, RIGHT_STORES_POST, RIGHT_USERS_GET } from './permissions';
 
 const PAGES = {
     title: 'LH-Tool',
@@ -7,23 +8,23 @@ const PAGES = {
         {
             title: 'Bedarf',
             path: fullPathOfNeedQuantities(),
-            permissions: ['ROLE_RIGHT_NEEDS_POST'],
+            permissions: [RIGHT_NEEDS_POST],
         },
         {
             title: 'Bewerben',
             path: fullPathOfNeedApply(),
-            permissions: ['ROLE_RIGHT_NEEDS_APPLY'],
+            permissions: [RIGHT_NEEDS_APPLY],
         },
         {
             title: 'Zuteilen',
             path: fullPathOfNeedApprove(),
-            permissions: ['ROLE_RIGHT_NEEDS_VIEW_APPROVED'],
+            permissions: [RIGHT_NEEDS_VIEW_APPROVED],
 
         },
         {
             title: 'Lagerplätze',
             path: fullPathOfSlots(),
-            permissions: ['ROLE_RIGHT_SLOTS_GET'],
+            permissions: [RIGHT_SLOTS_GET],
             subPages: [
                 {
                     path: fullPathOfSlot(),
@@ -33,22 +34,22 @@ const PAGES = {
         {
             title: 'Artikel',
             path: fullPathOfItems(),
-            permissions: ['ROLE_RIGHT_ITEMS_GET'],
+            permissions: [RIGHT_ITEMS_GET],
             subPages: [
                 {
                     path: fullPathOfItem(),
-                    permissions: ['ROLE_RIGHT_ITEMS_GET_BY_ID'],
+                    permissions: [RIGHT_ITEMS_GET],
                     tabs: true,
                     subPages: [
                         {
                             title: 'Daten',
                             path: fullPathOfItemData(),
-                            permissions: ['ROLE_RIGHT_ITEMS_GET_BY_ID'],
+                            permissions: [RIGHT_ITEMS_GET],
                         },
                         {
                             title: 'Protokoll',
                             path: fullPathOfItemHistory(),
-                            permissions: ['ROLE_RIGHT_ITEMS_GET_BY_ID'],
+                            permissions: [RIGHT_ITEMS_GET],
                         },
                     ],
                 },
@@ -65,29 +66,29 @@ const PAGES = {
                     subPages: [
                         {
                             path: fullPathOfUserSettings(),
-                            permissions: ['ROLE_RIGHT_USERS_GET_BY_ID'],
+                            permissions: [RIGHT_USERS_GET],
                         }
                     ]
                 },
                 {
                     title: 'Projekte',
                     path: fullPathOfProjectsSettings(),
-                    permissions: ['ROLE_RIGHT_PROJECTS_POST'],
+                    permissions: [RIGHT_PROJECTS_POST],
                     subPages: [
                         {
                             path: fullPathOfProjectSettings(),
-                            permissions: ['ROLE_RIGHT_PROJECTS_POST'],
+                            permissions: [RIGHT_PROJECTS_POST],
                         }
                     ]
                 },
                 {
                     title: 'Lager',
                     path: fullPathOfStoresSettings(),
-                    permissions: ['ROLE_RIGHT_STORES_POST'],
+                    permissions: [RIGHT_STORES_POST],
                     subPages: [
                         {
                             path: fullPathOfStoreSettings(),
-                            permissions: ['ROLE_RIGHT_STORES_POST'],
+                            permissions: [RIGHT_STORES_POST],
                         }
                     ]
                 },

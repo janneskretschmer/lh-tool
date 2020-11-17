@@ -16,6 +16,7 @@ import WithPermission from '../with-permission';
 import ItemTagsComponent from './item-tags';
 import { fullPathOfItemData } from '../../paths';
 import { Link } from 'react-router-dom';
+import { RIGHT_ITEMS_NOTES_DELETE, RIGHT_ITEMS_NOTES_DELETE_FOREIGN, RIGHT_ITEMS_NOTES_POST, RIGHT_ITEMS_PATCH_QUANTITY } from '../../permissions';
 
 
 const styles = theme => ({
@@ -97,8 +98,8 @@ class StatefulItemDisplayComponent extends React.Component {
 
     showNoteDeleteButton({ userId }) {
         const { sessionState } = this.props;
-        return sessionState.hasPermission('ROLE_RIGHT_ITEMS_NOTES_DELETE')
-            && (userId === sessionState.currentUser.id || sessionState.hasPermission('ROLE_RIGHT_ITEMS_NOTES_DELETE_FOREIGN'));
+        return sessionState.hasPermission(RIGHT_ITEMS_NOTES_DELETE)
+            && (userId === sessionState.currentUser.id || sessionState.hasPermission(RIGHT_ITEMS_NOTES_DELETE_FOREIGN));
     }
 
     render() {
@@ -151,7 +152,7 @@ class StatefulItemDisplayComponent extends React.Component {
                                 </IconButton>
                             </>) : (<>
                                 {item.quantity} {item.unit}
-                                <WithPermission permission="ROLE_RIGHT_ITEMS_PATCH_QUANTITY">
+                                <WithPermission permission={RIGHT_ITEMS_PATCH_QUANTITY}>
                                     <IconButton
                                         disabled={itemsState.actionsDisabled}
                                         onClick={event => itemsState.editQuantity()}
@@ -217,7 +218,7 @@ class StatefulItemDisplayComponent extends React.Component {
                             <Divider className={classes.divider} />
                         </div>
                     )) : (<CircularProgress />)}
-                    <WithPermission permission="ROLE_RIGHT_ITEMS_NOTES_POST">
+                    <WithPermission permission={RIGHT_ITEMS_NOTES_POST}>
                         <SimpleDialog
                             title={'Notiz hinzufügen'}
                             content={(<TextField

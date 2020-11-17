@@ -109,7 +109,7 @@ public class SlotIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.BAD_REQUEST)
 						.expectedResponse(
-								"{\"key\":\"EX_INVALID_ID\",\"message\":\"The provided id is invalid.\",\"httpCode\":400}")
+								"{\"key\":\"EX_INVALID_SLOT_ID\",\"message\":\"The provided slot id is invalid.\",\"httpCode\":400}")
 						.validationQueries(List.of("SELECT * FROM store WHERE id = 3 AND name='InRange'",
 								"SELECT 1 WHERE (SELECT COuNT(*) FROM store) = 3",
 								"SELECT 1 WHERE (SELECT COuNT(*) FROM slot WHERE store_id=3) = 2",
@@ -370,7 +370,7 @@ public class SlotIT extends BasicRestIntegrationTest {
 								STORE_KEEPER_EMAIL))
 						.expectedHttpCode(HttpStatus.BAD_REQUEST)
 						.expectedResponse(
-								"{\"key\":\"EX_INVALID_ID\",\"message\":\"The provided id is invalid.\",\"httpCode\":400}")
+								"{\"key\":\"EX_INVALID_SLOT_ID\",\"message\":\"The provided slot id is invalid.\",\"httpCode\":400}")
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}

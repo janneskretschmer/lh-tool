@@ -3,17 +3,28 @@ package de.lh.tool.service.entity.impl;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
+import de.lh.tool.domain.Identifiable;
+import de.lh.tool.domain.exception.DefaultException;
+import de.lh.tool.domain.exception.ExceptionEnum;
+import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.repository.BasicEntityRepository;
 import de.lh.tool.service.entity.interfaces.BasicEntityService;
+import de.lh.tool.service.entity.interfaces.UserRoleService;
 import lombok.Getter;
+import lombok.NonNull;
 
-public abstract class BasicEntityServiceImpl<R extends BasicEntityRepository<E, I>, E, I>
+public abstract class BasicEntityServiceImpl<R extends BasicEntityRepository<E, I>, E extends Identifiable<I>, I>
 		implements BasicEntityService<E, I> {
 	@Autowired
 	@Getter
 	private R repository;
+
+	@Autowired
+	protected UserRoleService userRoleService;
 
 	@Override
 	public long count() {
@@ -68,5 +79,152 @@ public abstract class BasicEntityServiceImpl<R extends BasicEntityRepository<E, 
 	@Override
 	public List<E> saveAll(Iterable<E> entities) {
 		return repository.saveAll(entities);
+	}
+
+	protected ExceptionEnum getInvalidIdException() {
+		return ExceptionEnum.EX_INVALID_ID;
+	}
+
+	@Override
+	@Transactional
+	public E findByIdOrThrowInvalidIdException(I id) throws DefaultException {
+		return findById(id).orElseThrow(getInvalidIdException()::createDefaultException);
+	}
+
+	// R/W permissions
+
+	@Override
+	abstract public boolean hasReadPermission(@NonNull E entity);
+
+	@Override
+	@Transactional
+	public boolean hasReadPermission(@NonNull I id) throws DefaultException {
+		return hasReadPermission(findByIdOrThrowInvalidIdException(id));
+	}
+
+	@Override
+	public void checkReadPermission(@NonNull E entity) throws DefaultException {
+		if (!hasReadPermission(entity)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+	}
+
+	@Override
+	@Transactional
+	public void checkReadPermission(@NonNull I id) throws DefaultException {
+		if (!hasReadPermission(id)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+	}
+
+	@Override
+	abstract public boolean hasWritePermission(@NonNull E entity);
+
+	@Override
+	@Transactional
+	public boolean hasWritePermission(@NonNull I id) throws DefaultException {
+		return hasWritePermission(findByIdOrThrowInvalidIdException(id));
+	}
+
+	@Override
+	public void checkWritePermission(@NonNull E entity) throws DefaultException {
+		if (!hasWritePermission(entity)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+	}
+
+	@Override
+	@Transactional
+	public void checkWritePermission(@NonNull I id) throws DefaultException {
+		if (!hasWritePermission(id)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+	}
+
+	// Find permission
+
+	protected abstract String getRightPrefix();
+
+	@Override
+	public boolean hasFindPermission(@NonNull E entity) {
+		return hasFindRight() && hasReadPermission(entity);
+	}
+
+	@Override
+	public boolean hasFindRight() {
+		return userRoleService.hasCurrentUserRight(getRightPrefix() + UserRole.GET_SUFFIX);
+	}
+
+	@Override
+	public void checkFindRight() throws DefaultException {
+		if (!hasFindRight()) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+	}
+
+	@Override
+	@Transactional
+	public boolean hasFindPermission(@NonNull I id) throws DefaultException {
+		return hasFindPermission(findByIdOrThrowInvalidIdException(id));
+	}
+
+	@Override
+	public void checkFindPermission(@NonNull E entity) throws DefaultException {
+		if (!hasFindPermission(entity)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+	}
+
+	@Override
+	@Transactional
+	public void checkFindPermission(@NonNull I id) throws DefaultException {
+		if (!hasFindPermission(id)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+	}
+
+	// Create permission
+
+	@Override
+	public boolean hasCreatePermission(@NonNull E entity) {
+		return userRoleService.hasCurrentUserRight(getRightPrefix() + UserRole.POST_SUFFIX)
+				&& hasWritePermission(entity);
+	}
+
+	@Override
+	public void checkCreatePermission(@NonNull E entity) throws DefaultException {
+		if (!hasCreatePermission(entity)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+	}
+
+	// Update permission
+
+	@Override
+	public boolean hasUpdatePermission(@NonNull E entity) {
+		return userRoleService.hasCurrentUserRight(getRightPrefix() + UserRole.PUT_SUFFIX)
+				&& hasWritePermission(entity);
+	}
+
+	@Override
+	public void checkUpdatePermission(@NonNull E entity) throws DefaultException {
+		if (!hasUpdatePermission(entity)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
+	}
+
+	// Delete permission
+
+	@Override
+	public boolean hasDeletePermission(@NonNull E entity) {
+		return userRoleService.hasCurrentUserRight(getRightPrefix() + UserRole.DELETE_SUFFIX)
+				&& hasWritePermission(entity);
+	}
+
+	@Override
+	public void checkDeletePermission(@NonNull E entity) throws DefaultException {
+		if (!hasDeletePermission(entity)) {
+			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		}
 	}
 }

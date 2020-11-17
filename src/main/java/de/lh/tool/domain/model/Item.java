@@ -10,12 +10,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import de.lh.tool.domain.Identifiable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,7 +28,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "item")
 @EqualsAndHashCode
-public class Item {
+public class Item implements Identifiable<Long> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -70,17 +69,12 @@ public class Item {
 	@JoinColumn(insertable = true, name = "technical_crew_id", updatable = true)
 	private TechnicalCrew technicalCrew;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "item")
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "item")
 	@EqualsAndHashCode.Exclude
 	private List<ItemNote> itemNotes;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "item")
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "item")
 	@EqualsAndHashCode.Exclude
 	private List<ItemHistory> history;
-
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "item_item_tag", inverseJoinColumns = @JoinColumn(name = "item_tag_id"), joinColumns = @JoinColumn(name = "item_id"))
-	@EqualsAndHashCode.Exclude
-	private List<ItemTag> tags;
 
 }

@@ -3,6 +3,7 @@ import { withSnackbar } from 'notistack';
 import React from 'react';
 import { createStore, deleteStore, fetchOwnStores, fetchStore, updateStore } from '../actions/store';
 import { NEW_ENTITY_ID_PLACEHOLDER } from '../config';
+import { EX_STORE_NOT_EMPTY } from '../exceptions';
 import { convertToIdMap, isAnyStringBlank, wrapSetStateInPromise } from '../util';
 import { SessionContext } from './session-provider';
 
@@ -183,7 +184,7 @@ class StatefulStoresProvider extends React.Component {
                 });
             }))
             .catch(error => {
-                if (error.response && error.response.key && error.response.key === 'EX_STORE_NOT_EMPTY') {
+                if (error.response && error.response.key && error.response.key === EX_STORE_NOT_EMPTY) {
                     this.showErrorMessage('Mindestens eines der Lager ist nicht leer');
                 } else {
                     this.showErrorMessage('Fehler beim Löschen der Lager');

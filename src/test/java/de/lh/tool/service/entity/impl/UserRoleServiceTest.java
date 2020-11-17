@@ -42,6 +42,6 @@ public class UserRoleServiceTest {
 		assertFalse(userRoleService.hasCurrentUserRight("RIGHT"));
 		assertFalse(userRoleService.hasCurrentUserRight(UserRole.ROLE_CONSTRUCTION_SERVANT));
 		assertTrue(userRoleService.hasCurrentUserRight(UserRole.ROLE_ADMIN));
-		assertTrue(userRoleService.hasCurrentUserRight(UserRole.RIGHT_USERS_CREATE));
+		assertTrue(userRoleService.hasCurrentUserRight(UserRole.RIGHT_USERS_POST));
 	}
 }

@@ -19,7 +19,7 @@ public interface ItemRepository extends BasicEntityRepository<Item, Long> {
 			+ "i.description) LIKE CONCAT('%',LOWER(:freeText),'%') OR LOWER("
 			+ "i.technicalCrew.name) LIKE CONCAT('%',LOWER(:freeText),'%') OR EXISTS(SELECT id FROM "
 			+ "i.itemNotes WHERE note LIKE CONCAT('%',LOWER(:freeText),'%')) OR EXISTS(SELECT id FROM "
-			+ "i.tags WHERE name LIKE CONCAT('%',LOWER(:freeText),'%'))" + ") "
-			+ "ORDER BY i.name ASC, i.identifier ASC ")
+			+ "ItemItemTag iit WHERE iit.item.id=i.id AND iit.itemTag.name LIKE CONCAT('%',LOWER(:freeText),'%'))"
+			+ ") " + "ORDER BY i.name ASC, i.identifier ASC ")
 	List<Item> findByFilters(@Param("freeText") String freeText);
 }

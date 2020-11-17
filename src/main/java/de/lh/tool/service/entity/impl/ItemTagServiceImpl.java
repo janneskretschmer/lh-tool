@@ -1,83 +1,110 @@
 package de.lh.tool.service.entity.impl;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import de.lh.tool.domain.dto.ItemItemTagDto;
 import de.lh.tool.domain.dto.ItemTagDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.Item;
+import de.lh.tool.domain.model.ItemItemTag;
 import de.lh.tool.domain.model.ItemTag;
+import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.repository.ItemTagRepository;
 import de.lh.tool.service.entity.interfaces.ItemItemTagService;
 import de.lh.tool.service.entity.interfaces.ItemService;
 import de.lh.tool.service.entity.interfaces.ItemTagService;
+import de.lh.tool.service.entity.interfaces.crud.ItemItemTagCrudService;
+import de.lh.tool.service.entity.interfaces.crud.ItemTagCrudService;
 import de.lh.tool.util.ValidationUtil;
+import lombok.NonNull;
 
 @Service
-public class ItemTagServiceImpl extends BasicMappableEntityServiceImpl<ItemTagRepository, ItemTag, ItemTagDto, Long>
-		implements ItemTagService {
+public class ItemTagServiceImpl extends BasicEntityCrudServiceImpl<ItemTagRepository, ItemTag, ItemTagDto, Long>
+		implements ItemTagService, ItemTagCrudService {
 
 	@Autowired
 	private ItemService itemService;
 
+	// FUTURE get rid of this
+	@Autowired
+	private ItemItemTagCrudService itemItemTagCrudService;
+
 	@Autowired
 	private ItemItemTagService itemItemTagService;
 
+	// FUTURE use ItemItemTagService
 	@Override
 	@Transactional
-	public List<ItemTagDto> findItemTagDtosByItemId(Long itemId) throws DefaultException {
-		return convertToDtoList(itemService.findById(itemId)
-				.orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException).getTags());
+	public List<ItemTagDto> findDtosByItemId(Long itemId) throws DefaultException {
+		checkFindRight();
+		Item item = itemService.findByIdOrThrowInvalidIdException(itemId);
+		itemService.checkReadPermission(item);
+		return itemItemTagService.findByItem(item).stream().map(ItemItemTag::getItemTag).map(this::convertToDto)
+				.collect(Collectors.toList());
+	}
+
+	// FUTURE use ItemItemTagService directly with dto
+	@Override
+	@Transactional
+	public ItemTagDto createDtoForItem(@NonNull Long itemId, @NonNull ItemTagDto dto) throws DefaultException {
+		ValidationUtil.checkNonBlank(ExceptionEnum.EX_NO_ITEM_ID, itemId);
+
+		itemService.checkWritePermission(itemId);
+		ItemTag tag = convertToEntity(dto);
+		checkValidity(tag);
+
+		ItemTag savedTag = getRepository().findByName(tag.getName()).orElseGet(() -> save(tag));
+
+		itemItemTagCrudService.createDto(ItemItemTagDto.builder().itemId(itemId).itemTagId(savedTag.getId()).build());
+
+		return convertToDto(savedTag);
 	}
 
 	@Override
-	@Transactional
-	public Optional<ItemTag> findByName(String name) {
-		return getRepository().findByName(name);
+	protected void checkValidity(@NonNull ItemTag itemTag) throws DefaultException {
+		ValidationUtil.checkNonBlank(ExceptionEnum.EX_NO_NAME, itemTag.getName());
 	}
 
+	// FUTURE use ItemItemTagService directly
 	@Override
 	@Transactional
-	public ItemTagDto createItemTagForItem(Long itemId, ItemTagDto dto) throws DefaultException {
-		ValidationUtil.checkIdsNonNull(itemId);
-		Item item = itemService.findById(itemId).orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException);
-		if (!itemService.isViewAllowed(item)) {
-			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
-		}
+	public void deleteDtoByIdFromItem(Long itemId, Long itemTagId) throws DefaultException {
+		ValidationUtil.checkNonBlank(ExceptionEnum.EX_NO_ITEM_ID, itemId);
+		ValidationUtil.checkNonBlank(ExceptionEnum.EX_NO_ITEM_TAG_ID, itemTagId);
 
-		String tagName = Optional.ofNullable(dto).map(ItemTagDto::getName)
-				.orElseThrow(ExceptionEnum.EX_ITEM_NO_TAG::createDefaultException);
+		Item item = itemService.findByIdOrThrowInvalidIdException(itemId);
 
-		ItemTag tag = findByName(tagName).orElseGet(() -> save(ItemTag.builder().name(tagName).build()));
+		itemService.checkWritePermission(item);
 
-		itemItemTagService.createItemItemTag(item, tag);
+		ItemTag itemTag = findByIdOrThrowInvalidIdException(itemTagId);
 
-		return convertToDto(tag);
-	}
-
-	@Override
-	@Transactional
-	public void deleteItemTagFromItem(Long itemId, Long itemTagId) throws DefaultException {
-		ValidationUtil.checkIdsNonNull(itemId, itemTagId);
-
-		Item item = itemService.findById(itemId).orElseThrow(ExceptionEnum.EX_INVALID_ITEM_ID::createDefaultException);
-
-		if (!itemService.isViewAllowed(item)) {
-			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
-		}
-		ItemTag itemTag = findById(itemTagId).orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException);
-
-		itemItemTagService.deleteIfExists(item, itemTag);
+		itemItemTagCrudService.deleteIfExists(item, itemTag);
 
 		if (itemItemTagService.findByItemTag(itemTag).isEmpty()) {
 			delete(itemTag);
 		}
+	}
+
+	@Override
+	public boolean hasReadPermission(@NonNull ItemTag entity) {
+		return true;
+	}
+
+	@Override
+	public boolean hasWritePermission(@NonNull ItemTag entity) {
+		return true;
+	}
+
+	@Override
+	public String getRightPrefix() {
+		return UserRole.ITEM_TAGS_PREFIX;
 	}
 
 }

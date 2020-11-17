@@ -5,6 +5,7 @@ import SessionProvider, { SessionContext } from './session-provider';
 import { NEW_ENTITY_ID_PLACEHOLDER } from '../config';
 import { fetchRoles } from '../actions/role';
 import { fetchProjects, deleteProjectUser, createProjectUser } from '../actions/project';
+import { RIGHT_PROJECTS_USERS_POST, RIGHT_USERS_POST, RIGHT_USERS_ROLES_GET, RIGHT_USERS_ROLES_POST } from '../permissions';
 
 export const UsersContext = React.createContext();
 
@@ -196,7 +197,7 @@ class StatefulUsersProvider extends React.Component {
     ///////////////////////////////////////////////////// Roles /////////////////////////////////////////////////////
 
     loadGrantableRoles() {
-        if (this.props.sessionState.hasPermission('ROLE_RIGHT_USERS_CHANGE_ROLES')) {
+        if (this.props.sessionState.hasPermission(RIGHT_USERS_ROLES_POST)) {
             if (!this.state.roles) {
                 fetchRoles(this.props.sessionState.accessToken).then(roles => this.setState({ roles }))
                     //e.g. if the user isn't allowed to grant rights
@@ -206,7 +207,7 @@ class StatefulUsersProvider extends React.Component {
     }
 
     findRolesForUser(user) {
-        if (user && this.props.sessionState.hasPermission('ROLE_RIGHT_USERS_CHANGE_ROLES')) {
+        if (user && this.props.sessionState.hasPermission(RIGHT_USERS_ROLES_GET)) {
             return fetchUserRoles(this.props.sessionState.accessToken, user).catch(error => []);
         }
         return Promise.resolve([]);
@@ -215,7 +216,7 @@ class StatefulUsersProvider extends React.Component {
     ///////////////////////////////////////////////////// Projects /////////////////////////////////////////////////////
 
     loadProjects() {
-        if (this.props.sessionState.hasPermission('ROLE_RIGHT_PROJECTS_USERS_POST')) {
+        if (this.props.sessionState.hasPermission(RIGHT_PROJECTS_USERS_POST)) {
             if (!this.state.projects) {
                 this.setState({ projects: [] });
                 fetchProjects(this.props.sessionState.accessToken).then(projects => this.setState(prevState => {
@@ -230,7 +231,7 @@ class StatefulUsersProvider extends React.Component {
     }
 
     findProjectsForUser(user) {
-        if (user && this.props.sessionState.hasPermission('ROLE_RIGHT_PROJECTS_USERS_POST')) {
+        if (user && this.props.sessionState.hasPermission(RIGHT_PROJECTS_USERS_POST)) {
             return fetchUserProjects(this.props.sessionState.accessToken, user).catch(error => []);
         }
         return Promise.resolve([]);
@@ -394,7 +395,7 @@ class StatefulUsersProvider extends React.Component {
     }
 
     isAllowedToCreate() {
-        return this.props.sessionState.hasPermission('ROLE_RIGHT_USERS_CREATE');
+        return this.props.sessionState.hasPermission(RIGHT_USERS_POST);
     }
 
     render() {

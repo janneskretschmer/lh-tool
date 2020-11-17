@@ -17,32 +17,32 @@ import org.springframework.web.bind.annotation.RestController;
 import de.lh.tool.domain.dto.TechnicalCrewDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.model.UserRole;
-import de.lh.tool.service.entity.interfaces.TechnicalCrewService;
+import de.lh.tool.service.entity.interfaces.crud.TechnicalCrewCrudService;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping(UrlMappings.TECHNICAL_CREW_PREFIX)
 public class TechnicalCrewRestService {
 	@Autowired
-	private TechnicalCrewService technicalCrewService;
+	private TechnicalCrewCrudService technicalCrewService;
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of own technical crews")
 	@Secured(UserRole.RIGHT_TECHNICAL_CREWS_GET)
 	public Resources<TechnicalCrewDto> getOwn() throws DefaultException {
 
-		List<TechnicalCrewDto> dtoList = technicalCrewService.getTechnicalCrewDtos();
+		List<TechnicalCrewDto> dtoList = technicalCrewService.findDtos();
 
 		return new Resources<>(dtoList, linkTo(methodOn(TechnicalCrewRestService.class).getOwn()).withSelfRel());
 	}
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
 	@ApiOperation(value = "Get a single technical crew by id")
-	@Secured(UserRole.RIGHT_TECHNICAL_CREWS_GET_BY_ID)
+	@Secured(UserRole.RIGHT_TECHNICAL_CREWS_GET)
 	public Resource<TechnicalCrewDto> getById(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 
-		TechnicalCrewDto dto = technicalCrewService.getTechnicalCrewDtoById(id);
+		TechnicalCrewDto dto = technicalCrewService.findDtoById(id);
 
 		return new Resource<>(dto, linkTo(methodOn(TechnicalCrewRestService.class).getById(id)).withSelfRel());
 	}

@@ -1,6 +1,7 @@
 package de.lh.tool.service.entity.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -17,16 +18,15 @@ import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.repository.ProjectUserRepository;
 import de.lh.tool.service.entity.interfaces.ProjectService;
 import de.lh.tool.service.entity.interfaces.ProjectUserService;
-import de.lh.tool.service.entity.interfaces.UserRoleService;
 import de.lh.tool.service.entity.interfaces.UserService;
+import de.lh.tool.service.entity.interfaces.crud.ProjectUserCrudService;
+import de.lh.tool.util.ValidationUtil;
+import lombok.NonNull;
 
 @Service
 public class ProjectUserServiceImpl
-		extends BasicMappableEntityServiceImpl<ProjectUserRepository, ProjectUser, ProjectUserDto, Long>
-		implements ProjectUserService {
-
-	@Autowired
-	private UserRoleService userRoleService;
+		extends BasicEntityCrudServiceImpl<ProjectUserRepository, ProjectUser, ProjectUserDto, Long>
+		implements ProjectUserService, ProjectUserCrudService {
 
 	@Autowired
 	private ProjectService projectService;
@@ -35,43 +35,67 @@ public class ProjectUserServiceImpl
 	private UserService userService;
 
 	@Override
-	@Transactional
-	public ProjectUserDto save(Long projectId, Long userId) throws DefaultException {
-		Project project = projectService.findById(projectId)
-				.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
-		User user = userService.findById(userId)
-				.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_USER_ID));
-		if (!projectService.isOwnProject(project)
-				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_CHANGE_FOREIGN)) {
-			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
-		}
-		return convertToDto(save(new ProjectUser(project, user)));
+	public Optional<ProjectUser> findByProjectAndUser(Project project, User user) {
+		return getRepository().findByProjectAndUser(project, user);
+	}
+
+	@Override
+	public List<ProjectUser> findByUserId(Long userId) {
+		return getRepository().findByUserId(userId);
 	}
 
 	@Override
 	@Transactional
-	public void deleteByProjectAndUser(Long projectId, Long userId) throws DefaultException {
-		Project project = projectService.findById(projectId)
-				.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
-		User user = userService.findById(userId)
-				.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_USER_ID));
-		if (!projectService.isOwnProject(project)
-				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_CHANGE_FOREIGN)) {
-			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
+	public ProjectUserDto createDto(@NonNull Long projectId, @NonNull Long userId) throws DefaultException {
+		return createDto(ProjectUserDto.builder().projectId(projectId).userId(userId).build());
+	}
+
+	@Override
+	protected void checkValidity(@NonNull ProjectUser projectUser) throws DefaultException {
+		ValidationUtil.checkNonBlank(ExceptionEnum.EX_NO_PROJECT_ID, projectUser.getProject());
+		ValidationUtil.checkNonBlank(ExceptionEnum.EX_NO_USER_ID, projectUser.getUser());
+	}
+
+	@Override
+	@Transactional
+	public void deleteByProjectAndUser(@NonNull Long projectId, @NonNull Long userId) throws DefaultException {
+		ProjectUserDto dto = ProjectUserDto.builder().projectId(projectId).userId(userId).build();
+		ProjectUser projectUser = convertToEntity(dto);
+		Optional<Long> optId = getRepository().findByProjectAndUser(projectUser.getProject(), projectUser.getUser())
+				.map(ProjectUser::getId);
+		if (optId.isPresent()) {
+			deleteDtoById(optId.get());
 		}
-		getRepository().findByProjectAndUser(project, user).ifPresent(this::delete);
 	}
 
 	@Override
 	@Transactional
 	public List<ProjectUserDto> findDtosByUserId(Long userId) throws DefaultException {
-		User user = userService.findById(userId)
-				.orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_USER_ID));
+		checkFindRight();
+		User user = userService.findByIdOrThrowInvalidIdException(userId);
+		userService.checkReadPermission(user);
 
-		userService.checkIfEditIsAllowed(user, true);
+		List<ProjectUser> projectUsers = getRepository().findByUser(user);
+		return convertToDtoList(projectUsers);
 
-		return convertToDtoList(getRepository().findByUser(user));
+	}
 
+	@Override
+	public boolean hasReadPermission(@NonNull ProjectUser projectUser) {
+		return userService.hasReadPermission(projectUser.getUser());
+	}
+
+	@Override
+	public boolean hasWritePermission(@NonNull ProjectUser projectUser) {
+		return userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_CHANGE_FOREIGN)
+				|| (projectService.hasWritePermission(projectUser.getProject())
+						&& (userRoleService.hasCurrentUserRightToGrantAllRoles(projectUser.getUser())
+								|| userService.hasWritePermission(projectUser.getUser())));
+	}
+
+	@Override
+	public String getRightPrefix() {
+		return UserRole.PROJECTS_USERS_PREFIX;
 	}
 
 }

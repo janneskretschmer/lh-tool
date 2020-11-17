@@ -14,6 +14,8 @@ import { Redirect } from 'react-router';
 import { fullPathOfUserSettings, fullPathOfUsersSettings } from '../../paths';
 import { NEW_ENTITY_ID_PLACEHOLDER } from '../../config';
 import LenientRedirect from '../util/lenient-redirect';
+import { EX_NO_EMAIL, EX_NO_FIRST_NAME, EX_NO_GENDER, EX_NO_LAST_NAME, EX_USER_EMAIL_ALREADY_IN_USE } from '../../exceptions';
+import { RIGHT_USERS_GET } from '../../permissions';
 
 const styles = theme => ({
     input: {
@@ -78,7 +80,7 @@ class StatefulUserEditComponent extends React.Component {
                         redirectUrl = fullPathOfUserSettings(redirectToUser);
                     }
                 } else {
-                    if (this.props.sessionState.hasPermission('ROLE_RIGHT_USERS_GET')) {
+                    if (this.props.sessionState.hasPermission(RIGHT_USERS_GET)) {
                         redirectUrl = fullPathOfUsersSettings();
                     } else if (match.params.userId !== usersState.selectedUser.id) {
                         redirectUrl = fullPathOfUserSettings(usersState.selectedUser.id);
@@ -92,7 +94,7 @@ class StatefulUserEditComponent extends React.Component {
     cancel() {
         const { usersState } = this.props;
         usersState.resetSelectedUser();
-        if (this.props.sessionState.hasPermission('ROLE_RIGHT_USERS_GET')) {
+        if (this.props.sessionState.hasPermission(RIGHT_USERS_GET)) {
             this.setState({
                 redirectUrl: fullPathOfUsersSettings(),
             });
@@ -113,15 +115,15 @@ class StatefulUserEditComponent extends React.Component {
     handleFailure(error) {
         let message;
         if (error && error.response && error.response.key) {
-            if (error.response.key === 'EX_USER_NO_EMAIL') {
+            if (error.response.key === EX_NO_EMAIL) {
                 message = 'Es wurde keine gültige Email-Adresse angegeben.';
-            } else if (error.response.key === 'EX_USER_NO_FIRST_NAME') {
+            } else if (error.response.key === EX_NO_FIRST_NAME) {
                 message = 'Es wurde kein Vorname angegeben.';
-            } else if (error.response.key === 'EX_USER_NO_LAST_NAME') {
+            } else if (error.response.key === EX_NO_LAST_NAME) {
                 message = 'Es wurde kein Nachname angegeben.';
-            } else if (error.response.key === 'EX_USER_NO_GENDER') {
+            } else if (error.response.key === EX_NO_GENDER) {
                 message = 'Es wurde kein Geschlecht angegeben.';
-            } else if (error.response.key === 'EX_USER_EMAIL_ALREADY_IN_USE') {
+            } else if (error.response.key === EX_USER_EMAIL_ALREADY_IN_USE) {
                 message = 'Diese Email-Adresse wird bereits verwendet.';
             }
         } else {

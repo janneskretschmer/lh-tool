@@ -6,6 +6,7 @@ import { fetchHelperTypes } from '../actions/helper-type';
 import moment, { weekdays } from 'moment';
 import { NEW_ENTITY_ID_PLACEHOLDER } from '../config';
 import _ from 'lodash';
+import { RIGHT_PROJECTS_POST } from '../permissions';
 
 export const ProjectsContext = React.createContext();
 
@@ -438,7 +439,7 @@ export default class ProjectsProvider extends React.Component {
     }
 
     isAllowedToCreate() {
-        return this.props.sessionState.hasPermission('ROLE_RIGHT_PROJECTS_POST');
+        return this.props.sessionState.hasPermission(RIGHT_PROJECTS_POST);
     }
 
     render() {

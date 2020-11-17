@@ -8,6 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import de.lh.tool.domain.Identifiable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,7 +21,7 @@ import lombok.NonNull;
 @Builder
 @Entity
 @Table(name = "item_item_tag")
-public class ItemItemTag {
+public class ItemItemTag implements Identifiable<Long> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

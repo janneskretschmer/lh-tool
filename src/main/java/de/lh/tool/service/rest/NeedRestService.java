@@ -26,8 +26,8 @@ import de.lh.tool.domain.dto.NeedDto;
 import de.lh.tool.domain.dto.NeedUserDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.model.UserRole;
-import de.lh.tool.service.entity.interfaces.NeedService;
-import de.lh.tool.service.entity.interfaces.NeedUserService;
+import de.lh.tool.service.entity.interfaces.crud.NeedCrudService;
+import de.lh.tool.service.entity.interfaces.crud.NeedUserCrudService;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
@@ -35,10 +35,10 @@ import io.swagger.annotations.ApiOperation;
 public class NeedRestService {
 
 	@Autowired
-	private NeedService needService;
+	private NeedCrudService needService;
 
 	@Autowired
-	private NeedUserService needUserService;
+	private NeedUserCrudService needUserService;
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of own needs")
@@ -48,7 +48,7 @@ public class NeedRestService {
 			@RequestParam(required = true, name = UrlMappings.DATE_VARIABLE) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date)
 			throws DefaultException {
 
-		NeedDto dto = needService.getNeedDtoByProjectHelperTypeIdAndDate(projectHelperTypeId, date);
+		NeedDto dto = needService.findDtoByProjectHelperTypeIdAndDate(projectHelperTypeId, date);
 
 		return new Resource<>(dto,
 				linkTo(methodOn(NeedRestService.class).getOwnByProjectHelperTypeIdAndDate(projectHelperTypeId, date))
@@ -57,11 +57,11 @@ public class NeedRestService {
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
 	@ApiOperation(value = "Get a single need by id")
-	@Secured(UserRole.RIGHT_NEEDS_GET_BY_ID)
+	@Secured(UserRole.RIGHT_NEEDS_GET)
 	public Resource<NeedDto> getById(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 
-		NeedDto dto = needService.getNeedDtoById(id);
+		NeedDto dto = needService.findDtoById(id);
 
 		return new Resource<>(dto, linkTo(methodOn(NeedRestService.class).getById(id)).withSelfRel());
 	}
@@ -71,7 +71,7 @@ public class NeedRestService {
 	@Secured(UserRole.RIGHT_NEEDS_POST)
 	public Resource<NeedDto> create(@RequestBody(required = true) NeedDto dto) throws DefaultException {
 
-		NeedDto needDto = needService.createNeedDto(dto);
+		NeedDto needDto = needService.createDto(dto);
 
 		return new Resource<>(needDto, linkTo(methodOn(NeedRestService.class).create(needDto)).withSelfRel());
 	}
@@ -82,7 +82,7 @@ public class NeedRestService {
 	public Resource<NeedDto> update(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@RequestBody(required = true) NeedDto dto) throws DefaultException {
 
-		NeedDto needDto = needService.updateNeedDto(dto, id);
+		NeedDto needDto = needService.updateDto(dto, id);
 
 		return new Resource<>(needDto, linkTo(methodOn(NeedRestService.class).update(id, dto)).withSelfRel());
 	}
@@ -93,7 +93,7 @@ public class NeedRestService {
 	public ResponseEntity<Void> delete(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 
-		needService.deleteOwn(id);
+		needService.deleteDtoById(id);
 
 		return ResponseEntity.noContent().build();
 	}

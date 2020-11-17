@@ -1,16 +1,13 @@
 package de.lh.tool.service.entity.impl;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.modelmapper.Conditions;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,22 +28,26 @@ import de.lh.tool.domain.dto.UserDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.PasswordChangeToken;
+import de.lh.tool.domain.model.ProjectUser;
 import de.lh.tool.domain.model.User;
 import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.repository.UserRepository;
 import de.lh.tool.service.entity.interfaces.MailService;
 import de.lh.tool.service.entity.interfaces.PasswordChangeTokenService;
 import de.lh.tool.service.entity.interfaces.ProjectService;
+import de.lh.tool.service.entity.interfaces.ProjectUserService;
 import de.lh.tool.service.entity.interfaces.UserRoleService;
 import de.lh.tool.service.entity.interfaces.UserService;
+import de.lh.tool.service.entity.interfaces.crud.UserCrudService;
 import de.lh.tool.util.StringUtil;
-import lombok.Data;
+import de.lh.tool.util.ValidationUtil;
+import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 
 @Service
 @Log4j2
-public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserRepository, User, UserDto, Long>
-		implements UserService, UserDetailsService {
+public class UserServiceImpl extends BasicEntityCrudServiceImpl<UserRepository, User, UserDto, Long>
+		implements UserService, UserDetailsService, UserCrudService {
 
 	@Autowired
 	private PasswordChangeTokenService passwordChangeTokenService;
@@ -56,6 +57,9 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 
 	@Autowired
 	private ProjectService projectService;
+
+	@Autowired
+	private ProjectUserService projectUserService;
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -70,132 +74,56 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 	private JwtTokenProvider tokenProvider;
 
 	@Override
-	@Transactional
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		return loadUserByEmail(username);
+	protected ExceptionEnum getInvalidIdException() {
+		return ExceptionEnum.EX_INVALID_USER_ID;
 	}
 
 	@Override
 	@Transactional
-	public UserDetails loadUserById(Long id) {
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		return findByEmail(username);
+	}
+
+	@Override
+	@Transactional
+	public UserDetails findUserDetailsById(Long id) {
 		return getRepository().findById(id)
 				.orElseThrow(() -> new UsernameNotFoundException("User not found with id : " + id));
 	}
 
-	@Override
 	@Transactional
-	public User loadUserByEmail(String email) throws UsernameNotFoundException {
+	private User findByEmail(String email) throws UsernameNotFoundException {
 		return getRepository().findByEmail(email)
 				.orElseThrow(() -> new UsernameNotFoundException("User with email " + email + " does not exist"));
 	}
 
 	@Override
-	@Transactional
-	public User createUser(User user) throws DefaultException {
-		if (StringUtils.isBlank(user.getEmail())) {
-			throw ExceptionEnum.EX_USER_NO_EMAIL.createDefaultException();
-		}
-		if (StringUtils.isBlank(user.getFirstName())) {
-			throw ExceptionEnum.EX_USER_NO_FIRST_NAME.createDefaultException();
-		}
-		if (StringUtils.isBlank(user.getLastName())) {
-			throw ExceptionEnum.EX_USER_NO_LAST_NAME.createDefaultException();
-		}
-		if (user.getGender() == null) {
-			throw ExceptionEnum.EX_USER_NO_GENDER.createDefaultException();
-		}
-		final boolean emailAlreadyInUse = getRepository().findByEmail(user.getEmail()).isPresent();
-		if (emailAlreadyInUse) {
-			throw ExceptionEnum.EX_USER_EMAIL_ALREADY_IN_USE.createDefaultException();
-		}
-		User savedUser = save(user);
+	protected void checkValidity(@NonNull User user) throws DefaultException {
+		ValidationUtil.checkNonBlank(ExceptionEnum.EX_NO_EMAIL, user.getEmail());
+		ValidationUtil.checkNonBlank(ExceptionEnum.EX_NO_FIRST_NAME, user.getFirstName());
+		ValidationUtil.checkNonBlank(ExceptionEnum.EX_NO_GENDER, user.getGender());
+		ValidationUtil.checkNonBlank(ExceptionEnum.EX_NO_LAST_NAME, user.getLastName());
+		ValidationUtil.checkSameIdIfExists(ExceptionEnum.EX_USER_EMAIL_ALREADY_IN_USE,
+				getRepository().findByEmail(user.getEmail()), user);
+	}
 
-		PasswordChangeToken token = passwordChangeTokenService.saveRandomToken(savedUser);
+	@Override
+	protected void postCreate(@NonNull User user) {
+		PasswordChangeToken token = passwordChangeTokenService.saveRandomToken(user);
+		mailService.sendUserCreatedMail(user, token);
+	}
 
-		mailService.sendUserCreatedMail(savedUser, token);
-
-		return savedUser;
+	@Override
+	protected void preUpdate(@NonNull User oldUser, @NonNull User newUser) {
+		// necessary bc password hash shouldn't get exposed over REST
+		// possible alternative: use one mapping without hash for REST-stuff and extend
+		// it with one bean definition for password validation and so on
+		newUser.setPasswordHash(oldUser.getPasswordHash());
 	}
 
 	@Override
 	@Transactional
-	public User updateUser(User user) throws DefaultException {
-		if (user.getId() == null) {
-			throw ExceptionEnum.EX_NO_ID_PROVIDED.createDefaultException();
-		}
-		User old = findById(user.getId()).orElseThrow(ExceptionEnum.EX_INVALID_USER_ID::createDefaultException);
-
-		checkIfEditIsAllowed(old, true);
-
-		final boolean emailAlreadyInUse = !old.getEmail().equals(user.getEmail())
-				&& getRepository().findByEmail(user.getEmail()).isPresent();
-		if (emailAlreadyInUse) {
-			throw ExceptionEnum.EX_USER_EMAIL_ALREADY_IN_USE.createDefaultException();
-		}
-
-		ModelMapper mapper = new ModelMapper();
-		// if behavior gets changed, password hash has to be preserved
-		mapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
-		mapper.map(user, old);
-		return save(old);
-	}
-
-	@Override
-	public void checkIfEditIsAllowed(User user, boolean allowedToEditSelf) throws DefaultException {
-		if (!isEditAllowed(user, allowedToEditSelf)) {
-			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
-		}
-	}
-
-	private boolean isEditAllowed(User user, boolean allowedToEditSelf) {
-		UserPermissionCriteria criteria = Optional.ofNullable(user).map(this::evaluatePermissionsOnOtherUser)
-				.orElse(new UserPermissionCriteria());
-
-		boolean allowedThroughIdentity = allowedToEditSelf && criteria.isSelf();
-
-		boolean allowedThroughRights = criteria.isAllowedToChangeFromForeignProjects()
-				&& (user.getRoles().isEmpty() || criteria.isAllowedToGrantRoles());
-
-		boolean allowedThroughProject = criteria.isSameProject() && criteria.isAllowedToGrantRoles();
-
-		return allowedThroughIdentity || allowedThroughRights || allowedThroughProject;
-	}
-
-	private UserPermissionCriteria evaluatePermissionsOnOtherUser(User user) {
-		UserPermissionCriteria criteria = new UserPermissionCriteria();
-
-		criteria.setSelf(getCurrentUser().getId().equals(user.getId()));
-
-		criteria.setAllowedToChangeFromForeignProjects(
-				userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_CHANGE_FOREIGN));
-
-		criteria.setAllowedToGetFromForeignProjects(
-				userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_GET_FOREIGN));
-
-		criteria.setAllowedToGetOtherUsers(userRoleService.hasCurrentUserRight(UserRole.RIGHT_USERS_GET_FOREIGN));
-
-		criteria.setAllowedToGrantRoles(user.getRoles().stream().map(UserRole::getRole)
-				.allMatch(userRoleService::hasCurrentUserRightToGrantRole));
-
-		criteria.setSameProject(projectService.getOwnProjects().stream().anyMatch(ownProject -> Optional
-				.ofNullable(user.getProjects()).map(projects -> projects.contains(ownProject)).orElse(false)));
-
-		return criteria;
-	}
-
-	@Data
-	private class UserPermissionCriteria {
-		private boolean self;
-		private boolean allowedToChangeFromForeignProjects;
-		private boolean allowedToGetFromForeignProjects;
-		private boolean allowedToGetOtherUsers;
-		private boolean allowedToGrantRoles;
-		private boolean sameProject;
-	}
-
-	@Override
-	@Transactional
-	public User changePassword(Long userId, String token, String oldPassword, String newPassword,
+	public UserDto changePassword(Long userId, String token, String oldPassword, String newPassword,
 			String confirmPassword) throws DefaultException {
 		if (newPassword == null || newPassword.length() < PasswordChangeToken.MIN_PASSWORD_LENGTH) {
 			throw ExceptionEnum.EX_PASSWORDS_SHORT_PASSWORD.createDefaultException();
@@ -204,7 +132,7 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 			throw ExceptionEnum.EX_PASSWORDS_DO_NOT_MATCH.createDefaultException();
 		}
 		if (userId == null) {
-			throw ExceptionEnum.EX_PASSWORDS_NO_USER_ID.createDefaultException();
+			throw ExceptionEnum.EX_NO_USER_ID.createDefaultException();
 		}
 
 		User user = findById(userId).orElseThrow(ExceptionEnum.EX_INVALID_USER_ID::createDefaultException);
@@ -232,7 +160,7 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 
 		user.setPasswordHash(passwordEncoder.encode(newPassword));
 
-		return save(user);
+		return convertToDto(save(user));
 	}
 
 	private void validateToken(String token, User user) throws DefaultException {
@@ -254,6 +182,14 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 	}
 
 	@Override
+	public UserDto findCurrentUserDto() throws DefaultException {
+		checkFindRight();
+		User user = getCurrentUser();
+		hasReadPermission(user);
+		return convertToDto(user);
+	}
+
+	@Override
 	@Transactional
 	public User getCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -266,6 +202,13 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 	}
 
 	@Override
+	public boolean isCurrentUser(User user) {
+		return Optional.ofNullable(getCurrentUser()).map(User::getId)
+				.map(currentUserId -> currentUserId.equals(Optional.ofNullable(user).map(User::getId).orElse(null)))
+				.orElse(Boolean.FALSE);
+	}
+
+	@Override
 	public List<User> findByProjectIdAndRoleIgnoreCase(Long projectId, String role) {
 		return getRepository().findByProjectIdAndRoleAndFreeTextIgnoreCase(projectId, role, null);
 	}
@@ -274,35 +217,21 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 	@Transactional
 	public List<UserDto> findDtosByProjectIdAndRoleIgnoreCase(Long projectId, String role, String freeText)
 			throws DefaultException {
-		if (projectId != null && !userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_GET_FOREIGN)
-				&& getCurrentUser().getProjects().stream().noneMatch(project -> projectId.equals(project.getId()))) {
-			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
+		checkFindRight();
+		if (projectId != null) {
+			projectService.checkReadPermission(projectId);
 		}
 
-		List<User> users = getRepository().findByProjectIdAndRoleAndFreeTextIgnoreCase(projectId, role, freeText);
-		if (users != null) {
-			return convertToDtoList(
-					users.stream().filter(user -> isEditAllowed(user, true)).collect(Collectors.toList()));
-		}
-		throw ExceptionEnum.EX_USERS_NOT_FOUND.createDefaultException();
-	}
-
-	@Override
-	@Transactional
-	public UserDto findDtoById(Long id) throws DefaultException {
-		User user = findById(id).orElseThrow(
-				() -> new DefaultException(userRoleService.hasCurrentUserRight(UserRole.RIGHT_USERS_GET_FOREIGN)
-						? ExceptionEnum.EX_WRONG_ID_PROVIDED
-						: ExceptionEnum.EX_FORBIDDEN));
-		checkIfEditIsAllowed(user, true);
-		return convertToDto(user);
+		List<User> users = getRepository().findByProjectIdAndRoleAndFreeTextIgnoreCase(projectId,
+				StringUtils.trimToNull(role), StringUtils.trimToNull(freeText));
+		return convertToDtoList(filterFindResult(users));
 	}
 
 	@Override
 	@Transactional
 	public void requestPasswordReset(String email) throws DefaultException {
 		try {
-			User user = loadUserByEmail(email);
+			User user = findByEmail(email);
 			if (user != null) {
 				PasswordChangeToken token = passwordChangeTokenService.saveRandomToken(user);
 
@@ -320,7 +249,7 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 		// admin can login as any user
 		if (userRoleService.hasCurrentUserRight(UserRole.ROLE_ADMIN)) {
 			log.info(getCurrentUser().getEmail() + " logged himself in as " + loginDto.getEmail());
-			User user = loadUserByEmail(loginDto.getEmail());
+			User user = findByEmail(loginDto.getEmail());
 			String jwt = tokenProvider.generateToken(user);
 			return new JwtAuthenticationDto(jwt);
 		}
@@ -335,25 +264,47 @@ public class UserServiceImpl extends BasicMappableEntityServiceImpl<UserReposito
 	}
 
 	@Override
-	@Transactional
-	public void deleteUserById(Long id) throws DefaultException {
-		User user = findById(id).orElseThrow(ExceptionEnum.EX_INVALID_USER_ID::createDefaultException);
-		checkIfEditIsAllowed(user, false);
-		getRepository().delete(user);
+	protected void checkDeletable(@NonNull User user) throws DefaultException {
+		if (getCurrentUser().equals(user)) {
+			throw ExceptionEnum.EX_USER_SUICIDE.createDefaultException();
+		}
 	}
 
 	@Override
-	public UserDto convertToDto(User user) {
-		if (user == null) {
-			return null;
+	public boolean hasReadPermission(@NonNull User user) {
+
+		boolean hasPermission = isCurrentUser(user);
+
+		if (userRoleService.hasCurrentUserRight(UserRole.RIGHT_USERS_CHANGE_FOREIGN)) {
+
+			boolean hasPermissionToGrantAllRoles = hasPermission
+					|| userRoleService.hasCurrentUserRightToGrantAllRoles(user);
+
+			hasPermission = hasPermission
+					// permission through rights
+					|| (userRoleService.hasCurrentUserRight(UserRole.RIGHT_PROJECTS_USERS_CHANGE_FOREIGN)
+							&& (hasPermissionToGrantAllRoles));
+
+			hasPermission = hasPermission
+					// permission through project
+					|| (hasPermissionToGrantAllRoles && Optional
+							.ofNullable(user.getId()).map(projectUserService::findByUserId)
+							.filter(projects -> !projects.isEmpty()).map(Collection::stream).map(stream -> stream
+									.map(ProjectUser::getProject).anyMatch(projectService::hasReadPermission))
+							.orElse(false));
 		}
-		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.addMappings(new PropertyMap<User, UserDto>() {
-			@Override
-			protected void configure() {
-				using(ctx -> ctx.getSource() != null).map(user.getPasswordHash()).setActive(null);
-			}
-		});
-		return modelMapper.map(user, UserDto.class);
+
+		return hasPermission;
+	}
+
+	@Override
+	public boolean hasWritePermission(@NonNull User user) {
+		return (user.getId() == null && userRoleService.hasCurrentUserRight(UserRole.RIGHT_USERS_POST))
+				|| hasReadPermission(user);
+	}
+
+	@Override
+	public String getRightPrefix() {
+		return UserRole.USERS_PREFIX;
 	}
 }

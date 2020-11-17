@@ -2,22 +2,33 @@ package de.lh.tool.domain.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
 
 import org.junit.jupiter.api.Test;
 
-import de.lh.tool.domain.model.UserRole;
+import de.lh.tool.util.BasicJsSyncTest;
 
-public class UserRoleTest {
+public class UserRoleTest extends BasicJsSyncTest<UserRole> {
+
+	private final static String PERMISSIONS_JS_PATH = "src/main/js/permissions.js";
 
 	@Test
 	public void testConsitency() throws IllegalArgumentException, IllegalAccessException {
 		for (Field field : UserRole.class.getFields()) {
 			String name = field.getName();
-			if (!name.startsWith("ROLE_")) {
-				name = "ROLE_" + name;
+			if (name.startsWith("RIGHT_")) {
+				if (!name.startsWith("ROLE_")) {
+					name = "ROLE_" + name;
+				}
+				assertEquals(name, field.get(null));
 			}
-			assertEquals(name, field.get(null));
 		}
 	}
+
+	@Test
+	public void testIfInSync() throws FileNotFoundException, IllegalAccessException {
+		testIfInSync(PERMISSIONS_JS_PATH, UserRole.class);
+	}
+
 }

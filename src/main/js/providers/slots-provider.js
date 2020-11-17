@@ -7,6 +7,7 @@ import { withSnackbar } from 'notistack';
 import { fetchSlotsByFreeTextAndNameAndDescriptionAndStore, fetchSlot, updateSlot, createSlot, deleteSlot } from '../actions/slot';
 import { fetchOwnStores } from '../actions/store';
 import { FREE_TEXT_VARIABLE, STORE_ID_VARIABLE, DESCRIPTION_VARIABLE, NAME_VARIABLE } from '../urlmappings';
+import { EX_SLOT_NOT_EMPTY } from '../exceptions';
 
 export const SlotsContext = React.createContext();
 
@@ -199,7 +200,7 @@ class StatefulSlotsProvider extends React.Component {
                 });
             }))
             .catch(error => {
-                if (error.response && error.response.key && error.response.key === 'EX_SLOT_NOT_EMPTY') {
+                if (error.response && error.response.key && error.response.key === EX_SLOT_NOT_EMPTY) {
                     this.showErrorMessage('Mindestens eines der Lager ist nicht leer');
                 } else {
                     this.showErrorMessage('Fehler beim Löschen der Lager');

@@ -18,6 +18,7 @@ import { requiresLogin } from '../../util';
 import WithPermission from '../with-permission';
 import { NeedsContext } from '../../providers/needs-provider';
 import { withSnackbar } from 'notistack';
+import { RIGHT_NEEDS_APPROVE } from '../../permissions';
 
 
 const styles = theme => ({
@@ -108,7 +109,7 @@ class StatefulNeedApproveEditComponent extends React.Component {
                                             {user && user.lastName ? (
                                                 <>
                                                     <ListItemText primary={`${user.lastName}, ${user.firstName}`} />
-                                                    <WithPermission permission="ROLE_RIGHT_NEEDS_APPROVE">
+                                                    <WithPermission permission={RIGHT_NEEDS_APPROVE}>
                                                         <IconButton
                                                             disabled={needUser.state !== 'APPROVED' && approved >= need.quantity}
                                                             onClick={() => this.handleToggle(needUser, needUser.state !== 'APPROVED' ? 'APPROVED' : 'APPLIED')}

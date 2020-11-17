@@ -27,7 +27,7 @@ public class RoleRestService {
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of all roles that the user can grant")
-	@Secured(UserRole.RIGHT_USERS_CHANGE_ROLES)
+	@Secured(UserRole.RIGHT_USERS_ROLES_GET)
 	public Resources<RoleDto> get() throws DefaultException {
 		List<RoleDto> dtos = roleService.getGrantableRoleDtos();
 		return new Resources<>(dtos, linkTo(methodOn(RoleRestService.class).get()).withSelfRel());

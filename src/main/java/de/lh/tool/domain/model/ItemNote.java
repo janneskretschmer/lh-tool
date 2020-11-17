@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import de.lh.tool.domain.Identifiable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "item_note")
-public class ItemNote implements Comparable<ItemNote> {
+public class ItemNote implements Comparable<ItemNote>, Identifiable<Long> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

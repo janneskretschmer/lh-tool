@@ -130,7 +130,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.BAD_REQUEST)
 						.expectedResponse(
-								"{\"key\":\"EX_ITEM_NO_NAME\",\"message\":\"The item has no name.\",\"httpCode\":400}")
+								"{\"key\":\"EX_NO_NAME\",\"message\":\"The provided name is empty.\",\"httpCode\":400}")
 						.validationQueries(List.of("SELECT 1 WHERE (SELECT COUNT(*) FROM item)=0",
 								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0"))
 						.build()))
@@ -158,7 +158,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.BAD_REQUEST)
 						.expectedResponse(
-								"{\"key\":\"EX_ITEM_NO_IDENTIFIER\",\"message\":\"The item has no identifier.\",\"httpCode\":400}")
+								"{\"key\":\"EX_NO_IDENTIFIER\",\"message\":\"The provided identifier is empty.\",\"httpCode\":400}")
 						.validationQueries(List.of("SELECT 1 WHERE (SELECT COUNT(*) FROM item)=0",
 								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0"))
 						.build()))
@@ -180,13 +180,41 @@ public class ItemIT extends BasicRestIntegrationTest {
 						"INSERT INTO `store_project` (`id`, `store_id`, `project_id`, `start`, `end`) VALUES ('1', '1', '1', '2020-06-01', '2030-12-31');"))
 				.url(REST_URL + "/items").method(Method.POST)
 				.body(ItemDto.builder().broken(false).consumable(true).description("description").hasBarcode(false)
+						.identifier("identifier").name("name").outsideQualified(true).quantity(100d).slotId(null)
+						.technicalCrewId(1l).unit("unit").build())
+				.userTests(List.of(UserTest.builder()
+						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
+						.expectedHttpCode(HttpStatus.BAD_REQUEST)
+						.expectedResponse(
+								"{\"key\":\"EX_NO_SLOT_ID\",\"message\":\"The provided slot id is empty.\",\"httpCode\":400}")
+						.validationQueries(List.of("SELECT 1 WHERE (SELECT COUNT(*) FROM item)=0",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of("SELECT 1 WHERE (SELECT COUNT(*) FROM item)=0",
+						"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0"))
+				.build()));
+	}
+
+	@Test
+	public void testItemCreationInvalidSlot() throws IOException {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `store` (`id`, `type`, `name`, `address`) VALUES ('1', 'STANDARD', 'Store', NULL)",
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `outside`) VALUES ('1', '1', 'Slot', NULL, '0')",
+						"INSERT INTO `technical_crew` (`id`, `name`) VALUES ('1', 'Technical Crew')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO `store_project` (`id`, `store_id`, `project_id`, `start`, `end`) VALUES ('1', '1', '1', '2020-06-01', '2030-12-31');"))
+				.url(REST_URL + "/items").method(Method.POST)
+				.body(ItemDto.builder().broken(false).consumable(true).description("description").hasBarcode(false)
 						.identifier("identifier").name("name").outsideQualified(true).quantity(100d).slotId(2l)
 						.technicalCrewId(1l).unit("unit").build())
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.BAD_REQUEST)
 						.expectedResponse(
-								"{\"key\":\"EX_ITEM_NO_SLOT\",\"message\":\"The item has no slot.\",\"httpCode\":400}")
+								"{\"key\":\"EX_INVALID_SLOT_ID\",\"message\":\"The provided slot id is invalid.\",\"httpCode\":400}")
 						.validationQueries(List.of("SELECT 1 WHERE (SELECT COUNT(*) FROM item)=0",
 								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0"))
 						.build()))
@@ -209,12 +237,40 @@ public class ItemIT extends BasicRestIntegrationTest {
 				.url(REST_URL + "/items").method(Method.POST)
 				.body(ItemDto.builder().broken(false).consumable(true).description("description").hasBarcode(false)
 						.identifier("identifier").name("name").outsideQualified(true).quantity(100d).slotId(1l)
+						.technicalCrewId(null).unit("unit").build())
+				.userTests(List.of(UserTest.builder()
+						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
+						.expectedHttpCode(HttpStatus.BAD_REQUEST)
+						.expectedResponse(
+								"{\"key\":\"EX_NO_TECHNICAL_CREW_ID\",\"message\":\"The provided technical crew id is empty.\",\"httpCode\":400}")
+						.validationQueries(List.of("SELECT 1 WHERE (SELECT COUNT(*) FROM item)=0",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of("SELECT 1 WHERE (SELECT COUNT(*) FROM item)=0",
+						"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0"))
+				.build()));
+	}
+
+	@Test
+	public void testItemCreationInvalidTechnicalCrew() throws IOException {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO `store` (`id`, `type`, `name`, `address`) VALUES ('1', 'STANDARD', 'Store', NULL)",
+						"INSERT INTO `slot` (`id`, `store_id`, `name`, `description`, `outside`) VALUES ('1', '1', 'Slot', NULL, '0')",
+						"INSERT INTO `technical_crew` (`id`, `name`) VALUES ('1', 'Technical Crew')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO `store_project` (`id`, `store_id`, `project_id`, `start`, `end`) VALUES ('1', '1', '1', '2020-06-01', '2030-12-31');"))
+				.url(REST_URL + "/items").method(Method.POST)
+				.body(ItemDto.builder().broken(false).consumable(true).description("description").hasBarcode(false)
+						.identifier("identifier").name("name").outsideQualified(true).quantity(100d).slotId(1l)
 						.technicalCrewId(2l).unit("unit").build())
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.BAD_REQUEST)
 						.expectedResponse(
-								"{\"key\":\"EX_ITEM_NO_TECHNICAL_CREW\",\"message\":\"The item has no technical crew.\",\"httpCode\":400}")
+								"{\"key\":\"EX_INVALID_TECHNICAL_CREW_ID\",\"message\":\"The provided technical crew id is invalid.\",\"httpCode\":400}")
 						.validationQueries(List.of("SELECT 1 WHERE (SELECT COUNT(*) FROM item)=0",
 								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0"))
 						.build()))
@@ -694,7 +750,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.BAD_REQUEST)
 						.expectedResponse(
-								"{\"key\":\"EX_ITEM_NO_NAME\",\"message\":\"The item has no name.\",\"httpCode\":400}")
+								"{\"key\":\"EX_NO_NAME\",\"message\":\"The provided name is empty.\",\"httpCode\":400}")
 						.validationQueries(List.of(
 								"SELECT * FROM item WHERE id=1 AND broken=1 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0",
@@ -728,7 +784,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.BAD_REQUEST)
 						.expectedResponse(
-								"{\"key\":\"EX_ITEM_NO_IDENTIFIER\",\"message\":\"The item has no identifier.\",\"httpCode\":400}")
+								"{\"key\":\"EX_NO_IDENTIFIER\",\"message\":\"The provided identifier is empty.\",\"httpCode\":400}")
 						.validationQueries(List.of(
 								"SELECT * FROM item WHERE id=1 AND broken=1 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0",
@@ -764,7 +820,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.BAD_REQUEST)
 						.expectedResponse(
-								"{\"key\":\"EX_ITEM_NO_SLOT\",\"message\":\"The item has no slot.\",\"httpCode\":400}")
+								"{\"key\":\"EX_NO_SLOT_ID\",\"message\":\"The provided slot id is empty.\",\"httpCode\":400}")
 						.validationQueries(List.of(
 								"SELECT * FROM item WHERE id=1 AND broken=1 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0",
@@ -798,7 +854,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.BAD_REQUEST)
 						.expectedResponse(
-								"{\"key\":\"EX_ITEM_NO_TECHNICAL_CREW\",\"message\":\"The item has no technical crew.\",\"httpCode\":400}")
+								"{\"key\":\"EX_NO_TECHNICAL_CREW_ID\",\"message\":\"The provided technical crew id is empty.\",\"httpCode\":400}")
 						.validationQueries(List.of(
 								"SELECT * FROM item WHERE id=1 AND broken=1 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0",
@@ -1760,7 +1816,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1000,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":null,\"email\":null,\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":null,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1/notes/1/user\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1000,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":null,\"email\":null,\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1/notes/1/user\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
 						.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
@@ -1829,7 +1885,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1000,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":null,\"email\":null,\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"active\":null,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1/history/1/user\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1000,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":null,\"email\":null,\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1/history/1/user\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
 						.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}

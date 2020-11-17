@@ -11,6 +11,7 @@ import EventBusyIcon from '@material-ui/icons/EventBusy';
 import classNames from 'classnames';
 import { withSnackbar } from 'notistack';
 import React from 'react';
+import { RIGHT_NEEDS_APPROVE } from '../../permissions';
 import { NeedsContext } from '../../providers/needs-provider';
 import { convertToMUIFormat, requiresLogin } from '../../util';
 import WithPermission from '../with-permission';
@@ -218,7 +219,7 @@ class StatefulNeedApproveComponent extends React.Component {
                                 })}
                             </tbody>
                         </table>
-                        <WithPermission permission="ROLE_RIGHT_NEEDS_APPROVE">
+                        <WithPermission permission={RIGHT_NEEDS_APPROVE}>
                             <div className={classes.legend}>
                                 Bitte klicke auf einen Tag, eine Kalenderwoche oder den Monat, um die Bewerber zuzuteilen.<br />
                                 Wenn alle Positionen besetzt sind, erscheint ein Haken.<br />

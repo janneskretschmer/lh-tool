@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import de.lh.tool.domain.Identifiable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,7 +26,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "slot")
-public class Slot {
+public class Slot implements Identifiable<Long> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -43,6 +44,6 @@ public class Slot {
 	@Column(name = "outside", nullable = false)
 	private Boolean outside;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "slot")
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "slot")
 	private Collection<Item> items;
 }

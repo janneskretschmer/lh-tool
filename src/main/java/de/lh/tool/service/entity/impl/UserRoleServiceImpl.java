@@ -1,12 +1,10 @@
 package de.lh.tool.service.entity.impl;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.transaction.Transactional;
 
-import org.modelmapper.ModelMapper;
-import org.modelmapper.PropertyMap;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,15 +16,25 @@ import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.repository.UserRoleRepository;
 import de.lh.tool.service.entity.interfaces.UserRoleService;
 import de.lh.tool.service.entity.interfaces.UserService;
+import de.lh.tool.service.entity.interfaces.crud.UserRoleCrudService;
+import de.lh.tool.util.ValidationUtil;
+import lombok.NonNull;
 
 @Service
-public class UserRoleServiceImpl extends BasicMappableEntityServiceImpl<UserRoleRepository, UserRole, UserRoleDto, Long>
-		implements UserRoleService {
-
-	private static final String GRANT_RIGHT_PREFIX = "ROLE_RIGHT_USERS_GRANT_";
+public class UserRoleServiceImpl extends BasicEntityCrudServiceImpl<UserRoleRepository, UserRole, UserRoleDto, Long>
+		implements UserRoleService, UserRoleCrudService {
 
 	@Autowired
 	private UserService userService;
+
+	@Override
+	@Transactional
+	public List<UserRoleDto> findDtosByUserId(@NonNull Long userId) throws DefaultException {
+		checkFindRight();
+		User user = userService.findByIdOrThrowInvalidIdException(userId);
+		userService.checkReadPermission(user);
+		return convertToDtoList(user.getRoles());
+	}
 
 	@Override
 	public boolean hasCurrentUserRight(String right) {
@@ -51,65 +59,42 @@ public class UserRoleServiceImpl extends BasicMappableEntityServiceImpl<UserRole
 
 	@Override
 	public boolean hasCurrentUserRightToGrantRole(String role) {
-		return hasCurrentUserRight(GRANT_RIGHT_PREFIX + role);
+		return hasCurrentUserRight(StringUtils.join(UserRole.USERS_GRANT_ROLE_PREFIX, "_", role));
 	}
 
 	@Override
 	@Transactional
-	public List<UserRoleDto> findDtosByUserId(Long userId) throws DefaultException {
-		if (userId == null) {
-			throw ExceptionEnum.EX_NO_ID_PROVIDED.createDefaultException();
-		}
-		User user = userService.findById(userId).orElseThrow(ExceptionEnum.EX_INVALID_USER_ID::createDefaultException);
-		userService.checkIfEditIsAllowed(user, true);
-		return convertToDtoList(user.getRoles());
+	public boolean hasCurrentUserRightToGrantAllRoles(@NonNull User user) {
+		return getRepository().findByUserId(user.getId()).stream().map(UserRole::getRole)
+				.allMatch(this::hasCurrentUserRightToGrantRole);
 	}
 
 	@Override
-	@Transactional
-	public UserRoleDto createUserRoleDto(UserRoleDto dto) throws DefaultException {
-		if (dto.getId() != null) {
-			throw ExceptionEnum.EX_ID_PROVIDED.createDefaultException();
-		}
-		UserRole userRole = convertToEntity(dto);
-		if (!hasCurrentUserRightToGrantRole(userRole.getRole())) {
-			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
-		}
-		if (userRole.getUser() == null) {
-			throw ExceptionEnum.EX_INVALID_USER_ID.createDefaultException();
-		}
-		userService.checkIfEditIsAllowed(userRole.getUser(), true);
+	protected void checkValidity(@NonNull UserRole userRole) throws DefaultException {
+		ValidationUtil.checkNonBlank(ExceptionEnum.EX_NO_ROLE, userRole.getRole());
+		ValidationUtil.checkNonBlank(ExceptionEnum.EX_NO_USER_ID, userRole.getUser());
 		if (hasUserRight(userRole.getUser(), userRole.getRole())) {
 			throw ExceptionEnum.EX_USER_ROLE_ALREADY_EXISTS.createDefaultException();
 		}
-		return convertToDto(save(userRole));
 	}
 
 	@Override
-	@Transactional
-	public void deleteUserRoleById(Long id) throws DefaultException {
-		if (id == null) {
-			throw ExceptionEnum.EX_NO_ID_PROVIDED.createDefaultException();
-		}
-		UserRole userRole = findById(id).orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException);
-		if (!hasCurrentUserRightToGrantRole(userRole.getRole())) {
-			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
-		}
-		userService.checkIfEditIsAllowed(userRole.getUser(), true);
+	protected void postDelete(@NonNull UserRole userRole) {
 		userRole.getUser().getRoles().remove(userRole);
-		delete(userRole);
 	}
 
 	@Override
-	public UserRole convertToEntity(UserRoleDto dto) {
-		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.addMappings(new PropertyMap<UserRoleDto, UserRole>() {
-			@Override
-			protected void configure() {
-				using(c -> Optional.ofNullable((UserRoleDto) c.getSource()).map(UserRoleDto::getUserId)
-						.flatMap(userService::findById).orElse(null)).map(source).setUser(null);
-			}
-		});
-		return modelMapper.map(dto, UserRole.class);
+	public boolean hasReadPermission(@NonNull UserRole userRole) {
+		return userService.hasReadPermission(userRole.getUser());
+	}
+
+	@Override
+	public boolean hasWritePermission(@NonNull UserRole userRole) {
+		return userService.hasWritePermission(userRole.getUser()) && hasCurrentUserRightToGrantRole(userRole.getRole());
+	}
+
+	@Override
+	public String getRightPrefix() {
+		return UserRole.USERS_ROLES_PREFIX;
 	}
 }

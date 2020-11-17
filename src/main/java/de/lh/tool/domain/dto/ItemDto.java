@@ -4,6 +4,7 @@ import org.apache.commons.lang3.ObjectUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import de.lh.tool.domain.Identifiable;
 import de.lh.tool.domain.Patchable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ItemDto implements Patchable {
+public class ItemDto implements Patchable, Identifiable<Long> {
 	private Long id;
 	private Long slotId;
 	private String identifier;

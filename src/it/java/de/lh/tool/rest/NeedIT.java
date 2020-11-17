@@ -667,8 +667,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 						"INSERT INTO need (id, project_helper_type_id, quantity, date) VALUES (2, 1, 21, '2020-04-24')",
 						"INSERT INTO need_user (id, need_id, user_id, state) VALUES (4, 2, 2, 'APPROVED')"))
 				.url(REST_URL + "/needs/1/users/1000").method(Method.GET)
-				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL, "test@lh-tool.de"))
-						.expectedHttpCode(HttpStatus.OK)
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
 								"{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPROVED\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
 						.build()))
