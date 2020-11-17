@@ -109,7 +109,7 @@ public class ItemServiceImpl extends BasicEntityCrudServiceImpl<ItemRepository, 
 
 		boolean allowedToModifySlot = allowedToModify
 				|| userRoleService.hasCurrentUserRight(UserRole.RIGHT_ITEMS_PATCH_SLOT);
-		boolean modifiedSlot = dto.getSlotId() != null && dto.getSlotId() != item.getSlot().getId();
+		boolean modifiedSlot = dto.getSlotId() != null && !dto.getSlotId().equals(item.getSlot().getId());
 
 		if (modifiedSlot && allowedToModifySlot) {
 			Slot slot = convertToEntity(dto).getSlot();
@@ -122,7 +122,7 @@ public class ItemServiceImpl extends BasicEntityCrudServiceImpl<ItemRepository, 
 
 		boolean allowedToModifyQuantity = allowedToModify
 				|| userRoleService.hasCurrentUserRight(UserRole.RIGHT_ITEMS_PATCH_QUANTITY);
-		boolean modifiedQuantity = dto.getQuantity() != null && dto.getQuantity() != item.getQuantity();
+		boolean modifiedQuantity = dto.getQuantity() != null && !dto.getQuantity().equals(item.getQuantity());
 		if (modifiedQuantity && allowedToModifyQuantity) {
 			Double old = item.getQuantity();
 			item.setQuantity(dto.getQuantity());

@@ -73,13 +73,11 @@ public class ItemNoteServiceImpl extends BasicEntityCrudServiceImpl<ItemNoteRepo
 
 		checkFindPermission(itemNote);
 
-		UserDto userDto = Optional.of(itemNote).map(ItemNote::getUser)
+		return Optional.of(itemNote).map(ItemNote::getUser)
 				// don't expose personal data except name
 				.map(user -> UserDto.builder().id(user.getId()).firstName(user.getFirstName())
 						.lastName(user.getLastName()).build())
 				.orElse(new UserDto());
-
-		return userDto;
 	}
 
 	@Override

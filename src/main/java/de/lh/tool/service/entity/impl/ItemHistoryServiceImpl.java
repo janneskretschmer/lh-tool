@@ -65,12 +65,11 @@ public class ItemHistoryServiceImpl
 
 		checkFindPermission(event);
 
-		UserDto userDto = Optional.of(event).map(ItemHistory::getUser)
+		return Optional.of(event).map(ItemHistory::getUser)
 				// don't expose personal data except name
 				.map(user -> UserDto.builder().id(user.getId()).firstName(user.getFirstName())
 						.lastName(user.getLastName()).build())
 				.orElse(new UserDto());
-		return userDto;
 	}
 
 	@Override
@@ -83,7 +82,7 @@ public class ItemHistoryServiceImpl
 	@Override
 	@Transactional
 	public void logNewBrokenState(Item item) {
-		saveHistoryEntry(item, item.getBroken() ? HistoryType.BROKEN : HistoryType.FIXED);
+		saveHistoryEntry(item, Boolean.TRUE.equals(item.getBroken()) ? HistoryType.BROKEN : HistoryType.FIXED);
 	}
 
 	@Data

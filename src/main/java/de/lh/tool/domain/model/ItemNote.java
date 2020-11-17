@@ -45,6 +45,7 @@ public class ItemNote implements Comparable<ItemNote>, Identifiable<Long> {
 
 	@Override
 	public int compareTo(ItemNote other) {
-		return Optional.ofNullable(other).map(note -> -timestamp.compareTo(note.getTimestamp())).orElse(1);
+		return Optional.ofNullable(other).map(otherNote -> -1 * timestamp.compareTo(otherNote.getTimestamp()))
+				.orElse(1);
 	}
 }
