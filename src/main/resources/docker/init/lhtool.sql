@@ -41,6 +41,11 @@ BEGIN
         SET @query=CONCAT('DELETE FROM ',tableName);
         PREPARE statement FROM @query;
         EXECUTE statement;
+        IF ROW_COUNT() > 0 THEN
+	        SET @query=CONCAT('ALTER TABLE ',tableName,' AUTO_INCREMENT = 1');
+	        PREPARE statement FROM @query;
+	        EXECUTE statement;
+        END IF;
     END LOOP trunc;
 	CLOSE tableCursor;
     
