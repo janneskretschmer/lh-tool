@@ -26,7 +26,7 @@ BEGIN
 	DECLARE finished INTEGER DEFAULT 0;
     DECLARE tableName VARCHAR(255);
 	DEClARE tableCursor 
-		CURSOR FOR SELECT table_name FROM information_schema.tables WHERE table_schema='lhtool' AND table_name != 'schema_version' AND auto_increment > 1;
+		CURSOR FOR SELECT table_name FROM information_schema.tables WHERE table_schema='lhtool' AND table_name != 'schema_version';
 	DECLARE CONTINUE HANDLER 
         FOR NOT FOUND SET finished = 1;
     
@@ -38,7 +38,7 @@ BEGIN
         IF finished=1 THEN 
         	LEAVE trunc;
         END IF;
-        SET @query=CONCAT('TRUNCATE TABLE ',tableName);
+        SET @query=CONCAT('DELETE FROM ',tableName);
         PREPARE statement FROM @query;
         EXECUTE statement;
     END LOOP trunc;
