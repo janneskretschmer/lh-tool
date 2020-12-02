@@ -52,8 +52,6 @@ public class ItemServiceImpl extends BasicEntityCrudServiceImpl<ItemRepository, 
 
 	@Override
 	protected void checkValidity(@NonNull Item item) throws DefaultException {
-		modelMapper.getConfiguration().getConverters();
-
 		ValidationUtil.checkNonBlank(ExceptionEnum.EX_NO_BROKEN, item.getBroken());
 		ValidationUtil.checkNonBlank(ExceptionEnum.EX_NO_CONSUMABLE, item.getConsumable());
 		ValidationUtil.checkNonBlank(ExceptionEnum.EX_NO_HAS_BARCODE, item.getHasBarcode());

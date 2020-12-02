@@ -103,6 +103,7 @@ public abstract class BasicEntityServiceImpl<R extends BasicEntityRepository<E, 
 	}
 
 	@Override
+	@Transactional
 	public void checkReadPermission(@NonNull E entity) throws DefaultException {
 		if (!hasReadPermission(entity)) {
 			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
@@ -127,6 +128,7 @@ public abstract class BasicEntityServiceImpl<R extends BasicEntityRepository<E, 
 	}
 
 	@Override
+	@Transactional
 	public void checkWritePermission(@NonNull E entity) throws DefaultException {
 		if (!hasWritePermission(entity)) {
 			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
@@ -146,16 +148,19 @@ public abstract class BasicEntityServiceImpl<R extends BasicEntityRepository<E, 
 	protected abstract String getRightPrefix();
 
 	@Override
+	@Transactional
 	public boolean hasFindPermission(@NonNull E entity) {
 		return hasFindRight() && hasReadPermission(entity);
 	}
 
 	@Override
+	@Transactional
 	public boolean hasFindRight() {
 		return userRoleService.hasCurrentUserRight(getRightPrefix() + UserRole.GET_SUFFIX);
 	}
 
 	@Override
+	@Transactional
 	public void checkFindRight() throws DefaultException {
 		if (!hasFindRight()) {
 			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
@@ -169,6 +174,7 @@ public abstract class BasicEntityServiceImpl<R extends BasicEntityRepository<E, 
 	}
 
 	@Override
+	@Transactional
 	public void checkFindPermission(@NonNull E entity) throws DefaultException {
 		if (!hasFindPermission(entity)) {
 			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
@@ -186,12 +192,14 @@ public abstract class BasicEntityServiceImpl<R extends BasicEntityRepository<E, 
 	// Create permission
 
 	@Override
+	@Transactional
 	public boolean hasCreatePermission(@NonNull E entity) {
 		return userRoleService.hasCurrentUserRight(getRightPrefix() + UserRole.POST_SUFFIX)
 				&& hasWritePermission(entity);
 	}
 
 	@Override
+	@Transactional
 	public void checkCreatePermission(@NonNull E entity) throws DefaultException {
 		if (!hasCreatePermission(entity)) {
 			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
@@ -201,12 +209,14 @@ public abstract class BasicEntityServiceImpl<R extends BasicEntityRepository<E, 
 	// Update permission
 
 	@Override
+	@Transactional
 	public boolean hasUpdatePermission(@NonNull E entity) {
 		return userRoleService.hasCurrentUserRight(getRightPrefix() + UserRole.PUT_SUFFIX)
 				&& hasWritePermission(entity);
 	}
 
 	@Override
+	@Transactional
 	public void checkUpdatePermission(@NonNull E entity) throws DefaultException {
 		if (!hasUpdatePermission(entity)) {
 			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
@@ -216,12 +226,14 @@ public abstract class BasicEntityServiceImpl<R extends BasicEntityRepository<E, 
 	// Delete permission
 
 	@Override
+	@Transactional
 	public boolean hasDeletePermission(@NonNull E entity) {
 		return userRoleService.hasCurrentUserRight(getRightPrefix() + UserRole.DELETE_SUFFIX)
 				&& hasWritePermission(entity);
 	}
 
 	@Override
+	@Transactional
 	public void checkDeletePermission(@NonNull E entity) throws DefaultException {
 		if (!hasDeletePermission(entity)) {
 			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
