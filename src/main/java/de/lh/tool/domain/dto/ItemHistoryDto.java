@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import de.lh.tool.domain.Identifiable;
 import de.lh.tool.domain.model.HistoryType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ItemHistoryDto {
+public class ItemHistoryDto implements Identifiable<Long> {
 	private Long id;
 	private Long itemId;
 	private Long userId;

@@ -8,6 +8,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import SearchIcon from '@material-ui/icons/Search';
 import React from 'react';
 import { fullPathOfSlot } from '../../paths';
+import { RIGHT_SLOTS_PUT } from '../../permissions';
 import { SessionContext } from '../../providers/session-provider';
 import { SlotsContext } from '../../providers/slots-provider';
 import PagedTable from '../table';
@@ -70,7 +71,7 @@ class StatefulSlotListComponent extends React.Component {
         const { expandFilters } = this.state;
         const expandedFilterSet = !!(slotsState.filterName || slotsState.filterDescription || slotsState.filterStoreId);
         const slots = slotsState && slotsState.slots && [...slotsState.slots.values()];
-        const showAddButton = sessionState.hasPermission('ROLE_RIGHT_SLOTS_PUT');
+        const showAddButton = sessionState.hasPermission(RIGHT_SLOTS_PUT);
         return (
             <>
                 {slots ? (

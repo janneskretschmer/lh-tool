@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import de.lh.tool.domain.dto.NeedUserDto;
 import de.lh.tool.domain.exception.DefaultException;
-import de.lh.tool.domain.exception.DefaultRuntimeException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.Need;
 import de.lh.tool.domain.model.NeedUser;
@@ -26,13 +25,14 @@ import de.lh.tool.service.entity.interfaces.MailService;
 import de.lh.tool.service.entity.interfaces.NeedService;
 import de.lh.tool.service.entity.interfaces.NeedUserService;
 import de.lh.tool.service.entity.interfaces.ProjectService;
-import de.lh.tool.service.entity.interfaces.UserRoleService;
 import de.lh.tool.service.entity.interfaces.UserService;
+import de.lh.tool.service.entity.interfaces.crud.NeedUserCrudService;
+import de.lh.tool.util.ValidationUtil;
 import lombok.NonNull;
 
 @Service
-public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUserRepository, NeedUser, NeedUserDto, Long>
-		implements NeedUserService {
+public class NeedUserServiceImpl extends BasicEntityCrudServiceImpl<NeedUserRepository, NeedUser, NeedUserDto, Long>
+		implements NeedUserService, NeedUserCrudService {
 
 	@Autowired
 	private NeedService needService;
@@ -44,11 +44,10 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 	private ProjectService projectService;
 
 	@Autowired
-	private UserRoleService userRoleService;
-
-	@Autowired
 	private MailService mailService;
 
+	// FUTURE: use standard methods
+	//
 	// necessary rights:
 	// . . . . . . +----------------8--+
 	// 1-apply-2 . 3-approve4+5approve-6
@@ -62,9 +61,10 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 	public NeedUserDto saveOrUpdateDto(Long needId, Long userId, NeedUserDto dto) throws DefaultException {
 		NeedUser needUser = findByNeedIdAndUserId(needId, userId);
 
-		boolean noPermissionOnProject = !projectService.isOwnProject(getProject(needUser))
+		Project project = getProject(needUser);
+		boolean noPermissionOnProject = !(project != null && projectService.hasReadPermission(project))
 				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT);
-		boolean noPermissionOnUser = needUser.getUser() != userService.getCurrentUser()
+		boolean noPermissionOnUser = !userService.isCurrentUser(needUser.getUser())
 				&& !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_USER);
 		if (noPermissionOnProject || noPermissionOnUser) {
 			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
@@ -110,8 +110,10 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 			// 7: APPROVED -> NONE
 			userRoleService.checkCurrentUserRight(UserRole.RIGHT_NEEDS_APPLY);
 			needUser.setState(NeedUserState.NONE);
-			userService.findByProjectIdAndRoleIgnoreCase(getProject(needUser).getId(), UserRole.ROLE_LOCAL_COORDINATOR)
-					.stream().forEach(u -> mailService.sendNeedUserStateChangedMailToCoordinator(needUser, u));
+			Optional.ofNullable(project).map(Project::getId)
+					.ifPresent(projectId -> userService
+							.findByProjectIdAndRoleIgnoreCase(projectId, UserRole.ROLE_LOCAL_COORDINATOR).stream()
+							.forEach(user -> mailService.sendNeedUserStateChangedMailToCoordinator(needUser, user)));
 			delete(needUser);
 			dto.setId(null);
 			return dto;
@@ -122,37 +124,37 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 
 		// if mail has to be sent, new state is already set above
 		needUser.setState(newState);
+
+		checkValidity(needUser);
+
 		return convertToDto(save(needUser));
 
 	}
 
-	private @NonNull Project getProject(NeedUser needUser) {
-		Optional<@NonNull Project> project = Optional.ofNullable(needUser).map(NeedUser::getNeed)
-				.map(Need::getProjectHelperType).map(ProjectHelperType::getProject).filter(p -> p.getId() != null);
-		return project.orElseThrow(() -> new DefaultRuntimeException(ExceptionEnum.EX_INVALID_PROJECT_ID));
+	@Override
+	protected void checkValidity(@NonNull NeedUser needUser) throws DefaultException {
+		ValidationUtil.checkNonBlank(ExceptionEnum.EX_NO_NEED_ID, needUser.getNeed());
+		ValidationUtil.checkNonBlank(ExceptionEnum.EX_NO_USER_ID, needUser.getUser());
+		ValidationUtil.checkNonBlank(ExceptionEnum.EX_NO_STATE, needUser.getState());
 	}
 
-	private boolean isViewAllowed(NeedUser needUser) {
-		boolean self = userService.getCurrentUser().getId().equals(needUser.getUser().getId());
-		boolean permissionOnProject = projectService.isOwnProject(getProject(needUser))
-				|| userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT);
-		boolean allowedToViewForeign = userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_GET_FOREIGN_USER);
-		return self || (permissionOnProject && allowedToViewForeign);
+	private Project getProject(NeedUser needUser) {
+		Optional<Project> project = Optional.ofNullable(needUser).map(NeedUser::getNeed).map(Need::getProjectHelperType)
+				.map(ProjectHelperType::getProject);
+		return project.orElse(null);
 	}
 
 	@Override
 	@Transactional
 	public NeedUserDto findDtoByNeedIdAndUserId(Long needId, Long userId) throws DefaultException {
 		NeedUser needUser = findByNeedIdAndUserId(needId, userId);
-		if (!isViewAllowed(needUser)) {
-			throw ExceptionEnum.EX_FORBIDDEN.createDefaultException();
-		}
+		checkFindPermission(needUser);
 		return convertToDto(needUser);
 	}
 
 	private NeedUser findByNeedIdAndUserId(Long needId, Long userId) throws DefaultException {
-		Need need = needService.findById(needId).orElseThrow(ExceptionEnum.EX_INVALID_ID::createDefaultException);
-		User user = userService.findById(userId).orElseThrow(ExceptionEnum.EX_INVALID_USER_ID::createDefaultException);
+		Need need = needService.findByIdOrThrowInvalidIdException(needId);
+		User user = userService.findByIdOrThrowInvalidIdException(userId);
 		return getRepository().findByNeedAndUser(need, user)
 				.orElse(NeedUser.builder().need(need).user(user).state(NeedUserState.NONE).build());
 	}
@@ -160,11 +162,11 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 	@Override
 	@Transactional
 	public List<NeedUserDto> findDtosByNeedId(Long needId) throws DefaultException {
-		Need need = needService.findById(needId).orElseThrow(() -> new DefaultException(ExceptionEnum.EX_INVALID_ID));
+		checkFindRight();
+		Need need = needService.findByIdOrThrowInvalidIdException(needId);
 
-		boolean ownProject = projectService.isOwnProject(need.getProjectHelperType().getProject());
-		if (!ownProject && !userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT)) {
-			throw new DefaultException(ExceptionEnum.EX_FORBIDDEN);
+		if (!userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT)) {
+			projectService.checkReadPermission(need.getProjectHelperType().getProject());
 		}
 
 		List<NeedUser> needUserList = getRepository().findByNeedOrderByUser_LastNameAscUser_FirstNameAsc(need);
@@ -175,7 +177,7 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 	}
 
 	private NeedUser anonymizeOrFilterNeedUserIfNecessary(NeedUser needUser) {
-		if (isViewAllowed(needUser)) {
+		if (hasReadPermission(needUser)) {
 			return needUser;
 		}
 		// necessary for getting correct approved count if user isn't allowed to see
@@ -184,6 +186,31 @@ public class NeedUserServiceImpl extends BasicMappableEntityServiceImpl<NeedUser
 			return new NeedUser(needUser.getId(), needUser.getNeed(), new User(), needUser.getState());
 		}
 		return null;
+	}
+
+	@Override
+	public boolean hasReadPermission(@NonNull NeedUser needUser) {
+		boolean permissionOnProject = Optional.ofNullable(getProject(needUser)).map(projectService::hasReadPermission)
+				.orElse(Boolean.FALSE)
+				|| userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT);
+		boolean permissionOnUser = userService.isCurrentUser(needUser.getUser())
+				|| userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_GET_FOREIGN_USER);
+		return permissionOnProject && permissionOnUser;
+	}
+
+	@Override
+	public boolean hasWritePermission(@NonNull NeedUser needUser) {
+		boolean permissionOnProject = Optional.ofNullable(getProject(needUser)).map(projectService::hasReadPermission)
+				.orElse(Boolean.FALSE)
+				|| userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_PROJECT);
+		boolean permissionOnUser = userService.isCurrentUser(needUser.getUser())
+				|| userRoleService.hasCurrentUserRight(UserRole.RIGHT_NEEDS_CHANGE_FOREIGN_USER);
+		return permissionOnProject && permissionOnUser;
+	}
+
+	@Override
+	public String getRightPrefix() {
+		return UserRole.NEEDS_USERS_PREFIX;
 	}
 
 }

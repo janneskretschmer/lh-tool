@@ -10,6 +10,7 @@ import { green, yellow, red, grey } from '@material-ui/core/colors';
 import SimpleDialog from '../simple-dialog';
 import moment from 'moment';
 import { NeedsContext } from '../../providers/needs-provider';
+import { RIGHT_NEEDS_APPLY } from '../../permissions';
 
 const styles = theme => ({
     none: {
@@ -96,7 +97,7 @@ class StatefulNeedApplyEditComponent extends React.Component {
         const { updating } = this.state;
         const appliedCount = this.props.needsState.getAppliedCount(need);
         const approvedCount = this.props.needsState.getApprovedCount(need);
-        const disabled = !sessionState.hasPermission('ROLE_RIGHT_NEEDS_APPLY') || !need.id || need.quantity === 0 || (need.state !== 'APPROVED' && approvedCount >= need.quantity);
+        const disabled = !sessionState.hasPermission(RIGHT_NEEDS_APPLY) || !need.id || need.quantity === 0 || (need.state !== 'APPROVED' && approvedCount >= need.quantity);
         return updating ? (
             <span className={classes.apply}>
                 <CircularProgress size={15} />

@@ -15,6 +15,7 @@ import SimpleDialog from '../simple-dialog';
 import { PageContext } from '../../providers/page-provider';
 import { fullPathOfItems, fullPathOfItemData } from '../../paths';
 import LenientRedirect from '../util/lenient-redirect';
+import { RIGHT_ITEMS_PATCH_BROKEN, RIGHT_ITEMS_PATCH_SLOT, RIGHT_ITEMS_POST, RIGHT_ITEMS_PUT } from '../../permissions';
 
 const styles = theme => ({
     bold: {
@@ -94,7 +95,7 @@ class StatefulItemDetailComponent extends React.Component {
                 ) : (
                         <>
                             <ItemDisplayComponent item={item}></ItemDisplayComponent>
-                            <WithPermission permission="ROLE_RIGHT_ITEMS_PUT">
+                            <WithPermission permission={RIGHT_ITEMS_PUT}>
                                 <Button
                                     variant="contained"
                                     className={classes.button}
@@ -104,7 +105,7 @@ class StatefulItemDetailComponent extends React.Component {
                                     Bearbeiten
                             </Button>
                             </WithPermission>
-                            <WithPermission permission="ROLE_RIGHT_ITEMS_PATCH_SLOT">
+                            <WithPermission permission={RIGHT_ITEMS_PATCH_SLOT}>
                                 <SimpleDialog
                                     title="Neuer Lagerplatz"
                                     content={<ItemSlotEditComponent />}
@@ -121,7 +122,7 @@ class StatefulItemDetailComponent extends React.Component {
                                     </Button>
                                 </SimpleDialog>
                             </WithPermission>
-                            <WithPermission permission="ROLE_RIGHT_ITEMS_POST">
+                            <WithPermission permission={RIGHT_ITEMS_POST}>
                                 <SimpleDialog
                                     title={item.name + ' kopieren'}
                                     content={<ItemIdentifierEditComponent />}
@@ -139,7 +140,7 @@ class StatefulItemDetailComponent extends React.Component {
                                 </Button>
                                 </SimpleDialog>
                             </WithPermission>
-                            <WithPermission permission="ROLE_RIGHT_ITEMS_PATCH_BROKEN">
+                            <WithPermission permission={RIGHT_ITEMS_PATCH_BROKEN}>
                                 <Button
                                     variant="contained"
                                     className={classes.button}

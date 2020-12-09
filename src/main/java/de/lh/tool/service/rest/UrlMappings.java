@@ -1,5 +1,7 @@
 package de.lh.tool.service.rest;
 
+import de.lh.tool.util.CodeGenUtil;
+
 // Needs to be kept in sync with urlmappings.js
 
 public abstract class UrlMappings {
@@ -85,5 +87,9 @@ public abstract class UrlMappings {
 
 	private UrlMappings() {
 		throw new IllegalStateException("class for constants");
+	}
+
+	public static void main(String... options) {
+		CodeGenUtil.generateJavascriptWithConstants(UrlMappings.class, "urlmappings.js");
 	}
 }

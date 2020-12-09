@@ -12,6 +12,8 @@ import _ from 'lodash';
 import { fetchItemTags } from '../actions/item-tags';
 import imageCompression from 'browser-image-compression';
 import { PageContext } from './page-provider';
+import { EX_ITEM_IDENTIFIER_ALREADY_IN_USE, EX_NO_IDENTIFIER, EX_NO_NAME, EX_NO_SLOT_ID, EX_NO_TECHNICAL_CREW_ID } from '../exceptions';
+import { RIGHT_ITEM_TAGS_GET } from '../permissions';
 
 export const ItemsContext = React.createContext();
 
@@ -56,15 +58,15 @@ class StatefulItemsProvider extends React.Component {
 
     handleFailure(error) {
         if (error && error.response && error.response.key) {
-            if (error.response.key === 'EX_ITEM_NO_SLOT') {
+            if (error.response.key === EX_NO_SLOT_ID) {
                 this.showErrorMessage('Es wurde kein gültiger Lagerplatz angegeben.');
-            } else if (error.response.key === 'EX_ITEM_NO_IDENTIFIER') {
+            } else if (error.response.key === EX_NO_IDENTIFIER) {
                 this.showErrorMessage('Es wurde kein gültiger Bezeichner angegeben.');
-            } else if (error.response.key === 'EX_ITEM_IDENTIFIER_ALREADY_IN_USE') {
+            } else if (error.response.key === EX_ITEM_IDENTIFIER_ALREADY_IN_USE) {
                 this.showErrorMessage('Der Bezeichner wird bereits verwendet');
-            } else if (error.response.key === 'EX_ITEM_NO_NAME') {
+            } else if (error.response.key === EX_NO_NAME) {
                 this.showErrorMessage('Es wurde kein gültiger Name angegeben.');
-            } else if (error.response.key === 'EX_ITEM_NO_TECHNICAL_CREW') {
+            } else if (error.response.key === EX_NO_TECHNICAL_CREW_ID) {
                 this.showErrorMessage('Es wurde kein gültiges Gewerk angegeben.');
             }
         } else {
@@ -232,7 +234,7 @@ class StatefulItemsProvider extends React.Component {
     }
 
     loadItemTags() {
-        if (!this.state.hasOwnProperty('tags') && this.props.sessionState.hasPermission('ROLE_RIGHT_ITEM_TAGS_GET')) {
+        if (!this.state.hasOwnProperty('tags') && this.props.sessionState.hasPermission(RIGHT_ITEM_TAGS_GET)) {
             this.setState({ tags: null }, () =>
                 fetchItemTags(this.props.sessionState.accessToken)
                     .then(tags => this.setState({

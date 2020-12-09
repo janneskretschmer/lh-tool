@@ -49,6 +49,105 @@ public class SlotIT extends BasicRestIntegrationTest {
 				.validationQueriesForOthers(List.of("SELECT 1 WHERE (SELECT COUNT(*) FROM slot) = 0")).build()));
 	}
 
+	@Test
+	public void testPostMissingName() throws IOException {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO `store` (`id`, `type`, `name`, `address`) VALUES ('1', 'MAIN', 'NoProject', 'Adresse des Hauptlagers'), ('2', 'STANDARD', 'Expired', 'Adresse des\\r\\n1234. Lagers'), ('3', 'MOBILE', 'InRange', 'Adresse des Magazins')",
+						"INSERT INTO `store_project` (`id`, `store_id`, `project_id`, `start`, `end`) VALUES ('1', '2', '1', '"
+								+ LocalDate.now().minusDays(1) + "', '" + LocalDate.now().minusDays(1)
+								+ "'),('2', '3', '1', '" + LocalDate.now() + "', '" + LocalDate.now() + "');"))
+				.url(REST_URL + "/slots").method(Method.POST)
+				.body(SlotDto.builder().description("Description").outside(Boolean.TRUE).storeId(3l).build())
+				.userTests(List.of(UserTest.builder()
+						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
+						.expectedHttpCode(HttpStatus.BAD_REQUEST)
+						.expectedResponse(
+								"{\"key\":\"EX_NO_NAME\",\"message\":\"The provided name is empty.\",\"httpCode\":400}")
+						.validationQueries(List.of("SELECT 1 WHERE (SELECT COUNT(*) FROM store) = 3",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM slot) = 0"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of("SELECT 1 WHERE (SELECT COUNT(*) FROM slot) = 0")).build()));
+	}
+
+	@Test
+	public void testPostMissingOutside() throws IOException {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO `store` (`id`, `type`, `name`, `address`) VALUES ('1', 'MAIN', 'NoProject', 'Adresse des Hauptlagers'), ('2', 'STANDARD', 'Expired', 'Adresse des\\r\\n1234. Lagers'), ('3', 'MOBILE', 'InRange', 'Adresse des Magazins')",
+						"INSERT INTO `store_project` (`id`, `store_id`, `project_id`, `start`, `end`) VALUES ('1', '2', '1', '"
+								+ LocalDate.now().minusDays(1) + "', '" + LocalDate.now().minusDays(1)
+								+ "'),('2', '3', '1', '" + LocalDate.now() + "', '" + LocalDate.now() + "');"))
+				.url(REST_URL + "/slots").method(Method.POST)
+				.body(SlotDto.builder().description("Description").name("name").storeId(3l).build())
+				.userTests(List.of(UserTest.builder()
+						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
+						.expectedHttpCode(HttpStatus.BAD_REQUEST)
+						.expectedResponse(
+								"{\"key\":\"EX_NO_OUTSIDE\",\"message\":\"The provided field outside is empty.\",\"httpCode\":400}")
+						.validationQueries(List.of("SELECT 1 WHERE (SELECT COUNT(*) FROM store) = 3",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM slot) = 0"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of("SELECT 1 WHERE (SELECT COUNT(*) FROM slot) = 0")).build()));
+	}
+
+	@Test
+	public void testPostMissingStore() throws IOException {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO `store` (`id`, `type`, `name`, `address`) VALUES ('1', 'MAIN', 'NoProject', 'Adresse des Hauptlagers'), ('2', 'STANDARD', 'Expired', 'Adresse des\\r\\n1234. Lagers'), ('3', 'MOBILE', 'InRange', 'Adresse des Magazins')",
+						"INSERT INTO `store_project` (`id`, `store_id`, `project_id`, `start`, `end`) VALUES ('1', '2', '1', '"
+								+ LocalDate.now().minusDays(1) + "', '" + LocalDate.now().minusDays(1)
+								+ "'),('2', '3', '1', '" + LocalDate.now() + "', '" + LocalDate.now() + "');"))
+				.url(REST_URL + "/slots").method(Method.POST)
+				.body(SlotDto.builder().description("Description").outside(Boolean.TRUE).name("name").build())
+				.userTests(List.of(UserTest.builder()
+						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
+						.expectedHttpCode(HttpStatus.BAD_REQUEST)
+						.expectedResponse(
+								"{\"key\":\"EX_NO_STORE_ID\",\"message\":\"The provided store id is empty.\",\"httpCode\":400}")
+						.validationQueries(List.of("SELECT 1 WHERE (SELECT COUNT(*) FROM store) = 3",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM slot) = 0"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of("SELECT 1 WHERE (SELECT COUNT(*) FROM slot) = 0")).build()));
+	}
+
+	@Test
+	public void testPostStoreNoProject() throws IOException {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO `store` (`id`, `type`, `name`, `address`) VALUES ('1', 'MAIN', 'NoProject', 'Adresse des Hauptlagers'), ('2', 'STANDARD', 'Expired', 'Adresse des\\r\\n1234. Lagers'), ('3', 'MOBILE', 'InRange', 'Adresse des Magazins')",
+						"INSERT INTO `store_project` (`id`, `store_id`, `project_id`, `start`, `end`) VALUES ('1', '2', '1', '"
+								+ LocalDate.now().minusDays(1) + "', '" + LocalDate.now().minusDays(1)
+								+ "'),('2', '3', '1', '" + LocalDate.now() + "', '" + LocalDate.now() + "');"))
+				.url(REST_URL + "/slots").method(Method.POST)
+				.body(SlotDto.builder().description("Description").name("created").outside(Boolean.TRUE).storeId(1l)
+						.build())
+				.userTests(List.of(UserTest.builder()
+						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
+						.expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"id\":1,\"storeId\":1,\"name\":\"created\",\"description\":\"Description\",\"outside\":true,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/slots/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.validationQueries(List.of(
+								"SELECT * FROM slot WHERE id =1 AND store_id=1 AND name='created' AND description='Description' AND outside=1",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM store) = 3",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM slot) = 1"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of("SELECT 1 WHERE (SELECT COUNT(*) FROM slot) = 0")).build()));
+	}
+
 //  ██████╗_██╗___██╗████████╗
 //  ██╔══██╗██║___██║╚══██╔══╝
 //  ██████╔╝██║___██║___██║___
@@ -56,7 +155,36 @@ public class SlotIT extends BasicRestIntegrationTest {
 //  ██║_____╚██████╔╝___██║___
 //  ╚═╝______╚═════╝____╚═╝___
 
-//	TODO
+	@Test
+	public void testPut() throws IOException {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of(
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
+						"INSERT INTO `store` (`id`, `type`, `name`, `address`) VALUES ('1', 'MAIN', 'NoProject', 'Adresse des Hauptlagers'), ('2', 'STANDARD', 'Expired', 'Adresse des\\r\\n1234. Lagers'), ('3', 'MOBILE', 'InRange', 'Adresse des Magazins')",
+						"INSERT INTO slot(id, store_id, name, description, outside) VALUES (1, 1, 'name', 'description', 0)",
+						"INSERT INTO `store_project` (`id`, `store_id`, `project_id`, `start`, `end`) VALUES ('1', '2', '1', '"
+								+ LocalDate.now().minusDays(1) + "', '" + LocalDate.now().minusDays(1)
+								+ "'),('2', '3', '1', '" + LocalDate.now() + "', '" + LocalDate.now() + "');"))
+				.url(REST_URL + "/slots/1").method(Method.PUT)
+				.body(SlotDto.builder().description("Changed description").name("Changed").outside(Boolean.TRUE)
+						.storeId(3l).build())
+				.userTests(List.of(UserTest.builder()
+						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
+						.expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"id\":1,\"storeId\":3,\"name\":\"Changed\",\"description\":\"Changed description\",\"outside\":true,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/slots/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.validationQueries(List.of(
+								"SELECT * FROM slot WHERE id =1 AND store_id=3 AND name='Changed' AND description='Changed description' AND outside=1",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM store) = 3",
+								"SELECT 1 WHERE (SELECT COUNT(*) FROM slot) = 1"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of(
+						"SELECT * FROM slot WHERE id =1 AND store_id=1 AND name='name' AND description='description' AND outside=0",
+						"SELECT 1 WHERE (SELECT COUNT(*) FROM slot) = 1"))
+				.build()));
+	}
 
 //  ██████╗_███████╗██╗_____███████╗████████╗███████╗
 //  ██╔══██╗██╔════╝██║_____██╔════╝╚══██╔══╝██╔════╝
@@ -109,7 +237,7 @@ public class SlotIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.BAD_REQUEST)
 						.expectedResponse(
-								"{\"key\":\"EX_INVALID_ID\",\"message\":\"The provided id is invalid.\",\"httpCode\":400}")
+								"{\"key\":\"EX_INVALID_SLOT_ID\",\"message\":\"The provided slot id is invalid.\",\"httpCode\":400}")
 						.validationQueries(List.of("SELECT * FROM store WHERE id = 3 AND name='InRange'",
 								"SELECT 1 WHERE (SELECT COuNT(*) FROM store) = 3",
 								"SELECT 1 WHERE (SELECT COuNT(*) FROM slot WHERE store_id=3) = 2",
@@ -370,7 +498,7 @@ public class SlotIT extends BasicRestIntegrationTest {
 								STORE_KEEPER_EMAIL))
 						.expectedHttpCode(HttpStatus.BAD_REQUEST)
 						.expectedResponse(
-								"{\"key\":\"EX_INVALID_ID\",\"message\":\"The provided id is invalid.\",\"httpCode\":400}")
+								"{\"key\":\"EX_INVALID_SLOT_ID\",\"message\":\"The provided slot id is invalid.\",\"httpCode\":400}")
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}

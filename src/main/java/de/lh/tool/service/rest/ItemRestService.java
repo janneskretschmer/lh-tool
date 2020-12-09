@@ -31,29 +31,29 @@ import de.lh.tool.domain.dto.ItemTagDto;
 import de.lh.tool.domain.dto.UserDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.model.UserRole;
-import de.lh.tool.service.entity.interfaces.ItemHistoryService;
-import de.lh.tool.service.entity.interfaces.ItemImageService;
-import de.lh.tool.service.entity.interfaces.ItemItemService;
-import de.lh.tool.service.entity.interfaces.ItemNoteService;
-import de.lh.tool.service.entity.interfaces.ItemService;
-import de.lh.tool.service.entity.interfaces.ItemTagService;
+import de.lh.tool.service.entity.interfaces.crud.ItemCrudService;
+import de.lh.tool.service.entity.interfaces.crud.ItemHistoryCrudService;
+import de.lh.tool.service.entity.interfaces.crud.ItemImageCrudService;
+import de.lh.tool.service.entity.interfaces.crud.ItemItemCrudService;
+import de.lh.tool.service.entity.interfaces.crud.ItemNoteCrudService;
+import de.lh.tool.service.entity.interfaces.crud.ItemTagCrudService;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping(UrlMappings.ITEM_PREFIX)
 public class ItemRestService {
 	@Autowired
-	private ItemService itemService;
+	private ItemCrudService itemService;
 	@Autowired
-	private ItemNoteService itemNoteService;
+	private ItemNoteCrudService itemNoteService;
 	@Autowired
-	private ItemHistoryService itemHistoryService;
+	private ItemHistoryCrudService itemHistoryService;
 	@Autowired
-	private ItemTagService itemTagService;
+	private ItemTagCrudService itemTagService;
 	@Autowired
-	private ItemImageService itemImageService;
+	private ItemImageCrudService itemImageService;
 	@Autowired
-	private ItemItemService itemItemService;
+	private ItemItemCrudService itemItemService;
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of items")
@@ -62,18 +62,18 @@ public class ItemRestService {
 			@RequestParam(required = false, name = UrlMappings.FREE_TEXT_VARIABLE) String freeText)
 			throws DefaultException {
 
-		List<ItemDto> dtoList = itemService.findItemDtosByFilters(freeText);
+		List<ItemDto> dtoList = itemService.findDtosByFilters(freeText);
 
 		return new Resources<>(dtoList, linkTo(methodOn(ItemRestService.class).getByFilters(freeText)).withSelfRel());
 	}
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
 	@ApiOperation(value = "Get a single item by id")
-	@Secured(UserRole.RIGHT_ITEMS_GET_BY_ID)
+	@Secured(UserRole.RIGHT_ITEMS_GET)
 	public Resource<ItemDto> getById(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 
-		ItemDto dto = itemService.findItemDtoById(id);
+		ItemDto dto = itemService.findDtoById(id);
 
 		return new Resource<>(dto, linkTo(methodOn(ItemRestService.class).getById(id)).withSelfRel());
 	}
@@ -83,7 +83,7 @@ public class ItemRestService {
 	@Secured(UserRole.RIGHT_ITEMS_POST)
 	public Resource<ItemDto> create(@RequestBody(required = true) ItemDto dto) throws DefaultException {
 
-		ItemDto itemDto = itemService.createItemDto(dto);
+		ItemDto itemDto = itemService.createDto(dto);
 
 		return new Resource<>(itemDto, linkTo(methodOn(ItemRestService.class).create(itemDto)).withSelfRel());
 	}
@@ -94,7 +94,7 @@ public class ItemRestService {
 	public Resource<ItemDto> update(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@RequestBody(required = true) ItemDto dto) throws DefaultException {
 
-		ItemDto itemDto = itemService.updateItemDto(dto, id);
+		ItemDto itemDto = itemService.updateDto(dto, id);
 
 		return new Resource<>(itemDto, linkTo(methodOn(ItemRestService.class).update(id, dto)).withSelfRel());
 	}
@@ -105,7 +105,7 @@ public class ItemRestService {
 	public Resource<ItemDto> patch(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@RequestBody(required = true) ItemDto dto) throws DefaultException {
 
-		ItemDto itemDto = itemService.patchItemDto(dto, id);
+		ItemDto itemDto = itemService.patchDto(dto, id);
 
 		return new Resource<>(itemDto, linkTo(methodOn(ItemRestService.class).patch(id, dto)).withSelfRel());
 	}
@@ -116,7 +116,7 @@ public class ItemRestService {
 	public ResponseEntity<Void> delete(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 
-		itemService.deleteItemById(id);
+		itemService.deleteDtoById(id);
 
 		return ResponseEntity.noContent().build();
 	}
@@ -127,7 +127,7 @@ public class ItemRestService {
 	public Resources<ItemNoteDto> getNotes(
 			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId) throws DefaultException {
 
-		Collection<ItemNoteDto> dtoList = itemNoteService.getDtosByItemId(itemId);
+		List<ItemNoteDto> dtoList = itemNoteService.findDtosByItemId(itemId);
 
 		return new Resources<>(dtoList, linkTo(methodOn(ItemRestService.class).getNotes(itemId)).withSelfRel());
 	}
@@ -139,8 +139,7 @@ public class ItemRestService {
 			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId,
 			@RequestBody(required = true) ItemNoteDto dto) throws DefaultException {
 
-		dto.setItemId(itemId);
-		ItemNoteDto itemNoteDto = itemNoteService.createItemNoteDto(dto);
+		ItemNoteDto itemNoteDto = itemNoteService.createDto(dto);
 
 		return new Resource<>(itemNoteDto,
 				linkTo(methodOn(ItemRestService.class).createNote(itemId, itemNoteDto)).withSelfRel());
@@ -153,7 +152,7 @@ public class ItemRestService {
 			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId,
 			@PathVariable(name = UrlMappings.NOTE_ID_VARIABLE, required = true) Long id) throws DefaultException {
 
-		itemNoteService.deleteItemNoteById(id);
+		itemNoteService.deleteDtoById(id);
 
 		return ResponseEntity.noContent().build();
 	}
@@ -165,7 +164,7 @@ public class ItemRestService {
 			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId,
 			@PathVariable(name = UrlMappings.NOTE_ID_VARIABLE, required = true) Long noteId) throws DefaultException {
 
-		UserDto userDto = itemNoteService.getUserNameDto(itemId, noteId);
+		UserDto userDto = itemNoteService.findUserNameDto(itemId, noteId);
 
 		return new Resource<>(userDto,
 				linkTo(methodOn(ItemRestService.class).getNoteUser(itemId, noteId)).withSelfRel());
@@ -177,19 +176,19 @@ public class ItemRestService {
 	public Resources<ItemTagDto> getTags(
 			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId) throws DefaultException {
 
-		Collection<ItemTagDto> dtoList = itemTagService.findItemTagDtosByItemId(itemId);
+		Collection<ItemTagDto> dtoList = itemTagService.findDtosByItemId(itemId);
 
 		return new Resources<>(dtoList, linkTo(methodOn(ItemRestService.class).getTags(itemId)).withSelfRel());
 	}
 
 	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ITEM_TAGS)
 	@ApiOperation(value = "Add tag to item and create it if it doesn't exist")
-	@Secured(UserRole.RIGHT_ITEMS_POST)
+	@Secured(UserRole.RIGHT_ITEM_TAGS_POST)
 	public Resource<ItemTagDto> createTag(
 			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId,
 			@RequestBody(required = true) ItemTagDto itemTagDto) throws DefaultException {
 
-		ItemTagDto savedItemTag = itemTagService.createItemTagForItem(itemId, itemTagDto);
+		ItemTagDto savedItemTag = itemTagService.createDtoForItem(itemId, itemTagDto);
 
 		return new Resource<ItemTagDto>(savedItemTag,
 				linkTo(methodOn(ItemRestService.class).createTag(itemId, itemTagDto)).withSelfRel());
@@ -197,12 +196,12 @@ public class ItemRestService {
 
 	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ITEM_TAGS_ID)
 	@ApiOperation(value = "Remove tag from item and delete tag if it is not referenced anymore")
-	@Secured(UserRole.RIGHT_ITEMS_POST)
+	@Secured(UserRole.RIGHT_ITEM_TAGS_DELETE)
 	public ResponseEntity<Void> removeTags(
 			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId,
 			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id) throws DefaultException {
 
-		itemTagService.deleteItemTagFromItem(itemId, id);
+		itemTagService.deleteDtoByIdFromItem(itemId, id);
 
 		return ResponseEntity.noContent().build();
 	}
@@ -238,7 +237,7 @@ public class ItemRestService {
 			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId,
 			@RequestBody(required = true) ItemImageDto dto) throws DefaultException {
 
-		ItemImageDto saved = itemImageService.createDto(itemId, dto);
+		ItemImageDto saved = itemImageService.createDto(dto, itemId);
 
 		return new Resource<>(saved, linkTo(methodOn(ItemRestService.class).addItemImage(itemId, dto)).withSelfRel());
 	}
@@ -251,7 +250,7 @@ public class ItemRestService {
 			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@RequestBody(required = true) ItemImageDto dto) throws DefaultException {
 
-		ItemImageDto saved = itemImageService.updateDto(itemId, id, dto);
+		ItemImageDto saved = itemImageService.updateDto(dto, id, itemId);
 
 		return new Resource<>(saved,
 				linkTo(methodOn(ItemRestService.class).updateItemImage(itemId, id, dto)).withSelfRel());
@@ -284,7 +283,7 @@ public class ItemRestService {
 			@PathVariable(name = UrlMappings.ITEM_ID_VARIABLE, required = true) Long itemId,
 			@RequestBody(required = true) ItemItemDto dto) throws DefaultException {
 
-		ItemItemDto savedRelation = itemItemService.createDto(itemId, dto);
+		ItemItemDto savedRelation = itemItemService.createDto(dto);
 		return new Resource<>(savedRelation,
 				linkTo(methodOn(ItemRestService.class).addItemReltation(itemId, dto)).withSelfRel());
 	}

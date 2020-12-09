@@ -4,6 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ldc</groupId>
 	<artifactId>lh-tool</artifactId>
+	<!-- needs to be in sync with sonar-project.properties -->
 	<version>0.0.1-SNAPSHOT</version>
 	<name>LH-Tool</name>
 	<packaging>war</packaging>
@@ -61,6 +62,7 @@
 					</execution>
 				</executions>
 				<configuration>
+					<skip>${skipTests}</skip>
 					<repository>lhtool</repository>
 					<tag>${project.version}</tag>
 					<buildArgs>
@@ -108,6 +110,7 @@
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>3.0.0-M3</version>
 				<configuration>
+					<skip>${skipTests}</skip>
 					<argLine>${failsafeArgLine}</argLine>
 				</configuration>
 				<executions>
@@ -123,6 +126,9 @@
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.5</version>
+				<configuration>
+					<skip>${skipTests}</skip>
+				</configuration>
 				<executions>
 					<execution>
 						<id>pre-unit-test</id>
@@ -152,7 +158,7 @@
 							<goal>prepare-agent</goal>
 						</goals>
 						<configuration>
-							<destFile>${project.build.directory}/jacoco-it.exec</destFile>
+							<destFile>${project.build.directory}/jacoco.exec</destFile>
 							<propertyName>failsafeArgLine</propertyName>
 							<append>true</append>
 						</configuration>
@@ -164,7 +170,7 @@
 							<goal>report</goal>
 						</goals>
 						<configuration>
-							<dataFile>${project.build.directory}/jacoco-it.exec</dataFile>
+							<dataFile>${project.build.directory}/jacoco.exec</dataFile>
 							<outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
 						</configuration>
 					</execution>
@@ -176,6 +182,7 @@
 				<artifactId>docker-compose-maven-plugin</artifactId>
 				<version>2.3.0</version>
 				<configuration>
+					<skip>${skipTests}</skip>
 					<composeFile>${project.basedir}/src/main/resources/docker/composition.yml</composeFile>
 					<detachedMode>true</detachedMode>
 					<removeImages>true</removeImages>

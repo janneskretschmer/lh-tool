@@ -1,9 +1,12 @@
 package de.lh.tool.repository;
 
+import java.util.List;
+
+import de.lh.tool.domain.model.Store;
 import de.lh.tool.domain.model.StoreProject;
 
 public interface StoreProjectRepository extends BasicEntityRepository<StoreProject, Long> {
-	Iterable<StoreProject> findByStore_Id(Long id);
+	List<StoreProject> findByStore(Store store);
 
-	void deleteByStore_Id(Long id);
+	void deleteByStore(Store store);
 }

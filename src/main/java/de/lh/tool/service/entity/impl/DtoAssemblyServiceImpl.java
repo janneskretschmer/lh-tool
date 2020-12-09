@@ -27,24 +27,24 @@ import de.lh.tool.domain.exception.DefaultRuntimeException;
 import de.lh.tool.domain.exception.ExceptionEnum;
 import de.lh.tool.domain.model.User;
 import de.lh.tool.service.entity.interfaces.DtoAssemblyService;
-import de.lh.tool.service.entity.interfaces.HelperTypeService;
-import de.lh.tool.service.entity.interfaces.NeedService;
-import de.lh.tool.service.entity.interfaces.NeedUserService;
-import de.lh.tool.service.entity.interfaces.ProjectHelperTypeService;
-import de.lh.tool.service.entity.interfaces.UserService;
+import de.lh.tool.service.entity.interfaces.crud.HelperTypeCrudService;
+import de.lh.tool.service.entity.interfaces.crud.NeedCrudService;
+import de.lh.tool.service.entity.interfaces.crud.NeedUserCrudService;
+import de.lh.tool.service.entity.interfaces.crud.ProjectHelperTypeCrudService;
+import de.lh.tool.service.entity.interfaces.crud.UserCrudService;
 
 @Service
 public class DtoAssemblyServiceImpl implements DtoAssemblyService {
 	@Autowired
-	private HelperTypeService helperTypeService;
+	private HelperTypeCrudService helperTypeService;
 	@Autowired
-	private ProjectHelperTypeService projectHelperTypeService;
+	private ProjectHelperTypeCrudService projectHelperTypeService;
 	@Autowired
-	private NeedService needService;
+	private NeedCrudService needService;
 	@Autowired
-	private NeedUserService needUserService;
+	private NeedUserCrudService needUserService;
 	@Autowired
-	private UserService userService;
+	private UserCrudService userService;
 
 	private ModelMapper modelMapper = new ModelMapper();
 
@@ -86,7 +86,7 @@ public class DtoAssemblyServiceImpl implements DtoAssemblyService {
 				AssembledProjectHelperTypeDto.class);
 		try {
 			assembled.setNeed(
-					assembleNeed(needService.getNeedDtoByProjectHelperTypeIdAndDate(projectHelperType.getId(), date)));
+					assembleNeed(needService.findDtoByProjectHelperTypeIdAndDate(projectHelperType.getId(), date)));
 		} catch (DefaultException e) {
 			throw new DefaultRuntimeException(e);
 		}
@@ -98,7 +98,7 @@ public class DtoAssemblyServiceImpl implements DtoAssemblyService {
 		try {
 			if (need.getId() != null) {
 				assembled.setState(needUserService
-						.findDtoByNeedIdAndUserId(need.getId(), userService.getCurrentUser().getId()).getState());
+						.findDtoByNeedIdAndUserId(need.getId(), userService.findCurrentUserDto().getId()).getState());
 				assembled.setUsers(needUserService.findDtosByNeedId(need.getId()).stream().map(this::assembleNeedUser)
 						.collect(Collectors.toList()));
 			}

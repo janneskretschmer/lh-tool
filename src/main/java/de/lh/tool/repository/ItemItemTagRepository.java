@@ -12,4 +12,6 @@ public interface ItemItemTagRepository extends BasicEntityRepository<ItemItemTag
 	List<ItemItemTag> findByItemTag(ItemTag itemTag);
 
 	Optional<ItemItemTag> findByItemAndItemTag(Item item, ItemTag itemTag);
+
+	List<ItemItemTag> findByItem(Item item);
 }

@@ -14,4 +14,6 @@ public interface ProjectUserRepository extends BasicEntityRepository<ProjectUser
 	Optional<ProjectUser> findByProjectAndUser(Project project, User user);
 
 	List<ProjectUser> findByUser(User user);
+
+	List<ProjectUser> findByUserId(Long userId);
 }

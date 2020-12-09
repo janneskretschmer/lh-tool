@@ -8,6 +8,7 @@ import { convertToMUIFormat, requiresLogin } from '../../util';
 import LenientRedirect from '../util/lenient-redirect';
 import ProjectShiftEditComponent from './project-shifts-edit';
 import { PageContext } from '../../providers/page-provider';
+import { EX_PROJECT_NAME_ALREADY_EXISTS } from '../../exceptions';
 
 
 const styles = theme => ({
@@ -50,7 +51,7 @@ class StatefulProjectEditComponent extends React.Component {
     handleFailure(error) {
         let message;
         if (error && error.response && error.response.key) {
-            if (error.response.key === 'EX_PROJECT_NAME_ALREADY_EXISTS') {
+            if (error.response.key === EX_PROJECT_NAME_ALREADY_EXISTS) {
                 message = 'Dieser Projektname wird bereits verwendet.';
             }
         } else {

@@ -8,6 +8,7 @@ import PagedTable from '../table';
 import { Button, CircularProgress } from '@material-ui/core';
 import WithPermission from '../with-permission';
 import SimpleDialog from '../simple-dialog';
+import { RIGHT_STORES_DELETE } from '../../permissions';
 
 const styles = theme => ({
     noDecoration: {
@@ -29,7 +30,7 @@ class StatefulStoreListComponent extends React.Component {
             <PagedTable
                 title="Lager"
                 SelectionHeader={props => (
-                    <WithPermission permission="ROLE_RIGHT_STORES_DELETE">
+                    <WithPermission permission={RIGHT_STORES_DELETE}>
                         {storesState.actionInProgress ? (<CircularProgress />) : (<>
                             <SimpleDialog
                                 title="Löschen bestätigen"

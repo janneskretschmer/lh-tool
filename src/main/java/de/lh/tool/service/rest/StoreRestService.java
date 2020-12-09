@@ -24,35 +24,35 @@ import de.lh.tool.domain.dto.StoreDto;
 import de.lh.tool.domain.dto.StoreProjectDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.model.UserRole;
-import de.lh.tool.service.entity.interfaces.StoreProjectService;
-import de.lh.tool.service.entity.interfaces.StoreService;
+import de.lh.tool.service.entity.interfaces.crud.StoreCrudService;
+import de.lh.tool.service.entity.interfaces.crud.StoreProjectCrudService;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping(UrlMappings.STORE_PREFIX)
 public class StoreRestService {
 	@Autowired
-	private StoreService storeService;
+	private StoreCrudService storeService;
 	@Autowired
-	private StoreProjectService storeProjectService;
+	private StoreProjectCrudService storeProjectService;
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of own stores")
 	@Secured(UserRole.RIGHT_STORES_GET)
 	public Resources<StoreDto> getOwn() throws DefaultException {
 
-		List<StoreDto> dtoList = storeService.getStoreDtos();
+		List<StoreDto> dtoList = storeService.findDtos();
 
 		return new Resources<>(dtoList, linkTo(methodOn(StoreRestService.class).getOwn()).withSelfRel());
 	}
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
 	@ApiOperation(value = "Get a single store by id")
-	@Secured(UserRole.RIGHT_STORES_GET_BY_ID)
+	@Secured(UserRole.RIGHT_STORES_GET)
 	public Resource<StoreDto> getById(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 
-		StoreDto dto = storeService.getStoreDtoById(id);
+		StoreDto dto = storeService.findDtoById(id);
 
 		return new Resource<>(dto, linkTo(methodOn(StoreRestService.class).getById(id)).withSelfRel());
 	}
@@ -62,7 +62,7 @@ public class StoreRestService {
 	@Secured(UserRole.RIGHT_STORES_POST)
 	public Resource<StoreDto> create(@RequestBody(required = true) StoreDto dto) throws DefaultException {
 
-		StoreDto storeDto = storeService.createStoreDto(dto);
+		StoreDto storeDto = storeService.createDto(dto);
 
 		return new Resource<>(storeDto, linkTo(methodOn(StoreRestService.class).create(storeDto)).withSelfRel());
 	}
@@ -73,7 +73,7 @@ public class StoreRestService {
 	public Resource<StoreDto> update(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@RequestBody(required = true) StoreDto dto) throws DefaultException {
 
-		StoreDto storeDto = storeService.updateStoreDto(dto, id);
+		StoreDto storeDto = storeService.updateDto(dto, id);
 
 		return new Resource<>(storeDto, linkTo(methodOn(StoreRestService.class).update(id, dto)).withSelfRel());
 	}
@@ -84,7 +84,7 @@ public class StoreRestService {
 	public ResponseEntity<Void> delete(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 
-		storeService.deleteStoreById(id);
+		storeService.deleteDtoById(id);
 
 		return ResponseEntity.noContent().build();
 	}

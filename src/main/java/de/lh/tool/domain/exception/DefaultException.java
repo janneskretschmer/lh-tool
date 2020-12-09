@@ -1,8 +1,9 @@
 package de.lh.tool.domain.exception;
 
+import de.lh.tool.domain.exception.ExceptionEnum.ExceptionEnumWrapper;
 import lombok.Getter;
 
-public class DefaultException extends Exception {
+public class DefaultException extends Exception implements ExceptionEnumWrapper {
 
 	private static final long serialVersionUID = 1718283140957405588L;
 

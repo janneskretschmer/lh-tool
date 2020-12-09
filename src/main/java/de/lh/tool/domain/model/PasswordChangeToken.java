@@ -13,6 +13,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.UpdateTimestamp;
 
+import de.lh.tool.domain.Identifiable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "password_change_token")
-public class PasswordChangeToken {
+public class PasswordChangeToken implements Identifiable<Long> {
 
 	public static final int TOKEN_LENGTH = 128;
 	public static final int MIN_PASSWORD_LENGTH = 6;

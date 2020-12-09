@@ -14,14 +14,14 @@ import de.lh.tool.domain.dto.JwtAuthenticationDto;
 import de.lh.tool.domain.dto.LoginDto;
 import de.lh.tool.domain.dto.PasswordResetDto;
 import de.lh.tool.domain.exception.DefaultException;
-import de.lh.tool.service.entity.interfaces.UserService;
+import de.lh.tool.service.entity.interfaces.crud.UserCrudService;
 
 @RestController
 @RequestMapping(UrlMappings.LOGIN_PREFIX)
 public class LoginRestService {
 
 	@Autowired
-	private UserService userService;
+	private UserCrudService userService;
 
 	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	public Resource<JwtAuthenticationDto> authenticateUser(@RequestBody LoginDto loginDto) {

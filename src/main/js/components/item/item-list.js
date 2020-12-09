@@ -22,6 +22,7 @@ import { CircularProgress, DialogActions, DialogContent, DialogTitle, Dialog } f
 import WithPermission from '../with-permission';
 import SimpleDialog from '../simple-dialog';
 import ItemSlotEditComponent from './item-slot';
+import { RIGHT_ITEMS_POST, RIGHT_ITEMS_PATCH_SLOT } from '../../permissions';
 
 
 const styles = theme => ({
@@ -104,7 +105,7 @@ class StatefulItemListComponent extends React.Component {
         const { classes, itemsState, sessionState, hideAdd, hideHeader, hiddenItemId, selected, onToggleSelect } = this.props;
         const { slotDialogOpen, expandFilters } = this.state;
         const items = itemsState.getAssembledItemList().filter(item => item.id !== hiddenItemId);
-        const showAddButton = sessionState.hasPermission('ROLE_RIGHT_ITEMS_POST');
+        const showAddButton = sessionState.hasPermission(RIGHT_ITEMS_POST);
 
         if (this.state.redirect) {
             return (<Redirect to={fullPathOfItem(this.state.redirect)} />);
@@ -121,7 +122,7 @@ class StatefulItemListComponent extends React.Component {
                     onToggleSelect={onToggleSelect}
                     SelectionHeader={!hideHeader && (props => (
                         <>
-                            <WithPermission permission="ROLE_RIGHT_ITEMS_PATCH_SLOT">
+                            <WithPermission permission={RIGHT_ITEMS_PATCH_SLOT}>
                                 <Button
                                     variant="contained"
                                     className={classes.button}

@@ -2,6 +2,7 @@ package de.lh.tool.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import de.lh.tool.domain.Identifiable;
 import de.lh.tool.domain.model.NeedUserState;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class NeedUserDto {
+public class NeedUserDto implements Identifiable<Long> {
 
 	private Long id;
 	private Long needId;

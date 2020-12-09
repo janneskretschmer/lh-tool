@@ -5,6 +5,7 @@ import { ItemsContext } from '../../providers/items-provider';
 import WithPermission from '../with-permission';
 import WithoutPermission from '../without-permission';
 import { Chip, withStyles, CircularProgress } from '@material-ui/core';
+import { RIGHT_ITEMS_POST } from '../../permissions';
 
 const styles = theme => ({
     chip: {
@@ -18,7 +19,7 @@ const ItemTagsComponent = props => (
         <ItemsContext.Consumer>
             {itemsState => itemsState.getSelectedItem().tags ? (
                 <>
-                    <WithPermission permission="ROLE_RIGHT_ITEMS_POST">
+                    <WithPermission permission={RIGHT_ITEMS_POST}>
                         <Select
                             inputValue={itemsState.tag}
                             options={itemsState.tags}
@@ -58,7 +59,7 @@ const ItemTagsComponent = props => (
                             }}
                         />
                     </WithPermission>
-                    <WithoutPermission permission="ROLE_RIGHT_ITEMS_POST">
+                    <WithoutPermission permission={RIGHT_ITEMS_POST}>
                         {itemsState.getSelectedItem().tags.map(tag => (
                             <Chip key={tag.name} label={tag.name} className={props.classes.chip} />
                         ))}

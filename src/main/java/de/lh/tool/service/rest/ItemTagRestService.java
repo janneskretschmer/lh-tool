@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import de.lh.tool.domain.dto.ItemTagDto;
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.model.UserRole;
-import de.lh.tool.service.entity.interfaces.ItemTagService;
+import de.lh.tool.service.entity.interfaces.crud.ItemTagCrudService;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
@@ -23,14 +23,14 @@ import io.swagger.annotations.ApiOperation;
 public class ItemTagRestService {
 
 	@Autowired
-	private ItemTagService itemTagService;
+	private ItemTagCrudService itemTagService;
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of item tags")
 	@Secured(UserRole.RIGHT_ITEM_TAGS_GET)
 	public Resources<ItemTagDto> getItemTags() throws DefaultException {
 
-		List<ItemTagDto> dtoList = itemTagService.findAllDtos();
+		List<ItemTagDto> dtoList = itemTagService.findDtos();
 
 		return new Resources<>(dtoList, linkTo(methodOn(ItemTagRestService.class).getItemTags()).withSelfRel());
 	}

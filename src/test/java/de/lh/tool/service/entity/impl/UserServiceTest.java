@@ -1,7 +1,6 @@
 package de.lh.tool.service.entity.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Calendar;
@@ -22,7 +21,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import de.lh.tool.domain.exception.DefaultException;
 import de.lh.tool.domain.exception.ExceptionEnum;
@@ -31,8 +29,6 @@ import de.lh.tool.domain.model.User;
 import de.lh.tool.domain.model.User.Gender;
 import de.lh.tool.domain.model.UserRole;
 import de.lh.tool.repository.UserRepository;
-import de.lh.tool.service.entity.interfaces.MailService;
-import de.lh.tool.service.entity.interfaces.PasswordChangeTokenService;
 import de.lh.tool.service.entity.interfaces.UserRoleService;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,19 +37,10 @@ public class UserServiceTest {
 	private UserRepository userRepository;
 
 	@Mock
-	private PasswordChangeTokenService passwordChangeTokenService;
-
-	@Mock
 	private UserRoleService userRoleService;
 
 	@Mock
 	private AuthenticationManager authenticationManager;
-
-	@Mock
-	private PasswordEncoder passwordEncoder;
-
-	@Mock
-	private MailService mailService;
 
 	@InjectMocks
 	private UserServiceImpl userService;
@@ -90,60 +77,9 @@ public class UserServiceTest {
 	public void testLoadById() {
 		Mockito.when(userRepository.findById(Mockito.eq(1l)))
 				.thenReturn(Optional.of(User.builder().email("test@te.st").firstName("Tes").lastName("Ter").build()));
-		UserDetails user = userService.loadUserById(1l);
+		UserDetails user = userService.findById(1l).get();
 		Mockito.verify(userRepository, Mockito.times(1)).findById(Mockito.eq(1l));
 		assertEquals("test@te.st", user.getUsername());
-	}
-
-	@Test
-	public void testLoadByIdNull() {
-		Mockito.when(userRepository.findById(Mockito.isNull())).thenReturn(Optional.empty());
-		assertThrows(UsernameNotFoundException.class, () -> userService.loadUserById(null));
-		Mockito.verify(userRepository, Mockito.times(1)).findById(Mockito.isNull());
-	}
-
-	@Test
-	public void testLoadByIdFalseId() {
-		Mockito.when(userRepository.findById(Mockito.eq(1l))).thenReturn(Optional.empty());
-		assertThrows(UsernameNotFoundException.class, () -> userService.loadUserById(1l));
-		Mockito.verify(userRepository, Mockito.times(1)).findById(Mockito.eq(1l));
-	}
-
-	@Test
-	public void testCreateUserNoEmail() {
-		DefaultException exception = assertThrows(DefaultException.class, () -> userService.createUser(new User()));
-		assertEquals(ExceptionEnum.EX_USER_NO_EMAIL, exception.getException());
-	}
-
-	@Test
-	public void testCreateUserNoFirstName() {
-		DefaultException exception = assertThrows(DefaultException.class,
-				() -> userService.createUser(User.builder().email("test@te.st").build()));
-		assertEquals(ExceptionEnum.EX_USER_NO_FIRST_NAME, exception.getException());
-	}
-
-	@Test
-	public void testCreateUserNoLastName() {
-		DefaultException exception = assertThrows(DefaultException.class,
-				() -> userService.createUser(User.builder().email("test@te.st").firstName("Tes").build()));
-		assertEquals(ExceptionEnum.EX_USER_NO_LAST_NAME, exception.getException());
-	}
-
-	@Test
-	public void testCreateUserNoGender() {
-		DefaultException exception = assertThrows(DefaultException.class, () -> userService
-				.createUser(User.builder().email("test@te.st").firstName("Tes").lastName("Ter").build()));
-		assertEquals(ExceptionEnum.EX_USER_NO_GENDER, exception.getException());
-	}
-
-	@Test
-	public void testCreateUser() throws DefaultException {
-		Mockito.when(userRepository.save(Mockito.any())).thenAnswer(i -> i.getArgument(0));
-		User user = userService.createUser(
-				User.builder().email("test@te.st").firstName("Tes").lastName("Ter").gender(Gender.MALE).build());
-		Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any());
-		Mockito.verify(mailService, Mockito.times(1)).sendUserCreatedMail(Mockito.any(), Mockito.any());
-		Mockito.verify(passwordChangeTokenService, Mockito.times(1)).saveRandomToken(Mockito.eq(user));
 	}
 
 	@Test
@@ -178,7 +114,7 @@ public class UserServiceTest {
 	public void testChangePasswordNoUser() {
 		DefaultException exception = assertThrows(DefaultException.class,
 				() -> userService.changePassword(null, null, null, "abcdef", "abcdef"));
-		assertEquals(ExceptionEnum.EX_PASSWORDS_NO_USER_ID, exception.getException());
+		assertEquals(ExceptionEnum.EX_NO_USER_ID, exception.getException());
 	}
 
 	@Test
@@ -214,18 +150,6 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testChangePasswordUserHasNoTokenAdmin() throws DefaultException {
-		Mockito.when(userRepository.findById(Mockito.eq(1l))).thenReturn(Optional
-				.of(User.builder().email("test@te.st").firstName("Tes").lastName("Ter").gender(Gender.MALE).build()));
-		Mockito.when(userRoleService.hasCurrentUserRight(Mockito.eq(UserRole.RIGHT_USERS_CHANGE_FOREIGN_PASSWORD)))
-				.thenReturn(true);
-		Mockito.when(userRepository.save(Mockito.any())).thenAnswer(i -> i.getArgument(0));
-		Mockito.when(passwordEncoder.encode(Mockito.anyString())).then(i -> i.<String>getArgument(0).toUpperCase());
-		User user = userService.changePassword(1l, "abc", null, "abcdef", "abcdef");
-		assertEquals("ABCDEF", user.getPassword());
-	}
-
-	@Test
 	public void testChangePasswordInvalidToken() {
 		mockCurrentUser();
 
@@ -255,25 +179,6 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testChangePasswordValidToken() throws DefaultException {
-		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-		Mockito.when(securityContext.getAuthentication()).thenReturn(null);
-		SecurityContextHolder.setContext(securityContext);
-
-		PasswordChangeToken token = PasswordChangeToken.builder().token("abcdef").updated(Calendar.getInstance())
-				.build();
-		Mockito.when(userRepository.findById(Mockito.eq(1l)))
-				.thenReturn(Optional.of(User.builder().id(1l).email("test@te.st").firstName("Tes").lastName("Ter")
-						.gender(Gender.MALE).passwordChangeToken(token).build()));
-		Mockito.when(userRepository.save(Mockito.any())).thenAnswer(i -> i.getArgument(0));
-		Mockito.when(passwordEncoder.encode(Mockito.anyString())).then(i -> i.<String>getArgument(0).toUpperCase());
-		User user = userService.changePassword(1l, "abcdef", null, "abcdef", "abcdef");
-		Mockito.verify(passwordChangeTokenService, Mockito.times(1)).delete(Mockito.eq(token));
-		assertNull(user.getPasswordChangeToken());
-		assertEquals("ABCDEF", user.getPassword());
-	}
-
-	@Test
 	public void testChangePasswordFalsePassword() {
 		mockCurrentUser();
 
@@ -285,19 +190,6 @@ public class UserServiceTest {
 		DefaultException exception = assertThrows(DefaultException.class,
 				() -> userService.changePassword(1l, null, "abcdef", "abcdef", "abcdef"));
 		assertEquals(ExceptionEnum.EX_PASSWORDS_INVALID_PASSWORD, exception.getException());
-	}
-
-	@Test
-	public void testChangePasswordOldPassword() throws DefaultException {
-		mockCurrentUser();
-
-		Mockito.when(userRepository.findById(Mockito.eq(1l))).thenReturn(Optional.of(User.builder().id(1l)
-				.email("test@te.st").firstName("Tes").lastName("Ter").gender(Gender.MALE).passwordHash("abc").build()));
-		Mockito.when(userRepository.save(Mockito.any())).thenAnswer(i -> i.getArgument(0));
-		Mockito.when(passwordEncoder.encode(Mockito.anyString())).then(i -> i.<String>getArgument(0).toUpperCase());
-		Mockito.when(authenticationManager.authenticate(Mockito.any())).thenReturn(null);
-		User user = userService.changePassword(1l, null, "abc", "abcdef", "abcdef");
-		assertEquals("ABCDEF", user.getPassword());
 	}
 
 	private void mockCurrentUser() {

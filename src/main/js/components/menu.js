@@ -21,6 +21,7 @@ import { logout } from '../actions/login';
 import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfProjects, fullPathOfStores, fullPathOfUsersSettings, fullPathOfUserSettings, fullPathOfSlots } from '../paths';
 import { SessionContext } from '../providers/session-provider';
 import WithPermission from './with-permission';
+import { RIGHT_ITEMS_GET, RIGHT_NEEDS_APPLY, RIGHT_NEEDS_POST, RIGHT_NEEDS_VIEW_APPROVED, RIGHT_SLOTS_GET, RIGHT_USERS_GET } from '../permissions';
 
 
 const linkStyle = { textDecoration: 'none' };
@@ -35,7 +36,7 @@ const CurrentUserItem = props => (
 );
 
 const NeedQuantitiesItem = () => (
-  <WithPermission permission="ROLE_RIGHT_NEEDS_POST">
+  <WithPermission permission={RIGHT_NEEDS_POST}>
     <Link to={fullPathOfNeedQuantities()} style={linkStyle}>
       <ListItem button>
         <ListItemIcon>
@@ -48,7 +49,7 @@ const NeedQuantitiesItem = () => (
 );
 
 const NeedApplyItem = () => (
-  <WithPermission permission="ROLE_RIGHT_NEEDS_APPLY">
+  <WithPermission permission={RIGHT_NEEDS_APPLY}>
     <Link to={fullPathOfNeedApply()} style={linkStyle}>
       <ListItem button>
         <ListItemIcon>
@@ -61,7 +62,7 @@ const NeedApplyItem = () => (
 );
 
 const NeedApproveItem = () => (
-  <WithPermission permission="ROLE_RIGHT_NEEDS_VIEW_APPROVED">
+  <WithPermission permission={RIGHT_NEEDS_VIEW_APPROVED}>
     <Link to={fullPathOfNeedApprove()} style={linkStyle}>
       <ListItem button>
         <ListItemIcon>
@@ -74,7 +75,7 @@ const NeedApproveItem = () => (
 );
 
 const StoresItem = () => (
-  <WithPermission permission="ROLE_RIGHT_SLOTS_GET">
+  <WithPermission permission={RIGHT_SLOTS_GET}>
     <Link to={fullPathOfSlots()} style={linkStyle}>
       <ListItem button>
         <ListItemIcon>
@@ -88,7 +89,7 @@ const StoresItem = () => (
 
 
 const ItemsItem = () => (
-  <WithPermission permission="ROLE_RIGHT_ITEMS_GET">
+  <WithPermission permission={RIGHT_ITEMS_GET}>
     <Link to={fullPathOfItems()} style={linkStyle}>
       <ListItem button>
         <ListItemIcon>
@@ -156,7 +157,7 @@ const DataProtectionItem = () => (
 );
 
 const SettingsItem = props => (
-  <Link to={props.sessionState.hasPermission('ROLE_RIGHT_USERS_GET') ? fullPathOfUsersSettings() : fullPathOfUserSettings(props.sessionState.currentUser.id)} style={linkStyle}>
+  <Link to={props.sessionState.hasPermission(RIGHT_USERS_GET) ? fullPathOfUsersSettings() : fullPathOfUserSettings(props.sessionState.currentUser.id)} style={linkStyle}>
     <ListItem button>
       <ListItemIcon>
         <SettingsIcon />

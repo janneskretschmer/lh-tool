@@ -14,7 +14,6 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.PropertySource;
@@ -99,21 +98,14 @@ public class IntegrationTestRestService {
 	 */
 	@Transactional
 	@GetMapping("/database/reset")
-	public int resetDatabase() throws DefaultException {
+	public boolean resetDatabase() throws DefaultException {
 		checkEnvironment();
-		entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS=0").executeUpdate();
-		@SuppressWarnings("unchecked")
-		int result = ((Stream<Object>) entityManager.createNativeQuery("SHOW TABLES").getResultStream())
-				.filter(tableName -> !"schema_version".equalsIgnoreCase(tableName.toString()))
-				.mapToInt(tableName -> entityManager.createNativeQuery("TRUNCATE TABLE " + tableName).executeUpdate())
-				.sum();
-		entityManager.unwrap(Session.class).clear();
-		entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS=1").executeUpdate();
+		entityManager.createNativeQuery("CALL truncate_all()").executeUpdate();
 
 		AtomicInteger id = new AtomicInteger(0);
 		getRoleStream().forEach(role -> createUser(id.incrementAndGet(), role));
 
-		return result;
+		return true;
 	}
 
 	private static Stream<String> getRoleStream() {

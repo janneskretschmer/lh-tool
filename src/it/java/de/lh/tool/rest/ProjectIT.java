@@ -145,6 +145,27 @@ public class ProjectIT extends BasicRestIntegrationTest {
 	}
 
 	@Test
+	public void testProjectHelperTypesCreationNoEndTime() throws Exception {
+		assertTrue(testEndpoint(EndpointTest.builder()//
+				.initializationQueries(List.of("INSERT INTO `helper_type` (`id`, `name`) VALUES (1, 'Test1')",
+						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
+						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user"))
+				.url(REST_URL + "/projects/1/helper_types").method(Method.POST)
+				.body(ProjectHelperTypeDto.builder().projectId(1l).helperTypeId(1l).weekday(3).startTime("12:00")
+						.build())
+				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL))
+						.expectedHttpCode(HttpStatus.OK)
+						.expectedResponse(
+								"{\"id\":1,\"projectId\":1,\"helperTypeId\":1,\"weekday\":3,\"startTime\":\"12:00\",\"endTime\":null,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1/helper_types\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.validationQueries(List.of(
+								"SELECT * FROM project_helper_type WHERE project_id=1 AND helper_type_id=1 AND weekday=3 AND start_time='12:00' AND end_time IS NULL"))
+						.build()))
+				.httpCodeForOthers(HttpStatus.FORBIDDEN)
+				.validationQueriesForOthers(List.of("SELECT 1 WHERE NOT EXISTS(SELECT * FROM project_helper_type)"))
+				.build()));
+	}
+
+	@Test
 	public void testProjectHelperTypesCreationNotExistingProject() throws Exception {
 		assertTrue(testEndpoint(EndpointTest.builder()//
 				.initializationQueries(List.of("INSERT INTO `helper_type` (`id`, `name`) VALUES (1, 'Test1')",
@@ -229,7 +250,8 @@ public class ProjectIT extends BasicRestIntegrationTest {
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
 				.validationQueriesForOthers(List.of(
-						"SELECT * FROM project WHERE name='Test123' AND start_date='2020-04-09' AND end_date='2020-04-24'"))
+						"SELECT * FROM project WHERE name='Test123' AND start_date='2020-04-09' AND end_date='2020-04-24'",
+						"SELECT 1 WHERE NOT EXISTS(SELECT * FROM user WHERE id NOT IN (SELECT user_id FROM project_user WHERE project_id=1))"))
 				.build()));
 	}
 
@@ -475,7 +497,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL))
 						.expectedHttpCode(HttpStatus.BAD_REQUEST)
 						.expectedResponse(
-								"{\"key\":\"EX_INVALID_ID\",\"message\":\"The provided id is invalid.\",\"httpCode\":400}")
+								"{\"key\":\"EX_INVALID_PROJECT_ID\",\"message\":\"The provided project id is invalid.\",\"httpCode\":400}")
 						.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
@@ -638,8 +660,8 @@ public class ProjectIT extends BasicRestIntegrationTest {
 						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user"))
 				.url(REST_URL + "/projects/1").method(Method.GET)
 				.userTests(List.of(UserTest.builder()
-						.emails(List
-								.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL, ATTENDANCE_EMAIL))
+						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL,
+								ATTENDANCE_EMAIL, PUBLISHER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
 								"{\"id\":1,\"name\":\"Test\",\"startDate\":1586390400000,\"endDate\":1587686400000,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
@@ -654,11 +676,11 @@ public class ProjectIT extends BasicRestIntegrationTest {
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test', '2020-04-09', '2020-04-24')"))
 				.url(REST_URL + "/projects/2").method(Method.GET)
 				.userTests(List.of(UserTest.builder()
-						.emails(List
-								.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL, ATTENDANCE_EMAIL))
+						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL,
+								ATTENDANCE_EMAIL, PUBLISHER_EMAIL))
 						.expectedHttpCode(HttpStatus.BAD_REQUEST)
 						.expectedResponse(
-								"{\"key\":\"EX_INVALID_ID\",\"message\":\"The provided id is invalid.\",\"httpCode\":400}")
+								"{\"key\":\"EX_INVALID_PROJECT_ID\",\"message\":\"The provided project id is invalid.\",\"httpCode\":400}")
 						.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
