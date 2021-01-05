@@ -124,7 +124,8 @@ class StatefulSlotsProvider extends React.Component {
 
     isSlotValid() {
         const slot = this.state.selectedSlot;
-        return slot && slot.storeId && !isAnyStringBlank([slot.name])
+        // name should be ascii for barcode generation
+        return slot && slot.storeId && !isAnyStringBlank([slot.name]) && /^[\x00-\x7F]*$/.test(slot.name);
     }
 
     saveSelectedSlot() {

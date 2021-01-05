@@ -250,3 +250,15 @@ export function getQueryParams() {
     }
     return params;
 }
+
+
+// items don't have any prefix, because it's possible to use the existing barcodes on the items
+export function getItemBarcodeString(itemIdentifier) {
+    return itemIdentifier;
+}
+
+export function getSlotBarcodeString(storeId, slotName) {
+    return storeId + " " + slotName;
+}
+
+// FUTURE: getUserBarcodeString considering existing IDs from Builder Assistent, probably it's not possible to detect if the barcode represents an item or user bc we can't influence the format

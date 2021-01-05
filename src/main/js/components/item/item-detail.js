@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import React from 'react';
 import { createOrUpdateItem, fetchItem } from '../../actions/item';
 import { SessionContext } from '../../providers/session-provider';
-import { withContext, generateUniqueId } from '../../util';
+import { withContext, generateUniqueId, prependItemBarcodePrefix, getItemBarcodeString } from '../../util';
 import ItemDisplayComponent from './item-display';
 import ItemEditComponent from './item-edit';
 import ItemSlotEditComponent from './item-slot';
@@ -16,6 +16,7 @@ import { PageContext } from '../../providers/page-provider';
 import { fullPathOfItems, fullPathOfItemData } from '../../paths';
 import LenientRedirect from '../util/lenient-redirect';
 import { RIGHT_ITEMS_PATCH_BROKEN, RIGHT_ITEMS_PATCH_SLOT, RIGHT_ITEMS_POST, RIGHT_ITEMS_PUT } from '../../permissions';
+import BarcodeGenerator from '../util/barcode-generator';
 
 const styles = theme => ({
     bold: {
@@ -158,6 +159,16 @@ class StatefulItemDetailComponent extends React.Component {
                             >
                                 Ausleihen
                             </Button>
+                            <BarcodeGenerator
+                                content={getItemBarcodeString(item.identifier)}
+                            >
+                                <Button
+                                    variant="contained"
+                                    className={classes.button}
+                                    disabled={itemsState.actionsDisabled}>
+                                    Barcode generieren
+                                </Button>
+                            </BarcodeGenerator>
                             <SimpleDialog
                                 title="Löschen bestätigen"
                                 okText="Ja"
