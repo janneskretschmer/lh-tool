@@ -258,7 +258,7 @@ export function getItemBarcodeString(itemIdentifier) {
 }
 
 export function getSlotBarcodeString(storeId, slotName) {
-    return storeId + " " + slotName;
+    return storeId + ' ' + slotName;
 }
 
 // FUTURE: getUserBarcodeString considering existing IDs from Builder Assistent, probably it's not possible to detect if the barcode represents an item or user bc we can't influence the format
