@@ -10,7 +10,8 @@ import React from 'react';
 import { fullPathOfSlot, fullPathOfSlots } from '../../paths';
 import { PageContext } from '../../providers/page-provider';
 import { SlotsContext } from '../../providers/slots-provider';
-import { getIdMapValues } from '../../util';
+import { getIdMapValues, getSlotBarcodeString, prependSlotBarcodePrefix } from '../../util';
+import BarcodeGenerator from '../util/barcode-generator';
 import IdNameSelect from '../util/id-name-select';
 import LenientRedirect from '../util/lenient-redirect';
 
@@ -220,6 +221,16 @@ class StatefulSlotDetailComponent extends React.Component {
                             >
                                 Bearbeiten
                             </Button>
+                            <BarcodeGenerator
+                                content={getSlotBarcodeString(slot.storeId, slot.name)}
+                            >
+                                <Button
+                                    variant="contained"
+                                    className={classes.button}
+                                    disabled={slotsState.actionInProgress}>
+                                    Barcode generieren
+                                </Button>
+                            </BarcodeGenerator>
                         </>
                     )}
             </>
