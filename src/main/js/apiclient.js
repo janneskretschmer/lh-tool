@@ -82,7 +82,13 @@ function renderPath({ apiEndpoint, parameters }) {
     else if (!areParametersValid(apiEndpoint, parameters)) {
         return { error: new Error('Missing parameters') };
     } else {
-        return { path: URI.expand(getContextPath() + apiEndpoint.path, parameters) };
+        return {
+            path: URI.expand("/foo/{dir}/{file}", {
+                dir: "bar",
+                file: "world.html"
+            })
+        };
+        //return { path: URI.expand(getContextPath() + apiEndpoint.path, parameters) };
     }
 }
 

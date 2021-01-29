@@ -43,18 +43,24 @@ module.exports = {
 				path.resolve(__dirname, 'node_modules/superagent')
 			],
 			use: [{
-				loader: 'babel-loader',
-				options: {
+				loader: 'ts-loader',
+				/*options: {
 					presets: ['@babel/preset-env', '@babel/preset-react'],
 					plugins: [
 						['@babel/plugin-proposal-decorators', { legacy: true }],
 						['@babel/plugin-proposal-class-properties', { loose: true }],
 					],
-				}
+				}*/
 			}]
+		}, {
+			enforce: "pre",
+			test: /\.js$/,
+			exclude: /node_modules/,
+			loader: "source-map-loader"
 		}]
 	},
 	resolve: {
+		extensions: [".ts", ".tsx", ".js", ".jsx"],
 		fallback: {
 			buffer: require.resolve("buffer/"),
 			crypto: require.resolve("crypto-browserify"),
