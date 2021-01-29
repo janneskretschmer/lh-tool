@@ -22,7 +22,7 @@
 		"caniuse-lite": "^1.0.30001015",
 		"classnames": "^2.2.6",
 		"jsonwebtoken": "^8.4.0",
-		"lodash": "^4.17.15",
+		"lodash": "^4.17.19",
 		"moment": "^2.24.0",
 		"notistack": "^0.4.2",
 		"range": "0.0.3",
