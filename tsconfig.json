@@ -6,8 +6,9 @@
         "module": "es6",
         "jsx": "react",
         "target": "ES5",
+        "downlevelIteration": true,
         "experimentalDecorators": true,
-        "allowJs": true,
+        "allowJs": true
     },
     "include": [
         "./src/main/js/"
