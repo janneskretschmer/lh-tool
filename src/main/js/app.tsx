@@ -1,32 +1,28 @@
-import '@babel/polyfill';
-import React from 'react';
+import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import { SnackbarProvider } from 'notistack';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import blueGrey from '@material-ui/core/colors/blueGrey';
+import * as React from 'react';
 import LHToolRoot from './components/root';
-import settings from './settings';
+import * as settings from './settings';
+import { EmptyPropsComponent } from './types/empty-props-component';
 
 const theme = createMuiTheme({
 	palette: {
 		//needs to be changed in deploy.sh as well
 		primary: settings.theme.primary,
-		secondary: blueGrey,
-	},
-	status: {
-		danger: 'orange',
+		secondary: settings.theme.secondary,
 	},
 	typography: {
 		useNextVariants: true,
 	},
 });
 
-const ThemedRoot = () => (
+const ThemedRoot: EmptyPropsComponent = ({ }) => (
 	<MuiThemeProvider theme={theme}>
 		<LHToolRoot />
 	</MuiThemeProvider>
 );
 
-const SnackbaredRoot = () => (
+const SnackbaredRoot: EmptyPropsComponent = ({ }) => (
 	<SnackbarProvider maxSnack={3}>
 		<ThemedRoot />
 	</SnackbarProvider>
