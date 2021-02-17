@@ -8,7 +8,8 @@
         "target": "ES5",
         "downlevelIteration": true,
         "experimentalDecorators": true,
-        "allowJs": true
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true
     },
     "include": [
         "./src/main/js/"
