@@ -61,7 +61,7 @@ const styles = theme => ({
 });
 
 @withStyles(styles, { withTheme: true })
-export default class LHToolRoot extends React.Component {
+class LHToolRoot extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -143,3 +143,8 @@ export default class LHToolRoot extends React.Component {
         );
     }
 }
+
+
+// typescript doesn't like class components written in javascript
+const LHToolRootWrapper = props => (<LHToolRoot />)
+export default LHToolRootWrapper;
