@@ -1,6 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-const TerserPlugin = require("terser-webpack-plugin");
+const TerserPlugin = require('terser-webpack-plugin');
 
 const settings = require('./src/main/js/settings');
 const PROD_BUILD = settings.prodBuild;
@@ -53,19 +53,19 @@ module.exports = {
 				}*/
 			}]
 		}, {
-			enforce: "pre",
+			enforce: 'pre',
 			test: /\.js$/,
 			exclude: /node_modules/,
-			loader: "source-map-loader"
+			loader: 'source-map-loader'
 		}]
 	},
 	resolve: {
-		extensions: [".ts", ".tsx", ".js", ".jsx"],
+		extensions: ['.ts', '.tsx', '.js', '.jsx'],
 		fallback: {
-			buffer: require.resolve("buffer/"),
-			crypto: require.resolve("crypto-browserify"),
-			util: require.resolve("util/"),
-			stream: require.resolve("stream-browserify"),
+			buffer: require.resolve('buffer/'),
+			crypto: require.resolve('crypto-browserify'),
+			util: require.resolve('util/'),
+			stream: require.resolve('stream-browserify'),
 		}
 	}
 };

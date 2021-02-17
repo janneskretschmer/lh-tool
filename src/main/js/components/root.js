@@ -146,5 +146,5 @@ class LHToolRoot extends React.Component {
 
 
 // typescript doesn't like class components written in javascript
-const LHToolRootWrapper = props => (<LHToolRoot />)
+const LHToolRootWrapper = props => (<LHToolRoot />);
 export default LHToolRootWrapper;

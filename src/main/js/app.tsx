@@ -1,8 +1,8 @@
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import { SnackbarProvider } from 'notistack';
-import * as React from 'react';
+import React from 'react';
 import LHToolRootWrapper from './components/root';
-import * as settings from './settings';
+import settings from './settings';
 import { EmptyPropsComponent } from './types/empty-props-component';
 
 const theme = createMuiTheme({
