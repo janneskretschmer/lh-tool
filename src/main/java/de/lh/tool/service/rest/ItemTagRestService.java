@@ -1,12 +1,8 @@
 package de.lh.tool.service.rest;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Resources;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,11 +24,9 @@ public class ItemTagRestService {
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of item tags")
 	@Secured(UserRole.RIGHT_ITEM_TAGS_GET)
-	public Resources<ItemTagDto> getItemTags() throws DefaultException {
+	public List<ItemTagDto> getItemTags() throws DefaultException {
 
-		List<ItemTagDto> dtoList = itemTagService.findDtos();
-
-		return new Resources<>(dtoList, linkTo(methodOn(ItemTagRestService.class).getItemTags()).withSelfRel());
+		return itemTagService.findDtos();
 	}
 
 }

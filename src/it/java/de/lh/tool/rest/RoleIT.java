@@ -25,15 +25,14 @@ public class RoleIT extends BasicRestIntegrationTest {
 				.url(REST_URL + "/roles").method(Method.GET).userTests(List.of(//
 						UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/roles/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"role\":\"ROLE_STORE_KEEPER\"},{\"role\":\"ROLE_INVENTORY_MANAGER\"},{\"role\":\"ROLE_ATTENDANCE\"},{\"role\":\"ROLE_CONSTRUCTION_SERVANT\"},{\"role\":\"ROLE_LOCAL_COORDINATOR\"},{\"role\":\"ROLE_ADMIN\"},{\"role\":\"ROLE_PUBLISHER\"}]}")
+										"[{\"role\":\"ROLE_STORE_KEEPER\"},{\"role\":\"ROLE_INVENTORY_MANAGER\"},{\"role\":\"ROLE_ATTENDANCE\"},{\"role\":\"ROLE_CONSTRUCTION_SERVANT\"},{\"role\":\"ROLE_LOCAL_COORDINATOR\"},{\"role\":\"ROLE_ADMIN\"},{\"role\":\"ROLE_PUBLISHER\"}]")
 								.build(),
 						UserTest.builder().emails(List.of(CONSTRUCTION_SERVANT_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/roles/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"role\":\"ROLE_STORE_KEEPER\"},{\"role\":\"ROLE_INVENTORY_MANAGER\"},{\"role\":\"ROLE_ATTENDANCE\"},{\"role\":\"ROLE_CONSTRUCTION_SERVANT\"},{\"role\":\"ROLE_LOCAL_COORDINATOR\"},{\"role\":\"ROLE_PUBLISHER\"}]}")
+										"[{\"role\":\"ROLE_STORE_KEEPER\"},{\"role\":\"ROLE_INVENTORY_MANAGER\"},{\"role\":\"ROLE_ATTENDANCE\"},{\"role\":\"ROLE_CONSTRUCTION_SERVANT\"},{\"role\":\"ROLE_LOCAL_COORDINATOR\"},{\"role\":\"ROLE_PUBLISHER\"}]")
 								.build(),
 						UserTest.builder().emails(List.of(LOCAL_COORDINATOR_EMAIL)).expectedHttpCode(HttpStatus.OK)
-								.expectedResponse(
-										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/roles/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"role\":\"ROLE_STORE_KEEPER\"},{\"role\":\"ROLE_PUBLISHER\"}]}")
+								.expectedResponse("[{\"role\":\"ROLE_STORE_KEEPER\"},{\"role\":\"ROLE_PUBLISHER\"}]")
 								.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}

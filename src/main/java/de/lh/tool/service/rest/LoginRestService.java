@@ -3,7 +3,6 @@ package de.lh.tool.service.rest;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,9 +23,9 @@ public class LoginRestService {
 	private UserCrudService userService;
 
 	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
-	public Resource<JwtAuthenticationDto> authenticateUser(@RequestBody LoginDto loginDto) {
+	public JwtAuthenticationDto authenticateUser(@RequestBody LoginDto loginDto) {
 
-		return new Resource<>(userService.login(loginDto));
+		return userService.login(loginDto);
 	}
 
 	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.LOGIN_PASSWORD_RESET)

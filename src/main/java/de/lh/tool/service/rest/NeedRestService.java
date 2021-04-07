@@ -1,15 +1,10 @@
 package de.lh.tool.service.rest;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
 import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,48 +38,38 @@ public class NeedRestService {
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of own needs")
 	@Secured(UserRole.RIGHT_NEEDS_GET)
-	public Resource<NeedDto> getOwnByProjectHelperTypeIdAndDate(
+	public NeedDto getOwnByProjectHelperTypeIdAndDate(
 			@RequestParam(required = true, name = UrlMappings.PROJECT_HELPER_TYPE_ID_VARIABLE) Long projectHelperTypeId,
 			@RequestParam(required = true, name = UrlMappings.DATE_VARIABLE) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date)
 			throws DefaultException {
 
-		NeedDto dto = needService.findDtoByProjectHelperTypeIdAndDate(projectHelperTypeId, date);
-
-		return new Resource<>(dto,
-				linkTo(methodOn(NeedRestService.class).getOwnByProjectHelperTypeIdAndDate(projectHelperTypeId, date))
-						.withSelfRel());
+		return needService.findDtoByProjectHelperTypeIdAndDate(projectHelperTypeId, date);
 	}
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
 	@ApiOperation(value = "Get a single need by id")
 	@Secured(UserRole.RIGHT_NEEDS_GET)
-	public Resource<NeedDto> getById(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
+	public NeedDto getById(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 
-		NeedDto dto = needService.findDtoById(id);
-
-		return new Resource<>(dto, linkTo(methodOn(NeedRestService.class).getById(id)).withSelfRel());
+		return needService.findDtoById(id);
 	}
 
 	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Create a new need")
 	@Secured(UserRole.RIGHT_NEEDS_POST)
-	public Resource<NeedDto> create(@RequestBody(required = true) NeedDto dto) throws DefaultException {
+	public NeedDto create(@RequestBody(required = true) NeedDto dto) throws DefaultException {
 
-		NeedDto needDto = needService.createDto(dto);
-
-		return new Resource<>(needDto, linkTo(methodOn(NeedRestService.class).create(needDto)).withSelfRel());
+		return needService.createDto(dto);
 	}
 
 	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
 	@ApiOperation(value = "Update a need")
 	@Secured(UserRole.RIGHT_NEEDS_PUT)
-	public Resource<NeedDto> update(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
+	public NeedDto update(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@RequestBody(required = true) NeedDto dto) throws DefaultException {
 
-		NeedDto needDto = needService.updateDto(dto, id);
-
-		return new Resource<>(needDto, linkTo(methodOn(NeedRestService.class).update(id, dto)).withSelfRel());
+		return needService.updateDto(dto, id);
 	}
 
 	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
@@ -101,39 +86,29 @@ public class NeedRestService {
 	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_USER_ID_EXTENSION)
 	@ApiOperation(value = "Create change the state of the relationship between a need and a user")
 	@Secured(UserRole.RIGHT_NEEDS_USERS_PUT)
-	public Resource<NeedUserDto> changeNeedUserState(
-			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
+	public NeedUserDto changeNeedUserState(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@PathVariable(name = UrlMappings.USER_ID_VARIABLE, required = true) Long userId,
 			@RequestBody(required = true) NeedUserDto dto) throws DefaultException {
 
-		NeedUserDto needUserDto = needUserService.saveOrUpdateDto(id, userId, dto);
-
-		return new Resource<>(needUserDto,
-				linkTo(methodOn(NeedRestService.class).changeNeedUserState(id, userId, dto)).withSelfRel(),
-				linkTo(methodOn(NeedRestService.class).getNeedUserState(id, userId)).withRel("getState"));
+		return needUserService.saveOrUpdateDto(id, userId, dto);
 	}
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_USER_ID_EXTENSION)
 	@ApiOperation(value = "Get state for a relationship between a need and a user")
 	@Secured(UserRole.RIGHT_NEEDS_USERS_GET)
-	public Resource<NeedUserDto> getNeedUserState(
-			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
+	public NeedUserDto getNeedUserState(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@PathVariable(name = UrlMappings.USER_ID_VARIABLE, required = true) Long userId) throws DefaultException {
 
-		NeedUserDto dto = needUserService.findDtoByNeedIdAndUserId(id, userId);
-
-		return new Resource<>(dto, linkTo(methodOn(NeedRestService.class).getNeedUserState(id, userId)).withSelfRel());
+		return needUserService.findDtoByNeedIdAndUserId(id, userId);
 	}
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_USER_EXTENSION)
 	@ApiOperation(value = "Get list of all users for need")
 	@Secured(UserRole.RIGHT_NEEDS_USERS_GET)
-	public Resources<NeedUserDto> getNeedUsers(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
+	public List<NeedUserDto> getNeedUsers(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 
-		List<NeedUserDto> dtoList = needUserService.findDtosByNeedId(id);
-
-		return new Resources<>(dtoList, linkTo(methodOn(NeedRestService.class).getNeedUsers(id)).withSelfRel());
+		return needUserService.findDtosByNeedId(id);
 	}
 
 }

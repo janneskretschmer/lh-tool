@@ -1,14 +1,8 @@
 package de.lh.tool.service.rest;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
-import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -39,43 +33,35 @@ public class StoreRestService {
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of own stores")
 	@Secured(UserRole.RIGHT_STORES_GET)
-	public Resources<StoreDto> getOwn() throws DefaultException {
+	public List<StoreDto> getOwn() throws DefaultException {
 
-		List<StoreDto> dtoList = storeService.findDtos();
-
-		return new Resources<>(dtoList, linkTo(methodOn(StoreRestService.class).getOwn()).withSelfRel());
+		return storeService.findDtos();
 	}
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
 	@ApiOperation(value = "Get a single store by id")
 	@Secured(UserRole.RIGHT_STORES_GET)
-	public Resource<StoreDto> getById(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
+	public StoreDto getById(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 
-		StoreDto dto = storeService.findDtoById(id);
-
-		return new Resource<>(dto, linkTo(methodOn(StoreRestService.class).getById(id)).withSelfRel());
+		return storeService.findDtoById(id);
 	}
 
 	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Create a new store")
 	@Secured(UserRole.RIGHT_STORES_POST)
-	public Resource<StoreDto> create(@RequestBody(required = true) StoreDto dto) throws DefaultException {
+	public StoreDto create(@RequestBody(required = true) StoreDto dto) throws DefaultException {
 
-		StoreDto storeDto = storeService.createDto(dto);
-
-		return new Resource<>(storeDto, linkTo(methodOn(StoreRestService.class).create(storeDto)).withSelfRel());
+		return storeService.createDto(dto);
 	}
 
 	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
 	@ApiOperation(value = "Update a store")
 	@Secured(UserRole.RIGHT_STORES_PUT)
-	public Resource<StoreDto> update(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
+	public StoreDto update(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@RequestBody(required = true) StoreDto dto) throws DefaultException {
 
-		StoreDto storeDto = storeService.updateDto(dto, id);
-
-		return new Resource<>(storeDto, linkTo(methodOn(StoreRestService.class).update(id, dto)).withSelfRel());
+		return storeService.updateDto(dto, id);
 	}
 
 	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
@@ -92,24 +78,19 @@ public class StoreRestService {
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.STORE_PROJECTS)
 	@ApiOperation(value = "Get a list of projects for store")
 	@Secured(UserRole.RIGHT_STORES_GET)
-	public Resources<StoreProjectDto> getProjects(
+	public List<StoreProjectDto> getProjects(
 			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long storeId) throws DefaultException {
 
-		Collection<StoreProjectDto> dtoList = storeProjectService.findDtosByStoreId(storeId);
-
-		return new Resources<>(dtoList, linkTo(methodOn(StoreRestService.class).getProjects(storeId)).withSelfRel());
+		return storeProjectService.findDtosByStoreId(storeId);
 	}
 
 	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.STORE_PROJECTS)
 	@ApiOperation(value = "Set projects for store")
 	@Secured(UserRole.RIGHT_STORES_PUT)
-	public Resources<StoreProjectDto> connectToProject(
+	public List<StoreProjectDto> connectToProject(
 			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long storeId,
 			@RequestBody(required = true) List<StoreProjectDto> dtos) throws DefaultException {
 
-		Collection<StoreProjectDto> storeProjectDtos = storeProjectService.bulkDeleteAndCreateByStoreId(storeId, dtos);
-
-		return new Resources<>(storeProjectDtos,
-				linkTo(methodOn(StoreRestService.class).connectToProject(storeId, dtos)).withSelfRel());
+		return storeProjectService.bulkDeleteAndCreateByStoreId(storeId, dtos);
 	}
 }

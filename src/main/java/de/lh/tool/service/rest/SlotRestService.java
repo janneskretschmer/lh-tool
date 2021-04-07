@@ -1,13 +1,8 @@
 package de.lh.tool.service.rest;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,50 +30,40 @@ public class SlotRestService {
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of own slots")
 	@Secured(UserRole.RIGHT_SLOTS_GET)
-	public Resources<SlotDto> getByFilters(
+	public List<SlotDto> getByFilters(
 			@RequestParam(name = UrlMappings.FREE_TEXT_VARIABLE, required = false) String freeText,
 			@RequestParam(name = UrlMappings.NAME_VARIABLE, required = false) String name,
 			@RequestParam(name = UrlMappings.DESCRIPTION_VARIABLE, required = false) String description,
 			@RequestParam(name = UrlMappings.STORE_ID_VARIABLE, required = false) Long storeId)
 			throws DefaultException {
 
-		List<SlotDto> dtoList = slotService.findDtosByFilters(freeText, name, description, storeId);
-
-		return new Resources<>(dtoList,
-				linkTo(methodOn(SlotRestService.class).getByFilters(freeText, name, description, storeId))
-						.withSelfRel());
+		return slotService.findDtosByFilters(freeText, name, description, storeId);
 	}
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
 	@ApiOperation(value = "Get a single slot by id")
 	@Secured(UserRole.RIGHT_SLOTS_GET)
-	public Resource<SlotDto> getById(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
+	public SlotDto getById(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 
-		SlotDto dto = slotService.findDtoById(id);
-
-		return new Resource<>(dto, linkTo(methodOn(SlotRestService.class).getById(id)).withSelfRel());
+		return slotService.findDtoById(id);
 	}
 
 	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Create a new slot")
 	@Secured(UserRole.RIGHT_SLOTS_POST)
-	public Resource<SlotDto> create(@RequestBody(required = true) SlotDto dto) throws DefaultException {
+	public SlotDto create(@RequestBody(required = true) SlotDto dto) throws DefaultException {
 
-		SlotDto slotDto = slotService.createDto(dto);
-
-		return new Resource<>(slotDto, linkTo(methodOn(SlotRestService.class).create(slotDto)).withSelfRel());
+		return slotService.createDto(dto);
 	}
 
 	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
 	@ApiOperation(value = "Update a slot")
 	@Secured(UserRole.RIGHT_SLOTS_PUT)
-	public Resource<SlotDto> update(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
+	public SlotDto update(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@RequestBody(required = true) SlotDto dto) throws DefaultException {
 
-		SlotDto slotDto = slotService.updateDto(dto, id);
-
-		return new Resource<>(slotDto, linkTo(methodOn(SlotRestService.class).update(id, dto)).withSelfRel());
+		return slotService.updateDto(dto, id);
 	}
 
 	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)

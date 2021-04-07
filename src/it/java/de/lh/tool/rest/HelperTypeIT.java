@@ -26,8 +26,7 @@ public class HelperTypeIT extends BasicRestIntegrationTest {
 		assertTrue(testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/helper_types/").method(Method.POST).body(HelperTypeDto.builder().name("Test").build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"id\":1,\"name\":\"Test\",\"links\":[{\"rel\":\"/{id}\",\"href\":\"http://localhost:8080/lh-tool/rest/helper_types/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.expectedResponse("{\"id\":1,\"name\":\"Test\"}")
 						.validationQueries(List.of("SELECT * FROM helper_type WHERE name='Test'")).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(
 						List.of("SELECT 1 WHERE NOT EXISTS(SELECT * FROM helper_type WHERE name='Test')"))
@@ -97,8 +96,7 @@ public class HelperTypeIT extends BasicRestIntegrationTest {
 				.url(REST_URL + "/helper_types/1").method(Method.PUT)
 				.body(HelperTypeDto.builder().id(1l).name("Changed").build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"id\":1,\"name\":\"Changed\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/helper_types/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.expectedResponse("{\"id\":1,\"name\":\"Changed\"}")
 						.validationQueries(List.of("SELECT * FROM helper_type WHERE name='Changed'",
 								"SELECT 1 WHERE NOT EXISTS(SELECT * FROM helper_type WHERE name='Test')"))
 						.build()))
@@ -212,9 +210,7 @@ public class HelperTypeIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL,
 								ATTENDANCE_EMAIL, PUBLISHER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/helper_types/{?project_id,weekday}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"name\":\"Test1\"},{\"id\":2,\"name\":\"Test2\"}]}")
-						.build()))
+						.expectedResponse("[{\"id\":1,\"name\":\"Test1\"},{\"id\":2,\"name\":\"Test2\"}]").build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 
@@ -232,10 +228,7 @@ public class HelperTypeIT extends BasicRestIntegrationTest {
 						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (4, 1, 3, 2, '07:00:00', '17:00:00')"))
 				.url(REST_URL + "/helper_types?project_id=2").method(Method.GET)
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/helper_types/?project_id=2{&weekday}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],"
-										+ "\"content\":[{\"id\":1,\"name\":\"Test1\"}]}")
-						.build()))
+						.expectedResponse("[{\"id\":1,\"name\":\"Test1\"}]").build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 
@@ -280,10 +273,7 @@ public class HelperTypeIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL,
 								ATTENDANCE_EMAIL, PUBLISHER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/helper_types/?project_id=1&weekday=1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],"
-										+ "\"content\":[{\"id\":1,\"name\":\"Test1\"},{\"id\":2,\"name\":\"Test2\"}]}")
-						.build()))
+						.expectedResponse("[{\"id\":1,\"name\":\"Test1\"},{\"id\":2,\"name\":\"Test2\"}]").build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 
@@ -296,10 +286,7 @@ public class HelperTypeIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL,
 								ATTENDANCE_EMAIL, PUBLISHER_EMAIL))
-						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"id\":1,\"name\":\"Test1\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/helper_types/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
-						.build()))
+						.expectedHttpCode(HttpStatus.OK).expectedResponse("{\"id\":1,\"name\":\"Test1\"}").build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 

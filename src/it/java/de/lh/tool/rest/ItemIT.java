@@ -42,7 +42,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.technicalCrewId(1l).unit("unit").build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"slotId\":1,\"identifier\":\"identifier\",\"hasBarcode\":false,\"name\":\"name\",\"description\":\"description\",\"quantity\":100.0,\"unit\":\"unit\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"slotId\":1,\"identifier\":\"identifier\",\"hasBarcode\":false,\"name\":\"name\",\"description\":\"description\",\"quantity\":100.0,\"unit\":\"unit\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 						.validationQueries(List.of(
 								"SELECT * FROM item WHERE slot_id=1 AND identifier='identifier' AND has_barcode=0 AND name='name' AND description='description' AND quantity=100 AND unit='unit' AND outside_qualified=1 AND consumable=1 AND broken=0 AND technical_crew_id=1",
 								"SELECT * FROM item_history WHERE item_id=1 AND type='CREATED' AND data IS NULL AND user_id="
@@ -50,7 +50,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.build(),
 						UserTest.builder().emails(List.of(CONSTRUCTION_SERVANT_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":1,\"identifier\":\"identifier\",\"hasBarcode\":false,\"name\":\"name\",\"description\":\"description\",\"quantity\":100.0,\"unit\":\"unit\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"identifier\",\"hasBarcode\":false,\"name\":\"name\",\"description\":\"description\",\"quantity\":100.0,\"unit\":\"unit\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE slot_id=1 AND identifier='identifier' AND has_barcode=0 AND name='name' AND description='description' AND quantity=100 AND unit='unit' AND outside_qualified=1 AND consumable=1 AND broken=0 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='CREATED' AND data IS NULL AND user_id="
@@ -58,7 +58,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								.build(),
 						UserTest.builder().emails(List.of(INVENTORY_MANAGER_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":1,\"identifier\":\"identifier\",\"hasBarcode\":false,\"name\":\"name\",\"description\":\"description\",\"quantity\":100.0,\"unit\":\"unit\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"identifier\",\"hasBarcode\":false,\"name\":\"name\",\"description\":\"description\",\"quantity\":100.0,\"unit\":\"unit\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE slot_id=1 AND identifier='identifier' AND has_barcode=0 AND name='name' AND description='description' AND quantity=100 AND unit='unit' AND outside_qualified=1 AND consumable=1 AND broken=0 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='CREATED' AND data IS NULL AND user_id="
@@ -84,7 +84,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.technicalCrewId(1l).unit("unit").build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"slotId\":1,\"identifier\":\"identifier\",\"hasBarcode\":false,\"name\":\"name\",\"description\":\"description\",\"quantity\":100.0,\"unit\":\"unit\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"slotId\":1,\"identifier\":\"identifier\",\"hasBarcode\":false,\"name\":\"name\",\"description\":\"description\",\"quantity\":100.0,\"unit\":\"unit\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 						.validationQueries(List.of(
 								"SELECT * FROM item WHERE slot_id=1 AND identifier='identifier' AND has_barcode=0 AND name='name' AND description='description' AND quantity=100 AND unit='unit' AND outside_qualified=1 AND consumable=1 AND broken=0 AND technical_crew_id=1",
 								"SELECT * FROM item_history WHERE item_id=1 AND type='CREATED' AND data IS NULL AND user_id="
@@ -92,7 +92,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.build(),
 						UserTest.builder().emails(List.of(CONSTRUCTION_SERVANT_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":1,\"identifier\":\"identifier\",\"hasBarcode\":false,\"name\":\"name\",\"description\":\"description\",\"quantity\":100.0,\"unit\":\"unit\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"identifier\",\"hasBarcode\":false,\"name\":\"name\",\"description\":\"description\",\"quantity\":100.0,\"unit\":\"unit\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE slot_id=1 AND identifier='identifier' AND has_barcode=0 AND name='name' AND description='description' AND quantity=100 AND unit='unit' AND outside_qualified=1 AND consumable=1 AND broken=0 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='CREATED' AND data IS NULL AND user_id="
@@ -100,7 +100,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								.build(),
 						UserTest.builder().emails(List.of(INVENTORY_MANAGER_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":1,\"identifier\":\"identifier\",\"hasBarcode\":false,\"name\":\"name\",\"description\":\"description\",\"quantity\":100.0,\"unit\":\"unit\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"identifier\",\"hasBarcode\":false,\"name\":\"name\",\"description\":\"description\",\"quantity\":100.0,\"unit\":\"unit\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE slot_id=1 AND identifier='identifier' AND has_barcode=0 AND name='name' AND description='description' AND quantity=100 AND unit='unit' AND outside_qualified=1 AND consumable=1 AND broken=0 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='CREATED' AND data IS NULL AND user_id="
@@ -324,9 +324,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 
-						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"id\":1,\"name\":\"Tag1\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1/tags\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.expectedHttpCode(HttpStatus.OK).expectedResponse("{\"id\":1,\"name\":\"Tag1\"}")
 						.validationQueries(List.of("SELECT * FROM item_tag WHERE name='Tag1'",
 								"SELECT * FROM item_item_tag WHERE item_id=1 AND item_tag_id=1"))
 						.build()))
@@ -353,9 +351,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 
-						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"id\":1,\"name\":\"Tag1\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1/tags\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.expectedHttpCode(HttpStatus.OK).expectedResponse("{\"id\":1,\"name\":\"Tag1\"}")
 						.validationQueries(List.of("SELECT * FROM item_tag WHERE name='Tag1'",
 								"SELECT * FROM item_item_tag WHERE item_id=1 AND item_tag_id=1"))
 						.build()))
@@ -413,7 +409,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponseIsRegex(true)
 						.expectedResponse("\\{\"id\":1,\"itemId\":1,\"userId\":" + getUserIdByEmail(ADMIN_EMAIL)
-								+ ",\"note\":\"Das ist eine Notiz\",\"timestamp\":\"\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d.\\d*\",\"links\":\\[\\{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1/notes\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null\\}\\]\\}")
+								+ ",\"note\":\"Das ist eine Notiz\",\"timestamp\":\"\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d.\\d*\"\\}")
 						.validationQueries(List
 								.of("SELECT * FROM item_note WHERE item_id=1 AND note='Das ist eine Notiz' AND user_id="
 										+ getUserIdByEmail(ADMIN_EMAIL)))
@@ -422,7 +418,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								.expectedResponseIsRegex(true)
 								.expectedResponse("\\{\"id\":1,\"itemId\":1,\"userId\":"
 										+ getUserIdByEmail(CONSTRUCTION_SERVANT_EMAIL)
-										+ ",\"note\":\"Das ist eine Notiz\",\"timestamp\":\"\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d.\\d*\",\"links\":\\[\\{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1/notes\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null\\}\\]\\}")
+										+ ",\"note\":\"Das ist eine Notiz\",\"timestamp\":\"\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d.\\d*\"\\}")
 								.validationQueries(List.of(
 										"SELECT * FROM item_note WHERE item_id=1 AND note='Das ist eine Notiz' AND user_id="
 												+ getUserIdByEmail(CONSTRUCTION_SERVANT_EMAIL)))
@@ -431,7 +427,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								.expectedResponseIsRegex(true)
 								.expectedResponse("\\{\"id\":1,\"itemId\":1,\"userId\":"
 										+ getUserIdByEmail(INVENTORY_MANAGER_EMAIL)
-										+ ",\"note\":\"Das ist eine Notiz\",\"timestamp\":\"\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d.\\d*\",\"links\":\\[\\{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1/notes\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null\\}\\]\\}")
+										+ ",\"note\":\"Das ist eine Notiz\",\"timestamp\":\"\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d.\\d*\"\\}")
 								.validationQueries(List.of(
 										"SELECT * FROM item_note WHERE item_id=1 AND note='Das ist eine Notiz' AND user_id="
 												+ getUserIdByEmail(INVENTORY_MANAGER_EMAIL)))
@@ -440,7 +436,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								.expectedResponseIsRegex(true)
 								.expectedResponse("\\{\"id\":1,\"itemId\":1,\"userId\":"
 										+ getUserIdByEmail(STORE_KEEPER_EMAIL)
-										+ ",\"note\":\"Das ist eine Notiz\",\"timestamp\":\"\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d.\\d*\",\"links\":\\[\\{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1/notes\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null\\}\\]\\}")
+										+ ",\"note\":\"Das ist eine Notiz\",\"timestamp\":\"\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d.\\d*\"\\}")
 								.validationQueries(List.of(
 										"SELECT * FROM item_note WHERE item_id=1 AND note='Das ist eine Notiz' AND user_id="
 												+ getUserIdByEmail(STORE_KEEPER_EMAIL)))
@@ -470,8 +466,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"itemId\":1,\"image\":\"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAABhWlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AYht+mSotUHOwg4pChOlnwD9FNq1CECqFWaNXB5NIfoUlDkuLiKLgWHPxZrDq4OOvq4CoIgj8gTo5Oii5S4ndJoUWMdxz38N73vtx9Bwj1MtOsjhFA020znUyI2dyKGHpFmGYIo5iWmWXMSlIKvuPrHgG+38V5ln/dn6NbzVsMCIjEM8wwbeJ14slN2+C8TxxlJVklPiceNumCxI9cVzx+41x0WeCZUTOTniOOEovFNlbamJVMjXiCOKZqOuULWY9VzluctXKVNe/JXxjJ68tLXKc1gCQWsAgJIhRUsYEybMRp10mxkKbzhI+/3/VL5FLItQFGjnlUoEF2/eB/8Lu3VmF8zEuKJIDOF8f5GARCu0Cj5jjfx47TOAGCz8CV3vJX6sDUJ+m1lhY7Anq2gYvrlqbsAZc7QN+TIZuyKwVpCYUC8H5G35QDem+BrlWvb81znD4AGepV6gY4OASGipS95vPucHvf/q1p9u8HrApyvnqnxPEAAAAJcEhZcwAALiMAAC4jAXilP3YAAAAHdElNRQfkCAgHMxPBX6JxAAAAGXRFWHRDb21tZW50AENyZWF0ZWQgd2l0aCBHSU1QV4EOFwAAAAxJREFUCNdjYGBgAAAABAABJzQnCgAAAABJRU5ErkJggg==\","
-										+ "\"mediaType\":\"image/png\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1/image\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"itemId\":1,\"image\":\"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAABhWlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AYht+mSotUHOwg4pChOlnwD9FNq1CECqFWaNXB5NIfoUlDkuLiKLgWHPxZrDq4OOvq4CoIgj8gTo5Oii5S4ndJoUWMdxz38N73vtx9Bwj1MtOsjhFA020znUyI2dyKGHpFmGYIo5iWmWXMSlIKvuPrHgG+38V5ln/dn6NbzVsMCIjEM8wwbeJ14slN2+C8TxxlJVklPiceNumCxI9cVzx+41x0WeCZUTOTniOOEovFNlbamJVMjXiCOKZqOuULWY9VzluctXKVNe/JXxjJ68tLXKc1gCQWsAgJIhRUsYEybMRp10mxkKbzhI+/3/VL5FLItQFGjnlUoEF2/eB/8Lu3VmF8zEuKJIDOF8f5GARCu0Cj5jjfx47TOAGCz8CV3vJX6sDUJ+m1lhY7Anq2gYvrlqbsAZc7QN+TIZuyKwVpCYUC8H5G35QDem+BrlWvb81znD4AGepV6gY4OASGipS95vPucHvf/q1p9u8HrApyvnqnxPEAAAAJcEhZcwAALiMAAC4jAXilP3YAAAAHdElNRQfkCAgHMxPBX6JxAAAAGXRFWHRDb21tZW50AENyZWF0ZWQgd2l0aCBHSU1QV4EOFwAAAAxJREFUCNdjYGBgAAAABAABJzQnCgAAAABJRU5ErkJggg==\",\"mediaType\":\"image/png\"}")
 						.validationQueries(
 								// FUTURE: check blob
 								List.of("SELECT * FROM item_image WHERE item_id=1 AND media_type='image/png'"))
@@ -498,9 +493,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 				.body(ItemItemDto.builder().item1Id(1l).item2Id(2l).build())
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
-						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"id\":1,\"item1Id\":1,\"item2Id\":2,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1/items\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.expectedHttpCode(HttpStatus.OK).expectedResponse("{\"id\":1,\"item1Id\":1,\"item2Id\":2}")
 						.validationQueries(List.of("SELECT * FROM item_item WHERE item1_id=1 AND item2_id")).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
 				.validationQueriesForOthers(List.of("SELECT 1 WHERE (SELECT COUNT(*) FROM item)=2",
@@ -536,7 +529,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.technicalCrewId(2l).unit("unit").build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"technicalCrewId\":2,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"technicalCrewId\":2}")
 						.validationQueries(List.of(
 								"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='identifier' AND has_barcode=1 AND name='name' AND description='description' AND quantity=123.0 AND unit='unit' AND outside_qualified=0 AND consumable=0 AND technical_crew_id=2",
 								"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
@@ -553,7 +546,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.build(),
 						UserTest.builder().emails(List.of(CONSTRUCTION_SERVANT_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"technicalCrewId\":2,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"technicalCrewId\":2}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='identifier' AND has_barcode=1 AND name='name' AND description='description' AND quantity=123.0 AND unit='unit' AND outside_qualified=0 AND consumable=0 AND technical_crew_id=2",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
@@ -570,7 +563,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								.build(),
 						UserTest.builder().emails(List.of(INVENTORY_MANAGER_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"technicalCrewId\":2,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"technicalCrewId\":2}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='identifier' AND has_barcode=1 AND name='name' AND description='description' AND quantity=123.0 AND unit='unit' AND outside_qualified=0 AND consumable=0 AND technical_crew_id=2",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
@@ -612,7 +605,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.technicalCrewId(1l).unit("Stück").build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"slotId\":2,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"slotId\":2,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 						.validationQueries(List.of(
 								"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 								"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
@@ -625,7 +618,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.build(),
 						UserTest.builder().emails(List.of(CONSTRUCTION_SERVANT_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":2,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":2,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
@@ -638,7 +631,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								.build(),
 						UserTest.builder().emails(List.of(INVENTORY_MANAGER_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":2,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":2,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
@@ -674,7 +667,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.technicalCrewId(2l).unit("unit").build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"technicalCrewId\":2,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"technicalCrewId\":2}")
 						.validationQueries(List.of(
 								"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='identifier' AND has_barcode=1 AND name='name' AND description='description' AND quantity=123.0 AND unit='unit' AND outside_qualified=0 AND consumable=0 AND technical_crew_id=2",
 								"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
@@ -691,7 +684,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.build(),
 						UserTest.builder().emails(List.of(CONSTRUCTION_SERVANT_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"technicalCrewId\":2,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"technicalCrewId\":2}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='identifier' AND has_barcode=1 AND name='name' AND description='description' AND quantity=123.0 AND unit='unit' AND outside_qualified=0 AND consumable=0 AND technical_crew_id=2",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
@@ -708,7 +701,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								.build(),
 						UserTest.builder().emails(List.of(INVENTORY_MANAGER_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"technicalCrewId\":2,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"technicalCrewId\":2}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='identifier' AND has_barcode=1 AND name='name' AND description='description' AND quantity=123.0 AND unit='unit' AND outside_qualified=0 AND consumable=0 AND technical_crew_id=2",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
@@ -887,8 +880,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"itemId\":1,\"image\":\"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAABhWlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AYht+mSotUHOwg4pChOlnwD9FNq1CECqFWaNXB5NIfoUlDkuLiKLgWHPxZrDq4OOvq4CoIgj8gTo5Oii5S4ndJoUWMdxz38N73vtx9Bwj1MtOsjhFA020znUyI2dyKGHpFmGYIo5iWmWXMSlIKvuPrHgG+38V5ln/dn6NbzVsMCIjEM8wwbeJ14slN2+C8TxxlJVklPiceNumCxI9cVzx+41x0WeCZUTOTniOOEovFNlbamJVMjXiCOKZqOuULWY9VzluctXKVNe/JXxjJ68tLXKc1gCQWsAgJIhRUsYEybMRp10mxkKbzhI+/3/VL5FLItQFGjnlUoEF2/eB/8Lu3VmF8zEuKJIDOF8f5GARCu0Cj5jjfx47TOAGCz8CV3vJX6sDUJ+m1lhY7Anq2gYvrlqbsAZc7QN+TIZuyKwVpCYUC8H5G35QDem+BrlWvb81znD4AGepV6gY4OASGipS95vPucHvf/q1p9u8HrApyvnqnxPEAAAAJcEhZcwAALiMAAC4jAXilP3YAAAAHdElNRQfkCAgHMxPBX6JxAAAAGXRFWHRDb21tZW50AENyZWF0ZWQgd2l0aCBHSU1QV4EOFwAAAAxJREFUCNdjYGBgAAAABAABJzQnCgAAAABJRU5ErkJggg==\","
-										+ "\"mediaType\":\"image/png\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1/image/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"itemId\":1,\"image\":\"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAABhWlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AYht+mSotUHOwg4pChOlnwD9FNq1CECqFWaNXB5NIfoUlDkuLiKLgWHPxZrDq4OOvq4CoIgj8gTo5Oii5S4ndJoUWMdxz38N73vtx9Bwj1MtOsjhFA020znUyI2dyKGHpFmGYIo5iWmWXMSlIKvuPrHgG+38V5ln/dn6NbzVsMCIjEM8wwbeJ14slN2+C8TxxlJVklPiceNumCxI9cVzx+41x0WeCZUTOTniOOEovFNlbamJVMjXiCOKZqOuULWY9VzluctXKVNe/JXxjJ68tLXKc1gCQWsAgJIhRUsYEybMRp10mxkKbzhI+/3/VL5FLItQFGjnlUoEF2/eB/8Lu3VmF8zEuKJIDOF8f5GARCu0Cj5jjfx47TOAGCz8CV3vJX6sDUJ+m1lhY7Anq2gYvrlqbsAZc7QN+TIZuyKwVpCYUC8H5G35QDem+BrlWvb81znD4AGepV6gY4OASGipS95vPucHvf/q1p9u8HrApyvnqnxPEAAAAJcEhZcwAALiMAAC4jAXilP3YAAAAHdElNRQfkCAgHMxPBX6JxAAAAGXRFWHRDb21tZW50AENyZWF0ZWQgd2l0aCBHSU1QV4EOFwAAAAxJREFUCNdjYGBgAAAABAABJzQnCgAAAABJRU5ErkJggg==\",\"mediaType\":\"image/png\"}")
 						.validationQueries(
 								// FUTURE: check blob
 								List.of("SELECT * FROM item_image WHERE item_id=1 AND media_type='image/png'"))
@@ -921,7 +913,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 				.url(REST_URL + "/items/1").method(Method.PATCH).body(ItemDto.builder().broken(true).build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1}")
 						.validationQueries(List.of(
 								"SELECT * FROM item WHERE id=1 AND broken=1 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 								"SELECT * FROM item_history WHERE item_id=1 AND type='BROKEN' AND data IS NULL AND user_id="
@@ -930,7 +922,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.build(),
 						UserTest.builder().emails(List.of(CONSTRUCTION_SERVANT_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=1 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='BROKEN' AND data IS NULL AND user_id="
@@ -939,7 +931,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								.build(),
 						UserTest.builder().emails(List.of(STORE_KEEPER_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=1 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='BROKEN' AND data IS NULL AND user_id="
@@ -948,7 +940,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								.build(),
 						UserTest.builder().emails(List.of(INVENTORY_MANAGER_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=1 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='BROKEN' AND data IS NULL AND user_id="
@@ -975,7 +967,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 				.url(REST_URL + "/items/1").method(Method.PATCH).body(ItemDto.builder().broken(true).build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1}")
 						.validationQueries(List.of(
 								"SELECT * FROM item WHERE id=1 AND broken=1 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 								"SELECT * FROM item_history WHERE item_id=1 AND type='BROKEN' AND data IS NULL AND user_id="
@@ -984,7 +976,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.build(),
 						UserTest.builder().emails(List.of(CONSTRUCTION_SERVANT_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=1 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='BROKEN' AND data IS NULL AND user_id="
@@ -993,7 +985,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								.build(),
 						UserTest.builder().emails(List.of(INVENTORY_MANAGER_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=1 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='BROKEN' AND data IS NULL AND user_id="
@@ -1018,7 +1010,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 				.url(REST_URL + "/items/1").method(Method.PATCH).body(ItemDto.builder().broken(true).build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1}")
 						.validationQueries(List.of(
 								"SELECT * FROM item WHERE id=1 AND broken=1 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 								"SELECT * FROM item_history WHERE item_id=1 AND type='BROKEN' AND data IS NULL AND user_id="
@@ -1027,7 +1019,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.build(),
 						UserTest.builder().emails(List.of(CONSTRUCTION_SERVANT_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=1 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='BROKEN' AND data IS NULL AND user_id="
@@ -1036,7 +1028,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								.build(),
 						UserTest.builder().emails(List.of(INVENTORY_MANAGER_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=1 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='BROKEN' AND data IS NULL AND user_id="
@@ -1063,7 +1055,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 				.url(REST_URL + "/items/1").method(Method.PATCH).body(ItemDto.builder().broken(false).build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 						.validationQueries(List.of(
 								"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 								"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
@@ -1072,7 +1064,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.build(),
 						UserTest.builder().emails(List.of(CONSTRUCTION_SERVANT_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
@@ -1081,7 +1073,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								.build(),
 						UserTest.builder().emails(List.of(STORE_KEEPER_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
@@ -1090,7 +1082,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								.build(),
 						UserTest.builder().emails(List.of(INVENTORY_MANAGER_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
@@ -1115,7 +1107,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 				.url(REST_URL + "/items/1").method(Method.PATCH).body(ItemDto.builder().broken(false).build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 						.validationQueries(List.of(
 								"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 								"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
@@ -1124,7 +1116,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.build(),
 						UserTest.builder().emails(List.of(CONSTRUCTION_SERVANT_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
@@ -1133,7 +1125,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								.build(),
 						UserTest.builder().emails(List.of(INVENTORY_MANAGER_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
@@ -1160,28 +1152,28 @@ public class ItemIT extends BasicRestIntegrationTest {
 				.url(REST_URL + "/items/1").method(Method.PATCH).body(ItemDto.builder().broken(true).build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1}")
 						.validationQueries(List.of(
 								"SELECT * FROM item WHERE id=1 AND broken=1 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 								"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0"))
 						.build(),
 						UserTest.builder().emails(List.of(CONSTRUCTION_SERVANT_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=1 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0"))
 								.build(),
 						UserTest.builder().emails(List.of(STORE_KEEPER_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=1 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0"))
 								.build(),
 						UserTest.builder().emails(List.of(INVENTORY_MANAGER_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":true,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=1 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 										"SELECT 1 WHERE (SELECT COUNT(*) FROM item_history)=0"))
@@ -1208,7 +1200,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 				.body(ItemDto.builder().broken(false).slotId(2l).build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"slotId\":2,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"slotId\":2,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 						.validationQueries(List.of(
 								"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 								"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
@@ -1219,7 +1211,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.build(),
 						UserTest.builder().emails(List.of(CONSTRUCTION_SERVANT_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":2,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":2,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
@@ -1230,7 +1222,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								.build(),
 						UserTest.builder().emails(List.of(STORE_KEEPER_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
@@ -1239,7 +1231,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								.build(),
 						UserTest.builder().emails(List.of(INVENTORY_MANAGER_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":2,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":2,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=1.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
@@ -1268,7 +1260,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 				.url(REST_URL + "/items/1").method(Method.PATCH).body(ItemDto.builder().quantity(123.0).build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":123.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":123.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 						.validationQueries(List.of(
 								"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=123.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 								"SELECT * FROM item_history WHERE item_id=1 AND type='QUANTITY_CHANGED' AND data ='{\"from\":\"1\",\"to\":\"123\"}' AND user_id="
@@ -1277,7 +1269,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.build(),
 						UserTest.builder().emails(List.of(CONSTRUCTION_SERVANT_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":123.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":123.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=123.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='QUANTITY_CHANGED' AND data='{\"from\":\"1\",\"to\":\"123\"}' AND user_id="
@@ -1286,7 +1278,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								.build(),
 						UserTest.builder().emails(List.of(STORE_KEEPER_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":123.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":123.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=123.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='QUANTITY_CHANGED' AND data='{\"from\":\"1\",\"to\":\"123\"}' AND user_id="
@@ -1295,7 +1287,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								.build(),
 						UserTest.builder().emails(List.of(INVENTORY_MANAGER_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":123.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":123.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=123.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='QUANTITY_CHANGED' AND data='{\"from\":\"1\",\"to\":\"123\"}' AND user_id="
@@ -1329,7 +1321,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.technicalCrewId(2l).unit("unit").build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"technicalCrewId\":2,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"technicalCrewId\":2}")
 						.validationQueries(List.of(
 								"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='identifier' AND has_barcode=1 AND name='name' AND description='description' AND quantity=123.0 AND unit='unit' AND outside_qualified=0 AND consumable=0 AND technical_crew_id=2",
 								"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
@@ -1346,7 +1338,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.build(),
 						UserTest.builder().emails(List.of(CONSTRUCTION_SERVANT_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"technicalCrewId\":2,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"technicalCrewId\":2}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='identifier' AND has_barcode=1 AND name='name' AND description='description' AND quantity=123.0 AND unit='unit' AND outside_qualified=0 AND consumable=0 AND technical_crew_id=2",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
@@ -1363,7 +1355,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								.build(),
 						UserTest.builder().emails(List.of(STORE_KEEPER_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":123.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":123.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=1 AND identifier='Identifier1' AND has_barcode=0 AND name='Item1' AND description='Description 1' AND quantity=123.0 AND unit='Stück' AND outside_qualified=1 AND consumable=1 AND technical_crew_id=1",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
@@ -1376,7 +1368,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								.build(),
 						UserTest.builder().emails(List.of(INVENTORY_MANAGER_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"technicalCrewId\":2,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+										"{\"id\":1,\"slotId\":2,\"identifier\":\"identifier\",\"hasBarcode\":true,\"name\":\"name\",\"description\":\"description\",\"quantity\":123.0,\"unit\":\"unit\",\"outsideQualified\":false,\"consumable\":false,\"broken\":false,\"technicalCrewId\":2}")
 								.validationQueries(List.of(
 										"SELECT * FROM item WHERE id=1 AND broken=0 AND slot_id=2 AND identifier='identifier' AND has_barcode=1 AND name='name' AND description='description' AND quantity=123.0 AND unit='unit' AND outside_qualified=0 AND consumable=0 AND technical_crew_id=2",
 										"SELECT * FROM item_history WHERE item_id=1 AND type='FIXED' AND data IS NULL AND user_id="
@@ -1630,7 +1622,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/{?free_text}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1},{\"id\":2,\"slotId\":1,\"identifier\":\"Identifier2\",\"hasBarcode\":true,\"name\":\"Item2\",\"description\":\"Description2\",\"quantity\":100.0,\"unit\":\"Stück\",\"outsideQualified\":false,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}]}")
+								"[{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1},{\"id\":2,\"slotId\":1,\"identifier\":\"Identifier2\",\"hasBarcode\":true,\"name\":\"Item2\",\"description\":\"Description2\",\"quantity\":100.0,\"unit\":\"Stück\",\"outsideQualified\":false,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}]")
 						.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
@@ -1668,14 +1660,13 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, STORE_KEEPER_EMAIL,
 								INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/?free_text=m1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":2,\"slotId\":1,\"identifier\":\"Identifier2\",\"hasBarcode\":false,"
-										+ "\"name\":\"InDescription\",\"description\":\"Description m1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1},{\"id\":3,\"slotId\":1,\"identifier\":\"Identifierm1\",\"hasBarcode\":false,"
-										+ "\"name\":\"InIdentifier\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1},{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,"
-										+ "\"name\":\"InNamem1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1},{\"id\":5,\"slotId\":1,\"identifier\":\"Identifier5\",\"hasBarcode\":false,"
-										+ "\"name\":\"InNote\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1},{\"id\":6,\"slotId\":1,\"identifier\":\"Identifier6\",\"hasBarcode\":false,"
-										+ "\"name\":\"InTag\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1},{\"id\":4,\"slotId\":1,\"identifier\":\"Identifier4\",\"hasBarcode\":false,"
-										+ "\"name\":\"InTechnicalCrew\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":2}]}")
+						.expectedResponse("[{\"id\":2,\"slotId\":1,\"identifier\":\"Identifier2\",\"hasBarcode\":false,"
+								+ "\"name\":\"InDescription\",\"description\":\"Description m1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1},{\"id\":3,\"slotId\":1,\"identifier\":\"Identifierm1\",\"hasBarcode\":false,"
+								+ "\"name\":\"InIdentifier\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1},{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,"
+								+ "\"name\":\"InNamem1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1},{\"id\":5,\"slotId\":1,\"identifier\":\"Identifier5\",\"hasBarcode\":false,"
+								+ "\"name\":\"InNote\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1},{\"id\":6,\"slotId\":1,\"identifier\":\"Identifier6\",\"hasBarcode\":false,"
+								+ "\"name\":\"InTag\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1},{\"id\":4,\"slotId\":1,\"identifier\":\"Identifier4\",\"hasBarcode\":false,"
+								+ "\"name\":\"InTechnicalCrew\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":2}]")
 						.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
@@ -1693,17 +1684,15 @@ public class ItemIT extends BasicRestIntegrationTest {
 				.url(REST_URL + "/items").method(Method.GET)
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/{?free_text}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1},{\"id\":2,\"slotId\":1,\"identifier\":\"Identifier2\",\"hasBarcode\":true,\"name\":\"Item2\",\"description\":\"Description2\",\"quantity\":100.0,\"unit\":\"Stück\",\"outsideQualified\":false,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}]}")
+								"[{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1},{\"id\":2,\"slotId\":1,\"identifier\":\"Identifier2\",\"hasBarcode\":true,\"name\":\"Item2\",\"description\":\"Description2\",\"quantity\":100.0,\"unit\":\"Stück\",\"outsideQualified\":false,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}]")
 						.build(),
 						UserTest.builder().emails(List.of(CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 								.expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/{?free_text}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1},{\"id\":2,\"slotId\":1,\"identifier\":\"Identifier2\",\"hasBarcode\":true,\"name\":\"Item2\",\"description\":\"Description2\",\"quantity\":100.0,\"unit\":\"Stück\",\"outsideQualified\":false,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}]}")
+										"[{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1},{\"id\":2,\"slotId\":1,\"identifier\":\"Identifier2\",\"hasBarcode\":true,\"name\":\"Item2\",\"description\":\"Description2\",\"quantity\":100.0,\"unit\":\"Stück\",\"outsideQualified\":false,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}]")
 								.build(),
 						UserTest.builder().emails(List.of(STORE_KEEPER_EMAIL)).expectedHttpCode(HttpStatus.OK)
-								.expectedResponse(
-										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/{?free_text}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[]}")
-								.build()))
+								.expectedResponse("[]").build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
 
@@ -1725,7 +1714,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 						.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
@@ -1745,7 +1734,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"slotId\":1,\"identifier\":\"Identifier1\",\"hasBarcode\":false,\"name\":\"Item1\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}")
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
@@ -1770,7 +1759,8 @@ public class ItemIT extends BasicRestIntegrationTest {
 								INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1/notes\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"itemId\":1,\"userId\":1,\"note\":\"Notize 1 \\\"Test\\\" <*/>§$1 \\\\\\\\\\\\\\\\\\\"\",\"timestamp\":\"2020-07-17T09:51:33\"},{\"id\":2,\"itemId\":1,\"userId\":2,\"note\":\"Blah Blah Blah\",\"timestamp\":\"2020-07-14T09:51:33\"}]}")
+								"[{\"id\":1,\"itemId\":1,\"userId\":1,\"note\":\"Notize 1 \\\"Test\\\" <*/>§$1 \\\\\\\\\\\\\\\\\\\"\",\"timestamp\":\"2020-07-17T09:51:33\"},"
+										+ "{\"id\":2,\"itemId\":1,\"userId\":2,\"note\":\"Blah Blah Blah\",\"timestamp\":\"2020-07-14T09:51:33\"}]")
 						.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
@@ -1792,7 +1782,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1/notes\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"itemId\":1,\"userId\":1,\"note\":\"Notize 1 \\\"Test\\\" <*/>§$1 \\\\\\\\\\\\\\\\\\\"\",\"timestamp\":\"2020-07-17T09:51:33\"},{\"id\":2,\"itemId\":1,\"userId\":2,\"note\":\"Blah Blah Blah\",\"timestamp\":\"2020-07-14T09:51:33\"}]}")
+								"[{\"id\":1,\"itemId\":1,\"userId\":1,\"note\":\"Notize 1 \\\"Test\\\" <*/>§$1 \\\\\\\\\\\\\\\\\\\"\",\"timestamp\":\"2020-07-17T09:51:33\"},{\"id\":2,\"itemId\":1,\"userId\":2,\"note\":\"Blah Blah Blah\",\"timestamp\":\"2020-07-14T09:51:33\"}]")
 						.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
@@ -1816,7 +1806,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1000,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":null,\"email\":null,\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1/notes/1/user\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1000,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":null,\"email\":null,\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null}")
 						.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
@@ -1840,7 +1830,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1/history\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":7,\"itemId\":1,\"userId\":6,\"timestamp\":\"2020-07-25T15:36:04\",\"type\":\"FIXED\",\"data\":null},{\"id\":6,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:35:06\",\"type\":\"BROKEN\",\"data\":null},{\"id\":5,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:35:03\",\"type\":\"MOVED\",\"data\":\"{\\\"from\\\":\\\"Store: Slot2\\\",\\\"to\\\":\\\"Store: Slot\\\"}\"},{\"id\":4,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:34:50\",\"type\":\"MOVED\",\"data\":\"{\\\"from\\\":\\\"Store: Slot\\\",\\\"to\\\":\\\"Store: Slot2\\\"}\"},{\"id\":1,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:34:13\",\"type\":\"CREATED\",\"data\":null}]}")
+								"[{\"id\":7,\"itemId\":1,\"userId\":6,\"timestamp\":\"2020-07-25T15:36:04\",\"type\":\"FIXED\",\"data\":null},{\"id\":6,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:35:06\",\"type\":\"BROKEN\",\"data\":null},{\"id\":5,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:35:03\",\"type\":\"MOVED\",\"data\":\"{\\\"from\\\":\\\"Store: Slot2\\\",\\\"to\\\":\\\"Store: Slot\\\"}\"},{\"id\":4,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:34:50\",\"type\":\"MOVED\",\"data\":\"{\\\"from\\\":\\\"Store: Slot\\\",\\\"to\\\":\\\"Store: Slot2\\\"}\"},{\"id\":1,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:34:13\",\"type\":\"CREATED\",\"data\":null}]")
 						.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
@@ -1861,7 +1851,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1/history\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":7,\"itemId\":1,\"userId\":6,\"timestamp\":\"2020-07-25T15:36:04\",\"type\":\"FIXED\",\"data\":null},{\"id\":6,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:35:06\",\"type\":\"BROKEN\",\"data\":null},{\"id\":5,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:35:03\",\"type\":\"MOVED\",\"data\":\"{\\\"from\\\":\\\"Store: Slot2\\\",\\\"to\\\":\\\"Store: Slot\\\"}\"},{\"id\":4,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:34:50\",\"type\":\"MOVED\",\"data\":\"{\\\"from\\\":\\\"Store: Slot\\\",\\\"to\\\":\\\"Store: Slot2\\\"}\"},{\"id\":1,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:34:13\",\"type\":\"CREATED\",\"data\":null}]}")
+								"[{\"id\":7,\"itemId\":1,\"userId\":6,\"timestamp\":\"2020-07-25T15:36:04\",\"type\":\"FIXED\",\"data\":null},{\"id\":6,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:35:06\",\"type\":\"BROKEN\",\"data\":null},{\"id\":5,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:35:03\",\"type\":\"MOVED\",\"data\":\"{\\\"from\\\":\\\"Store: Slot2\\\",\\\"to\\\":\\\"Store: Slot\\\"}\"},{\"id\":4,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:34:50\",\"type\":\"MOVED\",\"data\":\"{\\\"from\\\":\\\"Store: Slot\\\",\\\"to\\\":\\\"Store: Slot2\\\"}\"},{\"id\":1,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:34:13\",\"type\":\"CREATED\",\"data\":null}]")
 						.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
@@ -1885,7 +1875,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1000,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":null,\"email\":null,\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1/history/1/user\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1000,\"firstName\":\"Tes\",\"lastName\":\"Ter\",\"gender\":null,\"email\":null,\"telephoneNumber\":null,\"mobileNumber\":null,\"businessNumber\":null,\"profession\":null,\"skills\":null}")
 						.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
@@ -1909,7 +1899,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"itemId\":1,\"image\":\"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAABhWlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AYht+mSotUHOwg4pChOlnwD9FNq1CECqFWaNXB5NIfoUlDkuLiKLgWHPxZrDq4OOvq4CoIgj8gTo5Oii5S4ndJoUWMdxz38N73vtx9Bwj1MtOsjhFA020znUyI2dyKGHpFmGYIo5iWmWXMSlIKvuPrHgG+38V5ln/dn6NbzVsMCIjEM8wwbeJ14slN2+C8TxxlJVklPiceNumCxI9cVzx+41x0WeCZUTOTniOOEovFNlbamJVMjXiCOKZqOuULWY9VzluctXKVNe/JXxjJ68tLXKc1gCQWsAgJIhRUsYEybMRp10mxkKbzhI+/3/VL5FLItQFGjnlUoEF2/eB/8Lu3VmF8zEuKJIDOF8f5GARCu0Cj5jjfx47TOAGCz8CV3vJX6sDUJ+m1lhY7Anq2gYvrlqbsAZc7QN+TIZuyKwVpCYUC8H5G35QDem+BrlWvb81znD4AGepV6gY4OASGipS95vPucHvf/q1p9u8HrApyvnqnxPEAAAAJcEhZcwAALiMAAC4jAXilP3YAAAAHdElNRQfkCAgHMxPBX6JxAAAAGXRFWHRDb21tZW50AENyZWF0ZWQgd2l0aCBHSU1QV4EOFwAAAAxJREFUCNdjYGBgAAAABAABJzQnCgAAAABJRU5ErkJggg==\",\"mediaType\":\"image/png\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1/image\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"itemId\":1,\"image\":\"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAABhWlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AYht+mSotUHOwg4pChOlnwD9FNq1CECqFWaNXB5NIfoUlDkuLiKLgWHPxZrDq4OOvq4CoIgj8gTo5Oii5S4ndJoUWMdxz38N73vtx9Bwj1MtOsjhFA020znUyI2dyKGHpFmGYIo5iWmWXMSlIKvuPrHgG+38V5ln/dn6NbzVsMCIjEM8wwbeJ14slN2+C8TxxlJVklPiceNumCxI9cVzx+41x0WeCZUTOTniOOEovFNlbamJVMjXiCOKZqOuULWY9VzluctXKVNe/JXxjJ68tLXKc1gCQWsAgJIhRUsYEybMRp10mxkKbzhI+/3/VL5FLItQFGjnlUoEF2/eB/8Lu3VmF8zEuKJIDOF8f5GARCu0Cj5jjfx47TOAGCz8CV3vJX6sDUJ+m1lhY7Anq2gYvrlqbsAZc7QN+TIZuyKwVpCYUC8H5G35QDem+BrlWvb81znD4AGepV6gY4OASGipS95vPucHvf/q1p9u8HrApyvnqnxPEAAAAJcEhZcwAALiMAAC4jAXilP3YAAAAHdElNRQfkCAgHMxPBX6JxAAAAGXRFWHRDb21tZW50AENyZWF0ZWQgd2l0aCBHSU1QV4EOFwAAAAxJREFUCNdjYGBgAAAABAABJzQnCgAAAABJRU5ErkJggg==\",\"mediaType\":\"image/png\"}")
 						.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
@@ -1930,8 +1920,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, STORE_KEEPER_EMAIL,
 								INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"id\":null,\"itemId\":1,\"image\":null,\"mediaType\":null,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1/image\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.expectedResponse("{\"id\":null,\"itemId\":1,\"image\":null,\"mediaType\":null}")
 						.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
@@ -1971,10 +1960,9 @@ public class ItemIT extends BasicRestIntegrationTest {
 								INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/items/1/items\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":["
-										+ "{\"id\":2,\"slotId\":1,\"identifier\":\"Identifier2\",\"hasBarcode\":false,\"name\":\"InDescription\",\"description\":\"Description m1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1},"
+								"[{\"id\":2,\"slotId\":1,\"identifier\":\"Identifier2\",\"hasBarcode\":false,\"name\":\"InDescription\",\"description\":\"Description m1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1},"
 										+ "{\"id\":4,\"slotId\":1,\"identifier\":\"Identifier4\",\"hasBarcode\":false,\"name\":\"InTechnicalCrew\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":2},"
-										+ "{\"id\":6,\"slotId\":1,\"identifier\":\"Identifier6\",\"hasBarcode\":false,\"name\":\"InTag\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}]}")
+										+ "{\"id\":6,\"slotId\":1,\"identifier\":\"Identifier6\",\"hasBarcode\":false,\"name\":\"InTag\",\"description\":\"Description 1\",\"quantity\":1.0,\"unit\":\"Stück\",\"outsideQualified\":true,\"consumable\":true,\"broken\":false,\"technicalCrewId\":1}]")
 						.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}

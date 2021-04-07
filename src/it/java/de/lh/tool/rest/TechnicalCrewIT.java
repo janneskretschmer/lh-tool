@@ -30,9 +30,7 @@ public class TechnicalCrewIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, STORE_KEEPER_EMAIL,
 								INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/technical_crews/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"name\":\"Test1\"},{\"id\":2,\"name\":\"Test2\"}]}")
-						.build()))
+						.expectedResponse("[{\"id\":1,\"name\":\"Test1\"},{\"id\":2,\"name\":\"Test2\"}]").build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 
@@ -45,10 +43,7 @@ public class TechnicalCrewIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, STORE_KEEPER_EMAIL,
 								INVENTORY_MANAGER_EMAIL))
-						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"id\":1,\"name\":\"Test1\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/technical_crews/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
-						.build()))
+						.expectedHttpCode(HttpStatus.OK).expectedResponse("{\"id\":1,\"name\":\"Test1\"}").build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 

@@ -32,7 +32,7 @@ public class StoreIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"type\":\"MAIN\",\"name\":\"created\",\"address\":\"created address\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/stores/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"type\":\"MAIN\",\"name\":\"created\",\"address\":\"created address\"}")
 						.validationQueries(List.of(
 								"SELECT * FROM store WHERE id =1 AND name='created' AND type='MAIN' AND address='created address'",
 								"SELECT 1 WHERE (SELECT COUNT(*) FROM store) = 1"))
@@ -65,7 +65,7 @@ public class StoreIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":3,\"type\":\"MAIN\",\"name\":\"changed\",\"address\":\"changed address\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/stores/3\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":3,\"type\":\"MAIN\",\"name\":\"changed\",\"address\":\"changed address\"}")
 						.validationQueries(List.of(
 								"SELECT * FROM store WHERE id = 3 AND name='changed' AND type='MAIN' AND address='changed address'",
 								"SELECT 1 WHERE (SELECT COuNT(*) FROM store) = 3",
@@ -97,7 +97,7 @@ public class StoreIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"type\":\"MAIN\",\"name\":\"changed\",\"address\":\"changed address\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/stores/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"type\":\"MAIN\",\"name\":\"changed\",\"address\":\"changed address\"}")
 						.validationQueries(List.of(
 								"SELECT * FROM store WHERE id =1 AND name='changed' AND type='MAIN' AND address='changed address'",
 								"SELECT 1 WHERE (SELECT COuNT(*) FROM store) = 3",
@@ -293,16 +293,14 @@ public class StoreIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/stores/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"type\":\"MAIN\","
-										+ "\"name\":\"NoProject\",\"address\":\"Adresse des Hauptlagers\"},{\"id\":2,\"type\":\"STANDARD\","
-										+ "\"name\":\"Expired\",\"address\":\"Adresse des\\r\\n1234. Lagers\"},{\"id\":3,\"type\":\"MOBILE\","
-										+ "\"name\":\"InRange\",\"address\":\"Adresse des Magazins\"}]}")
+						.expectedResponse("[{\"id\":1,\"type\":\"MAIN\","
+								+ "\"name\":\"NoProject\",\"address\":\"Adresse des Hauptlagers\"},{\"id\":2,\"type\":\"STANDARD\","
+								+ "\"name\":\"Expired\",\"address\":\"Adresse des\\r\\n1234. Lagers\"},{\"id\":3,\"type\":\"MOBILE\","
+								+ "\"name\":\"InRange\",\"address\":\"Adresse des Magazins\"}]")
 						.build(),
 						UserTest.builder().emails(List.of(STORE_KEEPER_EMAIL)).expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/stores/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":3,\"type\":\"MOBILE\","
-												+ "\"name\":\"InRange\",\"address\":\"Adresse des Magazins\"}]}")
+										"[{\"id\":3,\"type\":\"MOBILE\",\"name\":\"InRange\",\"address\":\"Adresse des Magazins\"}]")
 								.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
@@ -320,16 +318,13 @@ public class StoreIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/stores/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"type\":\"MAIN\","
-										+ "\"name\":\"NoProject\",\"address\":\"Adresse des Hauptlagers\"},{\"id\":2,\"type\":\"STANDARD\","
-										+ "\"name\":\"Expired\",\"address\":\"Adresse des\\r\\n1234. Lagers\"},{\"id\":3,\"type\":\"MOBILE\","
-										+ "\"name\":\"InRange\",\"address\":\"Adresse des Magazins\"}]}")
+						.expectedResponse("[{\"id\":1,\"type\":\"MAIN\","
+								+ "\"name\":\"NoProject\",\"address\":\"Adresse des Hauptlagers\"},{\"id\":2,\"type\":\"STANDARD\","
+								+ "\"name\":\"Expired\",\"address\":\"Adresse des\\r\\n1234. Lagers\"},{\"id\":3,\"type\":\"MOBILE\","
+								+ "\"name\":\"InRange\",\"address\":\"Adresse des Magazins\"}]")
 						.build(),
 						UserTest.builder().emails(List.of(STORE_KEEPER_EMAIL)).expectedHttpCode(HttpStatus.OK)
-								.expectedResponse(
-										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/stores/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[]}")
-								.build()))
+								.expectedResponse("[]").build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 
@@ -349,7 +344,7 @@ public class StoreIT extends BasicRestIntegrationTest {
 								STORE_KEEPER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":3,\"type\":\"MOBILE\",\"name\":\"InRange\",\"address\":\"Adresse des Magazins\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/stores/3\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":3,\"type\":\"MOBILE\",\"name\":\"InRange\",\"address\":\"Adresse des Magazins\"}")
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
@@ -369,7 +364,7 @@ public class StoreIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"type\":\"MAIN\",\"name\":\"NoProject\",\"address\":\"Adresse des Hauptlagers\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/stores/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"type\":\"MAIN\",\"name\":\"NoProject\",\"address\":\"Adresse des Hauptlagers\"}")
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}

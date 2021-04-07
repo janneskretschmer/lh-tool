@@ -34,7 +34,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (1, 1, 1, 1, '07:00:00', '17:00:00')"))
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":123,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":123}")
 						.validationQueries(List.of(
 								"SELECT * FROM need WHERE project_helper_type_id=1 AND quantity=123 AND date='2020-04-23'"))
 						.build()))
@@ -57,7 +57,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":123,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":123}")
 						.validationQueries(List.of(
 								"SELECT * FROM need WHERE project_helper_type_id=1 AND quantity=123 AND date='2020-04-23'"))
 						.build()))
@@ -108,7 +108,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 						.build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587686400000,\"quantity\":123,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587686400000,\"quantity\":123}")
 						.validationQueries(List.of(
 								"SELECT * FROM need WHERE project_helper_type_id=1 AND quantity=123 AND date='2020-04-24'"))
 						.build()))
@@ -133,7 +133,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587686400000,\"quantity\":123,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587686400000,\"quantity\":123}")
 						.validationQueries(List.of(
 								"SELECT * FROM need WHERE project_helper_type_id=1 AND quantity=123 AND date='2020-04-24'"))
 						.build()))
@@ -158,7 +158,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1000,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":123,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1000,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":123}")
 						.validationQueries(List.of(
 								"SELECT * FROM need WHERE project_helper_type_id=1 AND quantity=123 AND date='2020-04-23'"))
 						.build()))
@@ -236,8 +236,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, LOCAL_COORDINATOR_EMAIL, "test@lh-tool.de"))
 						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"id\":null,\"needId\":1,\"userId\":1000,\"state\":\"NONE\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null},{\"rel\":\"getState\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.expectedResponse("{\"id\":null,\"needId\":1,\"userId\":1000,\"state\":\"NONE\"}")
 						.validationQueries(List.of(
 								"SELECT 1 WHERE NOT EXISTS (SELECT * FROM need_user WHERE need_id=1 AND user_id=1000)"))
 						.build()))
@@ -262,8 +261,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, LOCAL_COORDINATOR_EMAIL, "test@lh-tool.de"))
 						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPLIED\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null},{\"rel\":\"getState\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.expectedResponse("{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPLIED\"}")
 						.validationQueries(
 								List.of("SELECT * FROM need_user WHERE need_id=1 AND user_id=1000 AND state='APPLIED'"))
 						.build()))
@@ -289,8 +287,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPLIED\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null},{\"rel\":\"getState\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.expectedResponse("{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPLIED\"}")
 						.validationQueries(
 								List.of("SELECT * FROM need_user WHERE need_id=1 AND user_id=1000 AND state='APPLIED'"))
 						.expectedEmails(List.of(EmailTest.builder().recipient("test@lh-tool.de")
@@ -324,8 +321,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPROVED\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null},{\"rel\":\"getState\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.expectedResponse("{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPROVED\"}")
 						.validationQueries(List
 								.of("SELECT * FROM need_user WHERE need_id=1 AND user_id=1000 AND state='APPROVED'"))
 						.expectedEmails(List.of(EmailTest.builder().recipient("test@lh-tool.de")
@@ -359,8 +355,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPROVED\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null},{\"rel\":\"getState\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.expectedResponse("{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPROVED\"}")
 						.validationQueries(List
 								.of("SELECT * FROM need_user WHERE need_id=1 AND user_id=1000 AND state='APPROVED'"))
 						.expectedEmails(List.of(EmailTest.builder().recipient("test@lh-tool.de")
@@ -394,8 +389,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"REJECTED\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null},{\"rel\":\"getState\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.expectedResponse("{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"REJECTED\"}")
 						.validationQueries(List
 								.of("SELECT * FROM need_user WHERE need_id=1 AND user_id=1000 AND state='REJECTED'"))
 						.expectedEmails(List.of(EmailTest.builder().recipient("test@lh-tool.de")
@@ -428,8 +422,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, LOCAL_COORDINATOR_EMAIL, "test@lh-tool.de"))
 						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"id\":null,\"needId\":1,\"userId\":1000,\"state\":\"NONE\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null},{\"rel\":\"getState\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.expectedResponse("{\"id\":null,\"needId\":1,\"userId\":1000,\"state\":\"NONE\"}")
 						.validationQueries(List.of(
 								"SELECT 1 WHERE NOT EXISTS (SELECT * FROM need_user WHERE need_id=1 AND user_id=1000)"))
 						.expectedEmails(List.of(EmailTest.builder().recipient("test-local_coordinator@lh-tool.de")
@@ -465,8 +458,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL,
 								"test@lh-tool.de"))
 						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPROVED\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null},{\"rel\":\"getState\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.expectedResponse("{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPROVED\"}")
 						.validationQueries(List
 								.of("SELECT * FROM need_user WHERE need_id=1 AND user_id=1000 AND state='APPROVED'"))
 						.build()))
@@ -597,8 +589,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL,
 								ATTENDANCE_EMAIL, PUBLISHER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":42,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/?project_helper_type_id=1&date=2020-04-23\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.expectedResponse("{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":42}")
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
@@ -612,8 +603,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 						"INSERT INTO need (id, project_helper_type_id, quantity, date) VALUES (1, 1, 42, '2020-04-23')"))
 				.url(REST_URL + "/needs?project_helper_type_id=1&date=2020-04-23").method(Method.GET)
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":42,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/?project_helper_type_id=1&date=2020-04-23\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.expectedResponse("{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":42}")
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
@@ -632,7 +622,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 								ATTENDANCE_EMAIL, PUBLISHER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":42,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":42}")
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
@@ -646,8 +636,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 						"INSERT INTO need (id, project_helper_type_id, quantity, date) VALUES (1, 1, 42, '2020-04-23')"))
 				.url(REST_URL + "/needs/1").method(Method.GET)
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":42,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.expectedResponse("{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":42}")
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
@@ -668,9 +657,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 						"INSERT INTO need_user (id, need_id, user_id, state) VALUES (4, 2, 2, 'APPROVED')"))
 				.url(REST_URL + "/needs/1/users/1000").method(Method.GET)
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPROVED\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
-						.build()))
+						.expectedResponse("{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPROVED\"}").build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 
@@ -694,9 +681,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL,
 								ATTENDANCE_EMAIL, "test@lh-tool.de"))
 						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPROVED\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
-						.build()))
+						.expectedResponse("{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPROVED\"}").build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 
@@ -717,7 +702,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 				.url(REST_URL + "/needs/1/users").method(Method.GET)
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":2,\"needId\":1,\"userId\":1,\"state\":\"APPLIED\"},{\"id\":3,\"needId\":1,\"userId\":2,\"state\":\"REJECTED\"},{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPROVED\"}]}")
+								"[{\"id\":2,\"needId\":1,\"userId\":1,\"state\":\"APPLIED\"},{\"id\":3,\"needId\":1,\"userId\":2,\"state\":\"REJECTED\"},{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPROVED\"}]")
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
@@ -743,21 +728,17 @@ public class NeedIT extends BasicRestIntegrationTest {
 								.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL, ATTENDANCE_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":2,\"needId\":1,\"userId\":1,\"state\":\"APPLIED\"},{\"id\":3,\"needId\":1,\"userId\":2,\"state\":\"REJECTED\"},{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPROVED\"}]}")
+								"[{\"id\":2,\"needId\":1,\"userId\":1,\"state\":\"APPLIED\"},{\"id\":3,\"needId\":1,\"userId\":2,\"state\":\"REJECTED\"},{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPROVED\"}]")
 						.build(),
 						UserTest.builder().emails(List.of("test@lh-tool.de")).expectedHttpCode(HttpStatus.OK)
-								.expectedResponse(
-										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":["
-												+ "{\"id\":2,\"needId\":1,\"userId\":null,\"state\":\"APPLIED\"},"
-												+ "{\"id\":3,\"needId\":1,\"userId\":null,\"state\":\"REJECTED\"},"
-												+ "{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPROVED\"}]}")
+								.expectedResponse("[{\"id\":2,\"needId\":1,\"userId\":null,\"state\":\"APPLIED\"},"
+										+ "{\"id\":3,\"needId\":1,\"userId\":null,\"state\":\"REJECTED\"},"
+										+ "{\"id\":1,\"needId\":1,\"userId\":1000,\"state\":\"APPROVED\"}]")
 								.build(),
 						UserTest.builder().emails(List.of(PUBLISHER_EMAIL)).expectedHttpCode(HttpStatus.OK)
-								.expectedResponse(
-										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/needs/1/users\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":["
-												+ "{\"id\":2,\"needId\":1,\"userId\":null,\"state\":\"APPLIED\"},"
-												+ "{\"id\":3,\"needId\":1,\"userId\":null,\"state\":\"REJECTED\"},"
-												+ "{\"id\":1,\"needId\":1,\"userId\":null,\"state\":\"APPROVED\"}]}")
+								.expectedResponse("[{\"id\":2,\"needId\":1,\"userId\":null,\"state\":\"APPLIED\"},"
+										+ "{\"id\":3,\"needId\":1,\"userId\":null,\"state\":\"REJECTED\"},"
+										+ "{\"id\":1,\"needId\":1,\"userId\":null,\"state\":\"APPROVED\"}]")
 								.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}

@@ -39,7 +39,7 @@ public class SlotIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"storeId\":3,\"name\":\"created\",\"description\":\"Description\",\"outside\":true,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/slots/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"storeId\":3,\"name\":\"created\",\"description\":\"Description\",\"outside\":true}")
 						.validationQueries(List.of(
 								"SELECT * FROM slot WHERE id =1 AND store_id=3 AND name='created' AND description='Description' AND outside=1",
 								"SELECT 1 WHERE (SELECT COUNT(*) FROM store) = 3",
@@ -138,7 +138,7 @@ public class SlotIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"storeId\":1,\"name\":\"created\",\"description\":\"Description\",\"outside\":true,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/slots/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"storeId\":1,\"name\":\"created\",\"description\":\"Description\",\"outside\":true}")
 						.validationQueries(List.of(
 								"SELECT * FROM slot WHERE id =1 AND store_id=1 AND name='created' AND description='Description' AND outside=1",
 								"SELECT 1 WHERE (SELECT COUNT(*) FROM store) = 3",
@@ -173,7 +173,7 @@ public class SlotIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"storeId\":3,\"name\":\"Changed\",\"description\":\"Changed description\",\"outside\":true,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/slots/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"storeId\":3,\"name\":\"Changed\",\"description\":\"Changed description\",\"outside\":true}")
 						.validationQueries(List.of(
 								"SELECT * FROM slot WHERE id =1 AND store_id=3 AND name='Changed' AND description='Changed description' AND outside=1",
 								"SELECT 1 WHERE (SELECT COUNT(*) FROM store) = 3",
@@ -305,16 +305,14 @@ public class SlotIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/slots/{?free_text,name,description,store_id}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"storeId\":1,"
-										+ "\"name\":\"SlotOfMain\",\"description\":null,\"outside\":false},{\"id\":3,\"storeId\":3,"
-										+ "\"name\":\"SlotOfMobile\",\"description\":\"\",\"outside\":true},{\"id\":2,\"storeId\":2,"
-										+ "\"name\":\"SlotOfStandard\",\"description\":\"description\",\"outside\":false}]}")
+						.expectedResponse("[{\"id\":1,\"storeId\":1,"
+								+ "\"name\":\"SlotOfMain\",\"description\":null,\"outside\":false},{\"id\":3,\"storeId\":3,"
+								+ "\"name\":\"SlotOfMobile\",\"description\":\"\",\"outside\":true},{\"id\":2,\"storeId\":2,"
+								+ "\"name\":\"SlotOfStandard\",\"description\":\"description\",\"outside\":false}]")
 						.build(),
 						UserTest.builder().emails(List.of(STORE_KEEPER_EMAIL)).expectedHttpCode(HttpStatus.OK)
-								.expectedResponse(
-										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/slots/{?free_text,name,description,store_id}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":3,\"storeId\":3,"
-												+ "\"name\":\"SlotOfMobile\",\"description\":\"\",\"outside\":true}]}")
+								.expectedResponse("[{\"id\":3,\"storeId\":3,"
+										+ "\"name\":\"SlotOfMobile\",\"description\":\"\",\"outside\":true}]")
 								.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
@@ -331,16 +329,13 @@ public class SlotIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/slots/{?free_text,name,description,store_id}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"storeId\":1,"
-										+ "\"name\":\"SlotOfMain\",\"description\":null,\"outside\":false},{\"id\":3,\"storeId\":3,"
-										+ "\"name\":\"SlotOfMobile\",\"description\":\"\",\"outside\":true},{\"id\":2,\"storeId\":2,"
-										+ "\"name\":\"SlotOfStandard\",\"description\":\"description\",\"outside\":false}]}")
+						.expectedResponse("[{\"id\":1,\"storeId\":1,"
+								+ "\"name\":\"SlotOfMain\",\"description\":null,\"outside\":false},{\"id\":3,\"storeId\":3,"
+								+ "\"name\":\"SlotOfMobile\",\"description\":\"\",\"outside\":true},{\"id\":2,\"storeId\":2,"
+								+ "\"name\":\"SlotOfStandard\",\"description\":\"description\",\"outside\":false}]")
 						.build(),
 						UserTest.builder().emails(List.of(STORE_KEEPER_EMAIL)).expectedHttpCode(HttpStatus.OK)
-								.expectedResponse(
-										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/slots/{?free_text,name,description,store_id}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[]}")
-								.build()))
+								.expectedResponse("[]").build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 
@@ -356,16 +351,13 @@ public class SlotIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/slots/?free_text=123{&name,description,store_id}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":4,\"storeId\":1,"
-										+ "\"name\":\"InDescription\",\"description\":\"Description with 123xD\",\"outside\":true},{\"id\":3,\"storeId\":1,"
-										+ "\"name\":\"InName:123\",\"description\":\"\",\"outside\":true},{\"id\":2,\"storeId\":3,"
-										+ "\"name\":\"InStore\",\"description\":\"description\",\"outside\":false}]}")
+						.expectedResponse("[{\"id\":4,\"storeId\":1,"
+								+ "\"name\":\"InDescription\",\"description\":\"Description with 123xD\",\"outside\":true},{\"id\":3,\"storeId\":1,"
+								+ "\"name\":\"InName:123\",\"description\":\"\",\"outside\":true},{\"id\":2,\"storeId\":3,"
+								+ "\"name\":\"InStore\",\"description\":\"description\",\"outside\":false}]")
 						.build(),
 						UserTest.builder().emails(List.of(STORE_KEEPER_EMAIL)).expectedHttpCode(HttpStatus.OK)
-								.expectedResponse(
-										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/slots/?free_text=123{&name,description,store_id}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[]}")
-								.build()))
+								.expectedResponse("[]").build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 
@@ -381,15 +373,12 @@ public class SlotIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/slots/?name=123{&free_text,description,store_id}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"storeId\":2,"
-										+ "\"name\":\"In123Name\",\"description\":\"Description without search phrase\",\"outside\":false},{\"id\":3,\"storeId\":1,"
-										+ "\"name\":\"InName:123\",\"description\":\"\",\"outside\":true}]}")
+						.expectedResponse("[{\"id\":1,\"storeId\":2,"
+								+ "\"name\":\"In123Name\",\"description\":\"Description without search phrase\",\"outside\":false},{\"id\":3,\"storeId\":1,"
+								+ "\"name\":\"InName:123\",\"description\":\"\",\"outside\":true}]")
 						.build(),
 						UserTest.builder().emails(List.of(STORE_KEEPER_EMAIL)).expectedHttpCode(HttpStatus.OK)
-								.expectedResponse(
-										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/slots/?name=123{&free_text,description,store_id}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[]}")
-								.build()))
+								.expectedResponse("[]").build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 
@@ -405,15 +394,12 @@ public class SlotIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/slots/?description=123{&free_text,name,store_id}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":4,\"storeId\":1,"
-										+ "\"name\":\"InDescription\",\"description\":\"Description with 123xD\",\"outside\":true},{\"id\":1,\"storeId\":2,"
-										+ "\"name\":\"InDescription2\",\"description\":\"Description without 123 search phrase\",\"outside\":false}]}")
+						.expectedResponse("[{\"id\":4,\"storeId\":1,"
+								+ "\"name\":\"InDescription\",\"description\":\"Description with 123xD\",\"outside\":true},{\"id\":1,\"storeId\":2,"
+								+ "\"name\":\"InDescription2\",\"description\":\"Description without 123 search phrase\",\"outside\":false}]")
 						.build(),
 						UserTest.builder().emails(List.of(STORE_KEEPER_EMAIL)).expectedHttpCode(HttpStatus.OK)
-								.expectedResponse(
-										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/slots/?description=123{&free_text,name,store_id}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[]}")
-								.build()))
+								.expectedResponse("[]").build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 
@@ -429,18 +415,15 @@ public class SlotIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/slots/?store_id=1{&free_text,name,description}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":7,\"storeId\":1,"
-										+ "\"name\":\"InDepth\",\"description\":\"\",\"outside\":true},{\"id\":4,\"storeId\":1,"
-										+ "\"name\":\"InDescription\",\"description\":\"Description with 123xD\",\"outside\":true},{\"id\":6,\"storeId\":1,"
-										+ "\"name\":\"InHeight\",\"description\":\"desc\",\"outside\":true},{\"id\":3,\"storeId\":1,"
-										+ "\"name\":\"InName:123\",\"description\":\"\",\"outside\":true},{\"id\":5,\"storeId\":1,"
-										+ "\"name\":\"InWidth\",\"description\":\"\",\"outside\":true}]}")
+						.expectedResponse("[{\"id\":7,\"storeId\":1,"
+								+ "\"name\":\"InDepth\",\"description\":\"\",\"outside\":true},{\"id\":4,\"storeId\":1,"
+								+ "\"name\":\"InDescription\",\"description\":\"Description with 123xD\",\"outside\":true},{\"id\":6,\"storeId\":1,"
+								+ "\"name\":\"InHeight\",\"description\":\"desc\",\"outside\":true},{\"id\":3,\"storeId\":1,"
+								+ "\"name\":\"InName:123\",\"description\":\"\",\"outside\":true},{\"id\":5,\"storeId\":1,"
+								+ "\"name\":\"InWidth\",\"description\":\"\",\"outside\":true}]")
 						.build(),
 						UserTest.builder().emails(List.of(STORE_KEEPER_EMAIL)).expectedHttpCode(HttpStatus.OK)
-								.expectedResponse(
-										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/slots/?store_id=1{&free_text,name,description}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[]}")
-								.build()))
+								.expectedResponse("[]").build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
 
@@ -461,7 +444,7 @@ public class SlotIT extends BasicRestIntegrationTest {
 								STORE_KEEPER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"storeId\":3,\"name\":\"InDescription2\",\"description\":\"Description without 123 search phrase\",\"outside\":false,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/slots/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"storeId\":3,\"name\":\"InDescription2\",\"description\":\"Description without 123 search phrase\",\"outside\":false}")
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
@@ -479,7 +462,7 @@ public class SlotIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"storeId\":3,\"name\":\"InDescription2\",\"description\":\"Description without 123 search phrase\",\"outside\":false,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/slots/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"storeId\":3,\"name\":\"InDescription2\",\"description\":\"Description without 123 search phrase\",\"outside\":false}")
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
