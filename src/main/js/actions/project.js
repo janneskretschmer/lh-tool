@@ -23,7 +23,7 @@ export function fetchProjects(accessToken) {
     return apiRequest({
         apiEndpoint: apiEndpoints.project.getOwn,
         authToken: accessToken,
-    }).then(result => result.response.content.map(parseProjectDates));
+    }).then(result => result.response.map(parseProjectDates));
 }
 
 export function fetchProject(accessToken, projectId) {
@@ -101,7 +101,7 @@ export function fetchProjectHelperTypes(accessToken, projectId, helperTypeId, we
                 [WEEKDAY_VARIABLE]: weekday,
             }
         })
-            .then(result => result.response.content);
+            .then(result => result.response);
     } else {
         return Promise.resolve([]);
     }

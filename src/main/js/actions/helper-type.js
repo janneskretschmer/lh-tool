@@ -11,7 +11,7 @@ export function fetchHelperTypes(accessToken, projectId, weekday) {
                 [WEEKDAY_VARIABLE]: weekday,
             }
         })
-            .then(result => result.response.content);
+            .then(result => result.response);
     } else {
         return Promise.resolve([]);
     }

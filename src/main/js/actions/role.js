@@ -5,5 +5,5 @@ export function fetchRoles(accessToken) {
         apiEndpoint: apiEndpoints.role.get,
         authToken: accessToken,
     })
-        .then(result => result.response.content);
+        .then(result => result.response);
 }

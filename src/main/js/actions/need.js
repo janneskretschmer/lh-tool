@@ -23,7 +23,7 @@ export function fetchNeedUsers(accessToken, needId) {
             [ID_VARIABLE]: needId,
         },
     }).then(
-        result => result.response.content
+        result => result.response
     );
 }
 

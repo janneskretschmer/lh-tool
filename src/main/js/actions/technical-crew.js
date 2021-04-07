@@ -6,7 +6,7 @@ export function fetchTechnicalCrews(accessToken) {
         return apiRequest({
             apiEndpoint: apiEndpoints.technicalCrew.get,
             authToken: accessToken
-        }).then(result => result.response.content);
+        }).then(result => result.response);
     } else {
         return Promise.resolve([]);
     }

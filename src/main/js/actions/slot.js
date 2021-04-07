@@ -12,7 +12,7 @@ export function fetchSlotsByFreeTextAndNameAndDescriptionAndStore(accessToken, f
                 [DESCRIPTION_VARIABLE]: description,
                 [STORE_ID_VARIABLE]: storeId,
             }
-        }).then(result => result.response.content);
+        }).then(result => result.response);
     } else {
         return Promise.resolve([]);
     }
