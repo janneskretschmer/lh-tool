@@ -1,4 +1,3 @@
-import React from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
@@ -6,25 +5,22 @@ import IconButton from '@material-ui/core/IconButton';
 import { withStyles } from '@material-ui/core/styles';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import classNames from 'classnames';
+import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItem, fullPathOfItems, fullPathOfLogin, fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities, fullPathOfSlot, fullPathOfStore, fullPathOfStores, partialPathOfNeed, fullPathOfSettings, fullPathOfItemData, fullPathOfSlots } from '../paths';
+import { fullPathOfChangePw, fullPathOfDataProtection, fullPathOfImprint, fullPathOfItems, fullPathOfLogin, fullPathOfSettings, fullPathOfSlots, partialPathOfNeed } from '../paths';
+import PageProvider from '../providers/page-provider';
 import SessionProvider from '../providers/session-provider';
 import ChangePasswordComponent from './changepw';
 import AppHeader from './header';
+import ItemWrapperComponent from './item/item-wrapper';
 import LoginComponent from './login';
 import AppMenu from './menu';
 import NeedWrapperComponent from './need/need-wrapper';
-import ItemWrapperComponent from './item/item-wrapper';
 import NotFoundHandlerComponent from './notfound';
-import SlotDetailComponent from './slot/slot-detail';
-import StoreListComponent from './store/store-list';
-import SlotListComponent from './slot/slot-list';
+import SettingsComponent from './settings';
 import SlotWrapperComponent from './slot/slot-wrapper';
 import DataProtection from './util/data-protection';
 import Imprint from './util/imprint';
-import SettingsComponent from './settings';
-import PageProvider from '../providers/page-provider';
-import ItemsProvider from '../providers/items-provider';
 
 const drawerWidth = 240;
 
@@ -65,7 +61,7 @@ const styles = theme => ({
 });
 
 @withStyles(styles, { withTheme: true })
-export default class LHToolRoot extends React.Component {
+class LHToolRoot extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -147,3 +143,8 @@ export default class LHToolRoot extends React.Component {
         );
     }
 }
+
+
+// typescript doesn't like class components written in javascript
+const LHToolRootWrapper = props => (<LHToolRoot />);
+export default LHToolRootWrapper;

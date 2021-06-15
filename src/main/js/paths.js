@@ -3,7 +3,7 @@ import { STORE_ID_VARIABLE } from './urlmappings';
 
 export function fullPathOf(subPath, queryMap) {
     let path = (getBasePath() || '/') + (subPath || '');
-    const queryString = queryMap && [...queryMap.entries()]
+    const queryString = queryMap && Array.from(queryMap.entries())
         .filter(query => query[1])
         .map(query => `${query[0]}=${query[1]}`)
         .join('&');

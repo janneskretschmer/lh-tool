@@ -1,6 +1,17 @@
 {
     "compilerOptions": {
+        "outDir": "./src/main/resources/static/built",
+        "sourceMap": true,
+        "strictNullChecks": true,
+        "module": "es6",
+        "jsx": "react",
+        "target": "ES5",
+        "downlevelIteration": true,
         "experimentalDecorators": true,
         "allowJs": true,
-    }
+        "allowSyntheticDefaultImports": true
+    },
+    "include": [
+        "./src/main/js/"
+    ]
 }
