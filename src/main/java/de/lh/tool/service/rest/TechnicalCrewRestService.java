@@ -1,13 +1,8 @@
 package de.lh.tool.service.rest;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,21 +24,17 @@ public class TechnicalCrewRestService {
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of own technical crews")
 	@Secured(UserRole.RIGHT_TECHNICAL_CREWS_GET)
-	public Resources<TechnicalCrewDto> getOwn() throws DefaultException {
+	public List<TechnicalCrewDto> getOwn() throws DefaultException {
 
-		List<TechnicalCrewDto> dtoList = technicalCrewService.findDtos();
-
-		return new Resources<>(dtoList, linkTo(methodOn(TechnicalCrewRestService.class).getOwn()).withSelfRel());
+		return technicalCrewService.findDtos();
 	}
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
 	@ApiOperation(value = "Get a single technical crew by id")
 	@Secured(UserRole.RIGHT_TECHNICAL_CREWS_GET)
-	public Resource<TechnicalCrewDto> getById(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
+	public TechnicalCrewDto getById(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 
-		TechnicalCrewDto dto = technicalCrewService.findDtoById(id);
-
-		return new Resource<>(dto, linkTo(methodOn(TechnicalCrewRestService.class).getById(id)).withSelfRel());
+		return technicalCrewService.findDtoById(id);
 	}
 }

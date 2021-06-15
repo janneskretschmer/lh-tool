@@ -14,7 +14,7 @@ export function fetchNeedsForCalendar(accessToken, projectId, startDate, endDate
                 [END_DATE_VARIABLE]: endDate,
             }
         })
-            .then(result => result.response.content)
+            .then(result => result.response)
             .then(dateObject => {
                 let dateMap = new Map();
                 Object.keys(dateObject).forEach(

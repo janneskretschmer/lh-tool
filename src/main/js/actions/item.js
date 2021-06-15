@@ -11,7 +11,7 @@ export function fetchItems(accessToken, freeText) {
             queries: {
                 [FREE_TEXT_VARIABLE]: freeText,
             },
-        }).then(result => result.response.content);
+        }).then(result => result.response);
     } else {
         return Promise.resolve([]);
     }
@@ -90,7 +90,7 @@ export function fetchItemNotes(accessToken, itemId) {
         authToken: accessToken,
         parameters: { [ITEM_ID_VARIABLE]: itemId }
     })
-        .then(result => result.response.content.map(note => ({
+        .then(result => result.response.map(note => ({
             ...note,
             timestamp: moment(note.timestamp, moment.ISO_8601).utc(true),
         })));
@@ -138,7 +138,7 @@ export function fetchItemTagsByItem(accessToken, itemId) {
         authToken: accessToken,
         parameters: { [ITEM_ID_VARIABLE]: itemId }
     })
-        .then(result => result.response.content);
+        .then(result => result.response);
 }
 
 export function createItemTag(accessToken, itemId, itemTag) {
@@ -165,7 +165,7 @@ export function fetchItemHistory(accessToken, itemId) {
         authToken: accessToken,
         parameters: { [ITEM_ID_VARIABLE]: itemId }
     })
-        .then(result => result.response.content.map(tmp => ({
+        .then(result => result.response.map(tmp => ({
             ...tmp,
             timestamp: moment(tmp.timestamp, moment.ISO_8601).utc(true),
             data: tmp.data ? JSON.parse(tmp.data) : null,
@@ -228,7 +228,7 @@ export function fetchRelatedItems(accessToken, itemId) {
         authToken: accessToken,
         parameters: { [ITEM_ID_VARIABLE]: itemId }
     })
-        .then(result => result.response.content);
+        .then(result => result.response);
 }
 
 export function createItemRelation(accessToken, item1Id, item2Id) {

@@ -1,13 +1,8 @@
 package de.lh.tool.service.rest;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -46,67 +41,52 @@ public class UserRestService {
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of all users")
 	@Secured(UserRole.RIGHT_USERS_GET)
-	public Resources<UserDto> get(
-			@RequestParam(required = false, name = UrlMappings.PROJECT_ID_VARIABLE) Long projectId,
+	public List<UserDto> get(@RequestParam(required = false, name = UrlMappings.PROJECT_ID_VARIABLE) Long projectId,
 			@RequestParam(required = false, name = UrlMappings.ROLE_VARIABLE) String role,
 			@RequestParam(required = false, name = UrlMappings.FREE_TEXT_VARIABLE) String freeText)
 			throws DefaultException {
 
-		List<UserDto> dtos = userService.findDtosByProjectIdAndRoleIgnoreCase(projectId, role, freeText);
-
-		return new Resources<>(dtos,
-				linkTo(methodOn(UserRestService.class).get(projectId, role, freeText)).withSelfRel());
+		return userService.findDtosByProjectIdAndRoleIgnoreCase(projectId, role, freeText);
 	}
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
 	@ApiOperation(value = "Get a single user by id")
 	@Secured(UserRole.RIGHT_USERS_GET)
-	public Resource<UserDto> getById(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
+	public UserDto getById(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 
-		UserDto dto = userService.findDtoById(id);
-
-		return new Resource<>(dto, linkTo(methodOn(UserRestService.class).getById(id)).withSelfRel());
+		return userService.findDtoById(id);
 	}
 
 	// FUTURE convert to dto in service layer
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.USER_CURRENT)
 	@ApiOperation(value = "Get data of current users")
-	public Resource<UserDto> getCurrent() throws DefaultException {
+	public UserDto getCurrent() throws DefaultException {
 
-		UserDto user = userService.findCurrentUserDto();
-
-		return new Resource<>(user);
+		return userService.findCurrentUserDto();
 	}
 
 	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@Secured(UserRole.RIGHT_USERS_POST)
-	public Resource<UserDto> add(@RequestBody UserDto userDto) throws DefaultException {
+	public UserDto add(@RequestBody UserDto userDto) throws DefaultException {
 
-		UserDto savedDto = userService.createDto(userDto);
-
-		return new Resource<>(savedDto, linkTo(methodOn(UserRestService.class).add(userDto)).withSelfRel(),
-				linkTo(methodOn(UserRestService.class).changePassword(null)).withRel(UrlMappings.USER_PASSWORD));
+		return userService.createDto(userDto);
 	}
 
 	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
 	@Secured(UserRole.RIGHT_USERS_PUT)
-	public Resource<UserDto> update(@PathVariable(name = UrlMappings.ID_VARIABLE, required = false) Long id,
+	public UserDto update(@PathVariable(name = UrlMappings.ID_VARIABLE, required = false) Long id,
 			@RequestBody UserDto userDto) throws DefaultException {
 
-		UserDto savedDto = userService.updateDto(userDto, id);
-
-		return new Resource<>(savedDto, linkTo(methodOn(UserRestService.class).update(id, userDto)).withSelfRel());
+		return userService.updateDto(userDto, id);
 	}
 
 	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.USER_PASSWORD)
-	public Resource<UserDto> changePassword(@RequestBody PasswordChangeDto passwordChangeDto) throws DefaultException {
+	public UserDto changePassword(@RequestBody PasswordChangeDto passwordChangeDto) throws DefaultException {
 
-		UserDto savedDto = userService.changePassword(passwordChangeDto.getUserId(), passwordChangeDto.getToken(),
+		return userService.changePassword(passwordChangeDto.getUserId(), passwordChangeDto.getToken(),
 				passwordChangeDto.getOldPassword(), passwordChangeDto.getNewPassword(),
 				passwordChangeDto.getConfirmPassword());
-
-		return new Resource<>(savedDto);
 	}
 
 	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
@@ -121,24 +101,18 @@ public class UserRestService {
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.USER_ROLES)
 	@Secured(UserRole.RIGHT_USERS_ROLES_GET)
-	public Resources<UserRoleDto> getUserRoles(
-			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long userId) throws DefaultException {
+	public List<UserRoleDto> getUserRoles(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long userId)
+			throws DefaultException {
 
-		List<UserRoleDto> dtoList = userRoleService.findDtosByUserId(userId);
-
-		return new Resources<>(dtoList, linkTo(methodOn(UserRestService.class).getUserRoles(userId)).withSelfRel());
+		return userRoleService.findDtosByUserId(userId);
 	}
 
 	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.USER_ROLES)
 	@Secured(UserRole.RIGHT_USERS_ROLES_POST)
-	public Resource<UserRoleDto> createUserRole(
-			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long userId,
+	public UserRoleDto createUserRole(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long userId,
 			@RequestBody(required = true) UserRoleDto userRoleDto) throws DefaultException {
 
-		UserRoleDto savedUserRole = userRoleService.createDto(userRoleDto);
-
-		return new Resource<>(savedUserRole,
-				linkTo(methodOn(UserRestService.class).createUserRole(userId, userRoleDto)).withSelfRel());
+		return userRoleService.createDto(userRoleDto);
 	}
 
 	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.USER_ROLES_ID)
@@ -154,11 +128,9 @@ public class UserRestService {
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.USER_PROJECTS)
 	@Secured(UserRole.RIGHT_PROJECTS_USERS_GET)
-	public Resources<ProjectUserDto> getUserProjects(
+	public List<ProjectUserDto> getUserProjects(
 			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long userId) throws DefaultException {
 
-		List<ProjectUserDto> dtoList = projectUserService.findDtosByUserId(userId);
-
-		return new Resources<>(dtoList, linkTo(methodOn(UserRestService.class).getUserProjects(userId)).withSelfRel());
+		return projectUserService.findDtosByUserId(userId);
 	}
 }

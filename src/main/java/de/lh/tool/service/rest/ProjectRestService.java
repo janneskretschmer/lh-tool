@@ -1,16 +1,10 @@
 package de.lh.tool.service.rest;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
-import java.util.Collection;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -47,46 +41,35 @@ public class ProjectRestService {
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Get a list of own projects")
 	@Secured(UserRole.RIGHT_PROJECTS_GET)
-	public Resources<ProjectDto> getOwn() throws DefaultException {
+	public List<ProjectDto> getOwn() throws DefaultException {
 
-		Collection<ProjectDto> dtoList = projectService.findDtos();
-
-		return new Resources<>(dtoList, linkTo(methodOn(ProjectRestService.class).getOwn()).withSelfRel());
+		return projectService.findDtos();
 	}
 
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
 	@ApiOperation(value = "Get a single project by id")
 	@Secured(UserRole.RIGHT_PROJECTS_GET)
-	public Resource<ProjectDto> getById(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
+	public ProjectDto getById(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id)
 			throws DefaultException {
 
-		ProjectDto dto = projectService.findDtoById(id);
-
-		return new Resource<>(dto, linkTo(methodOn(ProjectRestService.class).getById(id)).withSelfRel());
+		return projectService.findDtoById(id);
 	}
 
 	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.NO_EXTENSION)
 	@ApiOperation(value = "Create a new project")
 	@Secured(UserRole.RIGHT_PROJECTS_POST)
-	public Resource<ProjectDto> create(@RequestBody(required = true) ProjectDto dto) throws DefaultException {
+	public ProjectDto create(@RequestBody(required = true) ProjectDto dto) throws DefaultException {
 
-		ProjectDto projectDto = projectService.createDto(dto);
-
-		return new Resource<>(projectDto,
-				linkTo(methodOn(ProjectRestService.class).update(projectDto.getId(), projectDto))
-						.withRel(UrlMappings.ID_EXTENSION));
+		return projectService.createDto(dto);
 	}
 
 	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
 	@ApiOperation(value = "Update a project")
 	@Secured(UserRole.RIGHT_PROJECTS_PUT)
-	public Resource<ProjectDto> update(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
+	public ProjectDto update(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@RequestBody(required = true) ProjectDto dto) throws DefaultException {
 
-		ProjectDto projectDto = projectService.updateDto(dto, id);
-
-		return new Resource<>(projectDto,
-				linkTo(methodOn(ProjectRestService.class).update(id, projectDto)).withSelfRel());
+		return projectService.updateDto(dto, id);
 	}
 
 	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_EXTENSION)
@@ -104,12 +87,10 @@ public class ProjectRestService {
 	@ApiOperation(value = "Create a new relationship between project and user")
 	@Secured(UserRole.RIGHT_PROJECTS_USERS_POST)
 	@Transactional
-	public Resource<ProjectUserDto> addUser(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
+	public ProjectUserDto addUser(@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@PathVariable(name = UrlMappings.USER_ID_VARIABLE, required = true) Long userId) throws DefaultException {
 
-		ProjectUserDto dto = projectUserService.createDto(id, userId);
-
-		return new Resource<>(dto, linkTo(methodOn(ProjectRestService.class).addUser(id, userId)).withSelfRel());
+		return projectUserService.createDto(id, userId);
 	}
 
 	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.ID_USER_ID_EXTENSION)
@@ -127,46 +108,35 @@ public class ProjectRestService {
 	@GetMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.PROJECT_HELPER_TYPES)
 	@ApiOperation(value = "Get a list of relationships between project and helpertypes")
 	@Secured(UserRole.RIGHT_PROJECTS_HELPER_TYPES_GET)
-	public Resources<ProjectHelperTypeDto> getProjectHelperTypes(
+	public List<ProjectHelperTypeDto> getProjectHelperTypes(
 			@PathVariable(name = UrlMappings.PROJECT_ID_VARIABLE, required = true) Long projectId,
 			@RequestParam(required = false, name = UrlMappings.HELPER_TYPE_ID_VARIABLE) Long helperTypeId,
 			@RequestParam(required = false, name = UrlMappings.WEEKDAY_VARIABLE) Integer weekday)
 			throws DefaultException {
 
-		List<ProjectHelperTypeDto> dtoList = projectHelperTypeService
-				.findDtosByProjectIdAndHelperTypeIdAndWeekday(projectId, helperTypeId, weekday);
-
-		return new Resources<>(dtoList,
-				linkTo(methodOn(ProjectRestService.class).getProjectHelperTypes(projectId, helperTypeId, weekday))
-						.withSelfRel());
+		return projectHelperTypeService.findDtosByProjectIdAndHelperTypeIdAndWeekday(projectId, helperTypeId, weekday);
 	}
 
 	@PostMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.PROJECT_HELPER_TYPES)
 	@ApiOperation(value = "Create a new relationship between project and helpertype")
 	@Secured(UserRole.RIGHT_PROJECTS_HELPER_TYPES_POST)
-	public Resource<ProjectHelperTypeDto> createPojectHelperType(
+	public ProjectHelperTypeDto createPojectHelperType(
 			@PathVariable(name = UrlMappings.PROJECT_ID_VARIABLE, required = true) Long id,
 			@RequestBody ProjectHelperTypeDto dto) throws DefaultException {
 
-		ProjectHelperTypeDto savedDto = projectHelperTypeService.createDto(dto);
-
-		return new Resource<>(savedDto,
-				linkTo(methodOn(ProjectRestService.class).createPojectHelperType(id, dto)).withSelfRel());
+		return projectHelperTypeService.createDto(dto);
 	}
 
 	@PutMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.PROJECT_HELPER_TYPES_ID)
 	@ApiOperation(value = "Update a new relationship between project and helpertype")
 	@Secured(UserRole.RIGHT_PROJECTS_HELPER_TYPES_PUT)
-	public Resource<ProjectHelperTypeDto> updatePojectHelperType(
+	public ProjectHelperTypeDto updatePojectHelperType(
 			@PathVariable(name = UrlMappings.PROJECT_ID_VARIABLE, required = true) Long projectId,
 			@PathVariable(name = UrlMappings.ID_VARIABLE, required = true) Long id,
 			@RequestBody ProjectHelperTypeDto dto) throws DefaultException {
 
 		dto.setProjectId(projectId);
-		ProjectHelperTypeDto savedDto = projectHelperTypeService.updateDto(dto, id);
-
-		return new Resource<>(savedDto,
-				linkTo(methodOn(ProjectRestService.class).updatePojectHelperType(projectId, id, dto)).withSelfRel());
+		return projectHelperTypeService.updateDto(dto, id);
 	}
 
 	@DeleteMapping(produces = UrlMappings.MEDIA_TYPE_JSON, path = UrlMappings.PROJECT_HELPER_TYPES_ID)

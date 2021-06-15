@@ -35,7 +35,7 @@ export function fetchUsersByProjectIdAndRoleAndFreeText(accessToken, projectId, 
             [FREE_TEXT_VARIABLE]: freeText,
         }
     })
-        .then(result => result.response.content);
+        .then(result => result.response);
 }
 
 export function fetchUser(accessToken, userId) {
@@ -87,7 +87,7 @@ export function fetchUserRoles(accessToken, { id }) {
         parameters: {
             [ID_VARIABLE]: id,
         }
-    }).then(result => result.response.content);
+    }).then(result => result.response);
 }
 
 export function createUserRole(accessToken, userRole) {
@@ -120,5 +120,5 @@ export function fetchUserProjects(accessToken, { id }) {
         parameters: {
             [ID_VARIABLE]: id,
         }
-    }).then(result => result.response.content);
+    }).then(result => result.response);
 }

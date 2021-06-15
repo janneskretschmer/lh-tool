@@ -7,7 +7,7 @@ export function fetchOwnStores(accessToken) {
         return apiRequest({
             apiEndpoint: apiEndpoints.store.get,
             authToken: accessToken
-        }).then(result => result.response.content);
+        }).then(result => result.response);
     } else {
         return Promise.resolve([]);
     }
@@ -33,7 +33,7 @@ export function fetchStoreProjects({ accessToken, storeId }) {
             authToken: accessToken,
             parameters: { [ID_VARIABLE]: storeId }
         })
-            .then(result => result.response.content.map(storeProject => ({
+            .then(result => result.response.map(storeProject => ({
                 ...storeProject,
                 start: moment(storeProject.start, 'x'),
                 end: moment(storeProject.end, 'x'),
@@ -51,7 +51,7 @@ export function deleteAndCreateStoreProjects({ accessToken, storeId, storeProjec
             parameters: { [ID_VARIABLE]: storeId },
             data: storeProjects,
         })
-            .then(result => result.response.content.map(storeProject => ({
+            .then(result => result.response.map(storeProject => ({
                 ...storeProject,
                 start: moment(storeProject.start, 'x'),
                 end: moment(storeProject.end, 'x'),

@@ -33,7 +33,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"name\":\"Test\",\"startDate\":1548971153,\"endDate\":1551571200,\"links\":[{\"rel\":\"/{id}\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"name\":\"Test\",\"startDate\":1548971153,\"endDate\":1551571200}")
 						.validationQueries(List.of("SELECT * FROM project WHERE name='Test'",
 								"SELECT * FROM project_user WHERE project_id=(SELECT id FROM project WHERE name='Test') AND user_id=(SELECT id FROM user WHERE email=:email)"))
 						.build()))
@@ -71,8 +71,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 						"INSERT INTO `user` (`id`, `first_name`, `last_name`, `gender`, `email`) VALUES ('1000', 'Tes', 'Ter', 'MALE','tester@lh-tool.de');"))
 				.url(REST_URL + "/projects/1/users/1000").method(Method.POST)
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
-						.expectedResponse(
-								"{\"id\":1,\"projectId\":1,\"userId\":1000,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+						.expectedResponse("{\"id\":1,\"projectId\":1,\"userId\":1000}")
 						.validationQueries(List.of("SELECT * FROM project_user WHERE project_id=1 AND user_id=1000"))
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
@@ -93,7 +92,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse("{\"id\":" + (IntegrationTestRestService.getDefaultEmails().size() + 1)
-								+ ",\"projectId\":1,\"userId\":1000,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1/users/1000\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								+ ",\"projectId\":1,\"userId\":1000}")
 						.validationQueries(List.of("SELECT * FROM project_user WHERE project_id=1 AND user_id=1000"))
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
@@ -114,7 +113,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 						.endTime("13:00").build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"projectId\":1,\"helperTypeId\":1,\"weekday\":3,\"startTime\":\"12:00\",\"endTime\":\"13:00\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1/helper_types\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"projectId\":1,\"helperTypeId\":1,\"weekday\":3,\"startTime\":\"12:00\",\"endTime\":\"13:00\"}")
 						.validationQueries(List.of(
 								"SELECT * FROM project_helper_type WHERE project_id=1 AND helper_type_id=1 AND weekday=3 AND start_time='12:00' AND end_time='13:00'"))
 						.build()))
@@ -135,7 +134,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"projectId\":1,\"helperTypeId\":1,\"weekday\":3,\"startTime\":\"12:00\",\"endTime\":\"13:00\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1/helper_types\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"projectId\":1,\"helperTypeId\":1,\"weekday\":3,\"startTime\":\"12:00\",\"endTime\":\"13:00\"}")
 						.validationQueries(List.of(
 								"SELECT * FROM project_helper_type WHERE project_id=1 AND helper_type_id=1 AND weekday=3 AND start_time='12:00' AND end_time='13:00'"))
 						.build()))
@@ -156,7 +155,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"projectId\":1,\"helperTypeId\":1,\"weekday\":3,\"startTime\":\"12:00\",\"endTime\":null,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1/helper_types\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"projectId\":1,\"helperTypeId\":1,\"weekday\":3,\"startTime\":\"12:00\",\"endTime\":null}")
 						.validationQueries(List.of(
 								"SELECT * FROM project_helper_type WHERE project_id=1 AND helper_type_id=1 AND weekday=3 AND start_time='12:00' AND end_time IS NULL"))
 						.build()))
@@ -222,7 +221,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 						.endDate(new Date(1551571200000l)).build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"name\":\"Test\",\"startDate\":1548971153000,\"endDate\":1551571200000,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"name\":\"Test\",\"startDate\":1548971153000,\"endDate\":1551571200000}")
 						.validationQueries(List.of(
 								"SELECT * FROM project WHERE name='Test' AND start_date='2019-01-31' AND end_date='2019-03-03'"))
 						.build()))
@@ -244,7 +243,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"name\":\"Test\",\"startDate\":1548971153000,\"endDate\":1551571200000,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"name\":\"Test\",\"startDate\":1548971153000,\"endDate\":1551571200000}")
 						.validationQueries(List.of(
 								"SELECT * FROM project WHERE name='Test' AND start_date='2019-01-31' AND end_date='2019-03-03'"))
 						.build()))
@@ -314,7 +313,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 						.endTime("13:00").build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"projectId\":1,\"helperTypeId\":1,\"weekday\":3,\"startTime\":\"12:00\",\"endTime\":\"13:00\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1/helper_types/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"projectId\":1,\"helperTypeId\":1,\"weekday\":3,\"startTime\":\"12:00\",\"endTime\":\"13:00\"}")
 						.validationQueries(List.of(
 								"SELECT * FROM project_helper_type WHERE project_id=1 AND helper_type_id=1 AND weekday=3 AND start_time='12:00' AND end_time='13:00'",
 								"SELECT 1 WHERE NOT EXISTS(SELECT * FROM project_helper_type WHERE project_id=1 AND helper_type_id=1 AND start_time='07:00')"))
@@ -345,7 +344,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"projectId\":1,\"helperTypeId\":1,\"weekday\":3,\"startTime\":\"12:00\",\"endTime\":\"13:00\",\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1/helper_types/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"projectId\":1,\"helperTypeId\":1,\"weekday\":3,\"startTime\":\"12:00\",\"endTime\":\"13:00\"}")
 						.validationQueries(List.of(
 								"SELECT * FROM project_helper_type WHERE project_id=1 AND helper_type_id=1 AND weekday=3 AND start_time='12:00' AND end_time='13:00'",
 								"SELECT 1 WHERE NOT EXISTS(SELECT * FROM project_helper_type WHERE project_id=1 AND helper_type_id=1 AND start_time='07:00')"))
@@ -627,14 +626,14 @@ public class ProjectIT extends BasicRestIntegrationTest {
 				.url(REST_URL + "/projects/").method(Method.GET)
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"name\":\"Test123\",\"startDate\":1586390400000,\"endDate\":1587686400000},{\"id\":2,\"name\":\"Test\",\"startDate\":1586390400000,\"endDate\":1587686400000}]}")
+								"[{\"id\":1,\"name\":\"Test123\",\"startDate\":1586390400000,\"endDate\":1587686400000},{\"id\":2,\"name\":\"Test\",\"startDate\":1586390400000,\"endDate\":1587686400000}]")
 						.validationQueries(List.of()).build(),
 						UserTest.builder()
 								.emails(List.of(CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL, ATTENDANCE_EMAIL,
 										PUBLISHER_EMAIL))
 								.expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"name\":\"Test123\",\"startDate\":1586390400000,\"endDate\":1587686400000}]}")
+										"[{\"id\":1,\"name\":\"Test123\",\"startDate\":1586390400000,\"endDate\":1587686400000}]")
 								.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
@@ -647,7 +646,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 				.url(REST_URL + "/projects/1").method(Method.GET)
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"name\":\"Test\",\"startDate\":1586390400000,\"endDate\":1587686400000,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"name\":\"Test\",\"startDate\":1586390400000,\"endDate\":1587686400000}")
 						.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
@@ -664,7 +663,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 								ATTENDANCE_EMAIL, PUBLISHER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"name\":\"Test\",\"startDate\":1586390400000,\"endDate\":1587686400000,\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}]}")
+								"{\"id\":1,\"name\":\"Test\",\"startDate\":1586390400000,\"endDate\":1587686400000}")
 						.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
@@ -700,7 +699,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 				.url(REST_URL + "/projects/1/helper_types?weekday=1&helper_type_id=1").method(Method.GET)
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1/helper_types?helper_type_id=1&weekday=1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"projectId\":1,\"helperTypeId\":1,\"weekday\":1,\"startTime\":\"07:00\",\"endTime\":\"12:00\"},{\"id\":2,\"projectId\":1,\"helperTypeId\":1,\"weekday\":1,\"startTime\":\"12:00\",\"endTime\":\"17:00\"}]}")
+								"[{\"id\":1,\"projectId\":1,\"helperTypeId\":1,\"weekday\":1,\"startTime\":\"07:00\",\"endTime\":\"12:00\"},{\"id\":2,\"projectId\":1,\"helperTypeId\":1,\"weekday\":1,\"startTime\":\"12:00\",\"endTime\":\"17:00\"}]")
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
@@ -724,7 +723,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 								ATTENDANCE_EMAIL, PUBLISHER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1/helper_types?helper_type_id=1&weekday=1\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],\"content\":[{\"id\":1,\"projectId\":1,\"helperTypeId\":1,\"weekday\":1,\"startTime\":\"07:00\",\"endTime\":\"12:00\"},{\"id\":2,\"projectId\":1,\"helperTypeId\":1,\"weekday\":1,\"startTime\":\"12:00\",\"endTime\":\"17:00\"}]}")
+								"[{\"id\":1,\"projectId\":1,\"helperTypeId\":1,\"weekday\":1,\"startTime\":\"07:00\",\"endTime\":\"12:00\"},{\"id\":2,\"projectId\":1,\"helperTypeId\":1,\"weekday\":1,\"startTime\":\"12:00\",\"endTime\":\"17:00\"}]")
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
@@ -748,10 +747,9 @@ public class ProjectIT extends BasicRestIntegrationTest {
 								ATTENDANCE_EMAIL, PUBLISHER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"links\":[{\"rel\":\"self\",\"href\":\"http://localhost:8080/lh-tool/rest/projects/1/helper_types{?helper_type_id,weekday}\",\"hreflang\":null,\"media\":null,\"title\":null,\"type\":null,\"deprecation\":null}],"
-										+ "\"content\":[{\"id\":1,\"projectId\":1,\"helperTypeId\":1,\"weekday\":1,\"startTime\":\"07:00\",\"endTime\":\"12:00\"},"
+								"[{\"id\":1,\"projectId\":1,\"helperTypeId\":1,\"weekday\":1,\"startTime\":\"07:00\",\"endTime\":\"12:00\"},"
 										+ "{\"id\":2,\"projectId\":1,\"helperTypeId\":1,\"weekday\":1,\"startTime\":\"12:00\",\"endTime\":\"17:00\"},"
-										+ "{\"id\":4,\"projectId\":1,\"helperTypeId\":3,\"weekday\":2,\"startTime\":\"07:00\",\"endTime\":\"17:00\"}]}")
+										+ "{\"id\":4,\"projectId\":1,\"helperTypeId\":3,\"weekday\":2,\"startTime\":\"07:00\",\"endTime\":\"17:00\"}]")
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
