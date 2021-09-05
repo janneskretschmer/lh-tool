@@ -26,15 +26,28 @@ export default class ChangePasswordComponent extends React.Component {
     }
 
     getUserCredentials(sessionState) {
-        const { uid, token } = URI(this.props.location.search).query(true);
+        const { uid, token, passwordNew, passwordNewConfirm } = URI(this.props.location.search).query(true);
         const isTokenBased = !!token && !!uid;
-        const userId = isTokenBased ? uid : sessionState.isLoggedIn() ? sessionState.currentUser.id : null;
+        const userId = isTokenBased ? uid : sessionState && sessionState.isLoggedIn() ? sessionState.currentUser.id : null;
         return userId ? { userId, token, isTokenBased } : null;
     }
 
-    componentWillMount() {
-        if (!this.getUserCredentials(this.props.sessionState)) {
-            // FUTURE: Redirect for login
+    // componentWillMount() {
+    //     if (!this.getUserCredentials(this.props.sessionState)) {
+    // FUTURE: Redirect for login
+    //     }
+    // }
+
+    componentDidMount() {
+        const credentials = this.getUserCredentials();
+        if (credentials.isTokenBased && !!credentials.passwordNew && !!credentials.passwordNewConfirm) {
+            changePassword({ userId: credentials.uid, token: credentials.token, newPassword: credentials.passwordNew, confirmPassword: credentials.passwordNewConfirm })
+                .then(user => {
+                    this.success();
+                })
+                .catch(() => {
+                    this.props.enqueueSnackbar('Fehler beim Ändern des Passworts', { variant: 'error', });
+                });
         }
     }
 
@@ -77,7 +90,7 @@ export default class ChangePasswordComponent extends React.Component {
                         );
                     }
 
-                    if (redirect) {
+                    if (redirect && false) {
                         return (
                             <Redirect to={fullPathOfLogin()} />
                         );

@@ -1,0 +1,2184 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no">
+<title>LH-Tool</title>
+<!-- Roboto fonts -->
+<style>
+/* roboto-300 - cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext */
+@font-face {
+	font-family: 'Roboto';
+	font-style: normal;
+	font-weight: 300;
+	src:
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-300.eot');
+	/* IE9 Compat Modes */
+	src: local('Roboto Light'), local('Roboto-Light'),
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-300.eot?#iefix')
+		format('embedded-opentype'), /* IE6-IE8 */ 
+    
+		
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-300.woff2')
+		format('woff2'), /* Super Modern Browsers */ 
+    
+		
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-300.woff')
+		format('woff'), /* Modern Browsers */ 
+    
+		
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-300.ttf')
+		format('truetype'), /* Safari, Android, iOS */ 
+    
+		
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-300.svg#Roboto')
+		format('svg'); /* Legacy iOS */
+}
+
+/* roboto-300italic - cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext */
+@font-face {
+	font-family: 'Roboto';
+	font-style: italic;
+	font-weight: 300;
+	src:
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-300italic.eot');
+	/* IE9 Compat Modes */
+	src: local('Roboto Light Italic'), local('Roboto-LightItalic'),
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-300italic.eot?#iefix')
+		format('embedded-opentype'), /* IE6-IE8 */ 
+    
+		
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-300italic.woff2')
+		format('woff2'), /* Super Modern Browsers */ 
+    
+		
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-300italic.woff')
+		format('woff'), /* Modern Browsers */ 
+    
+		
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-300italic.ttf')
+		format('truetype'), /* Safari, Android, iOS */ 
+    
+		
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-300italic.svg#Roboto')
+		format('svg'); /* Legacy iOS */
+}
+
+/* roboto-regular - cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext */
+@font-face {
+	font-family: 'Roboto';
+	font-style: normal;
+	font-weight: 400;
+	src:
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-regular.eot');
+	/* IE9 Compat Modes */
+	src: local('Roboto'), local('Roboto-Regular'),
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-regular.eot?#iefix')
+		format('embedded-opentype'), /* IE6-IE8 */ 
+    
+		
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-regular.woff2')
+		format('woff2'), /* Super Modern Browsers */ 
+    
+		
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-regular.woff')
+		format('woff'), /* Modern Browsers */ 
+    
+		
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-regular.ttf')
+		format('truetype'), /* Safari, Android, iOS */ 
+    
+		
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-regular.svg#Roboto')
+		format('svg'); /* Legacy iOS */
+}
+
+/* roboto-italic - cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext */
+@font-face {
+	font-family: 'Roboto';
+	font-style: italic;
+	font-weight: 400;
+	src:
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-italic.eot');
+	/* IE9 Compat Modes */
+	src: local('Roboto Italic'), local('Roboto-Italic'),
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-italic.eot?#iefix')
+		format('embedded-opentype'), /* IE6-IE8 */ 
+    
+		
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-italic.woff2')
+		format('woff2'), /* Super Modern Browsers */ 
+    
+		
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-italic.woff')
+		format('woff'), /* Modern Browsers */ 
+    
+		
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-italic.ttf')
+		format('truetype'), /* Safari, Android, iOS */ 
+    
+		
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-italic.svg#Roboto')
+		format('svg'); /* Legacy iOS */
+}
+
+/* roboto-500 - cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext */
+@font-face {
+	font-family: 'Roboto';
+	font-style: normal;
+	font-weight: 500;
+	src:
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-500.eot');
+	/* IE9 Compat Modes */
+	src: local('Roboto Medium'), local('Roboto-Medium'),
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-500.eot?#iefix')
+		format('embedded-opentype'), /* IE6-IE8 */ 
+    
+		
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-500.woff2')
+		format('woff2'), /* Super Modern Browsers */ 
+    
+		
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-500.woff')
+		format('woff'), /* Modern Browsers */ 
+    
+		
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-500.ttf')
+		format('truetype'), /* Safari, Android, iOS */ 
+    
+		
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-500.svg#Roboto')
+		format('svg'); /* Legacy iOS */
+}
+
+/* roboto-500italic - cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext */
+@font-face {
+	font-family: 'Roboto';
+	font-style: italic;
+	font-weight: 500;
+	src:
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-500italic.eot');
+	/* IE9 Compat Modes */
+	src: local('Roboto Medium Italic'), local('Roboto-MediumItalic'),
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-500italic.eot?#iefix')
+		format('embedded-opentype'), /* IE6-IE8 */ 
+    
+		
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-500italic.woff2')
+		format('woff2'), /* Super Modern Browsers */ 
+    
+		
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-500italic.woff')
+		format('woff'), /* Modern Browsers */ 
+    
+		
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-500italic.ttf')
+		format('truetype'), /* Safari, Android, iOS */ 
+    
+		
+		url('/lh-tool/static/fonts/roboto/roboto-v18-cyrillic_latin_latin-ext_greek_cyrillic-ext_greek-ext-500italic.svg#Roboto')
+		format('svg'); /* Legacy iOS */
+}
+</style>
+<!-- Material Icons -->
+<style>
+@font-face {
+	font-family: 'Material Icons';
+	font-style: normal;
+	font-weight: 400;
+	src: url(/lh-tool/static/fonts/icons/MaterialIcons-Regular.eot);
+	/* For IE6-8 */
+	src: local('Material Icons'), local('MaterialIcons-Regular'),
+		url(/lh-tool/static/fonts/icons/MaterialIcons-Regular.woff2)
+		format('woff2'),
+		url(/lh-tool/static/fonts/icons/MaterialIcons-Regular.woff)
+		format('woff'),
+		url(/lh-tool/static/fonts/icons/MaterialIcons-Regular.ttf)
+		format('truetype');
+}
+
+.material-icons {
+	font-family: 'Material Icons';
+	font-weight: normal;
+	font-style: normal;
+	font-size: 24px; /* Preferred icon size */
+	display: inline-block;
+	line-height: 1;
+	text-transform: none;
+	letter-spacing: normal;
+	word-wrap: normal;
+	white-space: nowrap;
+	direction: ltr;
+	/* Support for all WebKit browsers. */
+	-webkit-font-smoothing: antialiased;
+	/* Support for Safari and Chrome. */
+	text-rendering: optimizeLegibility;
+	/* Support for Firefox. */
+	-moz-osx-font-smoothing: grayscale;
+	/* Support for IE. */
+	font-feature-settings: 'liga';
+}
+</style>
+<style>
+body {
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	background-color: #FFF !important;
+}
+</style>
+<style data-jss="" data-meta="MuiPaper">
+.MuiPaper-root-19 {
+	background-color: #fff;
+}
+
+.MuiPaper-rounded-20 {
+	border-radius: 4px;
+}
+
+.MuiPaper-elevation0-21 {
+	box-shadow: none;
+}
+
+.MuiPaper-elevation1-22 {
+	box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px
+		rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+}
+
+.MuiPaper-elevation2-23 {
+	box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px
+		rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12);
+}
+
+.MuiPaper-elevation3-24 {
+	box-shadow: 0px 1px 8px 0px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px
+		rgba(0, 0, 0, 0.14), 0px 3px 3px -2px rgba(0, 0, 0, 0.12);
+}
+
+.MuiPaper-elevation4-25 {
+	box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px
+		rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+}
+
+.MuiPaper-elevation5-26 {
+	box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 5px 8px 0px
+		rgba(0, 0, 0, 0.14), 0px 1px 14px 0px rgba(0, 0, 0, 0.12);
+}
+
+.MuiPaper-elevation6-27 {
+	box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px
+		rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+}
+
+.MuiPaper-elevation7-28 {
+	box-shadow: 0px 4px 5px -2px rgba(0, 0, 0, 0.2), 0px 7px 10px 1px
+		rgba(0, 0, 0, 0.14), 0px 2px 16px 1px rgba(0, 0, 0, 0.12);
+}
+
+.MuiPaper-elevation8-29 {
+	box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px
+		rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.MuiPaper-elevation9-30 {
+	box-shadow: 0px 5px 6px -3px rgba(0, 0, 0, 0.2), 0px 9px 12px 1px
+		rgba(0, 0, 0, 0.14), 0px 3px 16px 2px rgba(0, 0, 0, 0.12);
+}
+
+.MuiPaper-elevation10-31 {
+	box-shadow: 0px 6px 6px -3px rgba(0, 0, 0, 0.2), 0px 10px 14px 1px
+		rgba(0, 0, 0, 0.14), 0px 4px 18px 3px rgba(0, 0, 0, 0.12);
+}
+
+.MuiPaper-elevation11-32 {
+	box-shadow: 0px 6px 7px -4px rgba(0, 0, 0, 0.2), 0px 11px 15px 1px
+		rgba(0, 0, 0, 0.14), 0px 4px 20px 3px rgba(0, 0, 0, 0.12);
+}
+
+.MuiPaper-elevation12-33 {
+	box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 12px 17px 2px
+		rgba(0, 0, 0, 0.14), 0px 5px 22px 4px rgba(0, 0, 0, 0.12);
+}
+
+.MuiPaper-elevation13-34 {
+	box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 13px 19px 2px
+		rgba(0, 0, 0, 0.14), 0px 5px 24px 4px rgba(0, 0, 0, 0.12);
+}
+
+.MuiPaper-elevation14-35 {
+	box-shadow: 0px 7px 9px -4px rgba(0, 0, 0, 0.2), 0px 14px 21px 2px
+		rgba(0, 0, 0, 0.14), 0px 5px 26px 4px rgba(0, 0, 0, 0.12);
+}
+
+.MuiPaper-elevation15-36 {
+	box-shadow: 0px 8px 9px -5px rgba(0, 0, 0, 0.2), 0px 15px 22px 2px
+		rgba(0, 0, 0, 0.14), 0px 6px 28px 5px rgba(0, 0, 0, 0.12);
+}
+
+.MuiPaper-elevation16-37 {
+	box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px
+		rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+}
+
+.MuiPaper-elevation17-38 {
+	box-shadow: 0px 8px 11px -5px rgba(0, 0, 0, 0.2), 0px 17px 26px 2px
+		rgba(0, 0, 0, 0.14), 0px 6px 32px 5px rgba(0, 0, 0, 0.12);
+}
+
+.MuiPaper-elevation18-39 {
+	box-shadow: 0px 9px 11px -5px rgba(0, 0, 0, 0.2), 0px 18px 28px 2px
+		rgba(0, 0, 0, 0.14), 0px 7px 34px 6px rgba(0, 0, 0, 0.12);
+}
+
+.MuiPaper-elevation19-40 {
+	box-shadow: 0px 9px 12px -6px rgba(0, 0, 0, 0.2), 0px 19px 29px 2px
+		rgba(0, 0, 0, 0.14), 0px 7px 36px 6px rgba(0, 0, 0, 0.12);
+}
+
+.MuiPaper-elevation20-41 {
+	box-shadow: 0px 10px 13px -6px rgba(0, 0, 0, 0.2), 0px 20px 31px 3px
+		rgba(0, 0, 0, 0.14), 0px 8px 38px 7px rgba(0, 0, 0, 0.12);
+}
+
+.MuiPaper-elevation21-42 {
+	box-shadow: 0px 10px 13px -6px rgba(0, 0, 0, 0.2), 0px 21px 33px 3px
+		rgba(0, 0, 0, 0.14), 0px 8px 40px 7px rgba(0, 0, 0, 0.12);
+}
+
+.MuiPaper-elevation22-43 {
+	box-shadow: 0px 10px 14px -6px rgba(0, 0, 0, 0.2), 0px 22px 35px 3px
+		rgba(0, 0, 0, 0.14), 0px 8px 42px 7px rgba(0, 0, 0, 0.12);
+}
+
+.MuiPaper-elevation23-44 {
+	box-shadow: 0px 11px 14px -7px rgba(0, 0, 0, 0.2), 0px 23px 36px 3px
+		rgba(0, 0, 0, 0.14), 0px 9px 44px 8px rgba(0, 0, 0, 0.12);
+}
+
+.MuiPaper-elevation24-45 {
+	box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px
+		rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+}
+</style>
+<style data-jss="" data-meta="MuiTypography">
+.MuiTypography-root-92 {
+	margin: 0;
+	display: block;
+}
+
+.MuiTypography-display4-93 {
+	color: rgba(0, 0, 0, 0.54);
+	font-size: 7rem;
+	font-weight: 300;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	line-height: 1.14286em;
+	margin-left: -.04em;
+	letter-spacing: -.04em;
+}
+
+.MuiTypography-display3-94 {
+	color: rgba(0, 0, 0, 0.54);
+	font-size: 3.5rem;
+	font-weight: 400;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	line-height: 1.30357em;
+	margin-left: -.02em;
+	letter-spacing: -.02em;
+}
+
+.MuiTypography-display2-95 {
+	color: rgba(0, 0, 0, 0.54);
+	font-size: 2.8125rem;
+	font-weight: 400;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	line-height: 1.13333em;
+	margin-left: -.02em;
+}
+
+.MuiTypography-display1-96 {
+	color: rgba(0, 0, 0, 0.54);
+	font-size: 2.125rem;
+	font-weight: 400;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	line-height: 1.20588em;
+}
+
+.MuiTypography-headline-97 {
+	color: rgba(0, 0, 0, 0.87);
+	font-size: 1.5rem;
+	font-weight: 400;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	line-height: 1.35417em;
+}
+
+.MuiTypography-title-98 {
+	color: rgba(0, 0, 0, 0.87);
+	font-size: 1.3125rem;
+	font-weight: 500;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	line-height: 1.16667em;
+}
+
+.MuiTypography-subheading-99 {
+	color: rgba(0, 0, 0, 0.87);
+	font-size: 1rem;
+	font-weight: 400;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	line-height: 1.5em;
+}
+
+.MuiTypography-body2-100 {
+	color: rgba(0, 0, 0, 0.87);
+	font-size: 0.875rem;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	font-weight: 400;
+	line-height: 1.5;
+	letter-spacing: 0.01071em;
+}
+
+.MuiTypography-body1-101 {
+	color: rgba(0, 0, 0, 0.87);
+	font-size: 1rem;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	font-weight: 400;
+	line-height: 1.5;
+	letter-spacing: 0.00938em;
+}
+
+.MuiTypography-caption-102 {
+	color: rgba(0, 0, 0, 0.87);
+	font-size: 0.75rem;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	font-weight: 400;
+	line-height: 1.66;
+	letter-spacing: 0.03333em;
+}
+
+.MuiTypography-button-103 {
+	color: rgba(0, 0, 0, 0.87);
+	font-size: 0.875rem;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	font-weight: 500;
+	line-height: 1.75;
+	letter-spacing: 0.02857em;
+	text-transform: uppercase;
+}
+
+.MuiTypography-h1-104 {
+	color: rgba(0, 0, 0, 0.87);
+	font-size: 6rem;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	font-weight: 300;
+	line-height: 1;
+	letter-spacing: -0.01562em;
+}
+
+.MuiTypography-h2-105 {
+	color: rgba(0, 0, 0, 0.87);
+	font-size: 3.75rem;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	font-weight: 300;
+	line-height: 1;
+	letter-spacing: -0.00833em;
+}
+
+.MuiTypography-h3-106 {
+	color: rgba(0, 0, 0, 0.87);
+	font-size: 3rem;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	font-weight: 400;
+	line-height: 1.04;
+	letter-spacing: 0em;
+}
+
+.MuiTypography-h4-107 {
+	color: rgba(0, 0, 0, 0.87);
+	font-size: 2.125rem;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	font-weight: 400;
+	line-height: 1.17;
+	letter-spacing: 0.00735em;
+}
+
+.MuiTypography-h5-108 {
+	color: rgba(0, 0, 0, 0.87);
+	font-size: 1.5rem;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	font-weight: 400;
+	line-height: 1.33;
+	letter-spacing: 0em;
+}
+
+.MuiTypography-h6-109 {
+	color: rgba(0, 0, 0, 0.87);
+	font-size: 1.25rem;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	font-weight: 500;
+	line-height: 1.6;
+	letter-spacing: 0.0075em;
+}
+
+.MuiTypography-subtitle1-110 {
+	color: rgba(0, 0, 0, 0.87);
+	font-size: 1rem;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	font-weight: 400;
+	line-height: 1.75;
+	letter-spacing: 0.00938em;
+}
+
+.MuiTypography-subtitle2-111 {
+	color: rgba(0, 0, 0, 0.87);
+	font-size: 0.875rem;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	font-weight: 500;
+	line-height: 1.57;
+	letter-spacing: 0.00714em;
+}
+
+.MuiTypography-overline-112 {
+	color: rgba(0, 0, 0, 0.87);
+	font-size: 0.75rem;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	font-weight: 400;
+	line-height: 2.66;
+	letter-spacing: 0.08333em;
+	text-transform: uppercase;
+}
+
+.MuiTypography-srOnly-113 {
+	width: 1px;
+	height: 1px;
+	position: absolute;
+	overflow: hidden;
+}
+
+.MuiTypography-alignLeft-114 {
+	text-align: left;
+}
+
+.MuiTypography-alignCenter-115 {
+	text-align: center;
+}
+
+.MuiTypography-alignRight-116 {
+	text-align: right;
+}
+
+.MuiTypography-alignJustify-117 {
+	text-align: justify;
+}
+
+.MuiTypography-noWrap-118 {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.MuiTypography-gutterBottom-119 {
+	margin-bottom: 0.35em;
+}
+
+.MuiTypography-paragraph-120 {
+	margin-bottom: 16px;
+}
+
+.MuiTypography-colorInherit-121 {
+	color: inherit;
+}
+
+.MuiTypography-colorPrimary-122 {
+	color: #673ab7;
+}
+
+.MuiTypography-colorSecondary-123 {
+	color: #78909c;
+}
+
+.MuiTypography-colorTextPrimary-124 {
+	color: rgba(0, 0, 0, 0.87);
+}
+
+.MuiTypography-colorTextSecondary-125 {
+	color: rgba(0, 0, 0, 0.54);
+}
+
+.MuiTypography-colorError-126 {
+	color: #f44336;
+}
+
+.MuiTypography-inline-127 {
+	display: inline;
+}
+</style>
+<style data-jss="" data-meta="MuiSvgIcon">
+.MuiSvgIcon-root-55 {
+	fill: currentColor;
+	width: 1em;
+	height: 1em;
+	display: inline-block;
+	font-size: 24px;
+	transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+	user-select: none;
+	flex-shrink: 0;
+}
+
+.MuiSvgIcon-colorPrimary-56 {
+	color: #673ab7;
+}
+
+.MuiSvgIcon-colorSecondary-57 {
+	color: #78909c;
+}
+
+.MuiSvgIcon-colorAction-58 {
+	color: rgba(0, 0, 0, 0.54);
+}
+
+.MuiSvgIcon-colorError-59 {
+	color: #f44336;
+}
+
+.MuiSvgIcon-colorDisabled-60 {
+	color: rgba(0, 0, 0, 0.26);
+}
+
+.MuiSvgIcon-fontSizeInherit-61 {
+	font-size: inherit;
+}
+
+.MuiSvgIcon-fontSizeSmall-62 {
+	font-size: 20px;
+}
+
+.MuiSvgIcon-fontSizeLarge-63 {
+	font-size: 35px;
+}
+</style>
+<style data-jss="" data-meta="MuiCssBaseline">
+html {
+	box-sizing: border-box;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+*, *::before, *::after {
+	box-sizing: inherit;
+}
+
+body {
+	margin: 0;
+	background-color: #fafafa;
+}
+
+@media print {
+	body {
+		background-color: #fff;
+	}
+}
+</style>
+<style data-jss="" data-meta="MuiDivider">
+.MuiDivider-root-64 {
+	height: 1px;
+	margin: 0;
+	border: none;
+	flex-shrink: 0;
+	background-color: rgba(0, 0, 0, 0.12);
+}
+
+.MuiDivider-absolute-65 {
+	left: 0;
+	width: 100%;
+	bottom: 0;
+	position: absolute;
+}
+
+.MuiDivider-inset-66 {
+	margin-left: 72px;
+}
+
+.MuiDivider-light-67 {
+	background-color: rgba(0, 0, 0, 0.08);
+}
+
+.MuiDivider-middle-68 {
+	margin-left: 16px;
+	margin-right: 16px;
+}
+</style>
+<style data-jss="" data-meta="MuiDrawer">
+.MuiDrawer-docked-8 {
+	flex: 0 0 auto;
+}
+
+.MuiDrawer-paper-9 {
+	top: 0;
+	flex: 1 0 auto;
+	height: 100%;
+	display: flex;
+	z-index: 1200;
+	outline: none;
+	position: fixed;
+	overflow-y: auto;
+	flex-direction: column;
+	-webkit-overflow-scrolling: touch;
+}
+
+.MuiDrawer-paperAnchorLeft-10 {
+	left: 0;
+	right: auto;
+}
+
+.MuiDrawer-paperAnchorRight-11 {
+	left: auto;
+	right: 0;
+}
+
+.MuiDrawer-paperAnchorTop-12 {
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: auto;
+	height: auto;
+	max-height: 100%;
+}
+
+.MuiDrawer-paperAnchorBottom-13 {
+	top: auto;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: auto;
+	max-height: 100%;
+}
+
+.MuiDrawer-paperAnchorDockedLeft-14 {
+	border-right: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.MuiDrawer-paperAnchorDockedTop-15 {
+	border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.MuiDrawer-paperAnchorDockedRight-16 {
+	border-left: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.MuiDrawer-paperAnchorDockedBottom-17 {
+	border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+</style>
+<style data-jss="" data-meta="MuiTouchRipple">
+.MuiTouchRipple-root-242 {
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	display: block;
+	z-index: 0;
+	position: absolute;
+	overflow: hidden;
+	border-radius: inherit;
+	pointer-events: none;
+}
+
+.MuiTouchRipple-ripple-243 {
+	top: 0;
+	left: 0;
+	width: 50px;
+	height: 50px;
+	opacity: 0;
+	position: absolute;
+}
+
+.MuiTouchRipple-rippleVisible-244 {
+	opacity: 0.3;
+	transform: scale(1);
+	animation: mui-ripple-enter 550ms cubic-bezier(0.4, 0, 0.2, 1);
+	animation-name: $mui-ripple-enter;
+}
+
+.MuiTouchRipple-ripplePulsate-245 {
+	animation-duration: 200ms;
+}
+
+.MuiTouchRipple-child-246 {
+	width: 100%;
+	height: 100%;
+	opacity: 1;
+	display: block;
+	border-radius: 50%;
+	background-color: currentColor;
+}
+
+.MuiTouchRipple-childLeaving-247 {
+	opacity: 0;
+	animation: mui-ripple-exit 550ms cubic-bezier(0.4, 0, 0.2, 1);
+	animation-name: $mui-ripple-exit;
+}
+
+.MuiTouchRipple-childPulsate-248 {
+	top: 0;
+	left: 0;
+	position: absolute;
+	animation: mui-ripple-pulsate 2500ms cubic-bezier(0.4, 0, 0.2, 1) 200ms
+		infinite;
+	animation-name: $mui-ripple-pulsate;
+}
+
+@
+-moz-keyframes mui-ripple-enter { 0% {
+	opacity: 0.1;
+	transform: scale(0);
+}
+
+100
+
+
+%
+{
+opacity
+
+
+:
+
+
+0
+.3
+;
+
+
+transform
+
+
+:
+
+
+scale
+(
+
+
+1
+
+
+)
+;
+
+
+}
+}
+@
+-moz-keyframes mui-ripple-exit { 0% {
+	opacity: 1;
+}
+
+100
+
+
+%
+{
+opacity
+
+
+:
+
+
+0
+;
+
+
+}
+}
+@
+-moz-keyframes mui-ripple-pulsate { 0% {
+	transform: scale(1);
+}
+50
+
+
+%
+{
+transform
+
+
+:
+
+
+scale
+(
+
+
+0
+.92
+
+
+)
+;
+
+
+}
+100
+
+
+%
+{
+transform
+
+
+:
+
+
+scale
+(
+
+
+1
+
+
+)
+;
+
+
+}
+}
+</style>
+<style data-jss="" data-meta="MuiButtonBase">
+.MuiButtonBase-root-52 {
+	color: inherit;
+	border: 0;
+	margin: 0;
+	cursor: pointer;
+	display: inline-flex;
+	outline: none;
+	padding: 0;
+	position: relative;
+	align-items: center;
+	user-select: none;
+	border-radius: 0;
+	vertical-align: middle;
+	justify-content: center;
+	-moz-appearance: none;
+	text-decoration: none;
+	background-color: transparent;
+	-webkit-appearance: none;
+	-webkit-tap-highlight-color: transparent;
+}
+
+.MuiButtonBase-root-52::-moz-focus-inner {
+	border-style: none;
+}
+
+.MuiButtonBase-root-52.MuiButtonBase-disabled-53 {
+	cursor: default;
+	pointer-events: none;
+}
+</style>
+<style data-jss="" data-meta="MuiIconButton">
+.MuiIconButton-root-46 {
+	flex: 0 0 auto;
+	color: rgba(0, 0, 0, 0.54);
+	padding: 12px;
+	overflow: visible;
+	font-size: 1.5rem;
+	text-align: center;
+	transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+	border-radius: 50%;
+}
+
+.MuiIconButton-root-46:hover {
+	background-color: rgba(0, 0, 0, 0.08);
+}
+
+.MuiIconButton-root-46.MuiIconButton-disabled-50 {
+	color: rgba(0, 0, 0, 0.26);
+}
+
+@media ( hover : none) {
+	.MuiIconButton-root-46:hover {
+		background-color: transparent;
+	}
+}
+
+.MuiIconButton-root-46:hover.MuiIconButton-disabled-50 {
+	background-color: transparent;
+}
+
+.MuiIconButton-colorInherit-47 {
+	color: inherit;
+}
+
+.MuiIconButton-colorPrimary-48 {
+	color: #673ab7;
+}
+
+.MuiIconButton-colorPrimary-48:hover {
+	background-color: rgba(103, 58, 183, 0.08);
+}
+
+@media ( hover : none) {
+	.MuiIconButton-colorPrimary-48:hover {
+		background-color: transparent;
+	}
+}
+
+.MuiIconButton-colorSecondary-49 {
+	color: #78909c;
+}
+
+.MuiIconButton-colorSecondary-49:hover {
+	background-color: rgba(120, 144, 156, 0.08);
+}
+
+@media ( hover : none) {
+	.MuiIconButton-colorSecondary-49:hover {
+		background-color: transparent;
+	}
+}
+
+.MuiIconButton-label-51 {
+	width: 100%;
+	display: flex;
+	align-items: inherit;
+	justify-content: inherit;
+}
+</style>
+<style data-jss="" data-meta="MuiFormControlLabel">
+.MuiFormControlLabel-root-200 {
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	margin-left: -14px;
+	margin-right: 16px;
+	vertical-align: middle;
+	-webkit-tap-highlight-color: transparent;
+}
+
+.MuiFormControlLabel-root-200.MuiFormControlLabel-disabled-204 {
+	cursor: default;
+}
+
+.MuiFormControlLabel-labelPlacementStart-201 {
+	margin-left: 16px;
+	margin-right: -14px;
+	flex-direction: row-reverse;
+}
+
+.MuiFormControlLabel-labelPlacementTop-202 {
+	margin-left: 16px;
+	flex-direction: column-reverse;
+}
+
+.MuiFormControlLabel-labelPlacementBottom-203 {
+	margin-left: 16px;
+	flex-direction: column;
+}
+
+.MuiFormControlLabel-label-205.MuiFormControlLabel-disabled-204 {
+	color: rgba(0, 0, 0, 0.38);
+}
+</style>
+<style data-jss="" data-meta="MuiPrivateSwitchBase">
+.MuiPrivateSwitchBase-root-212 {
+	display: inline-flex;
+	transition: none;
+	align-items: center;
+}
+
+.MuiPrivateSwitchBase-root-212:hover {
+	background-color: transparent;
+}
+
+.MuiPrivateSwitchBase-input-215 {
+	top: 0;
+	left: 0;
+	width: 100%;
+	cursor: inherit;
+	height: 100%;
+	margin: 0;
+	opacity: 0;
+	padding: 0;
+	position: absolute;
+}
+</style>
+<style data-jss="" data-meta="MuiCheckbox">
+.MuiCheckbox-root-206 {
+	color: rgba(0, 0, 0, 0.54);
+}
+
+.MuiCheckbox-colorPrimary-210.MuiCheckbox-checked-207 {
+	color: #673ab7;
+}
+
+.MuiCheckbox-colorPrimary-210.MuiCheckbox-disabled-208 {
+	color: rgba(0, 0, 0, 0.26);
+}
+
+.MuiCheckbox-colorSecondary-211.MuiCheckbox-checked-207 {
+	color: #78909c;
+}
+
+.MuiCheckbox-colorSecondary-211.MuiCheckbox-disabled-208 {
+	color: rgba(0, 0, 0, 0.26);
+}
+</style>
+<style data-jss="" data-meta="MuiButton">
+.MuiButton-root-216 {
+	color: rgba(0, 0, 0, 0.87);
+	padding: 6px 16px;
+	font-size: 0.875rem;
+	min-width: 64px;
+	box-sizing: border-box;
+	transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+		box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border 250ms
+		cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+	line-height: 1.75;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	font-weight: 500;
+	border-radius: 4px;
+	letter-spacing: 0.02857em;
+	text-transform: uppercase;
+}
+
+.MuiButton-root-216:hover {
+	text-decoration: none;
+	background-color: rgba(0, 0, 0, 0.08);
+}
+
+.MuiButton-root-216.MuiButton-disabled-236 {
+	color: rgba(0, 0, 0, 0.26);
+}
+
+@media ( hover : none) {
+	.MuiButton-root-216:hover {
+		background-color: transparent;
+	}
+}
+
+.MuiButton-root-216:hover.MuiButton-disabled-236 {
+	background-color: transparent;
+}
+
+.MuiButton-label-217 {
+	width: 100%;
+	display: inherit;
+	align-items: inherit;
+	justify-content: inherit;
+}
+
+.MuiButton-text-218 {
+	padding: 6px 8px;
+}
+
+.MuiButton-textPrimary-219 {
+	color: #673ab7;
+}
+
+.MuiButton-textPrimary-219:hover {
+	background-color: rgba(103, 58, 183, 0.08);
+}
+
+@media ( hover : none) {
+	.MuiButton-textPrimary-219:hover {
+		background-color: transparent;
+	}
+}
+
+.MuiButton-textSecondary-220 {
+	color: #78909c;
+}
+
+.MuiButton-textSecondary-220:hover {
+	background-color: rgba(120, 144, 156, 0.08);
+}
+
+@media ( hover : none) {
+	.MuiButton-textSecondary-220:hover {
+		background-color: transparent;
+	}
+}
+
+.MuiButton-outlined-224 {
+	border: 1px solid rgba(0, 0, 0, 0.23);
+	padding: 5px 16px;
+}
+
+.MuiButton-outlined-224.MuiButton-disabled-236 {
+	border: 1px solid rgba(0, 0, 0, 0.26);
+}
+
+.MuiButton-outlinedPrimary-225 {
+	color: #673ab7;
+	border: 1px solid rgba(103, 58, 183, 0.5);
+}
+
+.MuiButton-outlinedPrimary-225:hover {
+	border: 1px solid #673ab7;
+	background-color: rgba(103, 58, 183, 0.08);
+}
+
+@media ( hover : none) {
+	.MuiButton-outlinedPrimary-225:hover {
+		background-color: transparent;
+	}
+}
+
+.MuiButton-outlinedSecondary-226 {
+	color: #78909c;
+	border: 1px solid rgba(120, 144, 156, 0.5);
+}
+
+.MuiButton-outlinedSecondary-226:hover {
+	border: 1px solid #78909c;
+	background-color: rgba(120, 144, 156, 0.08);
+}
+
+.MuiButton-outlinedSecondary-226.MuiButton-disabled-236 {
+	border: 1px solid rgba(0, 0, 0, 0.26);
+}
+
+@media ( hover : none) {
+	.MuiButton-outlinedSecondary-226:hover {
+		background-color: transparent;
+	}
+}
+
+.MuiButton-contained-227 {
+	color: rgba(0, 0, 0, 0.87);
+	box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px
+		rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12);
+	background-color: #e0e0e0;
+}
+
+.MuiButton-contained-227.MuiButton-focusVisible-235 {
+	box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px
+		rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+}
+
+.MuiButton-contained-227:active {
+	box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px
+		rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.MuiButton-contained-227.MuiButton-disabled-236 {
+	color: rgba(0, 0, 0, 0.26);
+	box-shadow: none;
+	background-color: rgba(0, 0, 0, 0.12);
+}
+
+.MuiButton-contained-227:hover {
+	background-color: #d5d5d5;
+}
+
+@media ( hover : none) {
+	.MuiButton-contained-227:hover {
+		background-color: #e0e0e0;
+	}
+}
+
+.MuiButton-contained-227:hover.MuiButton-disabled-236 {
+	background-color: rgba(0, 0, 0, 0.12);
+}
+
+.MuiButton-containedPrimary-228 {
+	color: #fff;
+	background-color: #673ab7;
+}
+
+.MuiButton-containedPrimary-228:hover {
+	background-color: #512da8;
+}
+
+@media ( hover : none) {
+	.MuiButton-containedPrimary-228:hover {
+		background-color: #673ab7;
+	}
+}
+
+.MuiButton-containedSecondary-229 {
+	color: #fff;
+	background-color: #78909c;
+}
+
+.MuiButton-containedSecondary-229:hover {
+	background-color: #455a64;
+}
+
+@media ( hover : none) {
+	.MuiButton-containedSecondary-229:hover {
+		background-color: #78909c;
+	}
+}
+
+.MuiButton-fab-233 {
+	width: 56px;
+	height: 56px;
+	padding: 0;
+	min-width: 0;
+	box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px
+		rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+	border-radius: 50%;
+}
+
+.MuiButton-fab-233:active {
+	box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 12px 17px 2px
+		rgba(0, 0, 0, 0.14), 0px 5px 22px 4px rgba(0, 0, 0, 0.12);
+}
+
+.MuiButton-extendedFab-234 {
+	width: auto;
+	height: 48px;
+	padding: 0 16px;
+	min-width: 48px;
+	border-radius: 24px;
+}
+
+.MuiButton-colorInherit-237 {
+	color: inherit;
+	border-color: currentColor;
+}
+
+.MuiButton-mini-238 {
+	width: 40px;
+	height: 40px;
+}
+
+.MuiButton-sizeSmall-239 {
+	padding: 4px 8px;
+	min-width: 64px;
+	font-size: 0.8125rem;
+}
+
+.MuiButton-sizeLarge-240 {
+	padding: 8px 24px;
+	font-size: 0.9375rem;
+}
+
+.MuiButton-fullWidth-241 {
+	width: 100%;
+}
+</style>
+<style data-jss="" data-meta="MuiInputBase">
+.MuiInputBase-root-181 {
+	color: rgba(0, 0, 0, 0.87);
+	cursor: text;
+	display: inline-flex;
+	font-size: 1rem;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	line-height: 1.1875em;
+	align-items: center;
+}
+
+.MuiInputBase-root-181.MuiInputBase-disabled-184 {
+	color: rgba(0, 0, 0, 0.38);
+	cursor: default;
+}
+
+.MuiInputBase-multiline-189 {
+	padding: 6px 0 7px;
+}
+
+.MuiInputBase-fullWidth-190 {
+	width: 100%;
+}
+
+.MuiInputBase-input-191 {
+	font: inherit;
+	color: currentColor;
+	width: 100%;
+	border: 0;
+	margin: 0;
+	padding: 6px 0 7px;
+	display: block;
+	min-width: 0;
+	box-sizing: content-box;
+	background: none;
+	-webkit-tap-highlight-color: transparent;
+}
+
+.MuiInputBase-input-191::-webkit-input-placeholder {
+	color: currentColor;
+	opacity: 0.42;
+	transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.MuiInputBase-input-191::-moz-placeholder {
+	color: currentColor;
+	opacity: 0.42;
+	transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.MuiInputBase-input-191:-ms-input-placeholder {
+	color: currentColor;
+	opacity: 0.42;
+	transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.MuiInputBase-input-191::-ms-input-placeholder {
+	color: currentColor;
+	opacity: 0.42;
+	transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.MuiInputBase-input-191:focus {
+	outline: 0;
+}
+
+.MuiInputBase-input-191:invalid {
+	box-shadow: none;
+}
+
+.MuiInputBase-input-191::-webkit-search-decoration {
+	-webkit-appearance: none;
+}
+
+.MuiInputBase-input-191.MuiInputBase-disabled-184 {
+	opacity: 1;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl-182 .MuiInputBase-input-191::-webkit-input-placeholder
+	{
+	opacity: 0;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl-182 .MuiInputBase-input-191::-moz-placeholder
+	{
+	opacity: 0;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl-182 .MuiInputBase-input-191:-ms-input-placeholder
+	{
+	opacity: 0;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl-182 .MuiInputBase-input-191::-ms-input-placeholder
+	{
+	opacity: 0;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl-182 .MuiInputBase-input-191:focus::-webkit-input-placeholder
+	{
+	opacity: 0.42;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl-182 .MuiInputBase-input-191:focus::-moz-placeholder
+	{
+	opacity: 0.42;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl-182 .MuiInputBase-input-191:focus:-ms-input-placeholder
+	{
+	opacity: 0.42;
+}
+
+label[data-shrink=false]+.MuiInputBase-formControl-182 .MuiInputBase-input-191:focus::-ms-input-placeholder
+	{
+	opacity: 0.42;
+}
+
+.MuiInputBase-inputMarginDense-192 {
+	padding-top: 3px;
+}
+
+.MuiInputBase-inputMultiline-193 {
+	resize: none;
+	padding: 0;
+}
+
+.MuiInputBase-inputType-194 {
+	height: 1.1875em;
+}
+
+.MuiInputBase-inputTypeSearch-195 {
+	-moz-appearance: textfield;
+	-webkit-appearance: textfield;
+}
+</style>
+<style data-jss="" data-meta="MuiPrivateNotchedOutline">
+.MuiPrivateNotchedOutline-root-198 {
+	top: -5px;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	transition: padding-left 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,
+		border-color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms, border-width
+		200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+	border-style: solid;
+	border-width: 1px;
+	border-radius: 4px;
+	pointer-events: none;
+}
+
+.MuiPrivateNotchedOutline-legend-199 {
+	padding: 0;
+	text-align: left;
+	transition: width 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+	line-height: 11px;
+}
+</style>
+<style data-jss="" data-meta="MuiOutlinedInput">
+.MuiOutlinedInput-root-168 {
+	position: relative;
+}
+
+.MuiOutlinedInput-root-168 .MuiOutlinedInput-notchedOutline-175 {
+	border-color: rgba(0, 0, 0, 0.23);
+}
+
+.MuiOutlinedInput-root-168:hover:not(.MuiOutlinedInput-disabled-170):not(.MuiOutlinedInput-focused-169):not(.MuiOutlinedInput-error-173) .MuiOutlinedInput-notchedOutline-175
+	{
+	border-color: rgba(0, 0, 0, 0.87);
+}
+
+.MuiOutlinedInput-root-168.MuiOutlinedInput-focused-169 .MuiOutlinedInput-notchedOutline-175
+	{
+	border-color: #673ab7;
+	border-width: 2px;
+}
+
+.MuiOutlinedInput-root-168.MuiOutlinedInput-error-173 .MuiOutlinedInput-notchedOutline-175
+	{
+	border-color: #f44336;
+}
+
+.MuiOutlinedInput-root-168.MuiOutlinedInput-disabled-170 .MuiOutlinedInput-notchedOutline-175
+	{
+	border-color: rgba(0, 0, 0, 0.26);
+}
+
+@media ( hover : none) {
+	.MuiOutlinedInput-root-168:hover:not(.MuiOutlinedInput-disabled-170):not(.MuiOutlinedInput-focused-169):not(.MuiOutlinedInput-error-173) .MuiOutlinedInput-notchedOutline-175
+		{
+		border-color: rgba(0, 0, 0, 0.23);
+	}
+}
+
+.MuiOutlinedInput-adornedStart-171 {
+	padding-left: 14px;
+}
+
+.MuiOutlinedInput-adornedEnd-172 {
+	padding-right: 14px;
+}
+
+.MuiOutlinedInput-multiline-174 {
+	padding: 18.5px 14px;
+	box-sizing: border-box;
+}
+
+.MuiOutlinedInput-input-176 {
+	padding: 18.5px 14px;
+}
+
+.MuiOutlinedInput-inputMarginDense-177 {
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+
+.MuiOutlinedInput-inputMultiline-178 {
+	padding: 0;
+}
+
+.MuiOutlinedInput-inputAdornedStart-179 {
+	padding-left: 0;
+}
+
+.MuiOutlinedInput-inputAdornedEnd-180 {
+	padding-right: 0;
+}
+</style>
+<style data-jss="" data-meta="MuiFormLabel">
+.MuiFormLabel-root-161 {
+	color: rgba(0, 0, 0, 0.54);
+	padding: 0;
+	font-size: 1rem;
+	font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+	line-height: 1;
+}
+
+.MuiFormLabel-root-161.MuiFormLabel-focused-162 {
+	color: #512da8;
+}
+
+.MuiFormLabel-root-161.MuiFormLabel-disabled-163 {
+	color: rgba(0, 0, 0, 0.38);
+}
+
+.MuiFormLabel-root-161.MuiFormLabel-error-164 {
+	color: #f44336;
+}
+
+.MuiFormLabel-asterisk-167.MuiFormLabel-error-164 {
+	color: #f44336;
+}
+</style>
+<style data-jss="" data-meta="MuiInputLabel">
+.MuiInputLabel-root-150 {
+	transform-origin: top left;
+}
+
+.MuiInputLabel-formControl-155 {
+	top: 0;
+	left: 0;
+	position: absolute;
+	transform: translate(0, 24px) scale(1);
+}
+
+.MuiInputLabel-marginDense-156 {
+	transform: translate(0, 21px) scale(1);
+}
+
+.MuiInputLabel-shrink-157 {
+	transform: translate(0, 1.5px) scale(0.75);
+	transform-origin: top left;
+}
+
+.MuiInputLabel-animated-158 {
+	transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms, transform
+		200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+}
+
+.MuiInputLabel-filled-159 {
+	z-index: 1;
+	transform: translate(12px, 20px) scale(1);
+	pointer-events: none;
+}
+
+.MuiInputLabel-filled-159.MuiInputLabel-marginDense-156 {
+	transform: translate(12px, 17px) scale(1);
+}
+
+.MuiInputLabel-filled-159.MuiInputLabel-shrink-157 {
+	transform: translate(12px, 10px) scale(0.75);
+}
+
+.MuiInputLabel-filled-159.MuiInputLabel-shrink-157.MuiInputLabel-marginDense-156
+	{
+	transform: translate(12px, 7px) scale(0.75);
+}
+
+.MuiInputLabel-outlined-160 {
+	z-index: 1;
+	transform: translate(14px, 20px) scale(1);
+	pointer-events: none;
+}
+
+.MuiInputLabel-outlined-160.MuiInputLabel-marginDense-156 {
+	transform: translate(14px, 17px) scale(1);
+}
+
+.MuiInputLabel-outlined-160.MuiInputLabel-shrink-157 {
+	transform: translate(14px, -6px) scale(0.75);
+}
+</style>
+<style data-jss="" data-meta="MuiFormControl">
+.MuiFormControl-root-146 {
+	margin: 0;
+	border: 0;
+	display: inline-flex;
+	padding: 0;
+	position: relative;
+	min-width: 0;
+	flex-direction: column;
+	vertical-align: top;
+}
+
+.MuiFormControl-marginNormal-147 {
+	margin-top: 16px;
+	margin-bottom: 8px;
+}
+
+.MuiFormControl-marginDense-148 {
+	margin-top: 8px;
+	margin-bottom: 4px;
+}
+
+.MuiFormControl-fullWidth-149 {
+	width: 100%;
+}
+</style>
+<style data-jss="" data-meta="MuiList">
+.MuiList-root-69 {
+	margin: 0;
+	padding: 0;
+	position: relative;
+	list-style: none;
+}
+
+.MuiList-padding-70 {
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+
+.MuiList-dense-71 {
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+.MuiList-subheader-72 {
+	padding-top: 0;
+}
+</style>
+<style data-jss="" data-meta="MuiAppBar">
+.MuiAppBar-root-133 {
+	width: 100%;
+	display: flex;
+	z-index: 1100;
+	box-sizing: border-box;
+	flex-shrink: 0;
+	flex-direction: column;
+}
+
+.MuiAppBar-positionFixed-134 {
+	top: 0;
+	left: auto;
+	right: 0;
+	position: fixed;
+}
+
+.MuiAppBar-positionAbsolute-135 {
+	top: 0;
+	left: auto;
+	right: 0;
+	position: absolute;
+}
+
+.MuiAppBar-positionSticky-136 {
+	top: 0;
+	left: auto;
+	right: 0;
+	position: sticky;
+}
+
+.MuiAppBar-positionStatic-137 {
+	position: static;
+}
+
+.MuiAppBar-positionRelative-138 {
+	position: relative;
+}
+
+.MuiAppBar-colorDefault-139 {
+	color: rgba(0, 0, 0, 0.87);
+	background-color: #f5f5f5;
+}
+
+.MuiAppBar-colorPrimary-140 {
+	color: #fff;
+	background-color: #673ab7;
+}
+
+.MuiAppBar-colorSecondary-141 {
+	color: #fff;
+	background-color: #78909c;
+}
+</style>
+<style data-jss="" data-meta="MuiToolbar">
+.MuiToolbar-root-142 {
+	display: flex;
+	position: relative;
+	align-items: center;
+}
+
+.MuiToolbar-gutters-143 {
+	padding-left: 16px;
+	padding-right: 16px;
+}
+
+@media ( min-width :600px) {
+	.MuiToolbar-gutters-143 {
+		padding-left: 24px;
+		padding-right: 24px;
+	}
+}
+
+.MuiToolbar-regular-144 {
+	min-height: 56px;
+}
+
+@media ( min-width :0px) and (orientation: landscape) {
+	.MuiToolbar-regular-144 {
+		min-height: 48px;
+	}
+}
+
+@media ( min-width :600px) {
+	.MuiToolbar-regular-144 {
+		min-height: 64px;
+	}
+}
+
+.MuiToolbar-dense-145 {
+	min-height: 48px;
+}
+</style>
+<style data-jss="" data-meta="StatefulAppHeader">
+.StatefulAppHeader-appBar-128 {
+	transition: margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms, width 195ms
+		cubic-bezier(0.4, 0, 0.6, 1) 0ms;
+}
+
+.StatefulAppHeader-appBarShift-129 {
+	width: calc(100% - 240px);
+	transition: margin 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms, width 225ms
+		cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+	margin-left: 240px;
+}
+
+.StatefulAppHeader-menuButton-130 {
+	margin-left: 12px;
+	margin-right: 20px;
+}
+
+.StatefulAppHeader-hide-131 {
+	display: none;
+}
+
+.StatefulAppHeader-link-132 {
+	color: #fff;
+	cursor: pointer;
+	text-decoration: none;
+}
+</style>
+<style data-jss="" data-meta="MuiListItem">
+.MuiListItem-root-73 {
+	width: 100%;
+	display: flex;
+	position: relative;
+	box-sizing: border-box;
+	text-align: left;
+	align-items: center;
+	padding-top: 11px;
+	padding-bottom: 11px;
+	justify-content: flex-start;
+	text-decoration: none;
+}
+
+.MuiListItem-root-73.MuiListItem-selected-84, .MuiListItem-root-73.MuiListItem-selected-84:hover,
+	.MuiListItem-root-73.MuiListItem-selected-84:focus {
+	background-color: rgba(0, 0, 0, 0.14);
+}
+
+.MuiListItem-container-74 {
+	position: relative;
+}
+
+.MuiListItem-dense-77 {
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+
+.MuiListItem-alignItemsFlexStart-78 {
+	align-items: flex-start;
+}
+
+.MuiListItem-disabled-79 {
+	opacity: 0.5;
+}
+
+.MuiListItem-divider-80 {
+	border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+	background-clip: padding-box;
+}
+
+.MuiListItem-gutters-81 {
+	padding-left: 16px;
+	padding-right: 16px;
+}
+
+.MuiListItem-button-82 {
+	transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.MuiListItem-button-82:hover {
+	text-decoration: none;
+	background-color: rgba(0, 0, 0, 0.08);
+}
+
+.MuiListItem-button-82:focus {
+	background-color: rgba(0, 0, 0, 0.08);
+}
+
+@media ( hover : none) {
+	.MuiListItem-button-82:hover {
+		background-color: transparent;
+	}
+}
+
+.MuiListItem-secondaryAction-83 {
+	padding-right: 32px;
+}
+</style>
+<style data-jss="" data-meta="MuiListItemIcon">
+.MuiListItemIcon-root-85 {
+	color: rgba(0, 0, 0, 0.54);
+	display: inline-flex;
+	flex-shrink: 0;
+	margin-right: 16px;
+}
+</style>
+<style data-jss="" data-meta="MuiListItemText">
+.MuiListItemText-root-86 {
+	flex: 1 1 auto;
+	padding: 0 16px;
+	min-width: 0;
+}
+
+.MuiListItemText-root-86:first-child {
+	padding-left: 0;
+}
+
+.MuiListItemText-inset-87:first-child {
+	padding-left: 56px;
+}
+
+.MuiListItemText-dense-88 {
+	font-size: 0.8125rem;
+}
+
+.MuiListItemText-primary-89.MuiListItemText-textDense-91 {
+	font-size: inherit;
+}
+
+.MuiListItemText-secondary-90.MuiListItemText-textDense-91 {
+	font-size: inherit;
+}
+</style>
+<style data-jss="" data-meta="LHToolRoot">
+.LHToolRoot-root-1 {
+	display: flex;
+}
+
+.LHToolRoot-drawer-2 {
+	width: 240px;
+	flex-shrink: 0;
+}
+
+.LHToolRoot-drawerPaper-3 {
+	width: 240px;
+}
+
+.LHToolRoot-drawerHeader-4 {
+	display: flex;
+	padding: 0 8px;
+	min-height: 56px;
+	align-items: center;
+	justify-content: flex-end;
+}
+
+@media ( min-width :0px) and (orientation: landscape) {
+	.LHToolRoot-drawerHeader-4 {
+		min-height: 48px;
+	}
+}
+
+@media ( min-width :600px) {
+	.LHToolRoot-drawerHeader-4 {
+		min-height: 64px;
+	}
+}
+
+.LHToolRoot-content-5 {
+	padding: 24px;
+	flex-grow: 1;
+	transition: margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
+	margin-left: -240px;
+}
+
+.LHToolRoot-contentShift-6 {
+	transition: margin 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+	margin-left: 0;
+}
+</style>
+</head>
+<body onlo>
+	<div id="main-app-container">
+		<div class="LHToolRoot-root-1">
+			<div class="MuiDrawer-root-7 MuiDrawer-docked-8 LHToolRoot-drawer-2">
+				<div
+					class="MuiPaper-root-19 MuiPaper-elevation0-21 MuiDrawer-paper-9 LHToolRoot-drawerPaper-3 MuiDrawer-paperAnchorLeft-10 MuiDrawer-paperAnchorDockedLeft-14">
+					<div class="LHToolRoot-drawerHeader-4">
+						<button class="MuiButtonBase-root-52 MuiIconButton-root-46"
+							tabindex="0" type="button">
+							<span class="MuiIconButton-label-51"><svg
+									class="MuiSvgIcon-root-55" focusable="false"
+									viewBox="0 0 24 24" aria-hidden="true" role="presentation">
+									<path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path>
+									<path fill="none" d="M0 0h24v24H0z"></path></svg></span><span
+								class="MuiTouchRipple-root-242"></span>
+						</button>
+					</div>
+					<hr class="MuiDivider-root-64">
+					<ul class="MuiList-root-69 MuiList-padding-70">
+						<a style="text-decoration: none;" href="/lh-tool/web/login/"><div
+								class="MuiButtonBase-root-52 MuiListItem-root-73 MuiListItem-default-76 MuiListItem-gutters-81 MuiListItem-button-82"
+								tabindex="0" role="button">
+								<div class="MuiListItemIcon-root-85">
+									<svg class="MuiSvgIcon-root-55" focusable="false"
+										viewBox="0 0 24 24" aria-hidden="true" role="presentation">
+										<path fill="none" d="M0 0h24v24H0z"></path>
+										<path
+											d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"></path></svg>
+								</div>
+								<div class="MuiListItemText-root-86">
+									<span
+										class="MuiTypography-root-92 MuiTypography-body1-101 MuiListItemText-primary-89">Anmelden</span>
+								</div>
+								<span class="MuiTouchRipple-root-242"></span>
+							</div></a>
+					</ul>
+					<hr class="MuiDivider-root-64">
+					<ul class="MuiList-root-69 MuiList-padding-70">
+						<a style="text-decoration: none;" href="/lh-tool/web/imprint/"><div
+								class="MuiButtonBase-root-52 MuiListItem-root-73 MuiListItem-default-76 MuiListItem-gutters-81 MuiListItem-button-82"
+								tabindex="0" role="button">
+								<div class="MuiListItemIcon-root-85">
+									<svg class="MuiSvgIcon-root-55" focusable="false"
+										viewBox="0 0 24 24" aria-hidden="true" role="presentation">
+										<path fill="none" d="M0 0h24v24H0z"></path>
+										<path
+											d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm-1 4l6 6v10c0 1.1-.9 2-2 2H7.99C6.89 23 6 22.1 6 21l.01-14c0-1.1.89-2 1.99-2h7zm-1 7h5.5L14 6.5V12z"></path></svg>
+								</div>
+								<div class="MuiListItemText-root-86">
+									<span
+										class="MuiTypography-root-92 MuiTypography-body1-101 MuiListItemText-primary-89">Impressum</span>
+								</div>
+								<span class="MuiTouchRipple-root-242"></span>
+							</div></a>
+						<a style="text-decoration: none;"
+							href="/lh-tool/web/data-protection/"><div
+								class="MuiButtonBase-root-52 MuiListItem-root-73 MuiListItem-default-76 MuiListItem-gutters-81 MuiListItem-button-82"
+								tabindex="0" role="button">
+								<div class="MuiListItemIcon-root-85">
+									<svg class="MuiSvgIcon-root-55" focusable="false"
+										viewBox="0 0 24 24" aria-hidden="true" role="presentation">
+										<path fill="none" d="M0 0h24v24H0z"></path>
+										<path
+											d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm-1 4l6 6v10c0 1.1-.9 2-2 2H7.99C6.89 23 6 22.1 6 21l.01-14c0-1.1.89-2 1.99-2h7zm-1 7h5.5L14 6.5V12z"></path></svg>
+								</div>
+								<div class="MuiListItemText-root-86">
+									<span
+										class="MuiTypography-root-92 MuiTypography-body1-101 MuiListItemText-primary-89">Datenschutz</span>
+								</div>
+								<span class="MuiTouchRipple-root-242"></span>
+							</div></a>
+					</ul>
+				</div>
+			</div>
+			<main class="LHToolRoot-content-5 LHToolRoot-contentShift-6">
+				<header
+					class="MuiPaper-root-19 MuiPaper-elevation4-25 MuiAppBar-root-133 MuiAppBar-positionFixed-134 MuiAppBar-colorPrimary-140 mui-fixed StatefulAppHeader-appBar-128 StatefulAppHeader-appBarShift-129">
+					<div>
+						<div
+							class="MuiToolbar-root-142 MuiToolbar-regular-144 MuiToolbar-gutters-143">
+							<button
+								class="MuiButtonBase-root-52 MuiIconButton-root-46 MuiIconButton-colorInherit-47 StatefulAppHeader-menuButton-130 StatefulAppHeader-hide-131"
+								tabindex="0" type="button" aria-label="Open drawer">
+								<span class="MuiIconButton-label-51"><svg
+										class="MuiSvgIcon-root-55" focusable="false"
+										viewBox="0 0 24 24" aria-hidden="true" role="presentation">
+										<path fill="none" d="M0 0h24v24H0z"></path>
+										<path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path></svg></span><span
+									class="MuiTouchRipple-root-242"></span>
+							</button>
+							<h1
+								class="MuiTypography-root-92 MuiTypography-h6-109 MuiTypography-colorInherit-121 MuiTypography-noWrap-118">
+								<span><a class="StatefulAppHeader-link-132"
+									href="/lh-tool/web">LH-Tool</a></span>
+							</h1>
+						</div>
+					</div>
+				</header>
+				<div style="height: 64px;"></div>
+				<form method="get" action="../../web/changepw">
+					<br>
+					<div
+						class="MuiFormControl-root-146 MuiFormControl-marginDense-148 MuiFormControl-fullWidth-149">
+						<label
+							class="MuiFormLabel-root-161 MuiInputLabel-root-150 MuiInputLabel-formControl-155 MuiInputLabel-animated-158 MuiInputLabel-marginDense-156 MuiInputLabel-outlined-160"
+							data-shrink="false" for="passwordNew">Neues Passwort</label>
+						<div
+							class="MuiInputBase-root-181 MuiOutlinedInput-root-168 MuiInputBase-fullWidth-190 MuiInputBase-formControl-182 MuiInputBase-marginDense-188">
+							<fieldset aria-hidden="true" style="padding-left: 55.875px;"
+								class="MuiPrivateNotchedOutline-root-198 MuiOutlinedInput-notchedOutline-175">
+								<legend class="MuiPrivateNotchedOutline-legend-199"
+									style="width: 0.01px;">
+									<span>​</span>
+								</legend>
+							</fieldset>
+							<input aria-invalid="false"
+								class="MuiInputBase-input-191 MuiOutlinedInput-input-176 MuiInputBase-inputType-194 MuiInputBase-inputMarginDense-192 MuiOutlinedInput-inputMarginDense-177"
+								id="passwordNew" type="password" name="passwordNew" value="">
+						</div>
+					</div>
+					<br>
+					<div
+						class="MuiFormControl-root-146 MuiFormControl-marginDense-148 MuiFormControl-fullWidth-149">
+						<label
+							class="MuiFormLabel-root-161 MuiInputLabel-root-150 MuiInputLabel-formControl-155 MuiInputLabel-animated-158 MuiInputLabel-marginDense-156 MuiInputLabel-outlined-160"
+							data-shrink="false" for="passwordNewConfirm">Neues
+							Passwort bestätigen</label>
+						<div
+							class="MuiInputBase-root-181 MuiOutlinedInput-root-168 MuiInputBase-fullWidth-190 MuiInputBase-formControl-182 MuiInputBase-marginDense-188">
+							<fieldset aria-hidden="true" style="padding-left: 85.5px;"
+								class="MuiPrivateNotchedOutline-root-198 MuiOutlinedInput-notchedOutline-175">
+								<legend class="MuiPrivateNotchedOutline-legend-199"
+									style="width: 0.01px;">
+									<span>​</span>
+								</legend>
+							</fieldset>
+							<input aria-invalid="false"
+								class="MuiInputBase-input-191 MuiOutlinedInput-input-176 MuiInputBase-inputType-194 MuiInputBase-inputMarginDense-192 MuiOutlinedInput-inputMarginDense-177"
+								id="passwordNewConfirm" type="password" name="passwordNewConfirm" value="">
+						</div>
+					</div>
+					<label class="MuiFormControlLabel-root-200"><span
+						class="MuiButtonBase-root-52 MuiIconButton-root-46 MuiPrivateSwitchBase-root-212 MuiCheckbox-root-206 MuiCheckbox-colorSecondary-211"><span
+							class="MuiIconButton-label-51"> <input
+								onChange="togglePrivacyButton()" id="acceptPrivacy"
+								type="checkbox" data-indeterminate="false" value=""></span><span
+							class="MuiTouchRipple-root-242"></span></span><span
+						class="MuiTypography-root-92 MuiTypography-body2-100 MuiFormControlLabel-label-205">Ich
+							stimme der <a href="/lh-tool/web/data-protection/"
+							target="_blank">Datenschutzerklärung</a> dieser Webseite zu.
+					</span></label><br>
+					<button id="privacyButton"
+						class="MuiButtonBase-root-52 MuiButtonBase-disabled-53 MuiButton-root-216 MuiButton-contained-227 MuiButton-containedPrimary-228 MuiButton-raised-230 MuiButton-raisedPrimary-231 MuiButton-disabled-236"
+						tabindex="-1" type="submit" disabled="">
+						<span class="MuiButton-label-217">Passwort ändern</span>
+					</button>
+					<input id="uid" name="uid" type="hidden" /> <input id="token"
+						name="token" type="hidden" />
+				</form>
+			</main>
+		</div>
+	</div>
+	<script>
+		window.__GLOBAL_CONFIG__ = {
+			"basePath" : "/lh-tool/web",
+			"contextPath" : "/lh-tool"
+		};
+	</script>
+	<!-- 	<script src="/lh-tool/static/built/bundle.js"></script> -->
+	<script type="text/javascript">
+		function togglePrivacyButton() {
+			var privacyButton = document.getElementById('privacyButton');
+			if (privacyButton.hasAttribute('disabled')) {
+				privacyButton.removeAttribute('disabled');
+				privacyButton.classList.remove('MuiButtonBase-disabled-53');
+				privacyButton.classList.remove('MuiButton-disabled-236');
+			} else {
+				privacyButton.setAttribute('disabled', '');
+				privacyButton.classList.add('MuiButtonBase-disabled-53');
+				privacyButton.classList.add('MuiButton-disabled-236');
+			}
+		}
+		
+		
+		var urlParams = new URLSearchParams(window.location.search);
+		
+		document.getElementById("uid").setAttribute('value', urlParams.get('uid'));
+		document.getElementById("token").setAttribute('value', urlParams.get('token'));
+	</script>
+</body>
+</html>
