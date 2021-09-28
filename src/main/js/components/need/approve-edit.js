@@ -10,15 +10,13 @@ import CheckIcon from '@material-ui/icons/Check';
 import CloseIcon from '@material-ui/icons/Close';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
 import EventBusyIcon from '@material-ui/icons/EventBusy';
+import { withSnackbar } from 'notistack';
 import React from 'react';
 import { Prompt } from 'react-router';
-import { changeApplicationStateForNeed } from '../../actions/need';
-import { fetchUser } from '../../actions/user';
+import { RIGHT_NEEDS_APPROVE } from '../../permissions';
+import { NeedsContext } from '../../providers/needs-provider';
 import { requiresLogin } from '../../util';
 import WithPermission from '../with-permission';
-import { NeedsContext } from '../../providers/needs-provider';
-import { withSnackbar } from 'notistack';
-import { RIGHT_NEEDS_APPROVE } from '../../permissions';
 
 
 const styles = theme => ({
@@ -97,7 +95,7 @@ class StatefulNeedApproveEditComponent extends React.Component {
                 <div className={classes.wrapper}>
                     <div className={classes.label}>
                         {label} ({approved ? approved : 0} / {need.quantity})
-                </div>
+                    </div>
                     {users ? (
                         <>
                             <List className={classes.root}>
@@ -117,8 +115,8 @@ class StatefulNeedApproveEditComponent extends React.Component {
                                                             {needUser.state === 'APPROVED' ? (
                                                                 <EventAvailableIcon />
                                                             ) : (
-                                                                    <CheckIcon />
-                                                                )}
+                                                                <CheckIcon />
+                                                            )}
                                                         </IconButton>
                                                         <IconButton
                                                             disabled={needUser.state === 'REJECTED'}
@@ -127,17 +125,17 @@ class StatefulNeedApproveEditComponent extends React.Component {
                                                             {needUser.state === 'REJECTED' ? (
                                                                 <EventBusyIcon />
                                                             ) : (
-                                                                    <CloseIcon />
-                                                                )}
+                                                                <CloseIcon />
+                                                            )}
                                                         </IconButton>
                                                     </WithPermission>
                                                 </>
                                             ) : (
-                                                    <>
-                                                        <CircularProgress size={15} />
-                                                        <ListItemText primary="Loading..." />
-                                                    </>
-                                                )}
+                                                <>
+                                                    <CircularProgress size={15} />
+                                                    <ListItemText primary="Loading..." />
+                                                </>
+                                            )}
                                         </ListItem>
                                     );
                                 })}
@@ -149,8 +147,8 @@ class StatefulNeedApproveEditComponent extends React.Component {
                             {updating ? (
                                 <CircularProgress />
                             ) : (
-                                    <Button variant="contained" onClick={() => this.saveNeedUsers()}>Speichern</Button>
-                                )}
+                                <Button variant="contained" onClick={() => this.saveNeedUsers()}>Speichern</Button>
+                            )}
                         </div>
                     )}
 

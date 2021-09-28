@@ -1,3 +1,4 @@
+import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import grey from '@material-ui/core/colors/grey';
@@ -13,7 +14,7 @@ import { withSnackbar } from 'notistack';
 import React from 'react';
 import { RIGHT_NEEDS_APPROVE } from '../../permissions';
 import { NeedsContext } from '../../providers/needs-provider';
-import { convertToMUIFormat, requiresLogin } from '../../util';
+import { convertToDDMMYYYY, convertToYYYYMMDD, getWeek, requiresLogin } from '../../util';
 import WithPermission from '../with-permission';
 import NeedApproveEditComponent from './approve-edit';
 import NeedMonthSelection from './need-month-selection';
@@ -31,11 +32,16 @@ const styles = theme => ({
     calendarRow: {
 
     },
+    clickable: {
+        cursor: 'pointer',
+    },
     calendarCell: {
         width: '20%',
         border: '1px solid ' + theme.palette.primary.light,
         textAlign: 'center',
-        padding: theme.spacing.unit,
+        paddingTop: theme.spacing.unit,
+        paddingLeft: theme.spacing.unit * 2,
+        paddingRight: theme.spacing.unit * 2,
         verticalAlign: 'top',
     },
     dayName: {
@@ -54,7 +60,7 @@ const styles = theme => ({
         padding: '3px',
     },
     selected: {
-        backgroundColor: grey[300],
+        backgroundColor: grey[200],
     },
     monthWrapper: {
         width: '100%',
@@ -88,7 +94,7 @@ const styles = theme => ({
 });
 
 const Date = props => (
-    <>{['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'][props.date.isoWeekday() - 1]}, {props.date.format('DD.MM.YYYY')}</>
+    <>{props.date.toLocaleString('default', { weekday: 'long' })}, {convertToDDMMYYYY(props.date)}</>
 );
 
 @withStyles(styles)
@@ -147,7 +153,7 @@ class StatefulNeedApproveComponent extends React.Component {
         const project = this.props.needsState.getSelectedProject();
         const data = project.selectedMonthData;
         if (data && data.days[index] && project.days) {
-            const dayData = project.days.get(convertToMUIFormat(data.days[index].date));
+            const dayData = project.days.get(convertToYYYYMMDD(data.days[index].date));
             return dayData &&
                 dayData.helperTypes
                     .flat(2).map(helperType => helperType.shifts)
@@ -159,7 +165,7 @@ class StatefulNeedApproveComponent extends React.Component {
     }
 
     render() {
-        const { classes, sessionState, needsState } = this.props;
+        const { classes, needsState } = this.props;
         const { selectedStart, selectedEnd, month } = this.state;
         const project = needsState.getSelectedProject();
         const data = project && project.selectedMonthData;
@@ -181,22 +187,24 @@ class StatefulNeedApproveComponent extends React.Component {
                             </thead>
                             <tbody>
                                 {Array.from(Array(data.days.length / 7)).map((_, i) => {
-                                    let disabled = true;
+                                    let weekDisabled = true;
                                     return (<tr className={classes.calendarRow} key={i}>
                                         {Array.from(Array(7)).map((_, j) => {
                                             const index = i * 7 + j;
-                                            disabled = disabled && data.days[index].disabled;
+                                            weekDisabled = weekDisabled && data.days[index].disabled;
                                             return (
-                                                <td className={classNames({
-                                                    [classes.calendarCell]: true,
-                                                    [classes.selected]: !data.days[index].disabled && index >= selectedStart && index <= selectedEnd,
-                                                })} key={j}>
-                                                    <Button
-                                                        disabled={data.days[index].disabled}
-                                                        onClick={() => this.selectDay(index)}
-                                                    >
-                                                        {data.days[index].date.date()}
-                                                    </Button><br />
+                                                <td
+                                                    className={classNames({
+                                                        [classes.calendarCell]: true,
+                                                        [classes.selected]: !data.days[index].disabled && index >= selectedStart && index <= selectedEnd,
+                                                        [classes.clickable]: !data.days[index].disabled,
+                                                    })}
+                                                    key={j}
+                                                    onClick={data.days[index].disabled ? undefined : (() => this.selectDay(index))}
+                                                >
+                                                    <Typography variant="button" color={data.days[index].disabled ? 'textSecondary' : 'inherit'}>
+                                                        {data.days[index].date.getDate()}
+                                                    </Typography>
                                                     {this.isDayReady(i * 7 + j) ? (
                                                         <DoneIcon color={data.days[index].disabled ? 'disabled' : 'inherit'} />
                                                     ) : (<>&nbsp;</>)}
@@ -205,14 +213,14 @@ class StatefulNeedApproveComponent extends React.Component {
                                         })}
                                         <td className={classNames({
                                             [classes.calendarCell]: true,
-                                            [classes.selected]: !disabled && i * 7 >= selectedStart && i * 7 + 6 <= selectedEnd,
-                                        })} >
-                                            <Button
-                                                disabled={disabled}
-                                                onClick={() => this.selectDays(i * 7, i * 7 + 6)}
-                                            >
-                                                KW<br />{data.days[i * 7].date.isoWeek()}
-                                            </Button>
+                                            [classes.selected]: !weekDisabled && i * 7 >= selectedStart && i * 7 + 6 <= selectedEnd,
+                                            [classes.clickable]: !weekDisabled,
+                                        })}
+                                            onClick={weekDisabled ? undefined : (() => this.selectDays(i * 7, i * 7 + 6))}
+                                        >
+                                            <Typography variant="button" color={weekDisabled ? 'textSecondary' : 'inherit'}>
+                                                KW<br />{getWeek(data.days[i * 7].date)}
+                                            </Typography>
                                         </td>
                                     </tr>
                                     );
@@ -229,29 +237,29 @@ class StatefulNeedApproveComponent extends React.Component {
                                     <CheckIcon />
                                 </IconButton>
                                 Nicht genehmigt, klicke hier um die Person für diese Schicht einzuteilen.
-                            <br />
+                                <br />
                                 <IconButton>
                                     <EventAvailableIcon />
                                 </IconButton>
                                 Genehmigt, klicke hier um die Genehmigung zurückzuziehen.
-                            <br />
+                                <br />
                                 <IconButton>
                                     <CloseIcon />
                                 </IconButton>
                                 Nicht abgelehnt, klicke hier um die Person für diese Schicht explizit abzulehnen.
-                            <br />
+                                <br />
                                 <IconButton>
                                     <EventBusyIcon />
                                 </IconButton>
                                 Abgelehnt, klicke hier um die Ablehnung zurückzuziehen.
-                        </div>
+                            </div>
                         </WithPermission>
 
 
                         {selectedStart !== null && selectedEnd !== null && Array.from(Array(selectedEnd - selectedStart + 1)).map((_, i) => {
                             const index = i + parseInt(selectedStart);
                             const day = data.days[index];
-                            const dateString = convertToMUIFormat(day.date);
+                            const dateString = convertToYYYYMMDD(day.date);
                             if (day.disabled || !dayMap || !dayMap.has(dateString)) {
                                 return null;
                             }

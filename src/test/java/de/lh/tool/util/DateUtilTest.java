@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 
@@ -13,8 +12,8 @@ public class DateUtilTest {
 
 	@Test
 	public void testGetReadableFormat() {
-		assertEquals("31.12.2020", DateUtil.getReadableFormat(new Date(1609372800000l)));
 		assertEquals("31.12.2020", DateUtil.getReadableFormat(LocalDate.of(2020, 12, 31)));
+		assertEquals("01.01.2020", DateUtil.getReadableFormat(LocalDate.of(2020, 01, 01)));
 	}
 
 	@Test

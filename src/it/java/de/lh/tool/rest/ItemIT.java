@@ -409,7 +409,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponseIsRegex(true)
 						.expectedResponse("\\{\"id\":1,\"itemId\":1,\"userId\":" + getUserIdByEmail(ADMIN_EMAIL)
-								+ ",\"note\":\"Das ist eine Notiz\",\"timestamp\":\"\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d.\\d*\"\\}")
+								+ ",\"note\":\"Das ist eine Notiz\",\"timestamp\":\"\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d.\\d*Z\"\\}")
 						.validationQueries(List
 								.of("SELECT * FROM item_note WHERE item_id=1 AND note='Das ist eine Notiz' AND user_id="
 										+ getUserIdByEmail(ADMIN_EMAIL)))
@@ -418,7 +418,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								.expectedResponseIsRegex(true)
 								.expectedResponse("\\{\"id\":1,\"itemId\":1,\"userId\":"
 										+ getUserIdByEmail(CONSTRUCTION_SERVANT_EMAIL)
-										+ ",\"note\":\"Das ist eine Notiz\",\"timestamp\":\"\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d.\\d*\"\\}")
+										+ ",\"note\":\"Das ist eine Notiz\",\"timestamp\":\"\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d.\\d*Z\"\\}")
 								.validationQueries(List.of(
 										"SELECT * FROM item_note WHERE item_id=1 AND note='Das ist eine Notiz' AND user_id="
 												+ getUserIdByEmail(CONSTRUCTION_SERVANT_EMAIL)))
@@ -427,7 +427,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								.expectedResponseIsRegex(true)
 								.expectedResponse("\\{\"id\":1,\"itemId\":1,\"userId\":"
 										+ getUserIdByEmail(INVENTORY_MANAGER_EMAIL)
-										+ ",\"note\":\"Das ist eine Notiz\",\"timestamp\":\"\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d.\\d*\"\\}")
+										+ ",\"note\":\"Das ist eine Notiz\",\"timestamp\":\"\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d.\\d*Z\"\\}")
 								.validationQueries(List.of(
 										"SELECT * FROM item_note WHERE item_id=1 AND note='Das ist eine Notiz' AND user_id="
 												+ getUserIdByEmail(INVENTORY_MANAGER_EMAIL)))
@@ -436,7 +436,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								.expectedResponseIsRegex(true)
 								.expectedResponse("\\{\"id\":1,\"itemId\":1,\"userId\":"
 										+ getUserIdByEmail(STORE_KEEPER_EMAIL)
-										+ ",\"note\":\"Das ist eine Notiz\",\"timestamp\":\"\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d.\\d*\"\\}")
+										+ ",\"note\":\"Das ist eine Notiz\",\"timestamp\":\"\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d.\\d*Z\"\\}")
 								.validationQueries(List.of(
 										"SELECT * FROM item_note WHERE item_id=1 AND note='Das ist eine Notiz' AND user_id="
 												+ getUserIdByEmail(STORE_KEEPER_EMAIL)))
@@ -1759,8 +1759,8 @@ public class ItemIT extends BasicRestIntegrationTest {
 								INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"[{\"id\":1,\"itemId\":1,\"userId\":1,\"note\":\"Notize 1 \\\"Test\\\" <*/>§$1 \\\\\\\\\\\\\\\\\\\"\",\"timestamp\":\"2020-07-17T09:51:33\"},"
-										+ "{\"id\":2,\"itemId\":1,\"userId\":2,\"note\":\"Blah Blah Blah\",\"timestamp\":\"2020-07-14T09:51:33\"}]")
+								"[{\"id\":1,\"itemId\":1,\"userId\":1,\"note\":\"Notize 1 \\\"Test\\\" <*/>§$1 \\\\\\\\\\\\\\\\\\\"\",\"timestamp\":\"2020-07-17T09:51:33Z\"},"
+										+ "{\"id\":2,\"itemId\":1,\"userId\":2,\"note\":\"Blah Blah Blah\",\"timestamp\":\"2020-07-14T09:51:33Z\"}]")
 						.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
@@ -1782,7 +1782,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"[{\"id\":1,\"itemId\":1,\"userId\":1,\"note\":\"Notize 1 \\\"Test\\\" <*/>§$1 \\\\\\\\\\\\\\\\\\\"\",\"timestamp\":\"2020-07-17T09:51:33\"},{\"id\":2,\"itemId\":1,\"userId\":2,\"note\":\"Blah Blah Blah\",\"timestamp\":\"2020-07-14T09:51:33\"}]")
+								"[{\"id\":1,\"itemId\":1,\"userId\":1,\"note\":\"Notize 1 \\\"Test\\\" <*/>§$1 \\\\\\\\\\\\\\\\\\\"\",\"timestamp\":\"2020-07-17T09:51:33Z\"},{\"id\":2,\"itemId\":1,\"userId\":2,\"note\":\"Blah Blah Blah\",\"timestamp\":\"2020-07-14T09:51:33Z\"}]")
 						.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
@@ -1830,7 +1830,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 								INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"[{\"id\":7,\"itemId\":1,\"userId\":6,\"timestamp\":\"2020-07-25T15:36:04\",\"type\":\"FIXED\",\"data\":null},{\"id\":6,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:35:06\",\"type\":\"BROKEN\",\"data\":null},{\"id\":5,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:35:03\",\"type\":\"MOVED\",\"data\":\"{\\\"from\\\":\\\"Store: Slot2\\\",\\\"to\\\":\\\"Store: Slot\\\"}\"},{\"id\":4,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:34:50\",\"type\":\"MOVED\",\"data\":\"{\\\"from\\\":\\\"Store: Slot\\\",\\\"to\\\":\\\"Store: Slot2\\\"}\"},{\"id\":1,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:34:13\",\"type\":\"CREATED\",\"data\":null}]")
+								"[{\"id\":7,\"itemId\":1,\"userId\":6,\"timestamp\":\"2020-07-25T15:36:04Z\",\"type\":\"FIXED\",\"data\":null},{\"id\":6,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:35:06Z\",\"type\":\"BROKEN\",\"data\":null},{\"id\":5,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:35:03Z\",\"type\":\"MOVED\",\"data\":\"{\\\"from\\\":\\\"Store: Slot2\\\",\\\"to\\\":\\\"Store: Slot\\\"}\"},{\"id\":4,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:34:50Z\",\"type\":\"MOVED\",\"data\":\"{\\\"from\\\":\\\"Store: Slot\\\",\\\"to\\\":\\\"Store: Slot2\\\"}\"},{\"id\":1,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:34:13Z\",\"type\":\"CREATED\",\"data\":null}]")
 						.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
@@ -1851,7 +1851,7 @@ public class ItemIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, INVENTORY_MANAGER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"[{\"id\":7,\"itemId\":1,\"userId\":6,\"timestamp\":\"2020-07-25T15:36:04\",\"type\":\"FIXED\",\"data\":null},{\"id\":6,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:35:06\",\"type\":\"BROKEN\",\"data\":null},{\"id\":5,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:35:03\",\"type\":\"MOVED\",\"data\":\"{\\\"from\\\":\\\"Store: Slot2\\\",\\\"to\\\":\\\"Store: Slot\\\"}\"},{\"id\":4,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:34:50\",\"type\":\"MOVED\",\"data\":\"{\\\"from\\\":\\\"Store: Slot\\\",\\\"to\\\":\\\"Store: Slot2\\\"}\"},{\"id\":1,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:34:13\",\"type\":\"CREATED\",\"data\":null}]")
+								"[{\"id\":7,\"itemId\":1,\"userId\":6,\"timestamp\":\"2020-07-25T15:36:04Z\",\"type\":\"FIXED\",\"data\":null},{\"id\":6,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:35:06Z\",\"type\":\"BROKEN\",\"data\":null},{\"id\":5,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:35:03Z\",\"type\":\"MOVED\",\"data\":\"{\\\"from\\\":\\\"Store: Slot2\\\",\\\"to\\\":\\\"Store: Slot\\\"}\"},{\"id\":4,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:34:50Z\",\"type\":\"MOVED\",\"data\":\"{\\\"from\\\":\\\"Store: Slot\\\",\\\"to\\\":\\\"Store: Slot2\\\"}\"},{\"id\":1,\"itemId\":1,\"userId\":1,\"timestamp\":\"2020-07-25T15:34:13Z\",\"type\":\"CREATED\",\"data\":null}]")
 						.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}

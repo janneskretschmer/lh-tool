@@ -1,12 +1,11 @@
-import React from 'react';
-import { withContext, isStringBlank, convertFromMUIFormat, shallowEquals } from '../util';
-import { fetchProjects, fetchProjectHelperTypes, fetchProject, updateProject, createProject, createProjectHelperType, updateProjectHelperType, deleteProjectHelperType } from '../actions/project';
-import { SessionContext } from './session-provider';
-import { fetchHelperTypes } from '../actions/helper-type';
-import moment, { weekdays } from 'moment';
-import { NEW_ENTITY_ID_PLACEHOLDER } from '../config';
 import _ from 'lodash';
+import React from 'react';
+import { fetchHelperTypes } from '../actions/helper-type';
+import { createProject, createProjectHelperType, deleteProjectHelperType, fetchProject, fetchProjectHelperTypes, fetchProjects, updateProject, updateProjectHelperType } from '../actions/project';
+import { NEW_ENTITY_ID_PLACEHOLDER } from '../config';
 import { RIGHT_PROJECTS_POST } from '../permissions';
+import { isStringBlank, withContext } from '../util';
+import { SessionContext } from './session-provider';
 
 export const ProjectsContext = React.createContext();
 
@@ -374,9 +373,9 @@ export default class ProjectsProvider extends React.Component {
             return;
         }
         this.setState(prevState => {
-            let startDate = convertFromMUIFormat(date).utc(true);
+            let startDate = new Date(date);
             if (prevState.selectedProject.endDate) {
-                startDate = moment.max(startDate, prevState.selectedProject.endDate);
+                startDate = new Date(Math.min(startDate, prevState.selectedProject.endDate));
             }
             return {
                 selectedProject: {
@@ -392,9 +391,9 @@ export default class ProjectsProvider extends React.Component {
             return;
         }
         this.setState(prevState => {
-            let endDate = convertFromMUIFormat(date).utc(true);
+            let endDate = new Date(date);
             if (prevState.selectedProject.startDate) {
-                endDate = moment.max(endDate, prevState.selectedProject.startDate);
+                endDate = new Date(Math.max(endDate, prevState.selectedProject.startDate));
             }
             return {
                 selectedProject: {

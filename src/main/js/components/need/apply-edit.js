@@ -1,16 +1,13 @@
-import React from 'react';
+import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { green, grey, red, yellow } from '@material-ui/core/colors';
 import { withStyles } from '@material-ui/core/styles';
 import { withSnackbar } from 'notistack';
-import { requiresLogin } from '../../util';
-import TextField from '@material-ui/core/TextField';
-import { changeApplicationStateForNeed } from '../../actions/need';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Button from '@material-ui/core/Button';
-import { green, yellow, red, grey } from '@material-ui/core/colors';
-import SimpleDialog from '../simple-dialog';
-import moment from 'moment';
-import { NeedsContext } from '../../providers/needs-provider';
+import React from 'react';
 import { RIGHT_NEEDS_APPLY } from '../../permissions';
+import { NeedsContext } from '../../providers/needs-provider';
+import { convertToDDMMYYYY, requiresLogin } from '../../util';
+import SimpleDialog from '../simple-dialog';
 
 const styles = theme => ({
     none: {
@@ -88,7 +85,7 @@ class StatefulNeedApplyEditComponent extends React.Component {
     }
 
     getDialogTitle() {
-        const date = moment(this.props.need.date, 'x').format('DD.MM.YYYY');
+        const date = convertToDDMMYYYY(new Date(this.props.need.date));
         return this.props.helperTypeName + ' am ' + date + ' ' + this.props.label;
     }
 
@@ -121,19 +118,19 @@ class StatefulNeedApplyEditComponent extends React.Component {
                 </SimpleDialog>
             </>
         ) : (
-                    <SimpleDialog
-                        title={this.getDialogTitle()}
-                        text="Für diese Schicht stehen bereits genügend Helfer zur Verfügung. Bitte bewerbe dich für eine andere Aufgabe oder an einem anderen Datum."
-                        cancelText="OK"
-                    >
-                        <Button
-                            variant={'contained'}
-                            className={this.getClassName(need)}
-                            color="inherit">
-                            {label}
-                        </Button>
-                    </SimpleDialog>
-                );
+            <SimpleDialog
+                title={this.getDialogTitle()}
+                text="Für diese Schicht stehen bereits genügend Helfer zur Verfügung. Bitte bewerbe dich für eine andere Aufgabe oder an einem anderen Datum."
+                cancelText="OK"
+            >
+                <Button
+                    variant={'contained'}
+                    className={this.getClassName(need)}
+                    color="inherit">
+                    {label}
+                </Button>
+            </SimpleDialog>
+        );
     }
 }
 

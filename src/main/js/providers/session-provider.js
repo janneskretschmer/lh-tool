@@ -11,7 +11,7 @@ function getCurrentUserState(accessToken) {
     if (accessToken) {
         const decodedToken = jsonwebtoken.decode(accessToken);
         const permissions = decodedToken ? decodedToken.permissions : null;
-        return fetchCurrentUser({ accessToken })
+        return fetchCurrentUser(accessToken)
             .then(userInfo => ({ accessToken, userInfo, permissions }))
             .catch(() => ({ accessToken, permissions }));
     } else {

@@ -8,8 +8,8 @@
 		</Console>
 		<!-- File Appender -->
 		<RollingFile name="File">
-			<FileName>$${sys:catalina.base}/logs/lh-tool.log</FileName>
-			<FilePattern>$${sys:catalina.base}/logs/lh-tool_%d{yyyy-MM-dd}.log.gz</FilePattern>
+			<FileName>${sys:catalina.base}/logs/lh-tool.log</FileName>
+			<FilePattern>${sys:catalina.base}/logs/lh-tool_%d{yyyy-MM-dd}.log.gz</FilePattern>
 			<PatternLayout>
 				<Pattern>%d{yyyy-MMM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n</Pattern>
 			</PatternLayout>
@@ -29,6 +29,13 @@
 			<AppenderRef ref="Console" />
 			<AppenderRef ref="File" />
 		</Logger>
+		
+<!-- 		log requests -->
+<!-- 		<Logger name="org.springframework.web" level="debug" additivity="false"> -->
+<!-- 			<AppenderRef ref="Console" /> -->
+<!-- 		</Logger> -->
+
+<!-- log queries -->
 <!-- 		<Logger name="org.hibernate.SQL" level="debug" additivity="false"> -->
 <!-- 	      <AppenderRef ref="Console" />      -->
 <!-- 	    </Logger> -->

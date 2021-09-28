@@ -4,7 +4,7 @@ import { withSnackbar } from 'notistack';
 import React from 'react';
 import { fullPathOfProjectSettings, fullPathOfProjectsSettings } from '../../paths';
 import { ProjectsContext } from '../../providers/projects-provider';
-import { convertToMUIFormat, requiresLogin } from '../../util';
+import { convertToYYYYMMDD, requiresLogin } from '../../util';
 import LenientRedirect from '../util/lenient-redirect';
 import ProjectShiftEditComponent from './project-shifts-edit';
 import { PageContext } from '../../providers/page-provider';
@@ -102,7 +102,7 @@ class StatefulProjectEditComponent extends React.Component {
                 Von&nbsp;
                 <TextField
                     type="date"
-                    value={convertToMUIFormat(project.startDate) || ''}
+                    value={convertToYYYYMMDD(project.startDate) || ''}
                     variant="outlined"
                     margin="dense"
                     disabled={saving}
@@ -111,7 +111,7 @@ class StatefulProjectEditComponent extends React.Component {
                 &nbsp;bis&nbsp;
                 <TextField
                     type="date"
-                    value={convertToMUIFormat(project.endDate) || ''}
+                    value={convertToYYYYMMDD(project.endDate) || ''}
                     variant="outlined"
                     margin="dense"
                     disabled={saving}

@@ -1,16 +1,10 @@
-import React from 'react';
-import { UsersContext } from '../../providers/users-provider';
-import { requiresLogin, getRoleName, convertToReadableFormat } from '../../util';
-import { CircularProgress, Button, TextField, IconButton, InputAdornment, withStyles, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
-import { Redirect } from 'react-router';
-import { fullPathOfUserSettings, fullPathOfProjectSettings } from '../../paths';
-import PagedTable from '../table';
+import { CircularProgress, withStyles } from '@material-ui/core';
 import { withSnackbar } from 'notistack';
-import ExpandLessIcon from '@material-ui/icons/ExpandLess';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import SearchIcon from '@material-ui/icons/Search';
-import WithPermission from '../with-permission';
+import React from 'react';
+import { fullPathOfProjectSettings } from '../../paths';
 import { ProjectsContext } from '../../providers/projects-provider';
+import { convertToDDMMYYYY, convertToDDMMYYYY_HHMM, requiresLogin } from '../../util';
+import PagedTable from '../table';
 
 const styles = theme => ({
     button: {
@@ -52,12 +46,12 @@ export class StatefulProjectListComponent extends React.Component {
                     {
                         key: 'startDate',
                         name: 'Startdatum',
-                        converter: moment => convertToReadableFormat(moment),
+                        converter: date => convertToDDMMYYYY(date),
                     },
                     {
                         key: 'endDate',
                         name: 'Enddatum',
-                        converter: moment => convertToReadableFormat(moment),
+                        converter: date => convertToDDMMYYYY(date),
                     },
                 ]}
                 fitWidth={true}

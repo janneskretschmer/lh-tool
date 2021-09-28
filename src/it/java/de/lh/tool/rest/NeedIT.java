@@ -2,7 +2,7 @@ package de.lh.tool.rest;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -28,13 +28,14 @@ public class NeedIT extends BasicRestIntegrationTest {
 	public void testNeedCreationForeign() throws Exception {
 		assertTrue(testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/needs/").method(Method.POST)
-				.body(NeedDto.builder().projectHelperTypeId(1l).date(Date.valueOf("2020-04-23")).quantity(123).build())
+				.body(NeedDto.builder().projectHelperTypeId(1l).date(LocalDate.parse("2020-04-23")).quantity(123)
+						.build())
 				.initializationQueries(List.of("INSERT INTO `helper_type` (`id`, `name`) VALUES (1, 'Test1')",
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
 						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (1, 1, 1, 1, '07:00:00', '17:00:00')"))
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":123}")
+								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":\"2020-04-23\",\"quantity\":123}")
 						.validationQueries(List.of(
 								"SELECT * FROM need WHERE project_helper_type_id=1 AND quantity=123 AND date='2020-04-23'"))
 						.build()))
@@ -52,12 +53,13 @@ public class NeedIT extends BasicRestIntegrationTest {
 						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
 						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (1, 1, 1, 1, '07:00:00', '17:00:00')"))
 				.url(REST_URL + "/needs/").method(Method.POST)
-				.body(NeedDto.builder().projectHelperTypeId(1l).date(Date.valueOf("2020-04-23")).quantity(123).build())
+				.body(NeedDto.builder().projectHelperTypeId(1l).date(LocalDate.parse("2020-04-23")).quantity(123)
+						.build())
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":123}")
+								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":\"2020-04-23\",\"quantity\":123}")
 						.validationQueries(List.of(
 								"SELECT * FROM need WHERE project_helper_type_id=1 AND quantity=123 AND date='2020-04-23'"))
 						.build()))
@@ -76,7 +78,8 @@ public class NeedIT extends BasicRestIntegrationTest {
 						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (1, 1, 1, 1, '07:00:00', '17:00:00')",
 						"INSERT INTO need (id, project_helper_type_id, quantity, date) VALUES (1, 1, 42, '2020-04-23')"))
 				.url(REST_URL + "/needs/").method(Method.POST)
-				.body(NeedDto.builder().projectHelperTypeId(1l).date(Date.valueOf("2020-04-23")).quantity(123).build())
+				.body(NeedDto.builder().projectHelperTypeId(1l).date(LocalDate.parse("2020-04-23")).quantity(123)
+						.build())
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL))
 						.expectedHttpCode(HttpStatus.CONFLICT)
@@ -102,19 +105,19 @@ public class NeedIT extends BasicRestIntegrationTest {
 				.initializationQueries(List.of("INSERT INTO `helper_type` (`id`, `name`) VALUES (1, 'Test1')",
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
 						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (1, 1, 1, 1, '07:00:00', '17:00:00')",
-						"INSERT INTO need (id, project_helper_type_id, quantity, date) VALUES (1, 1, 42, '2020-04-23')"))
+						"INSERT INTO need (id, project_helper_type_id, quantity, date) VALUES (1, 1, 42, '2020-04-10')"))
 				.url(REST_URL + "/needs/1").method(Method.PUT)
-				.body(NeedDto.builder().id(1l).projectHelperTypeId(1l).date(Date.valueOf("2020-04-24")).quantity(123)
+				.body(NeedDto.builder().id(1l).projectHelperTypeId(1l).date(LocalDate.parse("2020-04-24")).quantity(123)
 						.build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587686400000,\"quantity\":123}")
+								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":\"2020-04-24\",\"quantity\":123}")
 						.validationQueries(List.of(
 								"SELECT * FROM need WHERE project_helper_type_id=1 AND quantity=123 AND date='2020-04-24'"))
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
 				.validationQueriesForOthers(List
-						.of("SELECT * FROM need WHERE project_helper_type_id=1 AND quantity=42 AND date='2020-04-23'"))
+						.of("SELECT * FROM need WHERE project_helper_type_id=1 AND quantity=42 AND date='2020-04-10'"))
 				.build()));
 	}
 
@@ -125,21 +128,21 @@ public class NeedIT extends BasicRestIntegrationTest {
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test1', '2020-04-09', '2020-04-24')",
 						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user",
 						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (1, 1, 1, 1, '07:00:00', '17:00:00')",
-						"INSERT INTO need (id, project_helper_type_id, quantity, date) VALUES (1, 1, 42, '2020-04-23')"))
+						"INSERT INTO need (id, project_helper_type_id, quantity, date) VALUES (1, 1, 42, '2020-04-10')"))
 				.url(REST_URL + "/needs/1").method(Method.PUT)
-				.body(NeedDto.builder().id(1l).projectHelperTypeId(1l).date(Date.valueOf("2020-04-24")).quantity(123)
+				.body(NeedDto.builder().id(1l).projectHelperTypeId(1l).date(LocalDate.parse("2020-04-24")).quantity(123)
 						.build())
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587686400000,\"quantity\":123}")
+								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":\"2020-04-24\",\"quantity\":123}")
 						.validationQueries(List.of(
 								"SELECT * FROM need WHERE project_helper_type_id=1 AND quantity=123 AND date='2020-04-24'"))
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
 				.validationQueriesForOthers(List
-						.of("SELECT * FROM need WHERE project_helper_type_id=1 AND quantity=42 AND date='2020-04-23'"))
+						.of("SELECT * FROM need WHERE project_helper_type_id=1 AND quantity=42 AND date='2020-04-10'"))
 				.build()));
 	}
 
@@ -152,13 +155,13 @@ public class NeedIT extends BasicRestIntegrationTest {
 						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (1, 1, 1, 1, '07:00:00', '17:00:00')",
 						"INSERT INTO need (id, project_helper_type_id, quantity, date) VALUES (1000, 1, 42, '2020-04-23')"))
 				.url(REST_URL + "/needs/1000").method(Method.PUT)
-				.body(NeedDto.builder().id(1000l).projectHelperTypeId(1l).date(Date.valueOf("2020-04-23")).quantity(123)
-						.build())
+				.body(NeedDto.builder().id(1000l).projectHelperTypeId(1l).date(LocalDate.parse("2020-04-23"))
+						.quantity(123).build())
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1000,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":123}")
+								"{\"id\":1000,\"projectHelperTypeId\":1,\"date\":\"2020-04-23\",\"quantity\":123}")
 						.validationQueries(List.of(
 								"SELECT * FROM need WHERE project_helper_type_id=1 AND quantity=123 AND date='2020-04-23'"))
 						.build()))
@@ -178,7 +181,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 						"INSERT INTO need (id, project_helper_type_id, quantity, date) VALUES (1, 1, 42, '2020-04-23')",
 						"INSERT INTO need (id, project_helper_type_id, quantity, date) VALUES (2, 1, 42, '2020-04-24')"))
 				.url(REST_URL + "/needs/1").method(Method.PUT)
-				.body(NeedDto.builder().id(1l).projectHelperTypeId(1l).date(Date.valueOf("2020-04-24")).quantity(123)
+				.body(NeedDto.builder().id(1l).projectHelperTypeId(1l).date(LocalDate.parse("2020-04-24")).quantity(123)
 						.build())
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL))
@@ -202,7 +205,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 						"INSERT INTO project_helper_type (id, project_id, helper_type_id, weekday, start_time, end_time) VALUES (1, 1, 1, 1, '07:00:00', '17:00:00')",
 						"INSERT INTO need (id, project_helper_type_id, quantity, date) VALUES (1, 1, 42, '2020-04-23')"))
 				.url(REST_URL + "/needs/2").method(Method.PUT)
-				.body(NeedDto.builder().id(2l).projectHelperTypeId(1l).date(Date.valueOf("2020-04-24")).quantity(123)
+				.body(NeedDto.builder().id(2l).projectHelperTypeId(1l).date(LocalDate.parse("2020-04-24")).quantity(123)
 						.build())
 				.userTests(List.of(UserTest.builder()
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL))
@@ -589,7 +592,8 @@ public class NeedIT extends BasicRestIntegrationTest {
 						.emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL,
 								ATTENDANCE_EMAIL, PUBLISHER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
-						.expectedResponse("{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":42}")
+						.expectedResponse(
+								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":\"2020-04-23\",\"quantity\":42}")
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
@@ -603,7 +607,8 @@ public class NeedIT extends BasicRestIntegrationTest {
 						"INSERT INTO need (id, project_helper_type_id, quantity, date) VALUES (1, 1, 42, '2020-04-23')"))
 				.url(REST_URL + "/needs?project_helper_type_id=1&date=2020-04-23").method(Method.GET)
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
-						.expectedResponse("{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":42}")
+						.expectedResponse(
+								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":\"2020-04-23\",\"quantity\":42}")
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
@@ -622,7 +627,7 @@ public class NeedIT extends BasicRestIntegrationTest {
 								ATTENDANCE_EMAIL, PUBLISHER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":42}")
+								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":\"2020-04-23\",\"quantity\":42}")
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}
@@ -636,7 +641,8 @@ public class NeedIT extends BasicRestIntegrationTest {
 						"INSERT INTO need (id, project_helper_type_id, quantity, date) VALUES (1, 1, 42, '2020-04-23')"))
 				.url(REST_URL + "/needs/1").method(Method.GET)
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
-						.expectedResponse("{\"id\":1,\"projectHelperTypeId\":1,\"date\":1587600000000,\"quantity\":42}")
+						.expectedResponse(
+								"{\"id\":1,\"projectHelperTypeId\":1,\"date\":\"2020-04-23\",\"quantity\":42}")
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).build()));
 	}

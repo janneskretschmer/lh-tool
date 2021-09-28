@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import React from 'react';
 import { NeedsContext } from '../../providers/needs-provider';
-import { convertToMUIFormat, requiresLogin } from '../../util';
+import { convertToYYYYMMDD, requiresLogin } from '../../util';
 import NeedMonthSelection from './need-month-selection';
 import NeedProjectSelection from './need-project-selection';
 
@@ -84,8 +84,8 @@ class StatefulNeedProjectCalendar extends React.Component {
                     {data ? (
                         <NeedMonthSelection className={classes.month} />
                     ) : (
-                            <CircularProgress size={15} />
-                        )}
+                        <CircularProgress size={15} />
+                    )}
 
                 </div>
                 {data && (
@@ -106,13 +106,13 @@ class StatefulNeedProjectCalendar extends React.Component {
                                 <tr className={classes.calendarRow} key={i}>
                                     {Array.from(Array(7)).map((_, j) => {
                                         const day = data.days[i * 7 + j];
-                                        const content = dateContentMap && dateContentMap.get(convertToMUIFormat(day.date));
+                                        const content = dateContentMap && dateContentMap.get(convertToYYYYMMDD(day.date));
                                         return (
                                             <td className={classNames({
                                                 [classes.calendarCell]: true,
                                                 [classes.disabled]: day.disabled,
                                             })} key={j}>
-                                                <div className={classes.day}>{day.date.date()}</div>
+                                                <div className={classes.day}>{day.date.getDate()}</div>
                                                 {content ? content : !day.disabled ? (<CircularProgress size={15} />) : null}
                                             </td>
                                         );

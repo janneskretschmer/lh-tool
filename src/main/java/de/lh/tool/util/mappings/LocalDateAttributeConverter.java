@@ -1,4 +1,4 @@
-package de.lh.tool.util;
+package de.lh.tool.util.mappings;
 
 import java.sql.Date;
 import java.time.LocalDate;

@@ -1,4 +1,3 @@
-import moment from 'moment';
 import React from 'react';
 import { Redirect } from 'react-router';
 import { fullPathOfLogin } from './paths';
@@ -48,58 +47,57 @@ export function isAnyStringBlank(strings) {
     return strings.some(isStringBlank);
 }
 
-export function getMonthArrayWithOffsets(start, end) {
-    const today = moment().utc().startOf('day');
-    let date = start.diff(today, 'days') > 0 ? start.clone() : today.clone();
-    let months = [];
-    while (end.diff(date, 'days') > 0) {
-        const monthEnd = date.clone().endOf('month');
-        months = [
-            ...months,
-            {
-                month: date.format('M'),
-                startOffset: date.diff(today, 'days'),
-                endOffset: monthEnd.diff(today, 'days'),
-            }];
-        date = monthEnd.add(1, 'days');
-    }
-    return months;
-}
-
-export function isMonthOffsetWithinRange(offset, startDate, endDate) {
-    return !moment().utc().add(offset, 'months').endOf('month').isBefore(startDate) && !moment().utc().add(offset, 'months').startOf('month').isAfter(endDate);
-}
-
 
 function getMonthsSinceYear1AD(date) {
-    return date.year() * 12 + date.month();
-}
-
-export function getMonthOffsetWithinRange(originalOffset, startDate, endDate) {
-    if (!isMonthOffsetWithinRange(originalOffset, startDate, endDate)) {
-        // it seems like moment.diff(...,'months') calculates the difference of full months
-        return getMonthsSinceYear1AD(startDate) - getMonthsSinceYear1AD(moment().utc());
+    if (!date) {
+        return undefined;
     }
-    return originalOffset;
+    return date.getFullYear() * 12 + date.getMonth();
 }
 
-export function getMonthNameForOffset(offset) {
-    return ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'][moment().utc().add(offset, 'months').month()];
+function getMonthOffset(date) {
+    if (!date) {
+        return undefined;
+    }
+    return getMonthsSinceYear1AD(date) - getMonthsSinceYear1AD(new Date());
 }
 
+function isMonthOffsetWithinRange(offset, startDate, endDate) {
+    return getMonthOffset(startDate) <= offset && offset <= getMonthOffset(endDate);
+}
+
+export function getWeek(date) {
+    if (!date) {
+        return undefined;
+    }
+
+    // https://weeknumber.com/how-to/javascript
+    const tmp = new Date(date.getTime());
+    tmp.setHours(0, 0, 0, 0);
+    // Thursday in current week decides the year.
+    tmp.setDate(tmp.getDate() + 3 - (tmp.getDay() + 6) % 7);
+    // January 4 is always in week 1.
+    const week1 = new Date(tmp.getFullYear(), 0, 4);
+    // Adjust to Thursday in week 1 and count number of weeks from date to week1.
+    return 1 + Math.round(((tmp.getTime() - week1.getTime()) / 86400000
+        - 3 + (week1.getDay() + 6) % 7) / 7);
+}
 
 export function getClosestProjectMonth(monthOffset, startDate, endDate) {
-    const validOffset = getMonthOffsetWithinRange(monthOffset, startDate, endDate);
+    const validOffset = Math.max(getMonthOffset(startDate), Math.min(getMonthOffset(endDate), monthOffset));
 
-    var date = moment().utc().startOf('month').add(validOffset, 'months');
-    let month = date.clone().month();
+
+    let date = new Date();
+    date = new Date(date.getFullYear(), date.getMonth(), 1);
+    date.setMonth(date.getMonth() + validOffset);
+    const month = date.getMonth();
+
     //necessary for december -> january 
-    let continiousMonth = getMonthsSinceYear1AD(date.clone());
-    let endOfMonth = date.clone().endOf('month');
+    let continiousMonth = getMonthsSinceYear1AD(date);
     var result = {
         monthOffset: validOffset,
         month,
-        monthName: getMonthNameForOffset(validOffset),
+        monthName: date.toLocaleString('default', { month: 'long' }),
         days: [],
         firstValidDate: null,
         lastValidDate: null,
@@ -107,47 +105,62 @@ export function getClosestProjectMonth(monthOffset, startDate, endDate) {
         isPreviousOffsetValid: isMonthOffsetWithinRange(validOffset - 1, startDate, endDate),
     };
 
-    // offset for Weekdays 1: 0;  2: -1;  3: -2;  4: -3;  5: -4;  6: -5;  7: -6
-    var offset = date.isoWeekday() * (-1) + 1;
-    date.add(offset, 'days');
+    // show full week in calendar
+    // negative offset for Weekdays 0: -6; 1: 0;  2: -1;  3: -2;  4: -3;  5: -4;  6: -5;
+    var offset = ((date.getDay() + 6) % 7);
+    date.setDate(date.getDate() - offset);
 
-    while (getMonthsSinceYear1AD(date) <= continiousMonth || (date.isoWeekday() > 1 && date.isoWeekday() <= 7)) {
-        const disabled = date.month() !== month || date.isBefore(startDate) || date.isAfter(endDate);
+    while (getMonthsSinceYear1AD(date) <= continiousMonth || date.getDay() != 1) {
+        const disabled = date.getMonth() !== month || startDate > date || date > endDate;
         if (!disabled) {
             if (!result.firstValidDate) {
-                result.firstValidDate = date.clone();
+                result.firstValidDate = new Date(date);
             }
-            result.lastValidDate = date.clone();
+            result.lastValidDate = new Date(date);
         }
         const day = {
-            date: date.clone(),
+            date: new Date(date.getTime()),
             disabled,
         };
         result.days.push(day);
-        date = date.add(1, 'days');
+        date.setDate(date.getDate() + 1);
     }
     return result;
 }
 
-const READABLE_DATE_FORMAT = 'DD.MM.YYYY';
-export function convertToReadableFormat(moment) {
-    return moment.format(READABLE_DATE_FORMAT);
+/** -> DD.MM. */
+export function convertToDDMM(date) {
+    if (!date) {
+        return undefined;
+    }
+    return _.padStart(date.getDate(), 2, '0') + "." + _.padStart(date.getMonth() + 1, 2, '0') + ".";
 }
-const READABLE_DATE_FORMAT_WITHOUT_YEAR = 'DD.MM.';
-export function convertToReadableFormatWithoutYear(moment) {
-    return moment.format(READABLE_DATE_FORMAT_WITHOUT_YEAR);
+/** -> DD.MM.YYYY */
+export function convertToDDMMYYYY(date) {
+    if (!date) {
+        return undefined;
+    }
+    return convertToDDMM(date) + date.getFullYear();
 }
-const READABLE_DATE_FORMAT_WITH_TIME = 'DD.MM.YYYY HH:mm';
-export function convertToReadableFormatWithTime(moment) {
-    return moment.format(READABLE_DATE_FORMAT_WITH_TIME);
+/** -> DD.MM.YYYY HH:MM */
+export function convertToDDMMYYYY_HHMM(date) {
+    if (!date) {
+        return undefined;
+    }
+    return convertToDDMMYYYY(date) + " " + _.padStart(date.getHours() + 1, 2, '0') + ":" + _.padStart(date.getMinutes() + 1, 2, '0');
 }
 
-const MUI_DATE_FORMAT = 'YYYY-MM-DD';
-export function convertToMUIFormat(moment) {
-    return moment && moment.format(MUI_DATE_FORMAT);
+/** -> YYYY-MM-DD */
+export function convertToYYYYMMDD(date) {
+    if (!date) {
+        return undefined;
+    }
+    return date.getFullYear() + "-" + _.padStart(date.getMonth() + 1, 2, '0') + "-" + _.padStart(date.getDate(), 2, '0');
 }
-export function convertFromMUIFormat(date) {
-    return !isStringBlank(date) && moment(date, MUI_DATE_FORMAT);
+
+/** returns if the dates represent the same day (ignores time) */
+export function dateEquals(date1, date2) {
+    return date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth() && date1.getDate() === date2.getDate();
 }
 
 const ROLE_NAMES = new Map();

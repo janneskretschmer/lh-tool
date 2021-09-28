@@ -1,18 +1,10 @@
-import { CircularProgress, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
+import { CircularProgress, Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import React from 'react';
-import { createOrUpdateItem, fetchItem } from '../../actions/item';
-import { SessionContext } from '../../providers/session-provider';
-import { withContext, generateUniqueId, convertToReadableFormat } from '../../util';
-import ItemDisplayComponent from './item-display';
-import ItemEditComponent from './item-edit';
-import ItemSlotEditComponent from './item-slot';
-import ItemIdentifierEditComponent from './item-identifier';
-import ItemsProvider, { ItemsContext } from '../../providers/items-provider';
-import WithPermission from '../with-permission';
-import SimpleDialog from '../simple-dialog';
+import { ItemsContext } from '../../providers/items-provider';
 import { PageContext } from '../../providers/page-provider';
+import { SessionContext } from '../../providers/session-provider';
+import { convertToDDMMYYYY_HHMM } from '../../util';
 
 const styles = theme => ({
     historyTable: {
@@ -90,19 +82,19 @@ class StatefulItemHistoryComponent extends React.Component {
                     <TableBody>
                         {item.history ? item.history.map(event => (
                             <TableRow key={event.id}>
-                                <TableCell>{convertToReadableFormat(event.timestamp.local())}</TableCell>
+                                <TableCell>{convertToDDMMYYYY_HHMM(event.timestamp)}</TableCell>
                                 <TableCell>
                                     {this.getFirstAndLastName(event)}
                                 </TableCell>
                                 <TableCell>{this.getHistoryActionText(event)}</TableCell>
                             </TableRow>
                         )) : (
-                                <TableRow>
-                                    <TableCell colSpan={3}>
-                                        <CircularProgress />
-                                    </TableCell>
-                                </TableRow>
-                            )}
+                            <TableRow>
+                                <TableCell colSpan={3}>
+                                    <CircularProgress />
+                                </TableCell>
+                            </TableRow>
+                        )}
                     </TableBody>
                 </Table>
             </>

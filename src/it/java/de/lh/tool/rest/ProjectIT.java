@@ -2,7 +2,7 @@ package de.lh.tool.rest;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -28,12 +28,12 @@ public class ProjectIT extends BasicRestIntegrationTest {
 	public void testProjectCreation() throws Exception {
 		assertTrue(testEndpoint(EndpointTest.builder()//
 				.url(REST_URL + "/projects/").method(Method.POST)
-				.body(ProjectDto.builder().name("Test").startDate(new Date(1548971153l)).endDate(new Date(1551571200l))
-						.build())
+				.body(ProjectDto.builder().name("Test").startDate(LocalDate.of(2021, 01, 01))
+						.endDate(LocalDate.of(2021, 10, 31)).build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"name\":\"Test\",\"startDate\":1548971153,\"endDate\":1551571200}")
+								"{\"id\":1,\"name\":\"Test\",\"startDate\":\"2021-01-01\",\"endDate\":\"2021-10-31\"}")
 						.validationQueries(List.of("SELECT * FROM project WHERE name='Test'",
 								"SELECT * FROM project_user WHERE project_id=(SELECT id FROM project WHERE name='Test') AND user_id=(SELECT id FROM user WHERE email=:email)"))
 						.build()))
@@ -48,8 +48,8 @@ public class ProjectIT extends BasicRestIntegrationTest {
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (NULL, 'Test', '2020-04-09', '2020-04-24')"))
 				.url(REST_URL + "/projects/").method(Method.POST)
-				.body(ProjectDto.builder().name("Test").startDate(new Date(1548971153l)).endDate(new Date(1551571200l))
-						.build())
+				.body(ProjectDto.builder().name("Test").startDate(LocalDate.of(2021, 01, 01))
+						.endDate(LocalDate.of(2021, 10, 31)).build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL))
 						.expectedHttpCode(HttpStatus.CONFLICT)
 						.expectedResponse(
@@ -217,13 +217,13 @@ public class ProjectIT extends BasicRestIntegrationTest {
 				.initializationQueries(List.of(
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test123', '2020-04-09', '2020-04-24')"))
 				.url(REST_URL + "/projects/1").method(Method.PUT)
-				.body(ProjectDto.builder().name("Test").startDate(new Date(1548971153000l))
-						.endDate(new Date(1551571200000l)).build())
+				.body(ProjectDto.builder().name("Test").startDate(LocalDate.of(2021, 01, 01))
+						.endDate(LocalDate.of(2021, 10, 31)).build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"name\":\"Test\",\"startDate\":1548971153000,\"endDate\":1551571200000}")
+								"{\"id\":1,\"name\":\"Test\",\"startDate\":\"2021-01-01\",\"endDate\":\"2021-10-31\"}")
 						.validationQueries(List.of(
-								"SELECT * FROM project WHERE name='Test' AND start_date='2019-01-31' AND end_date='2019-03-03'"))
+								"SELECT * FROM project WHERE name='Test' AND start_date='2021-01-01' AND end_date='2021-10-31'"))
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
 				.validationQueriesForOthers(List.of(
@@ -238,14 +238,14 @@ public class ProjectIT extends BasicRestIntegrationTest {
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test123', '2020-04-09', '2020-04-24')",
 						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user"))
 				.url(REST_URL + "/projects/1").method(Method.PUT)
-				.body(ProjectDto.builder().name("Test").startDate(new Date(1548971153000l))
-						.endDate(new Date(1551571200000l)).build())
+				.body(ProjectDto.builder().name("Test").startDate(LocalDate.of(2021, 01, 01))
+						.endDate(LocalDate.of(2021, 10, 31)).build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"name\":\"Test\",\"startDate\":1548971153000,\"endDate\":1551571200000}")
+								"{\"id\":1,\"name\":\"Test\",\"startDate\":\"2021-01-01\",\"endDate\":\"2021-10-31\"}")
 						.validationQueries(List.of(
-								"SELECT * FROM project WHERE name='Test' AND start_date='2019-01-31' AND end_date='2019-03-03'"))
+								"SELECT * FROM project WHERE name='Test' AND start_date='2021-01-01' AND end_date='2021-10-31'"))
 						.build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN)
 				.validationQueriesForOthers(List.of(
@@ -261,8 +261,8 @@ public class ProjectIT extends BasicRestIntegrationTest {
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test123', '2020-04-09', '2020-04-24')",
 						"INSERT INTO project_user(project_id, user_id) SELECT 1,id FROM user"))
 				.url(REST_URL + "/projects/2").method(Method.PUT)
-				.body(ProjectDto.builder().name("Test").startDate(new Date(1548971153000l))
-						.endDate(new Date(1551571200000l)).build())
+				.body(ProjectDto.builder().name("Test").startDate(LocalDate.of(2021, 01, 01))
+						.endDate(LocalDate.of(2021, 10, 31)).build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL, CONSTRUCTION_SERVANT_EMAIL))
 						.expectedHttpCode(HttpStatus.BAD_REQUEST)
 						.expectedResponse(
@@ -284,8 +284,8 @@ public class ProjectIT extends BasicRestIntegrationTest {
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (1, 'Test123', '2020-04-09', '2020-04-24')",
 						"INSERT INTO `project` (`id`, `name`, `start_date`, `end_date`) VALUES (2, 'Test', '2020-04-09', '2020-04-24')"))
 				.url(REST_URL + "/projects/1").method(Method.PUT)
-				.body(ProjectDto.builder().name("Test").startDate(new Date(1548971153000l))
-						.endDate(new Date(1551571200000l)).build())
+				.body(ProjectDto.builder().name("Test").startDate(LocalDate.of(2021, 01, 01))
+						.endDate(LocalDate.of(2021, 10, 31)).build())
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.CONFLICT)
 						.expectedResponse(
 								"{\"key\":\"EX_PROJECT_NAME_ALREADY_EXISTS\",\"message\":\"A project with the provided name already exists.\",\"httpCode\":409}")
@@ -626,14 +626,14 @@ public class ProjectIT extends BasicRestIntegrationTest {
 				.url(REST_URL + "/projects/").method(Method.GET)
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"[{\"id\":1,\"name\":\"Test123\",\"startDate\":1586390400000,\"endDate\":1587686400000},{\"id\":2,\"name\":\"Test\",\"startDate\":1586390400000,\"endDate\":1587686400000}]")
+								"[{\"id\":1,\"name\":\"Test123\",\"startDate\":\"2020-04-09\",\"endDate\":\"2020-04-24\"},{\"id\":2,\"name\":\"Test\",\"startDate\":\"2020-04-09\",\"endDate\":\"2020-04-24\"}]")
 						.validationQueries(List.of()).build(),
 						UserTest.builder()
 								.emails(List.of(CONSTRUCTION_SERVANT_EMAIL, LOCAL_COORDINATOR_EMAIL, ATTENDANCE_EMAIL,
 										PUBLISHER_EMAIL))
 								.expectedHttpCode(HttpStatus.OK)
 								.expectedResponse(
-										"[{\"id\":1,\"name\":\"Test123\",\"startDate\":1586390400000,\"endDate\":1587686400000}]")
+										"[{\"id\":1,\"name\":\"Test123\",\"startDate\":\"2020-04-09\",\"endDate\":\"2020-04-24\"}]")
 								.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
@@ -646,7 +646,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 				.url(REST_URL + "/projects/1").method(Method.GET)
 				.userTests(List.of(UserTest.builder().emails(List.of(ADMIN_EMAIL)).expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"name\":\"Test\",\"startDate\":1586390400000,\"endDate\":1587686400000}")
+								"{\"id\":1,\"name\":\"Test\",\"startDate\":\"2020-04-09\",\"endDate\":\"2020-04-24\"}")
 						.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}
@@ -663,7 +663,7 @@ public class ProjectIT extends BasicRestIntegrationTest {
 								ATTENDANCE_EMAIL, PUBLISHER_EMAIL))
 						.expectedHttpCode(HttpStatus.OK)
 						.expectedResponse(
-								"{\"id\":1,\"name\":\"Test\",\"startDate\":1586390400000,\"endDate\":1587686400000}")
+								"{\"id\":1,\"name\":\"Test\",\"startDate\":\"2020-04-09\",\"endDate\":\"2020-04-24\"}")
 						.validationQueries(List.of()).build()))
 				.httpCodeForOthers(HttpStatus.FORBIDDEN).validationQueriesForOthers(List.of()).build()));
 	}

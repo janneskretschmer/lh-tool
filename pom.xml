@@ -242,6 +242,29 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+                <groupId>cz.habarta.typescript-generator</groupId>
+                <artifactId>typescript-generator-maven-plugin</artifactId>
+                <version>2.32.889</version>
+                <executions>
+                    <execution>
+                        <id>generate</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jsonLibrary>jackson2</jsonLibrary>
+                    <classPatterns>
+                    	<classPattern>de.lh.tool.domain.dto.**</classPattern>
+                    	<classPattern>de.lh.tool.domain.model.**</classPattern>
+                    </classPatterns>
+                    <outputKind>module</outputKind>
+                    <outputFile>src/main/js/types/generated.d.ts</outputFile>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 

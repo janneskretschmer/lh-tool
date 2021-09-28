@@ -100,7 +100,7 @@ class StatefulStoresProvider extends React.Component {
         })
             .then(savedStore => this.handleStoreUpdatedOrSelected(savedStore))
             .then(() => this.props.enqueueSnackbar('Lager erfolgreich gespeichert', { variant: 'success' }))
-            .catch(() => this.showErrorMessage('Fehler beim Speichern des Lagers'));
+            .catch(error => this.showErrorMessage('Fehler beim Speichern des Lagers'));
     }
 
     resetSelectedStore() {

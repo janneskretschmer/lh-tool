@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { withSnackbar } from 'notistack';
 import React from 'react';
 import { NeedsContext } from '../../providers/needs-provider';
-import { requiresLogin, withContext, convertToMUIFormat } from '../../util';
+import { requiresLogin, withContext, convertToYYYYMMDD } from '../../util';
 import NeedProjectCalendar from './need-project-calendar';
 import NeedApplyEditComponent from './apply-edit';
 import { CircularProgress } from '@material-ui/core';
@@ -66,7 +66,7 @@ class StatefulNeedApplyComponent extends React.Component {
         const dateContentMap = new Map();
         if (dayMap && selectedDays) {
             selectedDays.forEach(day => {
-                const dateString = convertToMUIFormat(day.date);
+                const dateString = convertToYYYYMMDD(day.date);
                 const dayData = dayMap.get(dateString);
                 if (dayData) {
                     dateContentMap.set(dateString, (

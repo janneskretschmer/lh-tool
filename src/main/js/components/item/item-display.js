@@ -10,7 +10,7 @@ import React from 'react';
 import { createItemNote } from '../../actions/item';
 import { ItemsContext } from '../../providers/items-provider';
 import { SessionContext } from '../../providers/session-provider';
-import { convertToReadableFormat, convertToReadableFormatWithTime } from '../../util';
+import { convertToDDMMYYYY, convertToDDMMYYYY_HHMM } from '../../util';
 import SimpleDialog from '../simple-dialog';
 import WithPermission from '../with-permission';
 import ItemTagsComponent from './item-tags';
@@ -201,7 +201,7 @@ class StatefulItemDisplayComponent extends React.Component {
                                     <div className={classes.bold}>
                                         {this.getFirstAndLastName(note)}
                                     </div>
-                                    <Typography variant="caption">{convertToReadableFormatWithTime(note.timestamp.local())}</Typography>
+                                    <Typography variant="caption">{convertToDDMMYYYY_HHMM(note.timestamp)}</Typography>
                                 </div>
                                 {this.showNoteDeleteButton(note) &&
                                     <IconButton
@@ -233,7 +233,7 @@ class StatefulItemDisplayComponent extends React.Component {
                         >
                             <Button variant="contained">
                                 Notiz hinzufügen
-                        </Button>
+                            </Button>
                         </SimpleDialog>
                     </WithPermission>
                 </div>

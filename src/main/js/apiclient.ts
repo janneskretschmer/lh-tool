@@ -1,7 +1,9 @@
-import superagent from 'superagent';
+import request from 'superagent';
+import superagent, { SuperAgentRequest } from 'superagent';
 import URI from 'urijs';
 import URITemplate from 'urijs/src/URITemplate';
 import { getContextPath } from './config';
+import { Identifiable, ItemDto } from './types/generated';
 import {
     ID_VARIABLE,
     USER_ID_VARIABLE,
@@ -61,12 +63,33 @@ import {
 
 } from './urlmappings';
 
-function isWellFormedEndpoint(apiEndpoint) {
-    return apiEndpoint && apiEndpoint.method && apiEndpoint.path;
+type Endpoint = {
+    method: string,
+    path: string,
+    parameters?: string[],
+    queries?: string[],
+    data?: any,
+};
+
+type Parameters = {
+    [parameter: string]: string
+}
+type Queries = {
+    [query: string]: string | undefined
 }
 
-function areParametersValid(apiEndpoint, parameters) {
+type PromiseResult<DTO> = { error: any, response?: DTO };
+type PromiseCallback<DTO> = (arg: PromiseResult<DTO>) => any;
+
+function isWellFormedEndpoint(apiEndpoint: Endpoint): boolean {
+    return !!apiEndpoint && !!apiEndpoint.method && !!apiEndpoint.path;
+}
+
+function areParametersValid(apiEndpoint: Endpoint, parameters?: Parameters): boolean {
     if ('parameters' in apiEndpoint) {
+        if (!parameters) {
+            return false;
+        }
         const parKeys = Object.keys(parameters);
         const parDiff = (apiEndpoint.parameters || []).filter(par => !parKeys.includes(par));
         return parDiff.length === 0;
@@ -75,99 +98,153 @@ function areParametersValid(apiEndpoint, parameters) {
     }
 }
 
-function renderPath({ apiEndpoint, parameters }) {
+function renderPath(apiEndpoint: Endpoint, parameters?: Parameters): { path?: URI, error?: Error } {
     if (!isWellFormedEndpoint(apiEndpoint)) {
-        return { error: new Error('No apiEndpoint of form {method,path} given.') };
-    }
-    else if (!areParametersValid(apiEndpoint, parameters)) {
-        return { error: new Error('Missing parameters') };
+        return { path: undefined, error: new Error('No apiEndpoint of form {method,path} given.') };
+    } else if (!areParametersValid(apiEndpoint, parameters)) {
+        return { path: undefined, error: new Error('Missing parameters') };
     } else {
-        return { path: URITemplate(getContextPath() + apiEndpoint.path).expand(parameters) };
+        return { path: URITemplate(getContextPath() + apiEndpoint.path).expand(parameters || {}) };
     }
 }
 
-function buildRequest({ method, path, authToken, queries, data }) {
+function buildRequest(method: string, path: URI, authToken?: string, queries?: Queries, data?: any): SuperAgentRequest {
     const apiHostUrlTemplate = new URI('/');
-    let pendingReq = superagent(method, apiHostUrlTemplate.path(path).toString()).type('json');
+    //let pendingReq = superagent(method, apiHostUrlTemplate.path(path).toString()).type('json');
+    let pendingReq = superagent(method, apiHostUrlTemplate.path(path.toString()).toString()).type('json');
     if (authToken) {
         pendingReq = pendingReq.set('Authorization', `Bearer ${authToken}`);
     }
     pendingReq.set('Pragma', 'no-cache');
     pendingReq.set('Cache-Control', 'no-cache');
-    Object.keys(queries).forEach(queryKey => {
-        pendingReq = pendingReq.query({
-            // eslint-disable-next-line security/detect-object-injection
-            [queryKey]: queries[queryKey]
+    if (queries) {
+        Object.keys(queries).forEach(queryKey => {
+            pendingReq = pendingReq.query({
+                // eslint-disable-next-line security/detect-object-injection
+                [queryKey]: queries[queryKey]
+            });
         });
-    });
+    }
     if (data) {
         pendingReq = pendingReq.send(data);
     }
     return pendingReq;
 }
 
-function handleResponse(err, resBody, resolve, reject) {
+function handleResponse<DTO>(err: any, resBody: any, resolve: PromiseCallback<DTO>, reject: PromiseCallback<DTO>): void {
     if (err) {
+        console.log(err);
         reject({
             error: err,
-            response: resBody
+            response: resBody as DTO
         });
     }
     else if (!resBody) {
         resolve({
-            error: null,
-            response: null
+            error: undefined,
+            response: undefined
         });
     }
     else {
         resolve({
-            error: null,
-            response: resBody
+            error: undefined,
+            response: resBody as DTO
         });
     }
 }
 
-function completeRequest(request, resolve, reject) {
-    request.end((err, res) => {
-        const resBody = res ? (res.body || null) : null;
+function completeRequest<DTO>(request: SuperAgentRequest, resolve: PromiseCallback<DTO>, reject: PromiseCallback<DTO>) {
+    request.end((err: any, res: request.Response) => {
+        const resBody = res ? (res.body || undefined) : undefined;
         handleResponse(err, resBody, resolve, reject);
     });
 }
 
-export function apiRequest({
-    apiEndpoint,
-    authToken,
-    queries = {},
-    parameters = {},
-    data
-} = {
-        apiEndpoint: null,
-        authToken: null,
-        queries: {},
-        parameters: {},
-        data: null,
-    }) {
+export function apiRequestRaw<DTO>({ apiEndpoint, authToken, queries, parameters, data }: {
+    apiEndpoint: Endpoint,
+    authToken?: string,
+    queries?: Queries,
+    parameters?: Parameters,
+    data?: any
+}): Promise<PromiseResult<DTO>> {
 
-
-    const renderedPathResult = renderPath({ apiEndpoint, parameters });
+    const renderedPathResult = renderPath(apiEndpoint, parameters);
     if (renderedPathResult.error) {
         return Promise.reject(renderedPathResult.error);
     }
+    if (!renderedPathResult.path) {
+        return Promise.reject(new Error('no path'));
+    }
 
-    const req = buildRequest({
-        method: apiEndpoint.method,
-        path: renderedPathResult.path,
+    const req = buildRequest(
+        apiEndpoint.method,
+        renderedPathResult.path,
         authToken,
         queries,
         data,
-    });
+    );
 
     return new Promise((resolve, reject) => {
         completeRequest(req, resolve, reject);
     });
 }
 
-export const apiEndpoints = {
+export function apiRequest<DTO>({ apiEndpoint, authToken, queries, parameters, data }: {
+    apiEndpoint: Endpoint,
+    authToken?: string,
+    queries?: Queries,
+    parameters?: Parameters,
+    data?: any
+}): Promise<DTO> {
+    return apiRequestRaw<DTO>({
+        apiEndpoint,
+        authToken,
+        queries,
+        parameters,
+        data,
+    })
+        .then(result => result.response || Promise.reject());
+}
+
+
+export function fetchEntity<DTO extends Identifiable<number>>(apiEndpoint: Endpoint, accessToken: string, id: number): Promise<DTO> {
+    return apiRequest<DTO>({
+        apiEndpoint,
+        authToken: accessToken,
+        parameters: { [ID_VARIABLE]: id.toString() }
+    });
+}
+
+export function createEntity<DTO extends Identifiable<number>>(apiEndpoint: Endpoint, accessToken: string, entity: DTO): Promise<DTO> {
+    return apiRequest<DTO>({
+        apiEndpoint,
+        authToken: accessToken,
+        data: entity,
+    });
+}
+
+export function updateEntity<DTO extends Identifiable<number>>(apiEndpoint: Endpoint, accessToken: string, entity: DTO): Promise<DTO> {
+    return apiRequest<DTO>({
+        apiEndpoint,
+        authToken: accessToken,
+        data: entity,
+        parameters: { [ID_VARIABLE]: entity.id.toString() },
+    });
+}
+
+export function deleteEntity(apiEndpoint: Endpoint, accessToken: string, id: number): Promise<void> {
+    return apiRequestRaw<undefined>({
+        apiEndpoint,
+        authToken: accessToken,
+        parameters: { [ID_VARIABLE]: id.toString() },
+    }).then(result => undefined);
+}
+
+export const apiEndpoints: {
+    [entity: string]: {
+        [endpoint: string]: Endpoint
+    }
+} = {
     info: {
         heartbeat: {
             method: 'GET',
