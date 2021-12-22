@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/janneskretschmer/lh-tool.svg?branch=master)](https://travis-ci.org/janneskretschmer/lh-tool)
+[![Build Status](https://app.travis-ci.com/janneskretschmer/lh-tool.svg?branch=master)](https://app.travis-ci.com/janneskretschmer/lh-tool)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=lh-tool&metric=bugs)](https://sonarcloud.io/dashboard?id=lh-tool)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=lh-tool&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=lh-tool)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=lh-tool&metric=code_smells)](https://sonarcloud.io/dashboard?id=lh-tool)
