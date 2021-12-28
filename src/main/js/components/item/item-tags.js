@@ -1,18 +1,12 @@
-import Select, { components } from 'react-select';
+import { Chip, CircularProgress } from '@mui/material';
 import React from 'react';
-import { SessionContext } from '../../providers/session-provider';
+import Select, { components } from 'react-select';
+import { RIGHT_ITEMS_POST } from '../../permissions';
 import { ItemsContext } from '../../providers/items-provider';
 import WithPermission from '../with-permission';
 import WithoutPermission from '../without-permission';
-import { Chip, withStyles, CircularProgress } from '@material-ui/core';
-import { RIGHT_ITEMS_POST } from '../../permissions';
 
-const styles = theme => ({
-    chip: {
-        marginRight: theme.spacing.unit,
-        marginTop: theme.spacing.unit,
-    },
-});
+
 
 const ItemTagsComponent = props => (
     <>
@@ -61,7 +55,10 @@ const ItemTagsComponent = props => (
                     </WithPermission>
                     <WithoutPermission permission={RIGHT_ITEMS_POST}>
                         {itemsState.getSelectedItem().tags.map(tag => (
-                            <Chip key={tag.name} label={tag.name} className={props.classes.chip} />
+                            <Chip key={tag.name} label={tag.name} sx={{
+                                mr: 1,
+                                mt: 1,
+                            }} />
                         ))}
                     </WithoutPermission>
                 </>
@@ -69,4 +66,4 @@ const ItemTagsComponent = props => (
         </ItemsContext.Consumer>
     </>
 );
-export default withStyles(styles)(ItemTagsComponent);
+export default ItemTagsComponent;

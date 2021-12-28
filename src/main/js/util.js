@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect } from 'react-router';
+import { Redirect } from 'react-router-dom';
 import { fullPathOfLogin } from './paths';
 import { SessionContext } from './providers/session-provider';
 

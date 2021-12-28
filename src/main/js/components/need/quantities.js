@@ -1,26 +1,12 @@
-import { CircularProgress } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
+import { CircularProgress } from '@mui/material';
+import { Box } from '@mui/system';
 import { withSnackbar } from 'notistack';
 import React from 'react';
 import { NeedsContext } from '../../providers/needs-provider';
-import { requiresLogin, convertToYYYYMMDD } from '../../util';
+import { convertToYYYYMMDD, requiresLogin } from '../../util';
 import NeedProjectCalendar from './need-project-calendar';
 import NeedQuantityEditComponent from './quantity-edit';
 
-const styles = theme => ({
-    helperTypeName: {
-        marginTop: '15px',
-        marginBottom: '5px',
-    },
-    inputWrapper: {
-        width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-    },
-});
-
-@withStyles(styles)
 @withSnackbar
 class StatefulNeedQuantityComponent extends React.Component {
 
@@ -54,17 +40,25 @@ class StatefulNeedQuantityComponent extends React.Component {
                             {dayData.helperTypes && dayData.helperTypes.map(
                                 helperType => (
                                     <div key={helperType.id}>
-                                        <div className={classes.helperTypeName}>
+                                        <Box sx={{
+                                            marginTop: '15px',
+                                            marginBottom: '5px',
+                                        }}>
                                             {helperType.name}
-                                        </div>
+                                        </Box>
                                         {helperType.shifts && helperType.shifts[0] && helperType.shifts[0].need ? helperType.shifts.map(shift => (
-                                            <div key={shift.id} className={classes.inputWrapper}>
+                                            <Box key={shift.id} sx={{
+                                                width: '100%',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                flexWrap: 'wrap',
+                                            }}>
                                                 {shift.need ? (
                                                     <NeedQuantityEditComponent
                                                         projectHelperType={shift}
                                                         label={shift.endTime ? shift.startTime + ' - ' + shift.endTime : 'ab ' + shift.startTime} />
                                                 ) : (<CircularProgress size={15} />)}
-                                            </div>
+                                            </Box>
                                         )) : (<CircularProgress size={15} />)}
                                     </div>
                                 )

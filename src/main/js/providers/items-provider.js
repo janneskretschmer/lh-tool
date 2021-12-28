@@ -614,10 +614,10 @@ class StatefulItemsProvider extends React.Component {
         }
         return itemPromise
             .then(savedItem => Promise.all([
-                ...item.items ? item.items.filter(item1 => !this.state.items.has(item.id) || !this.state.items.get(item.id).items.find(item2 => item1.id === item2.id))
-                    .map(relatedItem => createItemRelation(this.props.sessionState.accessToken, savedItem.id, relatedItem.id)) : [],
-                ...this.state.items.has(item.id) && this.state.items.get(item.id).items ? this.state.items.get(item.id).items.filter(item1 => !item.items || !item.items.find(item2 => item1.id === item2.id))
-                    .map(relatedItem => deleteItemRelation(this.props.sessionState.accessToken, savedItem.id, relatedItem.id)) : []
+                ...(item.items ? item.items.filter(item1 => !this.state.items.has(item.id) || !this.state.items.get(item.id).items.find(item2 => item1.id === item2.id))
+                    .map(relatedItem => createItemRelation(this.props.sessionState.accessToken, savedItem.id, relatedItem.id)) : []),
+                ...(this.state.items.has(item.id) && this.state.items.get(item.id).items ? this.state.items.get(item.id).items.filter(item1 => !item.items || !item.items.find(item2 => item1.id === item2.id))
+                    .map(relatedItem => deleteItemRelation(this.props.sessionState.accessToken, savedItem.id, relatedItem.id)) : [])
             ]).then(() => ({
                 ...savedItem,
                 items: item.items || [],

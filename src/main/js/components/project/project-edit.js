@@ -1,27 +1,17 @@
-import { Button, CircularProgress, TextField } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
+import { Button, CircularProgress, TextField } from '@mui/material';
+import { Box } from '@mui/system';
 import { withSnackbar } from 'notistack';
 import React from 'react';
+import { EX_PROJECT_NAME_ALREADY_EXISTS } from '../../exceptions';
 import { fullPathOfProjectSettings, fullPathOfProjectsSettings } from '../../paths';
+import { PageContext } from '../../providers/page-provider';
 import { ProjectsContext } from '../../providers/projects-provider';
 import { convertToYYYYMMDD, requiresLogin } from '../../util';
 import LenientRedirect from '../util/lenient-redirect';
 import ProjectShiftEditComponent from './project-shifts-edit';
-import { PageContext } from '../../providers/page-provider';
-import { EX_PROJECT_NAME_ALREADY_EXISTS } from '../../exceptions';
 
 
-const styles = theme => ({
-    dateContainer: {
-        display: 'flex',
-        alignItems: 'baseline',
-    },
-    button: {
-        marginRight: theme.spacing.unit,
-    }
-});
 
-@withStyles(styles)
 @withSnackbar
 class StatefulProjectEditComponent extends React.Component {
 
@@ -94,17 +84,21 @@ class StatefulProjectEditComponent extends React.Component {
                 label="Name"
                 value={project.name}
                 variant="outlined"
-                margin="dense"
+                size="small"
                 disabled={saving}
                 onChange={event => projectsState.changeProjectName(event.target.value)}
+                sx={{ mb: 1, width: '228px' }}
             /><br />
-            <div className={classes.dateContainer}>
+            <Box sx={{
+                display: 'flex',
+                alignItems: 'baseline',
+            }}>
                 Von&nbsp;
                 <TextField
                     type="date"
                     value={convertToYYYYMMDD(project.startDate) || ''}
                     variant="outlined"
-                    margin="dense"
+                    size="small"
                     disabled={saving}
                     onChange={event => projectsState.changeProjectStartDate(event.target.value)}
                 />
@@ -113,18 +107,18 @@ class StatefulProjectEditComponent extends React.Component {
                     type="date"
                     value={convertToYYYYMMDD(project.endDate) || ''}
                     variant="outlined"
-                    margin="dense"
+                    size="small"
                     disabled={saving}
                     onChange={event => projectsState.changeProjectEndDate(event.target.value)}
                 />
-            </div>
+            </Box>
             <br />
             <br />
             {project.shifts && (<ProjectShiftEditComponent disabled={saving} />)}
             {!saving ? (
                 <>
                     <Button
-                        className={classes.button}
+                        sx={{ mr: 1 }}
                         onClick={() => this.save()}
                         variant="contained"
                         disabled={saveDisabled}
@@ -133,7 +127,7 @@ class StatefulProjectEditComponent extends React.Component {
                         Speichern
                     </Button>
                     <Button
-                        className={classes.button}
+                        sx={{ mr: 1 }}
                         onClick={() => this.cancel()}
                         variant="outlined"
                     >

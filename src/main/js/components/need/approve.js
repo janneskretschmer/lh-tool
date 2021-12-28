@@ -1,15 +1,13 @@
-import { Typography } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import grey from '@material-ui/core/colors/grey';
-import IconButton from '@material-ui/core/IconButton';
-import { withStyles } from '@material-ui/core/styles';
-import CheckIcon from '@material-ui/icons/Check';
-import CloseIcon from '@material-ui/icons/Close';
-import DoneIcon from '@material-ui/icons/Done';
-import EventAvailableIcon from '@material-ui/icons/EventAvailable';
-import EventBusyIcon from '@material-ui/icons/EventBusy';
-import classNames from 'classnames';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+import DoneIcon from '@mui/icons-material/Done';
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
+import EventBusyIcon from '@mui/icons-material/EventBusy';
+import { Typography } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import { grey } from '@mui/material/colors';
+import IconButton from '@mui/material/IconButton';
+import { Box } from '@mui/system';
 import { withSnackbar } from 'notistack';
 import React from 'react';
 import { RIGHT_NEEDS_APPROVE } from '../../permissions';
@@ -21,83 +19,10 @@ import NeedMonthSelection from './need-month-selection';
 import NeedProjectSelection from './need-project-selection';
 
 
-const styles = theme => ({
-    calendar: {
-        tableLayout: 'fixed',
-        borderCollapse: 'collapse',
-        display: 'inline-block',
-        verticalAlign: 'top',
-        marginRight: theme.spacing.unit,
-    },
-    calendarRow: {
-
-    },
-    clickable: {
-        cursor: 'pointer',
-    },
-    calendarCell: {
-        width: '20%',
-        border: '1px solid ' + theme.palette.primary.light,
-        textAlign: 'center',
-        paddingTop: theme.spacing.unit,
-        paddingLeft: theme.spacing.unit * 2,
-        paddingRight: theme.spacing.unit * 2,
-        verticalAlign: 'top',
-    },
-    dayName: {
-        padding: theme.spacing.unit,
-        color: theme.palette.secondary.dark,
-        border: '1px solid ' + theme.palette.primary.light,
-        fontWeight: 'normal',
-        fontSize: 'large',
-    },
-    day: {
-        width: '100%',
-        textAlign: 'right',
-        color: theme.palette.secondary.main,
-        fontWeight: 'bold',
-        fontSize: 'larger',
-        padding: '3px',
-    },
-    selected: {
-        backgroundColor: grey[200],
-    },
-    monthWrapper: {
-        width: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
-        display: 'flex',
-        fontSize: 'large',
-        fontWeight: 'normal',
-    },
-    dayWrapper: {
-        display: 'inline-block',
-        maxWidth: '2160px',
-        width: '100%',
-        verticalAlign: 'top',
-    },
-    needsWrapper: {
-        display: 'inline-block',
-        maxWidth: '720px',
-        width: '100%',
-        verticalAlign: 'top',
-    },
-    dateWrapper: {
-        textAlign: 'center',
-        margin: '9px',
-        fontSize: 'larger',
-    },
-    legend: {
-        display: 'inline-block',
-        padding: theme.spacing.unit,
-    },
-});
-
 const Date = props => (
     <>{props.date.toLocaleString('default', { weekday: 'long' })}, {convertToDDMMYYYY(props.date)}</>
 );
 
-@withStyles(styles)
 @withSnackbar
 class StatefulNeedApproveComponent extends React.Component {
 
@@ -170,126 +95,159 @@ class StatefulNeedApproveComponent extends React.Component {
         const project = needsState.getSelectedProject();
         const data = project && project.selectedMonthData;
         const dayMap = project && project.days;
-        return (
-            <>
-                <div>
-                    <NeedProjectSelection />
-                </div>
-                {data ? (
-                    <>
-                        <table className={classes.calendar}>
-                            <thead>
-                                <tr>
-                                    <th colSpan="8">
-                                        <NeedMonthSelection onClick={() => this.selectDays(0, data.days.length - 1)} />
-                                    </th>
+        return <>
+            <div>
+                <NeedProjectSelection />
+            </div>
+            {data ? (
+                <>
+                    <Box component="table" sx={{
+                        tableLayout: 'fixed',
+                        borderCollapse: 'collapse',
+                        display: 'inline-block',
+                        verticalAlign: 'top',
+                        mr: 1,
+                    }}>
+                        <thead>
+                            <tr>
+                                <th colSpan="8">
+                                    <NeedMonthSelection onClick={() => this.selectDays(0, data.days.length - 1)} />
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {Array.from(Array(data.days.length / 7)).map((_, i) => {
+                                let weekDisabled = true;
+                                return (<tr key={i}>
+                                    {Array.from(Array(7)).map((_, j) => {
+                                        const index = i * 7 + j;
+                                        weekDisabled = weekDisabled && data.days[index].disabled;
+                                        return (
+                                            <Box
+                                                component="td"
+                                                sx={{
+                                                    width: '20%',
+                                                    border: '1px solid ',
+                                                    borderColor: 'primary.light',
+                                                    textAlign: 'center',
+                                                    pt: 1,
+                                                    pl: 2,
+                                                    pr: 2,
+                                                    verticalAlign: 'top',
+                                                    cursor: data.days[index].disabled ? undefined : 'pointer',
+                                                    backgroundColor: !data.days[index].disabled && index >= selectedStart && index <= selectedEnd ? grey[200] : undefined,
+                                                }}
+                                                key={j}
+                                                onClick={data.days[index].disabled ? undefined : (() => this.selectDay(index))}
+                                            >
+                                                <Typography variant="button" color={data.days[index].disabled ? 'textSecondary' : 'inherit'}>
+                                                    {data.days[index].date.getDate()}
+                                                </Typography><br />
+                                                {this.isDayReady(i * 7 + j) ? (
+                                                    <DoneIcon color={data.days[index].disabled ? 'disabled' : 'inherit'} />
+                                                ) : (<>&nbsp;</>)}
+                                            </Box>
+                                        );
+                                    })}
+                                    <Box
+                                        component="td"
+                                        sx={{
+                                            width: '20%',
+                                            border: '1px solid ',
+                                            borderColor: 'primary.light',
+                                            textAlign: 'center',
+                                            pt: 1,
+                                            pl: 2,
+                                            pr: 2,
+                                            verticalAlign: 'top',
+                                            cursor: weekDisabled ? undefined : 'pointer',
+                                            backgroundColor: !weekDisabled && i * 7 >= selectedStart && i * 7 + 6 <= selectedEnd ? grey[200] : undefined,
+                                        }}
+                                        onClick={weekDisabled ? undefined : (() => this.selectDays(i * 7, i * 7 + 6))}
+                                    >
+                                        <Typography variant="button" color={weekDisabled ? 'textSecondary' : 'inherit'}>
+                                            KW<br />{getWeek(data.days[i * 7].date)}
+                                        </Typography>
+                                    </Box>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                {Array.from(Array(data.days.length / 7)).map((_, i) => {
-                                    let weekDisabled = true;
-                                    return (<tr className={classes.calendarRow} key={i}>
-                                        {Array.from(Array(7)).map((_, j) => {
-                                            const index = i * 7 + j;
-                                            weekDisabled = weekDisabled && data.days[index].disabled;
-                                            return (
-                                                <td
-                                                    className={classNames({
-                                                        [classes.calendarCell]: true,
-                                                        [classes.selected]: !data.days[index].disabled && index >= selectedStart && index <= selectedEnd,
-                                                        [classes.clickable]: !data.days[index].disabled,
-                                                    })}
-                                                    key={j}
-                                                    onClick={data.days[index].disabled ? undefined : (() => this.selectDay(index))}
-                                                >
-                                                    <Typography variant="button" color={data.days[index].disabled ? 'textSecondary' : 'inherit'}>
-                                                        {data.days[index].date.getDate()}
-                                                    </Typography>
-                                                    {this.isDayReady(i * 7 + j) ? (
-                                                        <DoneIcon color={data.days[index].disabled ? 'disabled' : 'inherit'} />
-                                                    ) : (<>&nbsp;</>)}
-                                                </td>
-                                            );
-                                        })}
-                                        <td className={classNames({
-                                            [classes.calendarCell]: true,
-                                            [classes.selected]: !weekDisabled && i * 7 >= selectedStart && i * 7 + 6 <= selectedEnd,
-                                            [classes.clickable]: !weekDisabled,
-                                        })}
-                                            onClick={weekDisabled ? undefined : (() => this.selectDays(i * 7, i * 7 + 6))}
-                                        >
-                                            <Typography variant="button" color={weekDisabled ? 'textSecondary' : 'inherit'}>
-                                                KW<br />{getWeek(data.days[i * 7].date)}
-                                            </Typography>
-                                        </td>
-                                    </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                        <WithPermission permission={RIGHT_NEEDS_APPROVE}>
-                            <div className={classes.legend}>
-                                Bitte klicke auf einen Tag, eine Kalenderwoche oder den Monat, um die Bewerber zuzuteilen.<br />
-                                Wenn alle Positionen besetzt sind, erscheint ein Haken.<br />
-                                <br />
-                                Bedeutung der Klammern neben der Aufgabenbezeichnung: ( Anzahl der Genehmigungen / Bedarf )<br />
-                                <IconButton>
-                                    <CheckIcon />
-                                </IconButton>
-                                Nicht genehmigt, klicke hier um die Person für diese Schicht einzuteilen.
-                                <br />
-                                <IconButton>
-                                    <EventAvailableIcon />
-                                </IconButton>
-                                Genehmigt, klicke hier um die Genehmigung zurückzuziehen.
-                                <br />
-                                <IconButton>
-                                    <CloseIcon />
-                                </IconButton>
-                                Nicht abgelehnt, klicke hier um die Person für diese Schicht explizit abzulehnen.
-                                <br />
-                                <IconButton>
-                                    <EventBusyIcon />
-                                </IconButton>
-                                Abgelehnt, klicke hier um die Ablehnung zurückzuziehen.
-                            </div>
-                        </WithPermission>
+                                );
+                            })}
+                        </tbody>
+                    </Box>
+                    <WithPermission permission={RIGHT_NEEDS_APPROVE}>
+                        <Box sx={{
+                            display: 'inline-block',
+                            p: 1,
+                        }}>
+                            Bitte klicke auf einen Tag, eine Kalenderwoche oder den Monat, um die Bewerber zuzuteilen.<br />
+                            Wenn alle Positionen besetzt sind, erscheint ein Haken.<br />
+                            <br />
+                            Bedeutung der Klammern neben der Aufgabenbezeichnung: ( Anzahl der Genehmigungen / Bedarf )<br />
+                            <IconButton size="large">
+                                <CheckIcon />
+                            </IconButton>
+                            Nicht genehmigt, klicke hier um die Person für diese Schicht einzuteilen.
+                            <br />
+                            <IconButton size="large">
+                                <EventAvailableIcon />
+                            </IconButton>
+                            Genehmigt, klicke hier um die Genehmigung zurückzuziehen.
+                            <br />
+                            <IconButton size="large">
+                                <CloseIcon />
+                            </IconButton>
+                            Nicht abgelehnt, klicke hier um die Person für diese Schicht explizit abzulehnen.
+                            <br />
+                            <IconButton size="large">
+                                <EventBusyIcon />
+                            </IconButton>
+                            Abgelehnt, klicke hier um die Ablehnung zurückzuziehen.
+                        </Box>
+                    </WithPermission>
 
 
-                        {selectedStart !== null && selectedEnd !== null && Array.from(Array(selectedEnd - selectedStart + 1)).map((_, i) => {
-                            const index = i + parseInt(selectedStart);
-                            const day = data.days[index];
-                            const dateString = convertToYYYYMMDD(day.date);
-                            if (day.disabled || !dayMap || !dayMap.has(dateString)) {
-                                return null;
-                            }
-                            const helperTypes = dayMap.get(dateString).helperTypes;
-                            return (
-                                <div className={classes.dayWrapper} key={i}>
-                                    <div className={classes.dateWrapper}>
-                                        <Date date={day.date} />
-                                    </div>
-                                    {helperTypes ? helperTypes.map(
-                                        helperType => helperType.shifts ? helperType.shifts.map(
-                                            shift => shift.need && shift.need.users ? (
-                                                <NeedApproveEditComponent
-                                                    key={shift.id + dateString}
-                                                    label={helperType.name + ' ' + (shift.endTime ? shift.startTime + ' - ' + shift.endTime : 'ab ' + shift.startTime)}
-                                                    projectHelperType={shift} />
-                                            ) : !shift.need || shift.need.id ? (
-                                                <CircularProgress key={shift.id + dateString} size={15} />
-                                            ) : null
-                                        ) : (<CircularProgress key={helperType.id + dateString} size={15} />)
-                                    ) : (<CircularProgress size={15} />)}
-                                </div>
-                            );
-                        })
+                    {selectedStart !== null && selectedEnd !== null && Array.from(Array(selectedEnd - selectedStart + 1)).map((_, i) => {
+                        const index = i + parseInt(selectedStart);
+                        const day = data.days[index];
+                        const dateString = convertToYYYYMMDD(day.date);
+                        if (day.disabled || !dayMap || !dayMap.has(dateString)) {
+                            return null;
                         }
-                    </>
-                ) : null
-                }
-            </>
-        );
+                        const helperTypes = dayMap.get(dateString).helperTypes;
+                        return (
+                            <Box sx={{
+                                display: 'inline-block',
+                                maxWidth: '2160px',
+                                width: '100%',
+                                verticalAlign: 'top',
+                            }} key={i}>
+                                <Box sx={{
+                                    textAlign: 'center',
+                                    margin: '9px',
+                                    fontSize: 'larger',
+                                }}>
+                                    <Date date={day.date} />
+                                </Box>
+                                {helperTypes ? helperTypes.map(
+                                    helperType => helperType.shifts ? helperType.shifts.map(
+                                        shift => shift.need && shift.need.users ? (
+                                            <NeedApproveEditComponent
+                                                key={shift.id + dateString}
+                                                label={helperType.name + ' ' + (shift.endTime ? shift.startTime + ' - ' + shift.endTime : 'ab ' + shift.startTime)}
+                                                projectHelperType={shift} />
+                                        ) : !shift.need || shift.need.id ? (
+                                            <CircularProgress key={shift.id + dateString} size={15} />
+                                        ) : null
+                                    ) : (<CircularProgress key={helperType.id + dateString} size={15} />)
+                                ) : (<CircularProgress size={15} />)}
+                            </Box>
+                        );
+                    })
+                    }
+                </>
+            ) : null
+            }
+        </>;
     }
 }
 

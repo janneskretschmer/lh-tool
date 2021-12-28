@@ -1,13 +1,6 @@
+import { Checkbox, FormControlLabel, TextField } from '@mui/material';
 import React from 'react';
-import { SessionContext } from '../../providers/session-provider';
 import { ItemsContext } from '../../providers/items-provider';
-import { withStyles, CircularProgress, Select, MenuItem, TextField, FormControlLabel, Checkbox } from '@material-ui/core';
-
-const styles = theme => ({
-    textField: {
-        marginTop: theme.spacing.unit,
-    }
-});
 
 const ItemIdentifierEditComponent = props => (
     <>
@@ -16,7 +9,7 @@ const ItemIdentifierEditComponent = props => (
                 <TextField
                     label="Neuer eindeutiger Bezeichner"
                     variant="outlined"
-                    className={props.classes.textField}
+                    sx={{ mt: 1 }}
                     value={itemsState.copyIdentifier}
                     onChange={event => itemsState.changeCopyIdentifier(event.target.value)}
                 /><br />
@@ -34,4 +27,4 @@ const ItemIdentifierEditComponent = props => (
         </ItemsContext.Consumer>
     </>
 );
-export default withStyles(styles)(ItemIdentifierEditComponent);
+export default ItemIdentifierEditComponent;

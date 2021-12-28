@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from '@material-ui/core';
+import { Link } from '@mui/material';
 import { withRouter, matchPath } from 'react-router-dom';
 import PAGES from '../pages';
 import { SessionContext } from './session-provider';

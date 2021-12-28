@@ -1,7 +1,7 @@
 module.exports = {
     prodBuild: false,
     theme: {
-        //copied from @material-ui/core/colors/deepPurple
+        //copied from @mui/material/colors/deepPurple
         primary: {
             50: '#ede7f6',
             100: '#d1c4e9',
@@ -18,7 +18,7 @@ module.exports = {
             A400: '#651fff',
             A700: '#6200ea'
         },
-        //copied from @material-ui/core/colors/blueGrey
+        //copied from @mui/material/colors/blueGrey
         secondary: {
             50: '#eceff1',
             100: '#cfd8dc',

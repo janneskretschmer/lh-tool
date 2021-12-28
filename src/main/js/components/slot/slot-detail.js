@@ -1,52 +1,21 @@
-import { Button, Checkbox, FormControlLabel } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import IconButton from '@material-ui/core/IconButton';
-import { withStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import CloseIcon from '@material-ui/icons/Close';
-import EditIcon from '@material-ui/icons/Edit';
-import SaveIcon from '@material-ui/icons/Save';
+import CloseIcon from '@mui/icons-material/Close';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
+import { Button, Checkbox, FormControlLabel } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import IconButton from '@mui/material/IconButton';
+import TextField from '@mui/material/TextField';
+import { Box } from '@mui/system';
 import React from 'react';
 import { fullPathOfSlot, fullPathOfSlots } from '../../paths';
 import { PageContext } from '../../providers/page-provider';
 import { SlotsContext } from '../../providers/slots-provider';
-import { getIdMapValues, getSlotBarcodeString, prependSlotBarcodePrefix } from '../../util';
+import { getIdMapValues, getSlotBarcodeString } from '../../util';
 import BarcodeGenerator from '../util/barcode-generator';
+import BoldText from '../util/bold-text';
 import IdNameSelect from '../util/id-name-select';
 import LenientRedirect from '../util/lenient-redirect';
 
-const styles = theme => ({
-    button: {
-        marginRight: theme.spacing.unit,
-    },
-    bold: {
-        fontWeight: '500',
-    },
-    title: {
-        fontSize: '30px',
-        marginBottom: '10px',
-    },
-    container: {
-        display: 'inline-block',
-        verticalAlign: 'top',
-        marginRight: theme.spacing.unit * 3,
-        marginBottom: theme.spacing.unit,
-        marginTop: theme.spacing.unit,
-    },
-    verticalCenteredContainer: {
-        display: 'flex',
-        alignItems: 'center',
-    },
-    margin: {
-        margin: theme.spacing.unit,
-    },
-    textField: {
-        marginRight: theme.spacing.unit
-    }
-
-});
-
-@withStyles(styles)
 class StatefulSlotDetailComponent extends React.Component {
 
     constructor(props) {
@@ -76,7 +45,7 @@ class StatefulSlotDetailComponent extends React.Component {
     }
 
     render() {
-        const { classes, match, slotsState } = this.props;
+        const { slotsState } = this.props;
         const { redirectToUrl } = this.state;
         const slot = slotsState.selectedSlot;
         const edit = slotsState.edit;
@@ -90,39 +59,59 @@ class StatefulSlotDetailComponent extends React.Component {
         return slot ? (
             <>
                 <div>
-                    <div className={classes.title}>
+                    <Box sx={{ fontSize: '30px', mb: 1 }}>
                         {edit ? (
                             <TextField
                                 id="name"
                                 label="Name"
-                                className={classes.textField}
+                                sx={{ mr: 1 }}
                                 value={slot.name || ''}
                                 onChange={event => slotsState.changeName(event.target.value)}
-                                margin="dense"
+                                size="small"
                                 variant="outlined"
                             />
                         ) : (slot.name)}
                         {edit ? (
                             slotsState.actionInProgress ? (<>&nbsp;<CircularProgress /></>) : (
                                 <>
-                                    <IconButton variant="contained" className={classes.button} type="submit" onClick={() => slotsState.saveSelectedSlot()}>
+                                    <IconButton
+                                        variant="contained"
+                                        sx={{ mr: 1 }}
+                                        type="submit"
+                                        onClick={() => slotsState.saveSelectedSlot()}
+                                        size="large">
                                         <SaveIcon />
                                     </IconButton>
-                                    <IconButton variant="contained" className={classes.button} type="submit" onClick={() => slotsState.resetSelectedSlot()}>
+                                    <IconButton
+                                        variant="contained"
+                                        sx={{ mr: 1 }}
+                                        type="submit"
+                                        onClick={() => slotsState.resetSelectedSlot()}
+                                        size="large">
                                         <CloseIcon />
                                     </IconButton>
                                 </>
                             )
                         ) : slot && (
                             <>
-                                <IconButton variant="contained" className={classes.button} type="submit" onClick={() => slotsState.changeEdit(true)}>
+                                <IconButton
+                                    variant="contained"
+                                    sx={{ mr: 1 }}
+                                    type="submit"
+                                    onClick={() => slotsState.changeEdit(true)}
+                                    size="large">
                                     <EditIcon />
                                 </IconButton>
                             </>
                         )}
-                    </div>
+                    </Box>
                 </div>
-                <div className={classes.container}>
+                <Box sx={{
+                    display: 'inline-block',
+                    verticalAlign: 'top',
+                    mr: 3,
+                    mb: 1
+                }}>
                     {stores ? (edit ? (
                         <IdNameSelect
                             label="Lager"
@@ -131,18 +120,21 @@ class StatefulSlotDetailComponent extends React.Component {
                             data={stores}
                         />
                     ) : (
-                            <>
-                                <div className={classes.bold}>
-                                    Lager
-                            </div>
-                                {slot.store && slot.store.name}
-                            </>
-                        )
+                        <>
+                            <BoldText>
+                                Lager
+                            </BoldText>
+                            {slot.store && slot.store.name}
+                        </>
+                    )
                     ) : (<CircularProgress />)}
                     <br />
                     <br />
                     {edit ? (
-                        <div className={classes.verticalCenteredContainer}>
+                        <Box sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                        }}>
                             <FormControlLabel
                                 control={
                                     <Checkbox
@@ -153,16 +145,16 @@ class StatefulSlotDetailComponent extends React.Component {
                                 }
                                 label="Draußen"
                             />
-                        </div>
+                        </Box>
                     ) : (
-                            <>
-                                <div className={classes.bold}>
-                                    Draußen
-                            </div>
-                                {slot.outside ? 'Ja' : 'Nein'}<br />
-                            </>
-                        )}
-                </div>
+                        <>
+                            <BoldText>
+                                Draußen
+                            </BoldText>
+                            {slot.outside ? 'Ja' : 'Nein'}<br />
+                        </>
+                    )}
+                </Box>
                 {edit ? (
                     <>
                         <br />
@@ -171,21 +163,21 @@ class StatefulSlotDetailComponent extends React.Component {
                             id="description"
                             label="Beschreibung"
                             multiline
-                            className={classes.textField}
+                            sx={{ mr: 1 }}
                             value={slot.description}
                             onChange={event => slotsState.changeDescription(event.target.value)}
-                            margin="dense"
+                            size="small"
                             variant="outlined"
                         />
                     </>
                 ) : (
-                        <>
-                            <div className={classes.bold}>
-                                Beschreibung
-                            </div>
-                            {slot.description}
-                        </>
-                    )}<br />
+                    <>
+                        <BoldText>
+                            Beschreibung
+                        </BoldText>
+                        {slot.description}
+                    </>
+                )}<br />
                 <br />
                 {edit ?
                     slotsState.actionInProgress ? (<>&nbsp;<CircularProgress /></>) : (
@@ -193,12 +185,12 @@ class StatefulSlotDetailComponent extends React.Component {
                             <Button
                                 disabled={saveDisabled}
                                 variant="contained"
-                                className={classes.button}
+                                sx={{ mr: 1 }}
                                 type="submit"
                                 onClick={() => slotsState.saveSelectedSlot()}>
                                 Speichern
                             </Button>
-                            <Button variant="outlined" className={classes.button} type="submit" onClick={() => slotsState.resetSelectedSlot()}>
+                            <Button variant="outlined" sx={{ mr: 1 }} type="submit" onClick={() => slotsState.resetSelectedSlot()}>
                                 Abbrechen
                             </Button>
                         </>
@@ -207,7 +199,7 @@ class StatefulSlotDetailComponent extends React.Component {
                         <>
                             <Button
                                 variant="contained"
-                                className={classes.button}
+                                sx={{ mr: 1 }}
                                 onClick={() => this.redirectToSlots()}
                                 disabled={slotsState.actionInProgress}
                             >
@@ -215,7 +207,7 @@ class StatefulSlotDetailComponent extends React.Component {
                             </Button>
                             <Button
                                 variant="contained"
-                                className={classes.button}
+                                sx={{ mr: 1 }}
                                 onClick={() => slotsState.changeEdit(true)}
                                 disabled={slotsState.actionInProgress}
                             >
@@ -226,7 +218,7 @@ class StatefulSlotDetailComponent extends React.Component {
                             >
                                 <Button
                                     variant="contained"
-                                    className={classes.button}
+                                    sx={{ mr: 1 }}
                                     disabled={slotsState.actionInProgress}>
                                     Barcode generieren
                                 </Button>

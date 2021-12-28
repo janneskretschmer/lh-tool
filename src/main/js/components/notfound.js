@@ -1,19 +1,15 @@
 import React from 'react';
-import Typography from '@material-ui/core/Typography';
-import { Redirect } from 'react-router';
+import Typography from '@mui/material/Typography';
 import { fullPathOfProjects, fullPathOfNeedQuantities, fullPathOfNeedApply, fullPathOfLogin, fullPathOfNeedApprove } from '../paths';
 import { withContext } from '../util';
 import { SessionContext } from '../providers/session-provider';
+import { Redirect } from 'react-router-dom';
 
 @withContext('sessionState', SessionContext)
 export default class NotFoundHandlerComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
-    }
-
-    componentWillMount() {
-        // FUTURE: 404 Status should be set here as soon as isomorphic rendering is employed.
     }
 
     render() {

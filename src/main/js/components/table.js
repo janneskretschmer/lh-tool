@@ -1,90 +1,28 @@
-import Button from '@material-ui/core/Button';
-import Checkbox from '@material-ui/core/Checkbox';
-import { withStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableFooter from '@material-ui/core/TableFooter';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import React from 'react';
-import { Redirect } from 'react-router';
-import classNames from 'classnames';
-import { NEW_ENTITY_ID_PLACEHOLDER } from '../config';
-import { Typography } from '@material-ui/core';
-import LenientRedirect from './util/lenient-redirect';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import SearchIcon from '@mui/icons-material/Search';
+import { IconButton, TextField, Typography } from '@mui/material';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableFooter from '@mui/material/TableFooter';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
+import { Box } from '@mui/system';
 import _ from 'lodash';
+import React from 'react';
+import { NEW_ENTITY_ID_PLACEHOLDER } from '../config';
+import LenientRedirect from './util/lenient-redirect';
 
-
-const styles = theme => ({
-    button: {
-        margin: '7px',
-    },
-    link: {
-        textDecoration: 'none',
-    },
-    formControl: {
-        width: '100px',
-        marginRight: theme.spacing.unit,
-        marginBottom: theme.spacing.unit,
-    },
-    searchInput: {
-        marginRight: theme.spacing.unit,
-    },
-    new: {
-        marginTop: theme.spacing.unit,
-    },
-    selectionText: {
-        marginRight: '18px',
-        display: 'inline',
-        verticalAlign: 'middle',
-    },
-    toolbar: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        flexWrap: 'wrap-reverse',
-    },
-    clickable: {
-        cursor: 'pointer',
-    },
-    checkboxColumn: {
-        width: '50px',
-    },
-    tableHeadCell: {
-        color: theme.palette.primary.main,
-    },
-    semiImportantCell: {
-        [theme.breakpoints.down('xs')]: {
-            display: 'none',
-        },
-    },
-    unimportantCell: {
-        [theme.breakpoints.down('sm')]: {
-            display: 'none',
-        },
-    },
-    paginationWrapper: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap-reverse',
-        alignItems: 'baseline',
-    },
-    fitWidth: {
-        width: 'initial',
-    },
-    alignRight: {
-        textAlign: 'right',
-    },
-});
-
-@withStyles(styles)
 export default class PagedTable extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            expandFilters: false,
             page: 0,
             rowsPerPage: 10,
             selected: [],
@@ -145,44 +83,97 @@ export default class PagedTable extends React.Component {
         }
     }
 
+    toggleExpandFilters() {
+        this.setState(prevState => ({
+            expandFilters: !prevState.expandFilters,
+        }));
+    }
 
     render() {
-        const { classes, rows, SelectionHeader, onToggleSelect, filter, headers, redirect, title, showAddButton, fitWidth } = this.props;
-        const { rowsPerPage, page, selected } = this.state;
+        const { classes, rows, SelectionHeader, onToggleSelect, filter, headers, redirect, title, showAddButton, fitWidth, freeTextValue, onChangeFreeText, onFilter, additionalFilters, keepFiltersExpanded } = this.props;
+        const { rowsPerPage, page, selected, expandFilters } = this.state;
         const emptyRows = rowsPerPage >= rows.length ? 0 : rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
         const singlePage = emptyRows < rows.length;
         if (this.state.redirect) {
             return (<LenientRedirect to={redirect(this.state.redirect)} />);
         }
         return (
-            <Table className={fitWidth && classes.fitWidth}>
+            <Table sx={fitWidth && {
+                width: 'initial',
+            }}>
                 {(filter || SelectionHeader) && (
                     <TableHead>
                         <TableRow>
                             <TableCell align="left" colSpan={headers.length + 1}>
-                                <div className={classes.toolbar}>
+                                <Box sx={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    flexWrap: 'wrap-reverse',
+                                }}>
                                     {SelectionHeader && selected.length > 0 ? (
                                         <div>
-                                            <Typography variant="h6" className={classes.selectionText}>
+                                            <Box typography="h6" sx={{
+                                                marginRight: '18px',
+                                                display: 'inline',
+                                                verticalAlign: 'middle',
+                                            }}>
                                                 Auswahl ({selected.length})
-                                    </Typography>
+                                            </Box>
                                             <SelectionHeader selected={selected} resetSelection={() => this.resetSelection()} />
                                         </div>
                                     ) : (
-                                            <Typography variant="h6">{title}</Typography>
+                                        <Typography variant="h6">{title}</Typography>
+                                    )}
+                                    <Box sx={{
+                                        textAlign: 'right',
+                                    }}>
+                                        {(onChangeFreeText && onFilter) && (
+                                            <Box sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'end'
+                                            }}>
+                                                <div>
+                                                    <TextField
+                                                        sx={{ m: 1 }}
+                                                        id="free-search"
+                                                        value={freeTextValue}
+                                                        onChange={event => onChangeFreeText(event.target.value)}
+                                                        variant="outlined"
+                                                        label="Freitextsuche"
+                                                        size="small"
+                                                    />
+                                                </div>
+                                                {additionalFilters && (
+                                                    <IconButton
+                                                        disabled={!!keepFiltersExpanded}
+                                                        onClick={() => this.toggleExpandFilters()}
+                                                        size="large">
+                                                        {expandFilters || keepFiltersExpanded ? (<ExpandLessIcon />) : (<ExpandMoreIcon />)}
+                                                    </IconButton>
+                                                )}
+                                                <IconButton onClick={() => onFilter()} size="large">
+                                                    <SearchIcon />
+                                                </IconButton>
+                                            </Box>
                                         )}
-                                    <div className={classes.alignRight}>
-                                        {filter}
-                                    </div>
-                                </div>
+                                        {(expandFilters || keepFiltersExpanded) && (
+                                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                                {additionalFilters}
+                                            </Box>
+                                        )}
+                                    </Box>
+                                </Box>
                             </TableCell>
                         </TableRow>
                     </TableHead>
-                )}
+                )
+                }
                 <TableHead>
                     <TableRow>
                         {(selected || SelectionHeader) && (
-                            <TableCell align="left" className={classes.checkboxColumn} padding="checkbox">
+                            <TableCell align="left" sx={{ width: '50px' }} padding="checkbox">
                                 <Checkbox
                                     indeterminate={selected.length > 0 && selected.length < rows.length}
                                     checked={selected.length >= rows.length}
@@ -192,10 +183,14 @@ export default class PagedTable extends React.Component {
                             </TableCell>
                         )}
                         {headers.map(header => !header.hidden && (
-                            <TableCell className={classNames(classes.tableHeadCell, {
-                                [classes.semiImportantCell]: header.semiImportant,
-                                [classes.unimportantCell]: header.unimportant,
-                            })} key={header.key} align={header.align ? header.align : 'left'}>
+                            <TableCell sx={{
+                                color: 'primary.main',
+                                display: {
+                                    xs: ((header.semiImportant || header.unimportant) && 'none') || 'table-cell',
+                                    md: ((header.unimportant) && 'none') || 'table-cell',
+                                    lg: 'table-cell'
+                                }
+                            }} key={header.key} align={header.align ? header.align : 'left'}>
                                 {header.name}
                             </TableCell>
                         ))}
@@ -205,10 +200,12 @@ export default class PagedTable extends React.Component {
                     {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
                         <TableRow
                             key={row.id}
-                            className={classes.clickable}
+                            sx={{
+                                cursor: 'pointer',
+                            }}
                         >
                             {(selected || SelectionHeader) && (
-                                <TableCell align="left" className={classes.checkboxColumn} padding="checkbox">
+                                <TableCell align="left" sx={{ width: '50px' }} padding="checkbox">
                                     <Checkbox
                                         checked={selected.includes(row.id)}
                                         onChange={() => this.handleSelection(row.id)}
@@ -216,10 +213,13 @@ export default class PagedTable extends React.Component {
                                 </TableCell>
                             )}
                             {headers.map(header => !header.hidden && (
-                                <TableCell className={classNames({
-                                    [classes.semiImportantCell]: header.semiImportant,
-                                    [classes.unimportantCell]: header.unimportant,
-                                })} key={header.key} align={header.align ? header.align : 'left'} onClick={event => this.handleRowClick(row.id)}>
+                                <TableCell sx={{
+                                    display: {
+                                        xs: ((header.semiImportant || header.unimportant) && 'none') || 'table-cell',
+                                        md: ((header.unimportant) && 'none') || 'table-cell',
+                                        lg: 'table-cell'
+                                    }
+                                }} key={header.key} align={header.align ? header.align : 'left'} onClick={event => this.handleRowClick(row.id)}>
                                     {header.converter ? header.converter(row[header.key]) : row[header.key]}
                                 </TableCell>
                             ))}
@@ -234,9 +234,14 @@ export default class PagedTable extends React.Component {
                 <TableFooter>
                     <TableRow>
                         <TableCell colSpan={headers.length + (SelectionHeader ? 1 : 0)}>
-                            <div className={classes.paginationWrapper}>
+                            <Box sx={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                flexWrap: 'wrap-reverse',
+                                alignItems: 'baseline',
+                            }}>
                                 {showAddButton ? (
-                                    <Button variant="contained" onClick={() => this.handleRowClick(NEW_ENTITY_ID_PLACEHOLDER)} className={classes.new}>
+                                    <Button variant="contained" onClick={() => this.handleRowClick(NEW_ENTITY_ID_PLACEHOLDER)} sx={{ mt: 1 }}>
                                         Hinzufügen
                                     </Button>
                                 ) : (<div></div>)}
@@ -252,15 +257,15 @@ export default class PagedTable extends React.Component {
                                             native: true,
                                         }}
                                         component="div"
-                                        onChangePage={this.handleChangePage}
-                                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                                        onPageChange={this.handleChangePage}
+                                        onRowsPerPageChange={this.handleChangeRowsPerPage}
                                     />
                                 )}
-                            </div>
+                            </Box>
                         </TableCell>
                     </TableRow>
                 </TableFooter>
-            </Table>
+            </Table >
         );
     }
 }

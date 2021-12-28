@@ -1,22 +1,13 @@
-import { withStyles } from '@material-ui/core/styles';
+import { Button, CircularProgress } from '@mui/material';
 import React from 'react';
 import { fullPathOfStoreSettings } from '../../paths';
+import { RIGHT_STORES_DELETE } from '../../permissions';
 import { SessionContext } from '../../providers/session-provider';
 import { StoresContext } from '../../providers/store-provider';
-import { withContext } from '../../util';
-import PagedTable from '../table';
-import { Button, CircularProgress } from '@material-ui/core';
-import WithPermission from '../with-permission';
 import SimpleDialog from '../simple-dialog';
-import { RIGHT_STORES_DELETE } from '../../permissions';
+import PagedTable from '../table';
+import WithPermission from '../with-permission';
 
-const styles = theme => ({
-    noDecoration: {
-        textDecoration: 'none',
-    },
-});
-
-@withStyles(styles)
 class StatefulStoreListComponent extends React.Component {
 
     componentDidMount() {

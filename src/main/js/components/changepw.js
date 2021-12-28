@@ -1,10 +1,10 @@
-import { Checkbox, FormControlLabel } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
+import { Checkbox, FormControlLabel } from '@mui/material';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { withSnackbar } from 'notistack';
 import React from 'react';
-import { Redirect } from 'react-router';
+import { Redirect } from 'react-router-dom';
 import URI from 'urijs';
 import { changePassword } from '../actions/user';
 import { fullPathOfDataProtection, fullPathOfLogin } from '../paths';
@@ -30,12 +30,6 @@ export default class ChangePasswordComponent extends React.Component {
         const isTokenBased = !!token && !!uid;
         const userId = isTokenBased ? uid : sessionState.isLoggedIn() ? sessionState.currentUser.id : null;
         return userId ? { userId, token, isTokenBased } : null;
-    }
-
-    componentWillMount() {
-        if (!this.getUserCredentials(this.props.sessionState)) {
-            // FUTURE: Redirect for login
-        }
     }
 
     success() {
@@ -120,7 +114,7 @@ export default class ChangePasswordComponent extends React.Component {
                                         label="Aktuelles Passwort"
                                         type="password"
                                         autoComplete="current-password"
-                                        margin="dense"
+                                        size="small"
                                         variant="outlined"
                                         fullWidth={true}
                                         InputProps={{
@@ -133,7 +127,7 @@ export default class ChangePasswordComponent extends React.Component {
                                     id="passwordNew"
                                     label="Neues Passwort"
                                     type="password"
-                                    margin="dense"
+                                    size="small"
                                     variant="outlined"
                                     fullWidth={true}
                                     InputProps={{
@@ -145,7 +139,7 @@ export default class ChangePasswordComponent extends React.Component {
                                     id="passwordNewConfirm"
                                     label="Neues Passwort bestätigen"
                                     type="password"
-                                    margin="dense"
+                                    size="small"
                                     variant="outlined"
                                     fullWidth={true}
                                     InputProps={{

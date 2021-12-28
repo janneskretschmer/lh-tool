@@ -1,23 +1,11 @@
-import { CircularProgress, withStyles } from '@material-ui/core';
+import { CircularProgress } from '@mui/material';
 import { withSnackbar } from 'notistack';
 import React from 'react';
 import { fullPathOfProjectSettings } from '../../paths';
 import { ProjectsContext } from '../../providers/projects-provider';
-import { convertToDDMMYYYY, convertToDDMMYYYY_HHMM, requiresLogin } from '../../util';
+import { convertToDDMMYYYY, requiresLogin } from '../../util';
 import PagedTable from '../table';
 
-const styles = theme => ({
-    button: {
-        marginTop: theme.spacing.unit,
-        marginBottom: theme.spacing.unit,
-    },
-    select: {
-        minWidth: '100px',
-        margin: theme.spacing.unit,
-    }
-});
-
-@withStyles(styles)
 @withSnackbar
 export class StatefulProjectListComponent extends React.Component {
 

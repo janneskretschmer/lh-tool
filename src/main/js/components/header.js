@@ -1,47 +1,15 @@
-import { Tab, Tabs } from '@material-ui/core';
-import AppBar from '@material-ui/core/AppBar';
-import IconButton from '@material-ui/core/IconButton';
-import { withStyles } from '@material-ui/core/styles';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import MenuIcon from '@material-ui/icons/Menu';
-import classNames from 'classnames';
+import MenuIcon from '@mui/icons-material/Menu';
+import { Link, Tab, Tabs } from '@mui/material';
+import AppBar from '@mui/material/AppBar';
+import IconButton from '@mui/material/IconButton';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { PageContext } from '../providers/page-provider';
 import LenientRedirect from './util/lenient-redirect';
 
-const drawerWidth = 240;
-const styles = theme => ({
-    appBar: {
-        transition: theme.transitions.create(['margin', 'width'], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-    },
-    appBarShift: {
-        width: `calc(100% - ${drawerWidth}px)`,
-        marginLeft: drawerWidth,
-        transition: theme.transitions.create(['margin', 'width'], {
-            easing: theme.transitions.easing.easeOut,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    },
-    menuButton: {
-        marginLeft: 12,
-        marginRight: 20,
-    },
-    hide: {
-        display: 'none',
-    },
-    link: {
-        color: theme.palette.primary.contrastText,
-        textDecoration: 'none',
-        cursor: 'pointer',
-    },
-});
+const drawerWidth = 220;
 
-@withStyles(styles)
 class StatefulAppHeader extends React.Component {
     constructor(props) {
         super(props);
@@ -79,78 +47,89 @@ class StatefulAppHeader extends React.Component {
         const { classes, drawerOpen, pagesState, match } = this.props;
         const { height, redirectToUrl } = this.state;
         const tabValue = pagesState.tabParent && pagesState.getTabValue();
-        return (
-            <>
-                <AppBar
-                    position="fixed"
-                    className={classNames(classes.appBar, {
-                        [classes.appBarShift]: drawerOpen,
-                    })}
-                >
-                    <div ref={this.headerRef}>
-                        <Toolbar disableGutters={!drawerOpen}>
-                            <IconButton
-                                color="inherit"
-                                aria-label="Open drawer"
-                                onClick={() => this.props.onOpenRequest && this.props.onOpenRequest()}
-                                className={classNames(classes.menuButton, drawerOpen && classes.hide)}
-                            >
-                                <MenuIcon />
-                            </IconButton>
-                            <Typography
-                                component="h1"
-                                variant="h6"
-                                color="inherit"
-                                noWrap
-                            >
-                                {
-                                    //build breadcrump
-                                    pagesState.currentTitleComponents ? pagesState.currentTitleComponents
-                                        .filter(component => component.title)
-                                        .map((component, i) => (
-                                            <span key={component.path}>
-                                                {i !== 0 ? ' › ' : null}
-                                                <Link to={component.path} className={classes.link}>{component.title}</Link>
-                                            </span>
-                                        )) : null
-                                }
-                            </Typography>
-                        </Toolbar>
-                        {pagesState.tabParent && (
-                            <>
-                                {tabValue ? (
-                                    <Tabs
-                                        value={tabValue}
-                                        onChange={(event, value) => this.redirect(value)}
-                                    >
-                                        {pagesState.tabParent.subPages
-                                            .filter(subPage => pagesState.isUserAllowedToSeePage(subPage))
-                                            .map(subPage => (
-                                                <Tab
-                                                    key={subPage.path}
-                                                    value={subPage.path}
-                                                    label={subPage.title}
-                                                />
-                                            ))}
-                                    </Tabs>
-                                ) : (
-                                        <LenientRedirect to={pagesState.tabParent.subPages[0].path} />
-                                    )}
-                            </>
-                        )}
-                    </div>
-                </AppBar>
-
-                {/* Top spacer */}
-                <div style={{ height: `${height}px` }}>
+        return <>
+            <AppBar
+                position="fixed"
+                sx={{
+                    transition: theme => theme.transitions.create(['margin', 'width'], {
+                        easing: theme.transitions.easing.sharp,
+                        duration: theme.transitions.duration.leavingScreen,
+                    }),
+                    width: drawerOpen ? 'calc(100% - 220px)' : '100%',
+                }}
+            >
+                <div ref={this.headerRef}>
+                    <Toolbar disableGutters={!drawerOpen}>
+                        <IconButton
+                            color="inherit"
+                            aria-label="Open drawer"
+                            onClick={() => this.props.onOpenRequest && this.props.onOpenRequest()}
+                            sx={{
+                                marginLeft: '12px',
+                                marginRight: '20px',
+                                display: drawerOpen ? 'none' : 'inline-block',
+                            }}
+                            size="large">
+                            <MenuIcon />
+                        </IconButton>
+                        <Typography
+                            component="h1"
+                            variant="h6"
+                            color="inherit"
+                            noWrap
+                        >
+                            {
+                                //build breadcrump
+                                pagesState.currentTitleComponents ? pagesState.currentTitleComponents
+                                    .filter(component => component.title)
+                                    .map((component, i) => (
+                                        <span key={component.path}>
+                                            {i !== 0 ? ' › ' : null}
+                                            <Link href={component.path} sx={{
+                                                color: 'primary.contrastText',
+                                                textDecoration: 'none',
+                                                cursor: 'pointer',
+                                            }}>{component.title}</Link>
+                                        </span>
+                                    )) : null
+                            }
+                        </Typography>
+                    </Toolbar>
+                    {pagesState.tabParent && (
+                        <>
+                            {tabValue ? (
+                                <Tabs
+                                    value={tabValue}
+                                    onChange={(event, value) => this.redirect(value)}
+                                    textColor="inherit"
+                                >
+                                    {pagesState.tabParent.subPages
+                                        .filter(subPage => pagesState.isUserAllowedToSeePage(subPage))
+                                        .map(subPage => (
+                                            <Tab
+                                                key={subPage.path}
+                                                value={subPage.path}
+                                                label={subPage.title}
+                                            />
+                                        ))}
+                                </Tabs>
+                            ) : (
+                                <LenientRedirect to={pagesState.tabParent.subPages[0].path} />
+                            )}
+                        </>
+                    )}
                 </div>
+            </AppBar>
 
-                {
-                    //keep header in case of redirect, because hight is probably the same
-                    redirectToUrl && (<LenientRedirect to={redirectToUrl} />)
-                }
-            </>
-        );
+            {/* Top spacer */}
+            <div style={{ height: `${height}px` }}>
+            </div>
+
+            {
+                //keep header in case of redirect, because hight is probably the same
+                redirectToUrl && (<LenientRedirect to={redirectToUrl} />)
+            }
+        </>;
     }
 }
 

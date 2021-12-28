@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch } from 'react-router';
+import { Route, Switch } from 'react-router-dom';
 import { fullPathOfSlot, fullPathOfSlots } from '../../paths';
 import NeedsProvider from '../../providers/needs-provider';
 import { requiresLogin } from '../../util';

@@ -1,18 +1,10 @@
-import { CircularProgress, Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
+import { CircularProgress, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import React from 'react';
 import { ItemsContext } from '../../providers/items-provider';
 import { PageContext } from '../../providers/page-provider';
 import { SessionContext } from '../../providers/session-provider';
 import { convertToDDMMYYYY_HHMM } from '../../util';
 
-const styles = theme => ({
-    historyTable: {
-        width: 'initial',
-    },
-});
-
-@withStyles(styles)
 class StatefulItemHistoryComponent extends React.Component {
 
     constructor(props) {
@@ -61,7 +53,7 @@ class StatefulItemHistoryComponent extends React.Component {
     }
 
     render() {
-        const { classes, itemsState } = this.props;
+        const { itemsState } = this.props;
         const item = itemsState.getSelectedItem();
         if (!item) {
             return (<CircularProgress />);
@@ -71,7 +63,7 @@ class StatefulItemHistoryComponent extends React.Component {
         }
         return (
             <>
-                <Table size="small" className={classes.historyTable}>
+                <Table size="small" sx={{ width: 'initial' }}>
                     <TableHead>
                         <TableRow>
                             <TableCell>Datum</TableCell>

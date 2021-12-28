@@ -1,23 +1,10 @@
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { withStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
+import CircularProgress from '@mui/material/CircularProgress';
+import TextField from '@mui/material/TextField';
 import { withSnackbar } from 'notistack';
 import React from 'react';
 import { NeedsContext } from '../../providers/needs-provider';
 import { requiresLogin } from '../../util';
 
-const styles = theme => ({
-    quantityInput: {
-        minWidth: '115px',
-        width: '100%',
-    },
-    quantityUpdating: {
-        minWidth: '85px',
-        width: 'calc(100% - 36px)',
-    },
-});
-
-@withStyles(styles)
 @withSnackbar
 class StatefulNeedQuantityEditComponent extends React.Component {
 
@@ -52,9 +39,15 @@ class StatefulNeedQuantityEditComponent extends React.Component {
                     label={label}
                     defaultValue={need.quantity > 0 ? need.quantity : null}
                     type="number"
-                    margin="dense"
+                    size="small"
                     variant="outlined"
-                    className={update ? classes.quantityUpdating : classes.quantityInput}
+                    sx={update ? {
+                        minWidth: '85px',
+                        width: 'calc(100% - 36px)',
+                    } : {
+                        minWidth: '115px',
+                        width: '100%',
+                    }}
                     onChange={event => this.handleQuantityChange(event.target.value)}
                     inputProps={{
                         'min': '0',

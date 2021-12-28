@@ -1,54 +1,16 @@
-import { CircularProgress, FormControlLabel } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import { withStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
+import { CircularProgress, FormControlLabel } from '@mui/material';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import TextField from '@mui/material/TextField';
+import { Box } from '@mui/system';
 import React from 'react';
-import { SessionContext } from '../../providers/session-provider';
 import { ItemsContext } from '../../providers/items-provider';
-import ItemSlotEditComponent from './item-slot';
-import { isStringBlank } from '../../util';
+import { SessionContext } from '../../providers/session-provider';
+import BoldText from '../util/bold-text';
 import IdNameSelect from '../util/id-name-select';
 import ItemListComponent from './item-list';
+import ItemSlotEditComponent from './item-slot';
 
-const styles = theme => ({
-    bold: {
-        fontWeight: 'bold',
-    },
-    textField: {
-        marginRight: theme.spacing.unit,
-    },
-    textArea: {
-        width: '100%',
-        maxWidth: '700px',
-    },
-    bottom: {
-        display: 'inline-block',
-        verticalAlign: 'bottom',
-    },
-    imageInput: {
-        display: 'none',
-    },
-    image: {
-        display: 'inline-block',
-        verticalAlign: 'bottom',
-        maxHeight: '36px',
-        marginLeft: theme.spacing.unit,
-    },
-    verticallyCenteredContainer: {
-        display: 'flex',
-        alignItems: 'center',
-    },
-    technicalCrew: {
-        minWidth: '100px',
-    },
-});
-
-@withStyles(styles)
 class StatefulItemEditComponent extends React.Component {
 
     constructor(props) {
@@ -62,26 +24,32 @@ class StatefulItemEditComponent extends React.Component {
     }
 
     render() {
-        const { classes, itemsState } = this.props;
+        const { itemsState } = this.props;
         const item = itemsState.getSelectedItem();
+
+        const sxTextField = { mr: 1 };
+
         return (
             <div>
-                <div className={classes.verticallyCenteredContainer}>
+                <Box sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                }}>
                     <TextField
                         id="name"
                         label="Name"
-                        className={classes.textField}
+                        sx={sxTextField}
                         value={item.name}
                         onChange={event => itemsState.changeItemName(event.target.value)}
-                        margin="dense"
+                        size="small"
                         variant="outlined"
                     /><TextField
                         id="id"
                         label="Eindeutiger Bezeichner"
-                        className={classes.textField}
+                        sx={sxTextField}
                         value={item.identifier}
                         onChange={event => itemsState.changeItemIdentifier(event.target.value)}
-                        margin="dense"
+                        size="small"
                         variant="outlined"
                     />
                     <FormControlLabel
@@ -94,33 +62,46 @@ class StatefulItemEditComponent extends React.Component {
                         }
                         label="ist Barcode"
                     />
-                </div>
+                </Box>
                 <ItemSlotEditComponent />
                 <br />
                 <br />
-                <input
+                <Box
+                    component="input"
                     accept="image/png,image/jpeg"
-                    className={classes.imageInput}
+                    sx={{ display: 'none' }}
                     id="image"
                     type="file"
                     onChange={event => itemsState.changeImage(event.target.files.length > 0 && event.target.files[0])}
                 />
                 <label htmlFor="image">
-                    <Button variant="contained" component="span" className={classes.button}>
+                    <Button variant="contained" component="span">
                         Bild auswählen
                     </Button>
                 </label>
-                <img className={classes.image} src={item.imageUrl} />&nbsp;
+                <Box
+                    component="img"
+                    sx={{
+                        display: 'inline-block',
+                        verticalAlign: 'bottom',
+                        maxHeight: '36px',
+                        ml: 1,
+                    }}
+                    src={item.imageUrl}
+                />&nbsp;
                 {item.imageName}
                 <br /><br />
-                <div className={classes.verticallyCenteredContainer}>
+                <Box sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                }}>
                     <TextField
                         id="quantity"
                         label="Menge"
-                        className={classes.textField}
+                        sx={sxTextField}
                         value={item.quantity}
                         onChange={event => itemsState.changeItemQuantity(event.target.value)}
-                        margin="dense"
+                        size="small"
                         variant="outlined"
                         type="number"
                         inputProps={{ min: '1' }}
@@ -128,10 +109,10 @@ class StatefulItemEditComponent extends React.Component {
                     <TextField
                         id="unit"
                         label="Einheit"
-                        className={classes.textField}
+                        sx={sxTextField}
                         value={item.unit}
                         onChange={event => itemsState.changeItemUnit(event.target.value)}
-                        margin="dense"
+                        size="small"
                         variant="outlined"
                     />
                     <FormControlLabel
@@ -144,7 +125,7 @@ class StatefulItemEditComponent extends React.Component {
                         }
                         label="Verbrauchsgegenstand"
                     />
-                </div>
+                </Box>
                 <FormControlLabel
                     control={
                         <Checkbox
@@ -161,30 +142,34 @@ class StatefulItemEditComponent extends React.Component {
                     id="description"
                     label="Beschreibung"
                     multiline
-                    className={classes.textArea}
+                    sx={{
+                        width: '100%',
+                        maxWidth: '700px',
+                    }}
                     value={item.description}
                     onChange={event => itemsState.changeItemDescription(event.target.value)}
-                    margin="dense"
+                    size="small"
                     variant="outlined"
                 /><br />
                 <br />
-                {itemsState.technicalCrews ? (
-                    <IdNameSelect
-                        label="Gewerk"
-                        className={classes.technicalCrew}
-                        value={item.technicalCrewId}
-                        onChange={value => itemsState.changeItemTechnicalCrewId(value)}
-                        data={itemsState.technicalCrews}
-                    />
-                ) : (
+                {
+                    itemsState.technicalCrews ? (
+                        <IdNameSelect
+                            label="Gewerk"
+                            value={item.technicalCrewId}
+                            onChange={value => itemsState.changeItemTechnicalCrewId(value)}
+                            data={itemsState.technicalCrews}
+                        />
+                    ) : (
                         <CircularProgress />
-                    )}
+                    )
+                }
                 <br />
                 <br />
                 <br />
-                <div className={classes.bold}>
+                <BoldText>
                     Zugehörig
-                </div>
+                </BoldText>
                 <ItemListComponent
                     keepSelectedItem
                     hideAdd
@@ -193,7 +178,7 @@ class StatefulItemEditComponent extends React.Component {
                     selected={item.items && item.items.map(relatedItem => relatedItem.id) || []}
                     onToggleSelect={id => itemsState.toggleItemRelation(id)}
                 />
-            </div>
+            </div >
         );
     }
 }

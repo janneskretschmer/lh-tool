@@ -1,68 +1,11 @@
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { withStyles } from '@material-ui/core/styles';
-import classNames from 'classnames';
+import CircularProgress from '@mui/material/CircularProgress';
+import { Box } from '@mui/system';
 import React from 'react';
 import { NeedsContext } from '../../providers/needs-provider';
 import { convertToYYYYMMDD, requiresLogin } from '../../util';
 import NeedMonthSelection from './need-month-selection';
 import NeedProjectSelection from './need-project-selection';
 
-const styles = theme => ({
-    calendar: {
-        tableLayout: 'fixed',
-        width: '100%',
-        borderCollapse: 'collapse',
-        minWidth: '920px',
-    },
-    calendarRow: {
-
-    },
-    calendarCell: {
-        width: '20%',
-        border: '1px solid ' + theme.palette.primary.light,
-        padding: theme.spacing.unit,
-        verticalAlign: 'top',
-    },
-    disabled: {
-        opacity: '0.38',
-    },
-    dayName: {
-        padding: theme.spacing.unit,
-        color: theme.palette.secondary.dark,
-        border: '1px solid ' + theme.palette.primary.light,
-        fontWeight: 'normal',
-        fontSize: 'large',
-    },
-    day: {
-        width: '100%',
-        textAlign: 'right',
-        color: theme.palette.secondary.main,
-        fontWeight: 'bold',
-        fontSize: 'larger',
-        padding: '3px',
-    },
-
-    header: {
-        display: 'flex',
-        position: 'relative',
-        height: '48px',
-        alignItems: 'center',
-    },
-    projectWrapper: {
-        justifySelf: 'start',
-    },
-    month: {
-        justifySelf: 'center',
-        position: 'absolute',
-        left: '50%',
-        transform: 'translate(-50%,0)',
-        alignItems: 'center',
-        display: 'flex',
-        fontSize: 'x-large',
-    },
-});
-
-@withStyles(styles)
 class StatefulNeedProjectCalendar extends React.Component {
 
     setMonth(monthOffset) {
@@ -75,52 +18,96 @@ class StatefulNeedProjectCalendar extends React.Component {
         const project = needsState.getSelectedProject();
         const data = project && project.selectedMonthData;
 
+        const sxDayName = {
+            p: 1,
+            color: 'secondary.dark',
+            border: '1px solid',
+            borderColor: 'primary.light',
+            fontWeight: 'normal',
+            fontSize: 'large',
+        };
+
         return (
             <>
-                <div className={classes.header}>
-                    <div className={classes.projectWrapper}>
+                <Box sx={{
+                    display: 'flex',
+                    position: 'relative',
+                    height: '48px',
+                    alignItems: 'center',
+                }}>
+                    <Box sx={{
+                        justifySelf: 'start',
+                    }}>
                         <NeedProjectSelection />
-                    </div>
+                    </Box>
                     {data ? (
-                        <NeedMonthSelection className={classes.month} />
+                        <NeedMonthSelection sx={{
+                            justifySelf: 'center',
+                            position: 'absolute',
+                            left: '50%',
+                            transform: 'translate(-50%,0)',
+                            alignItems: 'center',
+                            display: 'flex',
+                            fontSize: 'x-large',
+                        }} />
                     ) : (
                         <CircularProgress size={15} />
                     )}
 
-                </div>
+                </Box>
                 {data && (
-                    <table className={classes.calendar}>
+                    <Box component="table" sx={{
+                        tableLayout: 'fixed',
+                        width: '100%',
+                        borderCollapse: 'collapse',
+                        minWidth: '920px',
+                    }}>
                         <thead>
                             <tr>
-                                <th className={classes.dayName}>Montag</th>
-                                <th className={classes.dayName}>Dienstag</th>
-                                <th className={classes.dayName}>Mittwoch</th>
-                                <th className={classes.dayName}>Donnerstag</th>
-                                <th className={classes.dayName}>Freitag</th>
-                                <th className={classes.dayName}>Samstag</th>
-                                <th className={classes.dayName}>Sonntag</th>
+                                <Box component="th" sx={sxDayName}>Montag</Box>
+                                <Box component="th" sx={sxDayName}>Dienstag</Box>
+                                <Box component="th" sx={sxDayName}>Mittwoch</Box>
+                                <Box component="th" sx={sxDayName}>Donnerstag</Box>
+                                <Box component="th" sx={sxDayName}>Freitag</Box>
+                                <Box component="th" sx={sxDayName}>Samstag</Box>
+                                <Box component="th" sx={sxDayName}>Sonntag</Box>
                             </tr>
                         </thead>
                         <tbody>
                             {Array.from(Array(data.days.length / 7)).map((_, i) => (
-                                <tr className={classes.calendarRow} key={i}>
+                                <tr key={i}>
                                     {Array.from(Array(7)).map((_, j) => {
                                         const day = data.days[i * 7 + j];
                                         const content = dateContentMap && dateContentMap.get(convertToYYYYMMDD(day.date));
                                         return (
-                                            <td className={classNames({
-                                                [classes.calendarCell]: true,
-                                                [classes.disabled]: day.disabled,
-                                            })} key={j}>
-                                                <div className={classes.day}>{day.date.getDate()}</div>
+                                            <Box
+                                                component="td"
+                                                sx={{
+                                                    width: '20%',
+                                                    border: '1px solid',
+                                                    borderColor: 'primary.light',
+                                                    p: 1,
+                                                    verticalAlign: 'top',
+                                                    opacity: day.disabled ? '0.38' : undefined
+                                                }} key={j}>
+                                                <Box sx={{
+                                                    width: '100%',
+                                                    textAlign: 'right',
+                                                    color: 'secondary.main',
+                                                    fontWeight: 'bold',
+                                                    fontSize: 'larger',
+                                                    padding: '3px',
+                                                }}>
+                                                    {day.date.getDate()}
+                                                </Box>
                                                 {content ? content : !day.disabled ? (<CircularProgress size={15} />) : null}
-                                            </td>
+                                            </Box>
                                         );
                                     })}
                                 </tr>
                             ))}
                         </tbody>
-                    </table>
+                    </Box>
                 )}
             </>
         );
