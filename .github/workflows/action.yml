@@ -21,8 +21,8 @@ jobs:
         
     - name: Verify
       run: mvn verify
-      
-    - ńame: Deploy
+
+    - name: Deploy
       if: ${{ success() && (github.ref_name == 'stage' || github.ref_name == 'prod') }}
       run: scripts/deploy.sh $GITHUB_REF_NAME
       env: 
