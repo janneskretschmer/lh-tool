@@ -8,7 +8,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
-public abstract class JsonDeserializers {
+public final class JsonDeserializers {
+
+	private JsonDeserializers() {
+		// this class is just a namespace
+	}
+
 	public static class LocalDateDeserializer extends JsonDeserializer<LocalDate> {
 
 		@Override

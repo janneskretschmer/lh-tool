@@ -11,7 +11,12 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
-public abstract class JsonSerializers {
+public final class JsonSerializers {
+
+	private JsonSerializers() {
+		// this class is just a namespace
+	}
+
 	public static class LocalDateSerializer extends JsonSerializer<LocalDate> {
 		@Override
 		public Class<LocalDate> handledType() {

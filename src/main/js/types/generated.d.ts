@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 2.32.889 on 2021-09-28 21:17:20.
+// Generated using typescript-generator version 2.32.889 on 2021-12-29 01:56:57.
 
 export interface ExceptionDto {
     key: string;
@@ -539,13 +539,13 @@ export interface GrantedAuthority extends Serializable {
 }
 
 export interface UserDetails extends Serializable {
+    enabled: boolean;
+    username: string;
+    password: string;
     authorities: GrantedAuthority[];
     accountNonExpired: boolean;
     accountNonLocked: boolean;
     credentialsNonExpired: boolean;
-    enabled: boolean;
-    password: string;
-    username: string;
 }
 
 export interface Identifiable<I> {

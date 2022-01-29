@@ -93,7 +93,8 @@ public abstract class BasicRestIntegrationTest {
 				}
 			}
 		}
-		// code below here is unreachable
+
+		// code below here would be unreachable
 	}
 
 	protected String getJwtByEmail(String email) {

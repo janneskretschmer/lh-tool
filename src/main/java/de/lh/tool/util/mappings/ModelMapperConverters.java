@@ -5,7 +5,12 @@ import java.time.LocalTime;
 import org.modelmapper.Converter;
 import org.modelmapper.spi.MappingContext;
 
-public abstract class ModelMapperConverters {
+public final class ModelMapperConverters {
+
+	private ModelMapperConverters() {
+		// this class is just a namespace
+	}
+
 	public static class StringToLocalTime implements Converter<String, LocalTime> {
 
 		@Override
