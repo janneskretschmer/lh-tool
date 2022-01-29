@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch } from 'react-router';
+import { Route, Switch } from 'react-router-dom';
 import { fullPathOfItemData, fullPathOfItems, fullPathOfItemHistory } from '../../paths';
 import { requiresLogin } from '../../util';
 import NotFoundHandlerComponent from '../notfound';

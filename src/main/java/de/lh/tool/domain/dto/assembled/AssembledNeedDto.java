@@ -1,6 +1,6 @@
 package de.lh.tool.domain.dto.assembled;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -22,7 +22,7 @@ public class AssembledNeedDto {
 
 	private Long projectHelperTypeId;
 
-	private Date date;
+	private LocalDate date;
 
 	private Integer quantity;
 

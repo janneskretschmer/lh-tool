@@ -1,4 +1,4 @@
-import { Redirect, withRouter } from 'react-router';
+import { Redirect, withRouter } from 'react-router-dom';
 import React from 'react';
 
 

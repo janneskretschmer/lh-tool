@@ -1,7 +1,7 @@
 import React from 'react';
 import { fetchNeedsForCalendar } from '../actions/assembled';
 import { changeApplicationStateForNeed, createOrUpdateNeed } from '../actions/need';
-import { convertToMUIFormat, withContext, getProjectMonth, getMonthOffsetWithinRange, getClosestProjectMonth } from '../util';
+import { convertToYYYYMMDD, dateEquals, getClosestProjectMonth } from '../util';
 import { SessionContext } from './session-provider';
 import { fetchProjects } from '../actions/project';
 import _ from 'lodash';
@@ -47,8 +47,8 @@ class StatefulNeedsProvider extends React.Component {
         const project = this.getSelectedProject();
         if (project && !project.loadingMonthData && project.selectedMonthData
             && (!project.days
-                || !project.days.has(convertToMUIFormat(project.selectedMonthData.firstValidDate))
-                || !project.days.has(convertToMUIFormat(project.selectedMonthData.lastValidDate))
+                || !project.days.has(convertToYYYYMMDD(project.selectedMonthData.firstValidDate))
+                || !project.days.has(convertToYYYYMMDD(project.selectedMonthData.lastValidDate))
             )
         ) {
             this.setState(prevState => {
@@ -59,7 +59,7 @@ class StatefulNeedsProvider extends React.Component {
                 }
                 return { projects };
             }, () =>
-                fetchNeedsForCalendar(this.props.sessionState.accessToken, project.id, convertToMUIFormat(project.selectedMonthData.firstValidDate), convertToMUIFormat(project.selectedMonthData.lastValidDate))
+                fetchNeedsForCalendar(this.props.sessionState.accessToken, project.id, project.selectedMonthData.firstValidDate, project.selectedMonthData.lastValidDate)
                     .then(dateMap => {
                         this.setState(prevState => {
                             const tmpProjects = _.cloneDeep(prevState.projects);
@@ -75,7 +75,7 @@ class StatefulNeedsProvider extends React.Component {
     }
 
     getQuantityUpdate({ projectHelperTypeId, date }) {
-        return this.state.openQuantityUpdates.find(update => update.projectHelperTypeId === projectHelperTypeId && update.date.isSame(date, 'day'));
+        return this.state.openQuantityUpdates.find(update => update.projectHelperTypeId === projectHelperTypeId && dateEquals(update.date, date));
     }
 
     updateNeedQuantity(projectId, helperTypeId, need, handleFailure) {
@@ -98,35 +98,40 @@ class StatefulNeedsProvider extends React.Component {
     }
 
     updateNeedQuantityRecursively(projectId, helperTypeId, need, handleFailure) {
-        createOrUpdateNeed(this.props.sessionState.accessToken, need, handleFailure).then(
-            need => {
-                const update = this.getQuantityUpdate(need);
-                if (need.quantity !== update.quantity) {
-                    need.quantity = update.quantity;
-                    this.updateNeedQuantityRecursively(projectId, helperTypeId, need, handleFailure);
-                    return;
+        createOrUpdateNeed(this.props.sessionState.accessToken, need)
+            .catch(err => {
+                if (handleFailure) {
+                    handleFailure(err);
                 }
-                this.setState(prevState => {
-                    const projects = _.cloneDeep(prevState.projects);
-                    const cachedNeed = projects.get(projectId).days.get(convertToMUIFormat(need.date)).helperTypes
-                        .find(helperType => helperType.id === helperTypeId).shifts
-                        .find(projectHelperType => projectHelperType.id === need.projectHelperTypeId)
-                        .need;
-                    cachedNeed.quantity = need.quantity;
-                    if (!cachedNeed.id) {
-                        cachedNeed.id = need.id;
-                        cachedNeed.state = 'NONE';
-                        cachedNeed.users = [];
+            }).then(
+                need => {
+                    const update = this.getQuantityUpdate(need);
+                    if (need.quantity !== update.quantity) {
+                        need.quantity = update.quantity;
+                        this.updateNeedQuantityRecursively(projectId, helperTypeId, need, handleFailure);
+                        return;
                     }
+                    this.setState(prevState => {
+                        const projects = _.cloneDeep(prevState.projects);
+                        const cachedNeed = projects.get(projectId).days.get(convertToYYYYMMDD(need.date)).helperTypes
+                            .find(helperType => helperType.id === helperTypeId).shifts
+                            .find(projectHelperType => projectHelperType.id === need.projectHelperTypeId)
+                            .need;
+                        cachedNeed.quantity = need.quantity;
+                        if (!cachedNeed.id) {
+                            cachedNeed.id = need.id;
+                            cachedNeed.state = 'NONE';
+                            cachedNeed.users = [];
+                        }
 
-                    const openQuantityUpdates = prevState.openQuantityUpdates.filter(update => update.projectHelperTypeId !== need.projectHelperTypeId || !update.date.isSame(need.date, 'day'));
-                    return {
-                        projects,
-                        openQuantityUpdates,
-                    };
-                });
-            }
-        );
+                        const openQuantityUpdates = prevState.openQuantityUpdates.filter(update => update.projectHelperTypeId !== need.projectHelperTypeId || !dateEquals(update.date, need.date));
+                        return {
+                            projects,
+                            openQuantityUpdates,
+                        };
+                    });
+                }
+            );
     }
 
     updateOwnNeedState(projectHelperType, needId, state, handleFailure) {
@@ -134,37 +139,38 @@ class StatefulNeedsProvider extends React.Component {
 
     }
     updateNeedUserState(projectHelperType, needUser, handleFailure) {
-        changeApplicationStateForNeed(this.props.sessionState.accessToken, needUser, handleFailure).then(
-            needUser => this.setState(
-                prevState => {
+        changeApplicationStateForNeed(this.props.sessionState.accessToken, needUser)
+            .catch(handleFailure).then(
+                needUser => this.setState(
+                    prevState => {
 
-                    if (needUser.userId === this.props.sessionState.currentUser.id) {
-                        needUser.user = this.props.sessionState.currentUser;
-                    }
-
-                    const projects = _.cloneDeep(prevState.projects);
-                    const need = projects.get(projectHelperType.projectId).days.get(convertToMUIFormat(projectHelperType.need.date)).helperTypes
-                        .find(helperType => helperType.id === projectHelperType.helperTypeId).shifts
-                        .find(pht => pht.id === projectHelperType.id)
-                        .need;
-                    need.state = needUser.state;
-
-                    if (needUser.state === 'NONE') {
-                        need.users = projectHelperType.need.users.filter(nu => nu.needId !== needUser.needId || nu.userId !== needUser.userId);
-                    } else {
-                        if (projectHelperType.need.users.find(nu => nu.needId === needUser.needId && nu.userId === needUser.userId)) {
-                            need.users = projectHelperType.need.users.map(nu => nu.needId === needUser.needId && nu.userId === needUser.userId ? needUser : nu);
-                        } else {
-                            need.users = [...projectHelperType.need.users, needUser];
+                        if (needUser.userId === this.props.sessionState.currentUser.id) {
+                            needUser.user = this.props.sessionState.currentUser;
                         }
-                    }
 
-                    return {
-                        projects,
-                    };
-                }
-            )
-        );
+                        const projects = _.cloneDeep(prevState.projects);
+                        const need = projects.get(projectHelperType.projectId).days.get(convertToYYYYMMDD(projectHelperType.need.date)).helperTypes
+                            .find(helperType => helperType.id === projectHelperType.helperTypeId).shifts
+                            .find(pht => pht.id === projectHelperType.id)
+                            .need;
+                        need.state = needUser.state;
+
+                        if (needUser.state === 'NONE') {
+                            need.users = projectHelperType.need.users.filter(nu => nu.needId !== needUser.needId || nu.userId !== needUser.userId);
+                        } else {
+                            if (projectHelperType.need.users.find(nu => nu.needId === needUser.needId && nu.userId === needUser.userId)) {
+                                need.users = projectHelperType.need.users.map(nu => nu.needId === needUser.needId && nu.userId === needUser.userId ? needUser : nu);
+                            } else {
+                                need.users = [...projectHelperType.need.users, needUser];
+                            }
+                        }
+
+                        return {
+                            projects,
+                        };
+                    }
+                )
+            );
     }
 
     editNeedUser(needUser) {
@@ -186,34 +192,35 @@ class StatefulNeedsProvider extends React.Component {
     saveEditedNeedUsers(projectHelperType, handleFailure) {
         Promise.all(Array.from(this.state.editedNeedUsers.values()).filter(
             needUser => needUser.needId === projectHelperType.need.id
-        ).map(needUser => changeApplicationStateForNeed(this.props.sessionState.accessToken, needUser, handleFailure))).then(
-            needUsers => this.setState(
-                prevState => {
-                    const editedNeedUsers = _.cloneDeep(prevState.editedNeedUsers);
-                    needUsers.forEach(needUser => editedNeedUsers.delete(needUser.id));
-                    const projects = _.cloneDeep(prevState.projects);
-                    const need = projects.get(projectHelperType.projectId).days.get(convertToMUIFormat(projectHelperType.need.date)).helperTypes
-                        .find(helperType => helperType.id === projectHelperType.helperTypeId).shifts
-                        .find(pht => pht.id === projectHelperType.id)
-                        .need;
-                    need.users = projectHelperType.need.users.map(
-                        needUser => {
-                            const updated = needUsers.find(nu => nu.id === needUser.id);
-                            return {
-                                ...needUser,
-                                state: updated ? updated.state : needUser.state,
-                            };
-                        }
-                    );
-                    const userState = need.users.find(needUser => needUser.userId === this.props.sessionState.currentUser.id);
-                    need.state = userState ? userState.state : 'NONE';
-                    return {
-                        projects,
-                        editedNeedUsers,
-                    };
-                }
-            )
-        );
+        ).map(needUser => changeApplicationStateForNeed(this.props.sessionState.accessToken, needUser)
+            .catch(handleFailure))).then(
+                needUsers => this.setState(
+                    prevState => {
+                        const editedNeedUsers = _.cloneDeep(prevState.editedNeedUsers);
+                        needUsers.forEach(needUser => editedNeedUsers.delete(needUser.id));
+                        const projects = _.cloneDeep(prevState.projects);
+                        const need = projects.get(projectHelperType.projectId).days.get(convertToYYYYMMDD(projectHelperType.need.date)).helperTypes
+                            .find(helperType => helperType.id === projectHelperType.helperTypeId).shifts
+                            .find(pht => pht.id === projectHelperType.id)
+                            .need;
+                        need.users = projectHelperType.need.users.map(
+                            needUser => {
+                                const updated = needUsers.find(nu => nu.id === needUser.id);
+                                return {
+                                    ...needUser,
+                                    state: updated ? updated.state : needUser.state,
+                                };
+                            }
+                        );
+                        const userState = need.users.find(needUser => needUser.userId === this.props.sessionState.currentUser.id);
+                        need.state = userState ? userState.state : 'NONE';
+                        return {
+                            projects,
+                            editedNeedUsers,
+                        };
+                    }
+                )
+            );
     }
 
     hasNeedEditedUsers(needId) {

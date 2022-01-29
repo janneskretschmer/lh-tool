@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+
 import de.lh.tool.domain.dto.JwtAuthenticationDto;
 import de.lh.tool.domain.dto.LoginDto;
 import de.lh.tool.domain.dto.UserDto;
@@ -25,8 +29,13 @@ import de.lh.tool.service.rest.testonly.IntegrationTestRestService;
 import de.lh.tool.service.rest.testonly.dto.DatabaseValidationResultDto;
 import de.lh.tool.service.rest.testonly.dto.EmailDto;
 import de.lh.tool.service.rest.testonly.dto.EmailWrapperDto;
+import de.lh.tool.util.mappings.JsonSerializers;
 import io.restassured.RestAssured;
+import io.restassured.config.ObjectMapperConfig;
+import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
+import io.restassured.mapper.ObjectMapperType;
+import io.restassured.mapper.factory.Jackson2ObjectMapperFactory;
 import io.restassured.parsing.Parser;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
@@ -52,6 +61,23 @@ public abstract class BasicRestIntegrationTest {
 	protected void setup() {
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 
+		RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
+				new ObjectMapperConfig().jackson2ObjectMapperFactory(new Jackson2ObjectMapperFactory() {
+
+					@Override
+					public ObjectMapper create(Type arg0, String arg1) {
+						ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
+
+						SimpleModule module = new SimpleModule();
+						module.addSerializer(new JsonSerializers.LocalDateSerializer());
+						module.addSerializer(new JsonSerializers.LocalTimeSerializer());
+						module.addSerializer(new JsonSerializers.LocalDateTimeSerializer());
+						mapper.registerModule(module);
+						return mapper;
+					}
+
+				}).defaultObjectMapperType(ObjectMapperType.JACKSON_2));
+
 		// wait for local tomcat
 		long timeout = System.currentTimeMillis() + TIMEOUT;
 		while (System.currentTimeMillis() < timeout) {
@@ -67,6 +93,8 @@ public abstract class BasicRestIntegrationTest {
 				}
 			}
 		}
+
+		// code below here would be unreachable
 	}
 
 	protected String getJwtByEmail(String email) {
@@ -125,7 +153,7 @@ public abstract class BasicRestIntegrationTest {
 
 		Response response = requestSepcification.request(endpointTest.getMethod(), endpointTest.getUrl());
 
-		String message = getAsssertFailedMessage(endpointTest, email);
+		String message = getAsssertFailedMessage(endpointTest, email, response.getStatusCode());
 
 		validateResponse(userTest, email, response, message);
 	}
@@ -143,7 +171,8 @@ public abstract class BasicRestIntegrationTest {
 	private void validateResponse(UserTest userTest, String email, Response response, String message) {
 		Optional.ofNullable(userTest.getExpectedResponse()).ifPresent(expected -> {
 			if (userTest.isExpectedResponseIsRegex()) {
-				assertTrue(response.asString().matches(expected), message);
+				assertTrue(response.asString().matches(expected), StringUtils.join(message, "\nREGEX doesn't match:\n",
+						expected, "\n<==>\n", response.asString()));
 			} else {
 				assertEquals(expected, response.asString(), message);
 			}
@@ -174,8 +203,9 @@ public abstract class BasicRestIntegrationTest {
 
 	}
 
-	private String getAsssertFailedMessage(EndpointTest endpointTest, String email) {
-		return StringUtils.join(endpointTest.getMethod(), " ", endpointTest.getUrl(), "\nas ", email);
+	private String getAsssertFailedMessage(EndpointTest endpointTest, String email, int statusCode) {
+		return StringUtils.join("\n", endpointTest.getMethod(), " ", endpointTest.getUrl(), "\nas ", email,
+				"\nHTTP-Code: ", statusCode, "\n");
 	}
 
 }

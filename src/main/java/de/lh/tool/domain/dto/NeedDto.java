@@ -1,6 +1,6 @@
 package de.lh.tool.domain.dto;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -21,8 +21,7 @@ public class NeedDto implements Identifiable<Long> {
 
 	private Long projectHelperTypeId;
 
-	// FUTURE use new time api
-	private Date date;
+	private LocalDate date;
 
 	private Integer quantity;
 

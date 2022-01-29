@@ -1,36 +1,22 @@
-import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Grid from '@material-ui/core/Grid';
-import { withStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { withSnackbar } from 'notistack';
 import React from 'react';
-import { Redirect } from 'react-router';
+import { Redirect } from 'react-router-dom';
 import { login, requestPasswordReset } from '../actions/login';
-import { SessionContext } from '../providers/session-provider';
 import { fullPathOf } from '../paths';
-
-const styles = theme => ({
-    container: {
-        padding: theme.spacing.unit,
-        border: '1px solid',
-        borderRadius: '5px',
-        borderColor: theme.palette.secondary.light,
-        textAlign: 'right',
-    },
-    button: {
-        marginTop: theme.spacing.unit,
-    },
-});
+import { SessionContext } from '../providers/session-provider';
 
 @withSnackbar
-@withStyles(styles, { withTheme: true })
 export default class LoginComponent extends React.Component {
 
     state = {
@@ -73,7 +59,6 @@ export default class LoginComponent extends React.Component {
     }
 
     render() {
-        const { classes } = this.props;
 
         return (
             <SessionContext.Consumer>
@@ -93,11 +78,17 @@ export default class LoginComponent extends React.Component {
                                     handleLoginFailure: this.handleLoginFailure.bind(this),
                                 });
                             }}>
-                                <Grid container justify="center">
+                                <Grid container justifyContent="center">
                                     <div>
-                                        <Typography variant="h3" color="primary" inline={false}>Local Helper Tool</Typography>
-                                        <Typography variant="subtitle1" color="secondary" inline={false}>Willkommen</Typography>
-                                        <div className={classes.container}>
+                                        <Typography variant="h3" color="primary">Local Helper Tool</Typography>
+                                        <Typography variant="subtitle1" color="secondary">Willkommen</Typography>
+                                        <Box sx={{
+                                            p: 1,
+                                            border: '1px solid',
+                                            borderRadius: '5px',
+                                            borderColor: 'secondary.light',
+                                            textAlign: 'right',
+                                        }}>
                                             <TextField
                                                 id="username"
                                                 autoFocus={true}
@@ -105,7 +96,7 @@ export default class LoginComponent extends React.Component {
                                                 type="email"
                                                 name="username"
                                                 autoComplete="email"
-                                                margin="dense"
+                                                size="small"
                                                 variant="outlined"
                                                 fullWidth={true}
                                                 InputProps={{
@@ -116,9 +107,10 @@ export default class LoginComponent extends React.Component {
                                             <TextField
                                                 id="password"
                                                 label="Passwort"
+                                                sx={{ mt: 1 }}
                                                 type="password"
                                                 autoComplete="current-password"
-                                                margin="dense"
+                                                size="small"
                                                 variant="outlined"
                                                 fullWidth={true}
                                                 InputProps={{
@@ -128,12 +120,12 @@ export default class LoginComponent extends React.Component {
                                             <br />
                                             {this.state.loading ? (<CircularProgress />) : (
                                                 <>
-                                                    <Button size="small" color="secondary" className={classes.button} onClick={this.openPwResetDialog.bind(this)}>
+                                                    <Button size="small" color="secondary" sx={{ mt: 1 }} onClick={this.openPwResetDialog.bind(this)}>
                                                         Passwort vergessen
-		                                        </Button>
-                                                    <Button variant="contained" type="submit" className={classes.button}>
+                                                    </Button>
+                                                    <Button variant="contained" type="submit" sx={{ mt: 1 }}>
                                                         Anmelden
-		                                        </Button>
+                                                    </Button>
                                                 </>
                                             )}
                                             <Dialog
@@ -145,10 +137,10 @@ export default class LoginComponent extends React.Component {
                                                 <DialogContent>
                                                     <DialogContentText>
                                                         Wenn du dein Passwort vergessen hast, kannst du dir per E-Mail einen Link zusenden lassen, mit dem du dein Passwort neu setzen kannst.
-                                                </DialogContentText>
+                                                    </DialogContentText>
                                                     <TextField
                                                         autoFocus
-                                                        margin="dense"
+                                                        size="small"
                                                         id="resetEmail"
                                                         label="E-Mail"
                                                         type="email"
@@ -161,7 +153,7 @@ export default class LoginComponent extends React.Component {
                                                 <DialogActions>
                                                     <Button onClick={this.closePwResetDialog.bind(this)} color="secondary">
                                                         Abbrechen
-                                                </Button>
+                                                    </Button>
                                                     <Button onClick={() => {
                                                         const email = this.inputResetEmail.value;
                                                         requestPasswordReset({ email })
@@ -174,10 +166,10 @@ export default class LoginComponent extends React.Component {
                                                             });
                                                     }} color="primary">
                                                         Link für neues Passwort anfordern
-                                                </Button>
+                                                    </Button>
                                                 </DialogActions>
                                             </Dialog>
-                                        </div>
+                                        </Box>
                                     </div>
                                 </Grid>
                             </form>

@@ -1,26 +1,10 @@
-import { CircularProgress, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
-import { withStyles } from '@material-ui/core/styles';
+import { CircularProgress, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import React from 'react';
-import { createOrUpdateItem, fetchItem } from '../../actions/item';
-import { SessionContext } from '../../providers/session-provider';
-import { withContext, generateUniqueId, convertToReadableFormat } from '../../util';
-import ItemDisplayComponent from './item-display';
-import ItemEditComponent from './item-edit';
-import ItemSlotEditComponent from './item-slot';
-import ItemIdentifierEditComponent from './item-identifier';
-import ItemsProvider, { ItemsContext } from '../../providers/items-provider';
-import WithPermission from '../with-permission';
-import SimpleDialog from '../simple-dialog';
+import { ItemsContext } from '../../providers/items-provider';
 import { PageContext } from '../../providers/page-provider';
+import { SessionContext } from '../../providers/session-provider';
+import { convertToDDMMYYYY_HHMM } from '../../util';
 
-const styles = theme => ({
-    historyTable: {
-        width: 'initial',
-    },
-});
-
-@withStyles(styles)
 class StatefulItemHistoryComponent extends React.Component {
 
     constructor(props) {
@@ -69,7 +53,7 @@ class StatefulItemHistoryComponent extends React.Component {
     }
 
     render() {
-        const { classes, itemsState } = this.props;
+        const { itemsState } = this.props;
         const item = itemsState.getSelectedItem();
         if (!item) {
             return (<CircularProgress />);
@@ -79,7 +63,7 @@ class StatefulItemHistoryComponent extends React.Component {
         }
         return (
             <>
-                <Table size="small" className={classes.historyTable}>
+                <Table size="small" sx={{ width: 'initial' }}>
                     <TableHead>
                         <TableRow>
                             <TableCell>Datum</TableCell>
@@ -90,19 +74,19 @@ class StatefulItemHistoryComponent extends React.Component {
                     <TableBody>
                         {item.history ? item.history.map(event => (
                             <TableRow key={event.id}>
-                                <TableCell>{convertToReadableFormat(event.timestamp.local())}</TableCell>
+                                <TableCell>{convertToDDMMYYYY_HHMM(event.timestamp)}</TableCell>
                                 <TableCell>
                                     {this.getFirstAndLastName(event)}
                                 </TableCell>
                                 <TableCell>{this.getHistoryActionText(event)}</TableCell>
                             </TableRow>
                         )) : (
-                                <TableRow>
-                                    <TableCell colSpan={3}>
-                                        <CircularProgress />
-                                    </TableCell>
-                                </TableRow>
-                            )}
+                            <TableRow>
+                                <TableCell colSpan={3}>
+                                    <CircularProgress />
+                                </TableCell>
+                            </TableRow>
+                        )}
                     </TableBody>
                 </Table>
             </>

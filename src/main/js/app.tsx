@@ -1,25 +1,24 @@
-import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import { createTheme, StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
 import { SnackbarProvider } from 'notistack';
 import React from 'react';
 import LHToolRootWrapper from './components/root';
 import settings from './settings';
 import { EmptyPropsComponent } from './types/empty-props-component';
 
-const theme = createMuiTheme({
+const theme = createTheme({
 	palette: {
 		//needs to be changed in deploy.sh as well
 		primary: settings.theme.primary,
 		secondary: settings.theme.secondary,
 	},
-	typography: {
-		useNextVariants: true,
-	},
 });
 
 const ThemedRoot: EmptyPropsComponent = ({ }) => (
-	<MuiThemeProvider theme={theme}>
-		<LHToolRootWrapper />
-	</MuiThemeProvider>
+	<StyledEngineProvider injectFirst>
+		<ThemeProvider theme={theme}>
+			<LHToolRootWrapper />
+		</ThemeProvider>
+	</StyledEngineProvider>
 );
 
 const SnackbaredRoot: EmptyPropsComponent = ({ }) => (

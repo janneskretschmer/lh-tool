@@ -1,17 +1,21 @@
 import React from 'react';
-import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import IconButton from '@mui/material/IconButton';
+import Button from '@mui/material/Button';
 import { NeedsContext } from '../../providers/needs-provider';
+import { Box } from '@mui/system';
 
 const NeedMonthSelection = props => (
   <NeedsContext.Consumer>
     {needsState => {
       const data = needsState.getSelectedProject().selectedMonthData;
       return (
-        <div className={props.className}>
-          <IconButton onClick={() => needsState.selectMonth(data.monthOffset - 1)} disabled={!data.isPreviousOffsetValid}>
+        <Box sx={props.sx}>
+          <IconButton
+            onClick={() => needsState.selectMonth(data.monthOffset - 1)}
+            disabled={!data.isPreviousOffsetValid}
+            size="large">
             <NavigateBeforeIcon />
           </IconButton>
           {props.onClick ? (
@@ -21,10 +25,13 @@ const NeedMonthSelection = props => (
               {data.monthName}
             </Button>
           ) : data.monthName}
-          <IconButton onClick={() => needsState.selectMonth(data.monthOffset + 1)} disabled={!data.isNextOffsetValid}>
+          <IconButton
+            onClick={() => needsState.selectMonth(data.monthOffset + 1)}
+            disabled={!data.isNextOffsetValid}
+            size="large">
             <NavigateNextIcon />
           </IconButton>
-        </div>
+        </Box>
       );
     }}
   </NeedsContext.Consumer>

@@ -1,29 +1,16 @@
-import React from 'react';
-import { UsersContext } from '../../providers/users-provider';
-import { requiresLogin, getRoleName } from '../../util';
-import { CircularProgress, Button, TextField, IconButton, InputAdornment, withStyles, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
-import { Redirect } from 'react-router';
-import { fullPathOfUserSettings } from '../../paths';
-import PagedTable from '../table';
+import {
+    Button, CircularProgress
+} from '@mui/material';
 import { withSnackbar } from 'notistack';
-import ExpandLessIcon from '@material-ui/icons/ExpandLess';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import SearchIcon from '@material-ui/icons/Search';
-import WithPermission from '../with-permission';
+import React from 'react';
+import { fullPathOfUserSettings } from '../../paths';
 import { RIGHT_USERS_DELETE } from '../../permissions';
+import { UsersContext } from '../../providers/users-provider';
+import { getRoleName, requiresLogin } from '../../util';
+import PagedTable from '../table';
+import IdNameSelect from '../util/id-name-select';
+import WithPermission from '../with-permission';
 
-const styles = theme => ({
-    button: {
-        marginTop: theme.spacing.unit,
-        marginBottom: theme.spacing.unit,
-    },
-    select: {
-        minWidth: '100px',
-        margin: theme.spacing.unit,
-    }
-});
-
-@withStyles(styles)
 @withSnackbar
 export class StatefulUserListComponent extends React.Component {
 
@@ -59,7 +46,6 @@ export class StatefulUserListComponent extends React.Component {
 
     render() {
         const { usersState, classes } = this.props;
-        const { expandFilters } = this.state;
         const users = usersState.users && Array.from(usersState.users.values());
         return users ? (<>
             <PagedTable
@@ -73,56 +59,30 @@ export class StatefulUserListComponent extends React.Component {
                         </WithPermission>
                     </>
                 )}
-                filter={(<>
-                    <TextField
-                        id="free-search"
-                        value={usersState.filterFreeText}
-                        onChange={event => usersState.changeFreeTextFilter(event.target.value)}
-                        variant="outlined"
-                        label="Freitextsuche"
-                        margin="dense"
+                freeTextValue={usersState.filterFreeText}
+                onChangeFreeText={text => usersState.changeFreeTextFilter(text)}
+                onFilter={() => this.filter()}
+                keepFiltersExpanded={usersState.filterProjectId || usersState.filterRole}
+                additionalFilters={(<>
+                    <IdNameSelect
+                        sx={{ ml: 1, width: '111px' }}
+                        label="Projekt"
+                        value={usersState.filterProjectId}
+                        onChange={value => usersState.changeProjectIdFilter(value)}
+                        data={usersState.projects}
+                        nullable
                     />
-                    <IconButton className={classes.button} onClick={() => this.toggleExpandFilters()}>
-                        {expandFilters ? (<ExpandLessIcon />) : (<ExpandMoreIcon />)}
-                    </IconButton>
-                    <IconButton className={classes.button} onClick={() => this.filter()}>
-                        <SearchIcon />
-                    </IconButton>
-                    {(expandFilters || usersState.filterProjectId || usersState.filterRole) && (<>
-                        <br />
-                        <FormControl className={classes.select}>
-                            <InputLabel htmlFor="project">Projekt</InputLabel>
-                            <Select
-                                value={usersState.filterProjectId}
-                                onChange={event => usersState.changeProjectIdFilter(event.target.value)}
-                                inputProps={{
-                                    name: 'project',
-                                    id: 'project',
-                                }}
-                            >
-                                <MenuItem value=""></MenuItem>
-                                {usersState.projects.map(project => (
-                                    <MenuItem key={project.id} value={project.id}>{project.name}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                        <FormControl className={classes.select}>
-                            <InputLabel htmlFor="role">Rolle</InputLabel>
-                            <Select
-                                value={usersState.filterRole}
-                                onChange={event => usersState.changeRoleFilter(event.target.value)}
-                                inputProps={{
-                                    name: 'role',
-                                    id: 'role',
-                                }}
-                            >
-                                <MenuItem value=""></MenuItem>
-                                {usersState.roles.map((role) => (
-                                    <MenuItem key={role.role} value={role.role}>{getRoleName(role.role)}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </>)}
+                    <IdNameSelect
+                        sx={{ ml: 1, width: '111px' }}
+                        label="Rolle"
+                        value={usersState.filterRole}
+                        onChange={value => usersState.changeRoleFilter(value)}
+                        data={usersState.roles?.map(role => ({
+                            id: role.role,
+                            name: getRoleName(role.role),
+                        }))}
+                        nullable
+                    />
                 </>)}
                 headers={[
                     {
@@ -157,7 +117,7 @@ export class StatefulUserListComponent extends React.Component {
                 rows={users}
                 redirect={fullPathOfUserSettings}
                 showAddButton={usersState.isAllowedToCreate()} />
-        </>) : (<CircularProgress />)
+        </>) : (<CircularProgress />);
     }
 
 }

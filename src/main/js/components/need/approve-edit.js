@@ -1,53 +1,22 @@
-import { Button } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { green } from '@material-ui/core/colors';
-import IconButton from '@material-ui/core/IconButton';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import { withStyles } from '@material-ui/core/styles';
-import CheckIcon from '@material-ui/icons/Check';
-import CloseIcon from '@material-ui/icons/Close';
-import EventAvailableIcon from '@material-ui/icons/EventAvailable';
-import EventBusyIcon from '@material-ui/icons/EventBusy';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
+import EventBusyIcon from '@mui/icons-material/EventBusy';
+import { Button } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import { Box } from '@mui/system';
+import { withSnackbar } from 'notistack';
 import React from 'react';
-import { Prompt } from 'react-router';
-import { changeApplicationStateForNeed } from '../../actions/need';
-import { fetchUser } from '../../actions/user';
+import { Prompt } from 'react-router-dom';
+import { RIGHT_NEEDS_APPROVE } from '../../permissions';
+import { NeedsContext } from '../../providers/needs-provider';
 import { requiresLogin } from '../../util';
 import WithPermission from '../with-permission';
-import { NeedsContext } from '../../providers/needs-provider';
-import { withSnackbar } from 'notistack';
-import { RIGHT_NEEDS_APPROVE } from '../../permissions';
 
-
-const styles = theme => ({
-    wrapper: {
-        maxWidth: '344px',
-        width: '100%',
-        display: 'inline-block',
-        verticalAlign: 'top',
-        margin: theme.spacing.unit,
-        border: '1px solid ' + theme.palette.primary.main,
-        paddingTop: '16px',
-    },
-    label: {
-        fontSize: 'larger',
-        textAlign: 'center',
-    },
-    updating: {
-        margin: '16px',
-    },
-    save: {
-        margin: theme.spacing.unit,
-        textAlign: 'center',
-        paddingBottom: '16px',
-    },
-    approved: {
-        color: green[600],
-    }
-});
-@withStyles(styles)
 @withSnackbar
 class StatefulNeedApproveEditComponent extends React.Component {
 
@@ -91,72 +60,86 @@ class StatefulNeedApproveEditComponent extends React.Component {
         const thingsToSave = needsState.hasNeedEditedUsers(need.id);
         const users = need.users;
         const approved = needsState.getApprovedCount(need);
-        return (
-            <>
-                <Prompt when={thingsToSave} message="Es wurden nicht alle Änderungen gespeichert. Möchtest du diese Seite trotzdem verlassen?" />
-                <div className={classes.wrapper}>
-                    <div className={classes.label}>
-                        {label} ({approved ? approved : 0} / {need.quantity})
-                </div>
-                    {users ? (
-                        <>
-                            <List className={classes.root}>
-                                {users.map(nu => {
-                                    const needUser = needsState.editedNeedUsers.has(nu.id) ? needsState.editedNeedUsers.get(nu.id) : nu;
-                                    const user = needUser.user;
-                                    return (
-                                        <ListItem key={needUser.id} role={null} dense>
-                                            {user && user.lastName ? (
-                                                <>
-                                                    <ListItemText primary={`${user.lastName}, ${user.firstName}`} />
-                                                    <WithPermission permission={RIGHT_NEEDS_APPROVE}>
-                                                        <IconButton
-                                                            disabled={needUser.state !== 'APPROVED' && approved >= need.quantity}
-                                                            onClick={() => this.handleToggle(needUser, needUser.state !== 'APPROVED' ? 'APPROVED' : 'APPLIED')}
-                                                        >
-                                                            {needUser.state === 'APPROVED' ? (
-                                                                <EventAvailableIcon />
-                                                            ) : (
-                                                                    <CheckIcon />
-                                                                )}
-                                                        </IconButton>
-                                                        <IconButton
-                                                            disabled={needUser.state === 'REJECTED'}
-                                                            onClick={() => this.handleToggle(needUser, needUser.state !== 'REJECTED' ? 'REJECTED' : 'APPLIED')}
-                                                        >
-                                                            {needUser.state === 'REJECTED' ? (
-                                                                <EventBusyIcon />
-                                                            ) : (
-                                                                    <CloseIcon />
-                                                                )}
-                                                        </IconButton>
-                                                    </WithPermission>
-                                                </>
-                                            ) : (
-                                                    <>
-                                                        <CircularProgress size={15} />
-                                                        <ListItemText primary="Loading..." />
-                                                    </>
-                                                )}
-                                        </ListItem>
-                                    );
-                                })}
-                            </List>
-                        </>
-                    ) : (<br />)}
-                    {thingsToSave && (
-                        <div className={classes.save}>
-                            {updating ? (
-                                <CircularProgress />
-                            ) : (
-                                    <Button variant="contained" onClick={() => this.saveNeedUsers()}>Speichern</Button>
-                                )}
-                        </div>
-                    )}
+        return <>
+            <Prompt when={thingsToSave} message="Es wurden nicht alle Änderungen gespeichert. Möchtest du diese Seite trotzdem verlassen?" />
+            <Box sx={{
+                maxWidth: '344px',
+                width: '100%',
+                display: 'inline-block',
+                verticalAlign: 'top',
+                m: 1,
+                border: '1px solid',
+                borderColor: 'primary.main',
+                pt: 2,
+            }}>
+                <Box sx={{
+                    fontSize: 'larger',
+                    textAlign: 'center',
+                }}>
+                    {label} ({approved ? approved : 0} / {need.quantity})
+                </Box>
+                {users ? (
+                    <>
+                        <List>
+                            {users.map(nu => {
+                                const needUser = needsState.editedNeedUsers.has(nu.id) ? needsState.editedNeedUsers.get(nu.id) : nu;
+                                const user = needUser.user;
+                                return (
+                                    <ListItem key={needUser.id} role={null} dense>
+                                        {user && user.lastName ? (
+                                            <>
+                                                <ListItemText primary={`${user.lastName}, ${user.firstName}`} />
+                                                <WithPermission permission={RIGHT_NEEDS_APPROVE}>
+                                                    <IconButton
+                                                        disabled={needUser.state !== 'APPROVED' && approved >= need.quantity}
+                                                        onClick={() => this.handleToggle(needUser, needUser.state !== 'APPROVED' ? 'APPROVED' : 'APPLIED')}
+                                                        size="large">
+                                                        {needUser.state === 'APPROVED' ? (
+                                                            <EventAvailableIcon />
+                                                        ) : (
+                                                            <CheckIcon />
+                                                        )}
+                                                    </IconButton>
+                                                    <IconButton
+                                                        disabled={needUser.state === 'REJECTED'}
+                                                        onClick={() => this.handleToggle(needUser, needUser.state !== 'REJECTED' ? 'REJECTED' : 'APPLIED')}
+                                                        size="large">
+                                                        {needUser.state === 'REJECTED' ? (
+                                                            <EventBusyIcon />
+                                                        ) : (
+                                                            <CloseIcon />
+                                                        )}
+                                                    </IconButton>
+                                                </WithPermission>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <CircularProgress size={15} />
+                                                <ListItemText primary="Loading..." />
+                                            </>
+                                        )}
+                                    </ListItem>
+                                );
+                            })}
+                        </List>
+                    </>
+                ) : (<br />)}
+                {thingsToSave && (
+                    <Box sx={{
+                        m: 1,
+                        textAlign: 'center',
+                        pb: 2,
+                    }}>
+                        {updating ? (
+                            <CircularProgress />
+                        ) : (
+                            <Button variant="contained" onClick={() => this.saveNeedUsers()}>Speichern</Button>
+                        )}
+                    </Box>
+                )}
 
-                </div>
-            </>
-        );
+            </Box>
+        </>;
     }
 }
 const NeedApproveEditComponent = props => (
@@ -168,4 +151,4 @@ const NeedApproveEditComponent = props => (
         </NeedsContext.Consumer>
     </>
 );
-export default requiresLogin(withStyles(styles)(NeedApproveEditComponent));
+export default requiresLogin(NeedApproveEditComponent);

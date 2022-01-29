@@ -1,35 +1,22 @@
-import { CircularProgress } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
-import { withStyles } from '@material-ui/core/styles';
+import { CircularProgress } from '@mui/material';
+import Button from '@mui/material/Button';
 import React from 'react';
-import { createOrUpdateItem, fetchItem } from '../../actions/item';
+import { fullPathOfItemData, fullPathOfItems } from '../../paths';
+import { RIGHT_ITEMS_PATCH_BROKEN, RIGHT_ITEMS_PATCH_SLOT, RIGHT_ITEMS_POST, RIGHT_ITEMS_PUT } from '../../permissions';
+import { ItemsContext } from '../../providers/items-provider';
+import { PageContext } from '../../providers/page-provider';
 import { SessionContext } from '../../providers/session-provider';
-import { withContext, generateUniqueId, prependItemBarcodePrefix, getItemBarcodeString } from '../../util';
+import { generateUniqueId, getItemBarcodeString } from '../../util';
+import SimpleDialog from '../simple-dialog';
+import BarcodeGenerator from '../util/barcode-generator';
+import LenientRedirect from '../util/lenient-redirect';
+import WithPermission from '../with-permission';
 import ItemDisplayComponent from './item-display';
 import ItemEditComponent from './item-edit';
-import ItemSlotEditComponent from './item-slot';
 import ItemIdentifierEditComponent from './item-identifier';
-import ItemsProvider, { ItemsContext } from '../../providers/items-provider';
-import WithPermission from '../with-permission';
-import SimpleDialog from '../simple-dialog';
-import { PageContext } from '../../providers/page-provider';
-import { fullPathOfItems, fullPathOfItemData } from '../../paths';
-import LenientRedirect from '../util/lenient-redirect';
-import { RIGHT_ITEMS_PATCH_BROKEN, RIGHT_ITEMS_PATCH_SLOT, RIGHT_ITEMS_POST, RIGHT_ITEMS_PUT } from '../../permissions';
-import BarcodeGenerator from '../util/barcode-generator';
+import ItemSlotEditComponent from './item-slot';
 
-const styles = theme => ({
-    bold: {
-        fontWeight: 'bold',
-    },
-    button: {
-        marginRight: theme.spacing.unit,
-        marginTop: theme.spacing.unit,
-    },
 
-});
-
-@withStyles(styles)
 class StatefulItemDetailComponent extends React.Component {
 
     constructor(props) {
@@ -70,7 +57,7 @@ class StatefulItemDetailComponent extends React.Component {
     }
 
     render() {
-        const { classes, itemsState } = this.props;
+        const { itemsState } = this.props;
         const item = itemsState.getSelectedItem();
 
         if (this.state.redirectUrl) {
@@ -86,106 +73,134 @@ class StatefulItemDetailComponent extends React.Component {
                 {itemsState.edit ? (
                     <>
                         <ItemEditComponent item={item}></ItemEditComponent>
-                        <Button variant="contained" disabled={disabled} className={classes.button} onClick={() => this.save()}>
+                        <Button variant="contained" disabled={disabled} sx={{
+                            mt: 1,
+                            mr: 1
+                        }} onClick={() => this.save()}>
                             Speichern
                         </Button>
-                        <Button variant="outlined" disabled={itemsState.actionsDisabled} className={classes.button} onClick={() => itemsState.resetSelectedItem()}>
+                        <Button variant="outlined" disabled={itemsState.actionsDisabled} sx={{
+                            mt: 1,
+                            mr: 1
+                        }} onClick={() => itemsState.resetSelectedItem()}>
                             Abbrechen
                         </Button>
                     </>
                 ) : (
-                        <>
-                            <ItemDisplayComponent item={item}></ItemDisplayComponent>
-                            <WithPermission permission={RIGHT_ITEMS_PUT}>
-                                <Button
-                                    variant="contained"
-                                    className={classes.button}
-                                    onClick={() => itemsState.changeEdit(true)}
-                                    disabled={itemsState.actionsDisabled}
-                                >
-                                    Bearbeiten
-                            </Button>
-                            </WithPermission>
-                            <WithPermission permission={RIGHT_ITEMS_PATCH_SLOT}>
-                                <SimpleDialog
-                                    title="Neuer Lagerplatz"
-                                    content={<ItemSlotEditComponent />}
-                                    onOK={() => itemsState.saveSlot()}
-                                    okText="Speichern"
-                                    cancelText="Abbrechen"
-                                >
-                                    <Button
-                                        variant="contained"
-                                        className={classes.button}
-                                        disabled={itemsState.actionsDisabled}
-                                    >
-                                        Verschieben
-                                    </Button>
-                                </SimpleDialog>
-                            </WithPermission>
-                            <WithPermission permission={RIGHT_ITEMS_POST}>
-                                <SimpleDialog
-                                    title={item.name + ' kopieren'}
-                                    content={<ItemIdentifierEditComponent />}
-                                    onOK={() => itemsState.copySelectedItem()}
-                                    onOpen={() => itemsState.changeCopyIdentifier(generateUniqueId())}
-                                    okText="Kopieren"
-                                    cancelText="Abbrechen"
-                                >
-                                    <Button
-                                        variant="contained"
-                                        className={classes.button}
-                                        disabled={itemsState.actionsDisabled}
-                                    >
-                                        Kopieren
-                                </Button>
-                                </SimpleDialog>
-                            </WithPermission>
-                            <WithPermission permission={RIGHT_ITEMS_PATCH_BROKEN}>
-                                <Button
-                                    variant="contained"
-                                    className={classes.button}
-                                    onClick={() => itemsState.saveBrokenState(!item.broken)}
-                                    disabled={itemsState.actionsDisabled}
-                                >
-                                    {item.broken ? 'Repariert' : 'Defekt'}
-                                </Button>
-                            </WithPermission>
+                    <>
+                        <ItemDisplayComponent item={item}></ItemDisplayComponent>
+                        <WithPermission permission={RIGHT_ITEMS_PUT}>
                             <Button
                                 variant="contained"
-                                className={classes.button}
-                                onClick={() => alert('TODO: implement "Ausleihen"')}
+                                sx={{
+                                    mt: 1,
+                                    mr: 1
+                                }}
+                                onClick={() => itemsState.changeEdit(true)}
                                 disabled={itemsState.actionsDisabled}
                             >
-                                Ausleihen
+                                Bearbeiten
                             </Button>
-                            <BarcodeGenerator
-                                content={getItemBarcodeString(item.identifier)}
+                        </WithPermission>
+                        <WithPermission permission={RIGHT_ITEMS_PATCH_SLOT}>
+                            <SimpleDialog
+                                title="Neuer Lagerplatz"
+                                content={<ItemSlotEditComponent />}
+                                onOK={() => itemsState.saveSlot()}
+                                okText="Speichern"
+                                cancelText="Abbrechen"
                             >
                                 <Button
                                     variant="contained"
-                                    className={classes.button}
-                                    disabled={itemsState.actionsDisabled}>
-                                    Barcode generieren
-                                </Button>
-                            </BarcodeGenerator>
-                            <SimpleDialog
-                                title="Löschen bestätigen"
-                                okText="Ja"
-                                cancelText="Nein"
-                                text={`Sollen der Artikel ${item.name} wirklich gelöscht werden?`}
-                                onOK={() => this.delete()}
-                            >
-                                <Button
-                                    variant="outlined"
-                                    className={classes.button}
+                                    sx={{
+                                        mt: 1,
+                                        mr: 1
+                                    }}
                                     disabled={itemsState.actionsDisabled}
                                 >
-                                    Löschen
+                                    Verschieben
                                 </Button>
                             </SimpleDialog>
-                        </>
-                    )}
+                        </WithPermission>
+                        <WithPermission permission={RIGHT_ITEMS_POST}>
+                            <SimpleDialog
+                                title={item.name + ' kopieren'}
+                                content={<ItemIdentifierEditComponent />}
+                                onOK={() => itemsState.copySelectedItem()}
+                                onOpen={() => itemsState.changeCopyIdentifier(generateUniqueId())}
+                                okText="Kopieren"
+                                cancelText="Abbrechen"
+                            >
+                                <Button
+                                    variant="contained"
+                                    sx={{
+                                        mt: 1,
+                                        mr: 1
+                                    }}
+                                    disabled={itemsState.actionsDisabled}
+                                >
+                                    Kopieren
+                                </Button>
+                            </SimpleDialog>
+                        </WithPermission>
+                        <WithPermission permission={RIGHT_ITEMS_PATCH_BROKEN}>
+                            <Button
+                                variant="contained"
+                                sx={{
+                                    mt: 1,
+                                    mr: 1
+                                }}
+                                onClick={() => itemsState.saveBrokenState(!item.broken)}
+                                disabled={itemsState.actionsDisabled}
+                            >
+                                {item.broken ? 'Repariert' : 'Defekt'}
+                            </Button>
+                        </WithPermission>
+                        <Button
+                            variant="contained"
+                            sx={{
+                                mt: 1,
+                                mr: 1
+                            }}
+                            onClick={() => alert('TODO: implement "Ausleihen"')}
+                            disabled={itemsState.actionsDisabled || item.broken}
+                        >
+                            Ausleihen
+                        </Button>
+                        <BarcodeGenerator
+                            content={getItemBarcodeString(item.identifier)}
+                        >
+                            <Button
+                                variant="contained"
+                                sx={{
+                                    mt: 1,
+                                    mr: 1
+                                }}
+                                disabled={itemsState.actionsDisabled}>
+                                Barcode generieren
+                            </Button>
+                        </BarcodeGenerator>
+                        <SimpleDialog
+                            title="Löschen bestätigen"
+                            okText="Ja"
+                            cancelText="Nein"
+                            text={`Sollen der Artikel ${item.name} wirklich gelöscht werden?`}
+                            onOK={() => this.delete()}
+                        >
+                            <Button
+                                variant="outlined"
+                                sx={{
+                                    mt: 1,
+                                    mr: 1
+                                }}
+                                disabled={itemsState.actionsDisabled}
+                            >
+                                Löschen
+                            </Button>
+                        </SimpleDialog>
+                    </>
+                )
+                }
             </>
         );
     }

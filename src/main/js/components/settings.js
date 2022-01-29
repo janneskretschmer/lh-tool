@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch, Redirect } from 'react-router';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import { requiresLogin } from '../util';
 import NotFoundHandlerComponent from './notfound';
 import { fullPathOfUserSettings, fullPathOfUsersSettings, fullPathOfShiftsSettings, fullPathOfProjectSettings, fullPathOfSettings, fullPathOfProjectsSettings, fullPathOfStores, fullPathOfStoresSettings, fullPathOfStoreSettings } from '../paths';
@@ -48,8 +48,8 @@ class SettingsComponent extends React.Component {
                         {sessionsState => sessionsState.hasPermission(RIGHT_USERS_GET) ? (
                             <Route path={fullPathOfUsersSettings()} component={UserListComponent} />
                         ) : (
-                                <Route path={fullPathOfUsersSettings()} component={props => (<LenientRedirect to={fullPathOfUserSettings(sessionsState.currentUser.id)} />)} />
-                            )}
+                            <Route path={fullPathOfUsersSettings()} component={props => (<LenientRedirect to={fullPathOfUserSettings(sessionsState.currentUser.id)} />)} />
+                        )}
                     </SessionContext.Consumer>
                 </Switch>
             </UsersProvider>

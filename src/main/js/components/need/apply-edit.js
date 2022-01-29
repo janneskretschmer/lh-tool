@@ -1,47 +1,14 @@
-import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import { green, grey, red, yellow } from '@mui/material/colors';
+import { Box } from '@mui/system';
 import { withSnackbar } from 'notistack';
-import { requiresLogin } from '../../util';
-import TextField from '@material-ui/core/TextField';
-import { changeApplicationStateForNeed } from '../../actions/need';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Button from '@material-ui/core/Button';
-import { green, yellow, red, grey } from '@material-ui/core/colors';
-import SimpleDialog from '../simple-dialog';
-import moment from 'moment';
-import { NeedsContext } from '../../providers/needs-provider';
+import React from 'react';
 import { RIGHT_NEEDS_APPLY } from '../../permissions';
+import { NeedsContext } from '../../providers/needs-provider';
+import { convertToDDMMYYYY, requiresLogin } from '../../util';
+import SimpleDialog from '../simple-dialog';
 
-const styles = theme => ({
-    none: {
-        minWidth: '105px',
-        width: '100%',
-        marginBottom: '3px',
-    },
-    buttonText: {
-        color: grey[800],
-    },
-    applied: {
-        minWidth: '105px',
-        width: '100%',
-        backgroundColor: yellow[600],
-        marginBottom: '3px',
-    },
-    approved: {
-        minWidth: '105px',
-        width: '100%',
-        backgroundColor: green[600],
-        marginBottom: '3px',
-    },
-    rejected: {
-        minWidth: '105px',
-        width: '100%',
-        backgroundColor: red[600],
-        marginBottom: '3px',
-    },
-});
-
-@withStyles(styles)
 @withSnackbar
 class StatefulNeedApplyEditComponent extends React.Component {
 
@@ -74,13 +41,24 @@ class StatefulNeedApplyEditComponent extends React.Component {
         this.props.needsState.updateOwnNeedState(this.props.projectHelperType, this.props.need.id, this.props.need.state === 'NONE' ? 'APPLIED' : 'NONE', err => this.handleFailure());
     }
 
-    getClassName(need) {
+    getStyle(need) {
+        const style = {
+            minWidth: '105px',
+            width: '100%',
+            marginBottom: '3px',
+        };
         switch (need.state) {
-            case 'APPLIED': return this.props.classes.applied;
-            case 'APPROVED': return this.props.classes.approved;
-            case 'REJECTED': return this.props.classes.rejected;
-            default: return this.props.classes.none;
+            case 'APPLIED':
+                style.backgroundColor = yellow[600];
+                break;
+            case 'APPROVED':
+                style.backgroundColor = green[600];
+                break;
+            case 'REJECTED':
+                style.backgroundColor = red[600];
+                break;
         }
+        return style;
     }
 
     getDialogText(need) {
@@ -88,7 +66,7 @@ class StatefulNeedApplyEditComponent extends React.Component {
     }
 
     getDialogTitle() {
-        const date = moment(this.props.need.date, 'x').format('DD.MM.YYYY');
+        const date = convertToDDMMYYYY(new Date(this.props.need.date));
         return this.props.helperTypeName + ' am ' + date + ' ' + this.props.label;
     }
 
@@ -114,26 +92,28 @@ class StatefulNeedApplyEditComponent extends React.Component {
                     <Button
                         variant={need.state === 'APPLIED' || need.state === 'APPROVED' || need.state === 'REJECTED' ? 'contained' : 'outlined'}
                         disabled={disabled}
-                        className={this.getClassName(need)}
+                        sx={this.getStyle(need)}
                         color="inherit">
-                        <span className={!disabled ? classes.buttonText : null}>{label}</span>&nbsp;&nbsp;{appliedCount + approvedCount}/{need.quantity}
+                        <Box sx={!disabled ? { color: grey[800] } : {}}>
+                            {label}
+                        </Box>&nbsp;&nbsp;{appliedCount + approvedCount}/{need.quantity}
                     </Button>
                 </SimpleDialog>
             </>
         ) : (
-                    <SimpleDialog
-                        title={this.getDialogTitle()}
-                        text="Für diese Schicht stehen bereits genügend Helfer zur Verfügung. Bitte bewerbe dich für eine andere Aufgabe oder an einem anderen Datum."
-                        cancelText="OK"
-                    >
-                        <Button
-                            variant={'contained'}
-                            className={this.getClassName(need)}
-                            color="inherit">
-                            {label}
-                        </Button>
-                    </SimpleDialog>
-                );
+            <SimpleDialog
+                title={this.getDialogTitle()}
+                text="Für diese Schicht stehen bereits genügend Helfer zur Verfügung. Bitte bewerbe dich für eine andere Aufgabe oder an einem anderen Datum."
+                cancelText="OK"
+            >
+                <Button
+                    variant={'contained'}
+                    sx={this.getStyle(need)}
+                    color="inherit">
+                    {label}
+                </Button>
+            </SimpleDialog>
+        );
     }
 }
 

@@ -1,20 +1,20 @@
-import Divider from '@material-ui/core/Divider';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
-import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
-import BuildIcon from '@material-ui/icons/Build';
-import DateRangeIcon from '@material-ui/icons/DateRange';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import FaceIcon from '@material-ui/icons/Face';
-import FileCopyIcon from '@material-ui/icons/FileCopy';
-import GroupWorkIcon from '@material-ui/icons/GroupWork';
-import HomeIcon from '@material-ui/icons/Home';
-import SecurityIcon from '@material-ui/icons/Security';
-import VpnKeyIcon from '@material-ui/icons/VpnKey';
-import SettingsIcon from '@material-ui/icons/Settings';
+import Divider from '@mui/material/Divider';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import BuildIcon from '@mui/icons-material/Build';
+import DateRangeIcon from '@mui/icons-material/DateRange';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import FaceIcon from '@mui/icons-material/Face';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import GroupWorkIcon from '@mui/icons-material/GroupWork';
+import HomeIcon from '@mui/icons-material/Home';
+import SecurityIcon from '@mui/icons-material/Security';
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
+import SettingsIcon from '@mui/icons-material/Settings';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { logout } from '../actions/login';
@@ -24,104 +24,21 @@ import WithPermission from './with-permission';
 import { RIGHT_ITEMS_GET, RIGHT_NEEDS_APPLY, RIGHT_NEEDS_POST, RIGHT_NEEDS_VIEW_APPROVED, RIGHT_SLOTS_GET, RIGHT_USERS_GET } from '../permissions';
 
 
-const linkStyle = { textDecoration: 'none' };
-
-const CurrentUserItem = props => (
+const Item = props => (
   <ListItem button>
-    <ListItemIcon>
-      <FaceIcon />
+    <ListItemIcon sx={{ minWidth: '40px' }}>
+      {props.icon}
     </ListItemIcon>
-    <ListItemText primary={`${props.currentUser.firstName} ${props.currentUser.lastName}`} />
+    <ListItemText primary={props.text} sx={{ color: 'text.primary' }} />
   </ListItem>
-);
+)
 
-const NeedQuantitiesItem = () => (
-  <WithPermission permission={RIGHT_NEEDS_POST}>
-    <Link to={fullPathOfNeedQuantities()} style={linkStyle}>
-      <ListItem button>
-        <ListItemIcon>
-          <DateRangeIcon />
-        </ListItemIcon>
-        <ListItemText primary="Bedarf" />
-      </ListItem>
-    </Link>
-  </WithPermission>
-);
-
-const NeedApplyItem = () => (
-  <WithPermission permission={RIGHT_NEEDS_APPLY}>
-    <Link to={fullPathOfNeedApply()} style={linkStyle}>
-      <ListItem button>
-        <ListItemIcon>
-          <AssignmentIndIcon />
-        </ListItemIcon>
-        <ListItemText primary="Bewerben" />
-      </ListItem>
-    </Link>
-  </WithPermission>
-);
-
-const NeedApproveItem = () => (
-  <WithPermission permission={RIGHT_NEEDS_VIEW_APPROVED}>
-    <Link to={fullPathOfNeedApprove()} style={linkStyle}>
-      <ListItem button>
-        <ListItemIcon>
-          <AssignmentTurnedInIcon />
-        </ListItemIcon>
-        <ListItemText primary="Zuteilen" />
-      </ListItem>
-    </Link>
-  </WithPermission>
-);
-
-const StoresItem = () => (
-  <WithPermission permission={RIGHT_SLOTS_GET}>
-    <Link to={fullPathOfSlots()} style={linkStyle}>
-      <ListItem button>
-        <ListItemIcon>
-          <HomeIcon />
-        </ListItemIcon>
-        <ListItemText primary="Lagerplätze" />
-      </ListItem>
-    </Link>
-  </WithPermission>
-);
-
-
-const ItemsItem = () => (
-  <WithPermission permission={RIGHT_ITEMS_GET}>
-    <Link to={fullPathOfItems()} style={linkStyle}>
-      <ListItem button>
-        <ListItemIcon>
-          <BuildIcon />
-        </ListItemIcon>
-        <ListItemText primary="Artikel" />
-      </ListItem>
-    </Link>
-  </WithPermission>
-);
-
-const ChangePwItem = () => (
-  <Link to={fullPathOfChangePw()} style={linkStyle}>
-    <ListItem button>
-      <ListItemIcon>
-        <SecurityIcon />
-      </ListItemIcon>
-      <ListItemText primary="Passwort ändern" />
-    </ListItem>
+const LinkItem = props => (
+  <Link to={props.path} style={{ textDecoration: 'none' }}>
+    <Item {...props} />
   </Link>
-);
+)
 
-const LoginItem = () => (
-  <Link to={fullPathOfLogin()} style={linkStyle}>
-    <ListItem button>
-      <ListItemIcon>
-        <VpnKeyIcon />
-      </ListItemIcon>
-      <ListItemText primary="Anmelden" />
-    </ListItem>
-  </Link>
-);
 
 const LogoutItem = props => (
   <ListItem button onClick={() => {
@@ -130,41 +47,8 @@ const LogoutItem = props => (
     <ListItemIcon>
       <ExitToAppIcon />
     </ListItemIcon>
-    <ListItemText primary="Abmelden" />
+    <ListItemText primary="Abmelden" sx={{ color: 'text.primary' }} />
   </ListItem>
-);
-
-const ImprintItem = () => (
-  <Link to={fullPathOfImprint()} style={linkStyle}>
-    <ListItem button>
-      <ListItemIcon>
-        <FileCopyIcon />
-      </ListItemIcon>
-      <ListItemText primary="Impressum" />
-    </ListItem>
-  </Link>
-);
-
-const DataProtectionItem = () => (
-  <Link to={fullPathOfDataProtection()} style={linkStyle}>
-    <ListItem button>
-      <ListItemIcon>
-        <FileCopyIcon />
-      </ListItemIcon>
-      <ListItemText primary="Datenschutz" />
-    </ListItem>
-  </Link>
-);
-
-const SettingsItem = props => (
-  <Link to={props.sessionState.hasPermission(RIGHT_USERS_GET) ? fullPathOfUsersSettings() : fullPathOfUserSettings(props.sessionState.currentUser.id)} style={linkStyle}>
-    <ListItem button>
-      <ListItemIcon>
-        <SettingsIcon />
-      </ListItemIcon>
-      <ListItemText primary="Einstellungen" />
-    </ListItem>
-  </Link>
 );
 
 export default function AppMenu() {
@@ -173,36 +57,52 @@ export default function AppMenu() {
       {loginState => loginState.isLoggedIn() ? (
         <>
           <List>
-            <CurrentUserItem currentUser={loginState.currentUser} />
+            <Item icon={<FaceIcon />} text={`${loginState.currentUser.firstName} ${loginState.currentUser.lastName}`} />
           </List>
           <Divider />
           <List>
-            <NeedQuantitiesItem />
-            <NeedApplyItem />
-            <NeedApproveItem />
-            <StoresItem />
-            <ItemsItem />
+
+            <WithPermission permission={RIGHT_NEEDS_POST}>
+              <LinkItem icon={<DateRangeIcon />} text="Bedarf" path={fullPathOfNeedQuantities()} />
+            </WithPermission>
+
+            <WithPermission permission={RIGHT_NEEDS_APPLY}>
+              <LinkItem icon={<AssignmentIndIcon />} text="Bewerben" path={fullPathOfNeedApply()} />
+            </WithPermission>
+
+            <WithPermission permission={RIGHT_NEEDS_VIEW_APPROVED}>
+              <LinkItem icon={<AssignmentTurnedInIcon />} text="Zuteilen" path={fullPathOfNeedApprove()} />
+            </WithPermission>
+
+            <WithPermission permission={RIGHT_SLOTS_GET}>
+              <LinkItem icon={<HomeIcon />} text="Lagerplätze" path={fullPathOfSlots()} />
+            </WithPermission>
+
+            <WithPermission permission={RIGHT_ITEMS_GET}>
+              <LinkItem icon={<BuildIcon />} text="Artikel" path={fullPathOfItems()} />
+            </WithPermission>
           </List>
           <Divider />
           <List>
-            <SettingsItem sessionState={loginState} />
+            <LinkItem icon={<SettingsIcon />} text="Einstellungen" path={loginState.hasPermission(RIGHT_USERS_GET) ? fullPathOfUsersSettings() : fullPathOfUserSettings(loginState.currentUser.id)} />
+
             <LogoutItem loginState={loginState} />
-            <ImprintItem />
-            <DataProtectionItem />
+            <LinkItem icon={<FileCopyIcon />} text="Impressum" path={fullPathOfImprint()} />
+            <LinkItem icon={<FileCopyIcon />} text="Datenschutz" path={fullPathOfDataProtection()} />
           </List>
         </>
       ) : (
-          <>
-            <List>
-              <LoginItem />
-            </List>
-            <Divider />
-            <List>
-              <ImprintItem />
-              <DataProtectionItem />
-            </List>
-          </>
-        )}
+        <>
+          <List>
+            <LinkItem icon={<VpnKeyIcon />} text="Anmelden" path={fullPathOfLogin()} />
+          </List>
+          <Divider />
+          <List>
+            <LinkItem icon={<FileCopyIcon />} text="Impressum" path={fullPathOfImprint()} />
+            <LinkItem icon={<FileCopyIcon />} text="Datenschutz" path={fullPathOfDataProtection()} />
+          </List>
+        </>
+      )}
     </SessionContext.Consumer>
   );
 }

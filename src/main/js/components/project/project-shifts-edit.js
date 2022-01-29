@@ -1,97 +1,53 @@
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, Typography } from '@mui/material';
+import { Box } from '@mui/system';
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import { Button, IconButton, TextField, Dialog, DialogTitle, DialogContent, FormControl, InputLabel, Select, MenuItem, DialogActions, CircularProgress, Typography } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import DeleteIcon from '@material-ui/icons/Delete';
-import ProjectsProvider, { ProjectsContext } from '../../providers/projects-provider';
+import { ProjectsContext } from '../../providers/projects-provider';
 import { requiresLogin } from '../../util';
+import IdNameSelect from '../util/id-name-select';
 
-
-const styles = theme => ({
-    calendar: {
-        tableLayout: 'fixed',
-        width: '100%',
-        borderCollapse: 'collapse',
-        minWidth: '1200px',
-        marginBottom: theme.spacing.unit,
-    },
-    calendarCell: {
-        width: '20%',
-        border: '1px solid ' + theme.palette.primary.light,
-        padding: theme.spacing.unit,
-        verticalAlign: 'top',
-        textAlign: 'left'
-    },
-    dayName: {
-        padding: theme.spacing.unit,
-        color: theme.palette.secondary.dark,
-        border: '1px solid ' + theme.palette.primary.light,
-        fontWeight: 'normal',
-        fontSize: 'large',
-    },
-    day: {
-        width: '100%',
-        textAlign: 'right',
-        color: theme.palette.secondary.main,
-        fontWeight: 'bold',
-        fontSize: 'larger',
-        padding: '3px',
-    },
-    button: {
-        marginTop: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
-        marginBottom: theme.spacing.unit,
-    },
-    shiftContainer: {
-        display: 'flex',
-    },
-    shift: {
-        marginBottom: '3px',
-        minWidth: '105px',
-        flexGrow: '1',
-    },
-    shiftAdd: {
-        width: '100%',
-    },
-    helperTypeContainer: {
-        marginBottom: 3 * theme.spacing.unit,
-    },
-    dialogContent: {
-        display: 'flex',
-        alignItems: 'baseline',
-    },
-    dialogItem: {
-        marginRight: theme.spacing.unit,
-    },
-});
-
-@withStyles(styles)
 class StatefulProjectShiftEditComponent extends React.Component {
     render() {
         const { classes, projectsState, disabled } = this.props;
         const shifts = projectsState.getCurrentShifts();
 
+        const sxDayName = {
+            p: 1,
+            color: 'secondary.dark',
+            border: '1px solid',
+            borderColor: 'primary.light',
+            fontWeight: 'normal',
+            fontSize: 'large',
+        };
+
         if (!projectsState) {
             return (<CircularProgress />);
         }
 
-        return (<>
+        return <>
             <Typography variant="h6">Schichten</Typography>
-            <Button disabled={disabled} variant="contained" color="primary" className={classes.button} onClick={() => projectsState.addStandardShifts()}><AddIcon /> Standardschichten</Button>
-            <Button disabled={disabled} variant="contained" color="primary" className={classes.button} onClick={() => projectsState.addGateKeeperShifts()}><AddIcon /> Pförtner</Button>
-            <Button disabled={disabled} variant="contained" color="primary" className={classes.button} onClick={() => projectsState.addSecurityShifts()}><AddIcon /> Nachtwächter</Button>
+            <Button disabled={disabled} variant="contained" color="primary" sx={{ mt: 1, mr: 1, mb: 1 }} onClick={() => projectsState.addStandardShifts()}><AddIcon /> Standardschichten</Button>
+            <Button disabled={disabled} variant="contained" color="primary" sx={{ mt: 1, mr: 1, mb: 1 }} onClick={() => projectsState.addGateKeeperShifts()}><AddIcon /> Pförtner</Button>
+            <Button disabled={disabled} variant="contained" color="primary" sx={{ mt: 1, mr: 1, mb: 1 }} onClick={() => projectsState.addSecurityShifts()}><AddIcon /> Nachtwächter</Button>
 
 
-            <table className={classes.calendar}>
+            <Box component="table" sx={{
+                tableLayout: 'fixed',
+                width: '100%',
+                borderCollapse: 'collapse',
+                minWidth: '1200px',
+                mb: 1,
+            }}>
                 <thead>
                     <tr>
-                        <th className={classes.dayName}>Montag</th>
-                        <th className={classes.dayName}>Dienstag</th>
-                        <th className={classes.dayName}>Mittwoch</th>
-                        <th className={classes.dayName}>Donnerstag</th>
-                        <th className={classes.dayName}>Freitag</th>
-                        <th className={classes.dayName}>Samstag</th>
-                        <th className={classes.dayName}>Sonntag</th>
+                        <Box component="th" sx={sxDayName}>Montag</Box>
+                        <Box component="th" sx={sxDayName}>Dienstag</Box>
+                        <Box component="th" sx={sxDayName}>Mittwoch</Box>
+                        <Box component="th" sx={sxDayName}>Donnerstag</Box>
+                        <Box component="th" sx={sxDayName}>Freitag</Box>
+                        <Box component="th" sx={sxDayName}>Samstag</Box>
+                        <Box component="th" sx={sxDayName}>Sonntag</Box>
                     </tr>
                 </thead>
                 {shifts ? (
@@ -99,22 +55,42 @@ class StatefulProjectShiftEditComponent extends React.Component {
                         <tr>
                             {
                                 [...shifts.keys()].map(weekday => (
-                                    <td key={weekday} className={classes.calendarCell}>
-                                        <div className={classes.day}>{weekday}</div>
+                                    <Box component="td" key={weekday} sx={{
+                                        width: '20%',
+                                        border: '1px solid',
+                                        borderColor: 'primary.light',
+                                        p: 1,
+                                        verticalAlign: 'top',
+                                        textAlign: 'left'
+                                    }}>
+                                        <Box sx={{
+                                            width: '100%',
+                                            textAlign: 'right',
+                                            color: 'secondary.main',
+                                            fontWeight: 'bold',
+                                            fontSize: 'larger',
+                                            padding: '3px',
+                                        }}>
+                                            {weekday}
+                                        </Box>
                                         {projectsState.helperTypes.map(helperType =>
                                             shifts.get(weekday).get(helperType.id) &&
                                             shifts.get(weekday).get(helperType.id).length > 0 && (
-                                                <div key={helperType.id} className={classes.helperTypeContainer}>
+                                                <Box key={helperType.id} sx={{ mb: 3 }}>
                                                     {helperType.name}<br />
                                                     {shifts.get(weekday).get(helperType.id).map(shift => (
-                                                        <div
+                                                        <Box
                                                             key={weekday + shift.startTime + shift.helperTypeId}
-                                                            className={classes.shiftContainer}
+                                                            sx={{ display: 'flex' }}
                                                         >
                                                             <Button
                                                                 // id doesn't work for new shifts
                                                                 variant="outlined"
-                                                                className={classes.shift}
+                                                                sx={{
+                                                                    marginBottom: '3px',
+                                                                    minWidth: '105px',
+                                                                    flexGrow: '1',
+                                                                }}
                                                                 onClick={() => shift.id && projectsState.changeShift(shift)}
                                                                 disabled={disabled}
                                                             >
@@ -123,15 +99,15 @@ class StatefulProjectShiftEditComponent extends React.Component {
                                                             <IconButton
                                                                 disabled={disabled}
                                                                 onClick={() => projectsState.removeShift(shift)}
-                                                            >
+                                                                size="large">
                                                                 <DeleteIcon />
                                                             </IconButton>
-                                                        </div>
+                                                        </Box>
                                                     ))}
-                                                </div>
+                                                </Box>
                                             ))}
                                         <Button
-                                            className={classes.shiftAdd}
+                                            sx={{ width: '100%' }}
                                             variant="contained"
                                             onClick={event => projectsState.createShift(weekday)}
                                             disabled={disabled}
@@ -139,68 +115,61 @@ class StatefulProjectShiftEditComponent extends React.Component {
                                             Schicht hinzufügen
                                         </Button>
 
-                                    </td>
+                                    </Box>
                                 ))
                             }
                         </tr>
                     </tbody>
                 ) : (
-                        <tbody>
-                            <tr colspan={7}><td><CircularProgress /></td></tr>
-                        </tbody>
-                    )}
-            </table>
+                    <tbody>
+                        <tr colspan={7}><td><CircularProgress /></td></tr>
+                    </tbody>
+                )}
+            </Box>
             {!disabled && projectsState.selectedShift && (
                 <Dialog
                     open={true}>
                     <DialogTitle>Schicht bearbeiten</DialogTitle>
-                    <DialogContent className={classes.dialogContent}>
-                        <TextField
-                            className={classes.dialogItem}
-                            id="start"
-                            label="Start"
-                            type="time"
-                            value={projectsState.selectedShift.startTime}
-                            onChange={event => projectsState.changeShiftStartTime(event.target.value)}
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            inputProps={{
-                                step: 900, // 15 min
-                            }}
-                        />
-                        <div className={classes.dialogItem}>-</div>
-                        <TextField
-                            className={classes.dialogItem}
-                            id="start"
-                            label="Ende"
-                            type="time"
-                            value={projectsState.selectedShift.endTime}
-                            onChange={event => projectsState.changeShiftEndTime(event.target.value)}
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            inputProps={{
-                                step: 900, // 15 min
-                            }}
-                        />
-                        {!projectsState.selectedShift.id && (
-                            <FormControl>
-                                <InputLabel htmlFor="type">Aufgabe</InputLabel>
-                                <Select
+                    <DialogContent>
+                        <Box sx={{
+                            display: 'flex',
+                            alignItems: 'baseline',
+                            pt: 1
+                        }}>
+                            <TextField
+                                sx={{ mr: 1 }}
+                                id="start"
+                                label="Start"
+                                type="time"
+                                value={projectsState.selectedShift.startTime}
+                                onChange={event => projectsState.changeShiftStartTime(event.target.value)}
+                                inputProps={{
+                                    step: 900, // 15 min
+                                }}
+                                size="small"
+                            />
+                            <Box sx={{ mr: 1 }}>-</Box>
+                            <TextField
+                                sx={{ mr: 1 }}
+                                id="start"
+                                label="Ende"
+                                type="time"
+                                value={projectsState.selectedShift.endTime}
+                                onChange={event => projectsState.changeShiftEndTime(event.target.value)}
+                                inputProps={{
+                                    step: 900, // 15 min
+                                }}
+                                size="small"
+                            />
+                            {!projectsState.selectedShift.id && (
+                                <IdNameSelect
+                                    label="Aufgabe"
                                     value={projectsState.selectedShift.helperTypeId}
-                                    onChange={event => projectsState.changeShiftHelperTypeId(event.target.value)}
-                                    inputProps={{
-                                        name: 'type',
-                                        id: 'type',
-                                    }}
-                                >
-                                    {projectsState.helperTypes.map(helperType => (
-                                        <MenuItem key={helperType.id} value={helperType.id}>{helperType.name}</MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        )}
+                                    onChange={value => projectsState.changeShiftHelperTypeId(value)}
+                                    data={projectsState.helperTypes}
+                                />
+                            )}
+                        </Box>
                     </DialogContent>
                     <DialogActions>
                         <Button
@@ -219,7 +188,7 @@ class StatefulProjectShiftEditComponent extends React.Component {
                     </DialogActions>
                 </Dialog>
             )}
-        </>);
+        </>;
     }
 }
 

@@ -1,54 +1,13 @@
-import { Redirect, withRouter } from 'react-router';
+import {
+    Button,
+    Checkbox, FormControlLabel, TextField,
+    Typography
+} from '@mui/material';
+import { Box } from '@mui/system';
+import bwipjs from 'bwip-js';
 import React from 'react';
 import SimpleDialog from '../simple-dialog';
-import { Button, Checkbox, FormControl, FormControlLabel, IconButton, InputLabel, Select, TextField, Typography, withStyles } from '@material-ui/core';
-import bwipjs from 'bwip-js';
 
-const styles = theme => ({
-    preview: {
-        border: '1px dashed ' + theme.palette.text.disabled,
-    },
-    centeredCell: {
-        textAlign: 'center',
-    },
-    topAlignedCell: {
-        verticalAlign: 'top',
-    },
-    specificField: {
-        width: '145px',
-    },
-    specificFieldWithMargin: {
-        width: '145px',
-        marginLeft: '10px',
-    },
-    qrPreviewWrapper: {
-        minWidth: '145px',
-        minHeight: '160px',
-        border: '1px solid ' + theme.palette.primary.main,
-        borderRadius: '4px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    barcodePreviewWrapper: {
-        minWidth: '300px',
-        minHeight: '160px',
-        border: '1px solid ' + theme.palette.primary.main,
-        borderRadius: '4px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    verticallyCentered: {
-        display: 'flex',
-        alignItems: 'center',
-    },
-    spacer: {
-        width: 2 * theme.spacing.unit,
-    },
-});
-
-@withStyles(styles)
 export default class BarcodeGenerator extends React.Component {
 
     BWIPJS_PX_TO_MM_FACTOR = 2.83;
@@ -172,144 +131,151 @@ export default class BarcodeGenerator extends React.Component {
                 title={'Barcode herunterladen'}
                 content={(
                     <>
-                        <table>
+                        <Box component="table" sx={{ borderSpacing: '8px' }}>
                             <tbody>
                                 <tr>
                                     <td>
-                                        <div className={classes.verticallyCentered}>
-                                            <FormControlLabel
-                                                className={classes.specificField}
-                                                control={
-                                                    <Checkbox
-                                                        checked={showText}
-                                                        onChange={event => this.changeShowText(event.target.checked)}
-                                                        disableRipple
-                                                    />
-                                                }
-                                                label="Text anzeigen"
-                                            />
-                                            <TextField
-                                                id="textSize"
-                                                label="Textgröße"
-                                                className={classes.specificFieldWithMargin}
-                                                type="number"
-                                                value={textSize}
-                                                onChange={event => this.changeTextSize(event.target.value)}
-                                                margin="dense"
-                                                variant="outlined"
-                                                disabled={!showText}
-                                            />
-                                        </div>
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox
+                                                    checked={showText}
+                                                    onChange={event => this.changeShowText(event.target.checked)}
+                                                    disableRipple
+                                                />
+                                            }
+                                            label="Text anzeigen"
+                                        />
                                     </td>
-                                    <td className={classes.spacer}></td>
+                                    <td>
+                                        <TextField
+                                            id="textSize"
+                                            label="Textgröße"
+                                            type="number"
+                                            value={textSize}
+                                            onChange={event => this.changeTextSize(event.target.value)}
+                                            size="small"
+                                            variant="outlined"
+                                            disabled={!showText}
+                                        />
+                                    </td>
                                     <td>
                                         <TextField
                                             id="textMargin"
                                             label="Textabstand"
-                                            className={classes.specificField}
+                                            sx={{ width: '145px' }}
                                             type="number"
                                             value={textMargin}
                                             onChange={event => this.changeTextMargin(event.target.value)}
-                                            margin="dense"
+                                            size="small"
                                             variant="outlined"
                                             disabled={!showText}
                                         />
                                     </td>
                                 </tr>
                                 <tr><td colSpan="3"><br /></td></tr>
-                                <tr><td colSpan="3"><br /></td></tr>
                                 <tr>
-                                    <td className={classes.centeredCell}>Eindimensional</td>
-                                    <td className={classes.spacer}></td>
-                                    <td className={classes.centeredCell}>Zweidimensional</td>
+                                    <Box component="td" sx={{ textAlign: 'center' }} colSpan="2">Eindimensional</Box>
+                                    <Box component="td" sx={{ textAlign: 'center' }}>Zweidimensional</Box>
                                 </tr>
                                 <tr>
-                                    <td className={classes.topAlignedCell}>
+                                    <td>
                                         <TextField
                                             id="barcodeWidth"
                                             label="Breite"
-                                            className={classes.specificField}
                                             type="number"
                                             value={barcodeWidth}
                                             onChange={event => this.changeBarcodeWidth(event.target.value)}
-                                            margin="dense"
+                                            size="small"
                                             variant="outlined"
                                         />
+                                    </td>
+                                    <td>
                                         <TextField
                                             id="barcodeHeight"
                                             label="Höhe"
-                                            className={classes.specificFieldWithMargin}
                                             type="number"
                                             value={barcodeHeight}
                                             onChange={event => this.changeBarcodeHeight(event.target.value)}
-                                            margin="dense"
+                                            size="small"
                                             variant="outlined"
                                         />
                                     </td>
-                                    <td className={classes.spacer}></td>
-                                    <td className={classes.topAlignedCell}>
+                                    <Box component="td" sx={{ verticalAlign: 'top' }}>
                                         <TextField
                                             id="qrSize"
                                             label="Größe"
-                                            className={classes.specificField}
+                                            sx={{ width: '145px' }}
                                             type="number"
                                             value={qrSize}
                                             onChange={event => this.changeQrSize(event.target.value)}
-                                            margin="dense"
+                                            size="small"
                                             variant="outlined"
                                         />
-                                    </td>
+                                    </Box>
                                 </tr>
                                 <tr>
-                                    <td>
-                                        <div className={classes.barcodePreviewWrapper}>
-                                            <canvas className={classes.preview} ref={this.barcodeCanvasRef}></canvas>
-                                        </div>
-                                    </td>
-                                    <td className={classes.spacer}></td>
-                                    <td>
-                                        <div className={classes.qrPreviewWrapper}>
-                                            <canvas className={classes.preview} ref={this.qrCanvasRef}></canvas><br />
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
+                                    <td colSpan="2">
+                                        <Box sx={{
+                                            minWidth: '300px',
+                                            minHeight: '160px',
+                                            border: '1px solid',
+                                            borderColor: 'primary.main',
+                                            borderRadius: '4px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                        }}>
+                                            <Box component="canvas" sx={{
+                                                border: '1px dashed',
+                                                borderColor: 'text.disabled',
+                                            }} ref={this.barcodeCanvasRef}></Box>
+                                        </Box>
                                         <Typography variant="caption"><span ref={this.barcodeSizeRef}>145 x 20</span> Pixel</Typography>
                                     </td>
-                                    <td className={classes.spacer}></td>
                                     <td>
+                                        <Box sx={{
+                                            minWidth: '145px',
+                                            minHeight: '160px',
+                                            border: '1px solid',
+                                            borderColor: 'primary.main',
+                                            borderRadius: '4px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                        }}>
+                                            <Box component="canvas" sx={{
+                                                border: '1px dashed',
+                                                borderColor: 'text.disabled',
+                                            }} ref={this.qrCanvasRef}></Box><br />
+                                        </Box>
                                         <Typography variant="caption"><span ref={this.qrSizeRef}>84 x 99</span> Pixel</Typography>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td className={classes.centeredCell}>
+                                    <Box component="td" colSpan="2" sx={{ textAlign: 'center' }}>
                                         <Button
                                             component={React.forwardRef((props, ref) => <a {...props} ref={ref}>{props.children}</a>)}
                                             color="primary"
                                             download={'Barcode_' + content + '.jpeg'}
-                                            //FUTURE: needs to be changed to ref with mui v4
-                                            buttonRef={this.barcodeDownloadRef}
+                                            ref={this.barcodeDownloadRef}
                                         >
                                             Herunterladen
                                         </Button>
-                                    </td>
-                                    <td className={classes.spacer}></td>
-                                    <td className={classes.centeredCell}>
+                                    </Box>
+                                    <Box component="td" sx={{ textAlign: 'center' }}>
                                         <Button
                                             component={React.forwardRef((props, ref) => <a {...props} ref={ref}>{props.children}</a>)}
                                             color="primary"
                                             download={'QR_' + content + '.jpeg'}
-                                            //FUTURE: needs to be changed to ref with mui v4
-                                            buttonRef={this.qrDownloadRef}
+                                            ref={this.qrDownloadRef}
                                         >
                                             Herunterladen
                                         </Button>
-                                    </td>
+                                    </Box>
                                 </tr>
 
                             </tbody>
-                        </table>
+                        </Box>
                     </>
                 )}
                 cancelText="Abbrechen"
@@ -320,4 +286,4 @@ export default class BarcodeGenerator extends React.Component {
 
         </>);
     }
-};
+}

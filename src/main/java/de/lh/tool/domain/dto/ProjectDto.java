@@ -1,6 +1,6 @@
 package de.lh.tool.domain.dto;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -21,8 +21,8 @@ public class ProjectDto implements Identifiable<Long> {
 
 	private String name;
 
-	private Date startDate;
+	private LocalDate startDate;
 
-	private Date endDate;
+	private LocalDate endDate;
 
 }

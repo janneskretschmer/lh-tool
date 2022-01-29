@@ -1,25 +1,17 @@
-import React from 'react';
-import { withStyles, CircularProgress, TextField, FormControl, InputLabel, Select, MenuItem, Button, Typography, Link } from '@material-ui/core';
-import StoresProvider, { StoresContext } from '../../providers/store-provider';
-import { requiresLogin } from '../../util';
-import { PageContext } from '../../providers/page-provider';
-import { NEW_ENTITY_ID_PLACEHOLDER } from '../../config';
-import LenientRedirect from '../util/lenient-redirect';
-import { fullPathOfStoreSettings, fullPathOfStoresSettings, fullPathOf, fullPathOfSlots } from '../../paths';
+import {
+    Button, CircularProgress, FormControl,
+    InputLabel, MenuItem, Select, TextField
+} from '@mui/material';
 import { withSnackbar } from 'notistack';
-import PagedTable from '../table';
+import React from 'react';
+import { fullPathOfSlots, fullPathOfStoreSettings, fullPathOfStoresSettings } from '../../paths';
+import { PageContext } from '../../providers/page-provider';
+import { StoresContext } from '../../providers/store-provider';
+import { requiresLogin } from '../../util';
+import IdNameSelect from '../util/id-name-select';
+import LenientRedirect from '../util/lenient-redirect';
 
 
-const styles = theme => ({
-    input: {
-        marginRight: theme.spacing.unit,
-        marginBottom: theme.spacing.unit,
-    },
-
-});
-
-
-@withStyles(styles)
 @withSnackbar
 class StatefulStoreEditComponent extends React.Component {
 
@@ -64,7 +56,6 @@ class StatefulStoreEditComponent extends React.Component {
         const { storesState } = this.props;
         const store = storesState.getSelectedStoreAssembled();
         const disabled = !storesState.isStoreValid();
-        const { classes } = this.props;
 
         if (this.state.redirect) {
             return (<LenientRedirect to={this.state.redirect} onSamePage={() => this.setState({ redirect: null })} />);
@@ -76,48 +67,36 @@ class StatefulStoreEditComponent extends React.Component {
 
         return (<>
             <TextField
-                className={classes.input}
+                sx={{ mr: 1, mb: 1 }}
                 id="name"
                 label="Name"
                 value={store.name}
                 onChange={event => storesState.changeName(event.target.value)}
-                margin="dense"
+                size="small"
                 variant="outlined"
             />
-            <FormControl
-                className={classes.input}
-                variant="outlined"
-            >
-                <InputLabel htmlFor="type">Typ</InputLabel>
-                <Select
-                    variant="outlined"
-                    value={store.type}
-                    onChange={event => storesState.changeType(event.target.value)}
-                    inputProps={{
-                        name: 'type',
-                        id: 'type',
-                    }}
-                >
-                    <MenuItem value={'STANDARD'}>Lager</MenuItem>
-                    <MenuItem value={'MOBILE'}>Magazin</MenuItem>
-                    <MenuItem value={'MAIN'}>Hauptlager</MenuItem>
-                </Select>
-            </FormControl>
+            <IdNameSelect
+                label="Typ"
+                value={store.type}
+                onChange={value => storesState.changeType(value)}
+                // TODO: REST-Endpoint
+                data={[{ id: 'STANDARD', name: 'Lager' }, { id: 'MOBILE', name: 'Magazin' }, { id: 'MAIN', name: 'Hauptlager' }]}
+            />
             <br />
             <TextField
-                className={classes.input}
+                sx={{ mr: 1, mb: 1, width: '230px' }}
                 id="address"
                 label="Adresse"
                 multiline
                 value={store.address}
                 onChange={event => storesState.changeAddress(event.target.value)}
-                margin="dense"
+                size="small"
                 variant="outlined"
             /><br />
             {storesState.changed ? (
                 storesState.actionInProgress ? (<CircularProgress />) : (<>
                     <Button
-                        className={classes.input}
+                        sx={{ mr: 1, mb: 1 }}
                         disabled={disabled || storesState.actionInProgress}
                         variant="contained"
                         onClick={() => this.save()}
@@ -125,7 +104,7 @@ class StatefulStoreEditComponent extends React.Component {
                         Speichern
                     </Button>
                     <Button
-                        className={classes.input}
+                        sx={{ mr: 1, mb: 1 }}
                         disabled={storesState.actionInProgress}
                         variant="outlined"
                         onClick={() => this.cancel()}
@@ -135,7 +114,7 @@ class StatefulStoreEditComponent extends React.Component {
                 </>)
             ) : (<>
                 <Button
-                    className={classes.input}
+                    sx={{ mr: 1, mb: 1 }}
                     disabled={storesState.actionInProgress}
                     variant="contained"
                     onClick={() => this.redirectToStores()}
@@ -144,7 +123,7 @@ class StatefulStoreEditComponent extends React.Component {
                 </Button>
                 {store.id && (
                     <Button
-                        className={classes.input}
+                        sx={{ mr: 1, mb: 1 }}
                         disabled={storesState.actionInProgress}
                         variant="contained"
                         onClick={() => this.redirectToSlots()}

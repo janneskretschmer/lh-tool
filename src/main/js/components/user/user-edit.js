@@ -1,43 +1,20 @@
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { withStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
+import { Checkbox, FormControlLabel, Tooltip, Typography } from '@mui/material';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import TextField from '@mui/material/TextField';
+import { Box } from '@mui/system';
 import { withSnackbar } from 'notistack';
 import React from 'react';
-import { NeedsContext } from '../../providers/needs-provider';
-import { requiresLogin, isAnyStringBlank, getRoleName } from '../../util';
-import { UsersContext } from '../../providers/users-provider';
-import Button from '@material-ui/core/Button';
 import { requestPasswordReset } from '../../actions/login';
-import { PageContext } from '../../providers/page-provider';
-import { Typography, Checkbox, FormControlLabel, Tooltip } from '@material-ui/core';
-import { Redirect } from 'react-router';
-import { fullPathOfUserSettings, fullPathOfUsersSettings } from '../../paths';
 import { NEW_ENTITY_ID_PLACEHOLDER } from '../../config';
-import LenientRedirect from '../util/lenient-redirect';
 import { EX_NO_EMAIL, EX_NO_FIRST_NAME, EX_NO_GENDER, EX_NO_LAST_NAME, EX_USER_EMAIL_ALREADY_IN_USE } from '../../exceptions';
+import { fullPathOfUserSettings, fullPathOfUsersSettings } from '../../paths';
 import { RIGHT_USERS_GET } from '../../permissions';
+import { PageContext } from '../../providers/page-provider';
+import { UsersContext } from '../../providers/users-provider';
+import { getRoleName, requiresLogin } from '../../util';
+import LenientRedirect from '../util/lenient-redirect';
 
-const styles = theme => ({
-    input: {
-        margin: '2px',
-    },
-    button: {
-        margin: '2px',
-    },
-    skills: {
-        margin: '2px',
-        maxWidth: '694px',
-        width: '100%',
-    },
-    container: {
-        display: 'inline-block',
-        verticalAlign: 'top',
-        marginRight: theme.spacing.unit * 3,
-        marginBottom: theme.spacing.unit * 3,
-    },
-});
-
-@withStyles(styles)
 @withSnackbar
 class StatefulUserEditComponent extends React.Component {
 
@@ -139,7 +116,7 @@ class StatefulUserEditComponent extends React.Component {
     }
 
     render() {
-        const { classes, usersState, pagesState } = this.props;
+        const { usersState, pagesState } = this.props;
         const { passwordEmailSent, saving, redirectUrl } = this.state;
         if (redirectUrl) {
             return (<LenientRedirect to={redirectUrl} onSamePage={() => this.redirect(null)} />);
@@ -149,7 +126,12 @@ class StatefulUserEditComponent extends React.Component {
         const disableSave = !usersState.isUserValid();
         return user ? (
             <>
-                <div className={classes.container}>
+                <Box sx={{
+                    display: 'inline-block',
+                    verticalAlign: 'top',
+                    mr: 3,
+                    mb: 3,
+                }}>
                     {isNewUser ? (
                         <>
                             <TextField
@@ -159,10 +141,10 @@ class StatefulUserEditComponent extends React.Component {
                                 type="text"
                                 name="first_name"
                                 autoComplete="first name"
-                                margin="dense"
+                                size="small"
                                 variant="outlined"
                                 onChange={event => usersState.changeFirstName(event.target.value)}
-                                className={classes.input}
+                                sx={{ mr: 1, mb: 1 }}
                                 required
                             />
                             <TextField
@@ -172,10 +154,10 @@ class StatefulUserEditComponent extends React.Component {
                                 type="text"
                                 name="last_name"
                                 autoComplete="last name"
-                                margin="dense"
+                                size="small"
                                 variant="outlined"
                                 onChange={event => usersState.changeLastName(event.target.value)}
-                                className={classes.input}
+                                sx={{ mr: 1, mb: 1 }}
                                 required
                             />
                             <TextField
@@ -185,10 +167,10 @@ class StatefulUserEditComponent extends React.Component {
                                 type="email"
                                 name="email"
                                 autoComplete="email"
-                                margin="dense"
+                                size="small"
                                 variant="outlined"
                                 onChange={event => usersState.changeEmail(event.target.value)}
-                                className={classes.input}
+                                sx={{ mb: 1 }}
                                 required
                             /><br />
                             <FormControlLabel
@@ -203,9 +185,9 @@ class StatefulUserEditComponent extends React.Component {
                             /><br />
                         </>
                     ) : (
-                            <Typography variant='h6'>Benutzereintstellungen für {user.firstName} {user.lastName}</Typography>
+                        <Typography variant='h6'>Benutzereintstellungen für {user.firstName} {user.lastName}</Typography>
 
-                        )
+                    )
                     }
                     <br />
                     <TextField
@@ -215,10 +197,10 @@ class StatefulUserEditComponent extends React.Component {
                         type="text"
                         name="telephone_number"
                         autoComplete="telephone number"
-                        margin="dense"
+                        size="small"
                         variant="outlined"
                         onChange={event => usersState.changeTelephoneNumber(event.target.value)}
-                        className={classes.input}
+                        sx={{ mr: 1, mb: 1 }}
                     />
                     <TextField
                         id="mobile_number"
@@ -227,10 +209,10 @@ class StatefulUserEditComponent extends React.Component {
                         type="text"
                         name="mobile_number"
                         autoComplete="telephone mobile number"
-                        margin="dense"
+                        size="small"
                         variant="outlined"
                         onChange={event => usersState.changeMobileNumber(event.target.value)}
-                        className={classes.input}
+                        sx={{ mr: 1, mb: 1 }}
                     />
                     <TextField
                         id="business_number"
@@ -239,22 +221,22 @@ class StatefulUserEditComponent extends React.Component {
                         type="text"
                         name="business_number"
                         autoComplete="telephone business number"
-                        margin="dense"
+                        size="small"
                         variant="outlined"
                         onChange={event => usersState.changeBusinessNumber(event.target.value)}
-                        className={classes.input}
+                        sx={{ mb: 1 }}
                     /><br />
                     {
                         !isNewUser ? (
                             passwordEmailSent ? (
                                 <>
                                     Es wurde eine Email an {user.email} geschickt.<br /> Mit dem Link in der Email kann das Passwort geändert werden.
-                            </>
+                                </>
                             ) : (
-                                    <Button variant="outlined" className={classes.button} type="submit" onClick={() => this.changePassword()}>
-                                        Passwort ändern
-                                    </Button>
-                                )
+                                <Button variant="outlined" type="submit" onClick={() => this.changePassword()}>
+                                    Passwort ändern
+                                </Button>
+                            )
                         ) : null
                     }
                     <br /><br />
@@ -262,25 +244,32 @@ class StatefulUserEditComponent extends React.Component {
                         id="profession"
                         label="Beruf"
                         value={user.profession || ''}
-                        margin="dense"
+                        size="small"
                         variant="outlined"
                         onChange={event => usersState.changeProfession(event.target.value)}
-                        className={classes.input}
+                        sx={{ mb: 1 }}
                     /><br />
                     <TextField
                         id="skills"
                         label="Fähigkeiten"
                         multiline
                         value={user.skills || ''}
-                        margin="dense"
+                        size="small"
                         variant="outlined"
                         onChange={event => usersState.changeSkills(event.target.value)}
-                        className={classes.skills}
+                        sx={{
+                            width: '100%',
+                        }}
                     />
-                </div>
+                </Box>
 
                 {usersState.roles && usersState.roles.length > 0 ? (<>
-                    <div className={classes.container}>
+                    <Box sx={{
+                        display: 'inline-block',
+                        verticalAlign: 'top',
+                        mr: 3,
+                        mb: 3,
+                    }}>
                         <Typography variant='h6'>Rollen</Typography>
                         {usersState.roles.map(role => (
                             <div key={role.role}>
@@ -297,10 +286,15 @@ class StatefulUserEditComponent extends React.Component {
                                 <br />
                             </div>
                         ))}
-                    </div>
+                    </Box>
                 </>) : null}
                 {usersState.projects && usersState.projects.length > 0 ? (<>
-                    <div className={classes.container}>
+                    <Box sx={{
+                        display: 'inline-block',
+                        verticalAlign: 'top',
+                        mr: 3,
+                        mb: 3,
+                    }}>
                         <Typography variant='h6'>Projekte</Typography>
                         {usersState.projects.map(project => (
                             <div key={project.id}>
@@ -317,24 +311,24 @@ class StatefulUserEditComponent extends React.Component {
                                 <br />
                             </div>
                         ))}
-                    </div>
+                    </Box>
                 </>) : null}
 
                 <br />
                 {saving ? (<CircularProgress />) : (<>
-                    <Button variant="contained" disabled={disableSave} className={classes.button} type="submit" onClick={() => this.save()}>
+                    <Button variant="contained" disabled={disableSave} sx={{ mr: 1 }} type="submit" onClick={() => this.save()}>
                         Speichern
                     </Button>
                     {isNewUser && (
                         <Tooltip title="Benutzerdaten speichern und anschließend auf diese Seite zurückkehren">
                             <span>
-                                <Button variant="contained" disabled={disableSave} className={classes.button} type="submit" onClick={() => this.save(NEW_ENTITY_ID_PLACEHOLDER)}>
+                                <Button variant="contained" disabled={disableSave} sx={{ mr: 1 }} type="submit" onClick={() => this.save(NEW_ENTITY_ID_PLACEHOLDER)}>
                                     Speichern &amp; Neu erstellen
                                 </Button>
                             </span>
                         </Tooltip>
                     )}
-                    <Button variant="outlined" className={classes.button} type="submit" onClick={() => this.cancel()}>
+                    <Button variant="outlined" type="submit" onClick={() => this.cancel()}>
                         Abbrechen
                     </Button>
                 </>)}
@@ -347,11 +341,11 @@ const UserEditComponent = props => (
     <>
         <UsersContext.Consumer>
             {usersState =>
-                (
-                    <PageContext.Consumer>
-                        {pagesState => (<StatefulUserEditComponent {...props} usersState={usersState} pagesState={pagesState} />)}
-                    </PageContext.Consumer>
-                )
+            (
+                <PageContext.Consumer>
+                    {pagesState => (<StatefulUserEditComponent {...props} usersState={usersState} pagesState={pagesState} />)}
+                </PageContext.Consumer>
+            )
             }
         </UsersContext.Consumer>
     </>

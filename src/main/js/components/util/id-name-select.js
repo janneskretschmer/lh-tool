@@ -1,21 +1,28 @@
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import React from 'react';
-import { Select, FormControl, InputLabel, MenuItem } from '@material-ui/core';
 
 const IdNameSelect = props => (
     <>
         <FormControl
-            className={props.className}
+            sx={
+                props.sx || {
+                    minWidth: '100px',
+                }
+            }
+            size="small"
         >
-            <InputLabel htmlFor="select">{props.label}</InputLabel>
+            <InputLabel id="select-label">{props.label}</InputLabel>
             <Select
                 value={props.value || ''}
                 onChange={event => props.onChange(event.target.value)}
-                inputProps={{
-                    name: 'select',
-                    id: 'select',
-                }}
+                labelId="select-label"
+                label={props.label}
+                size="small"
             >
-                {(!props.value || props.nullable) && (<MenuItem value=""></MenuItem>)}
+                {(!props.value || props.nullable) && (
+                    // unfortunately, the invisable content is necessary for the hight. &nbsp; doesn't work either
+                    <MenuItem value="" sx={{ opacity: 0 }}>[empty]</MenuItem>
+                )}
                 {(props.data instanceof Map ? [...props.data.values()] : props.data).map(idName => (
                     <MenuItem key={idName.id} value={idName.id}>{idName.name}</MenuItem>
                 ))}

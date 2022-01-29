@@ -1,7 +1,7 @@
 module.exports = {
     prodBuild: true,
     theme: {
-        //copied from @material-ui/core/colors/deepPurple
+        //copied from @mui/material/colors/deepPurple
         primary: {
             50: '#ede7f6',
             100: '#d1c4e9',

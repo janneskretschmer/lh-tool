@@ -1,15 +1,15 @@
 import React from 'react';
-import { Route, Switch } from 'react-router';
+import { Route, Switch } from 'react-router-dom';
+import { fullPathOfNeedApply, fullPathOfNeedApprove, fullPathOfNeedQuantities } from '../../paths';
 import NeedsProvider from '../../providers/needs-provider';
 import { requiresLogin } from '../../util';
+import NotFoundHandlerComponent from '../notfound';
 import NeedApplyComponent from './apply';
 import NeedApproveComponent from './approve';
 import NeedQuantityComponent from './quantities';
-import { fullPathOfNeedApprove, fullPathOfNeedApply, fullPathOfNeedQuantities } from '../../paths';
-import NotFoundHandlerComponent from '../notfound';
-import ProjectsProvider from '../../providers/projects-provider';
 
 class NeedWrapperComponent extends React.Component {
+
     render() {
         return (<>
             <NeedsProvider>

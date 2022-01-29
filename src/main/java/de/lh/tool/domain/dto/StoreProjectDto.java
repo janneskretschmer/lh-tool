@@ -1,6 +1,6 @@
 package de.lh.tool.domain.dto;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -23,8 +23,8 @@ public class StoreProjectDto implements Identifiable<Long> {
 
 	private Long projectId;
 
-	private Date start;
+	private LocalDate start;
 
-	private Date end;
+	private LocalDate end;
 
 }
